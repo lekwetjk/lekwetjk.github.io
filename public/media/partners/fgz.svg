@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="240" viewBox="0 0 800 240" role="img" aria-label="FGŻ logo">
+  <rect width="800" height="240" rx="28" fill="#1b3a5b"/>
+  <rect x="102" y="68" width="134" height="104" rx="18" fill="#f4b942"/>
+  <path d="M132 118h74" stroke="#1b3a5b" stroke-width="16" stroke-linecap="round"/>
+  <path d="M169 80v76" stroke="#1b3a5b" stroke-width="16" stroke-linecap="round"/>
+  <text x="270" y="118" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="44" font-weight="700">FGŻ</text>
+  <text x="270" y="160" fill="#dbe8f5" font-family="Arial, Helvetica, sans-serif" font-size="24">Forum Gospodarcze Żywności</text>
+</svg>

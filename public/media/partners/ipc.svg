@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="240" viewBox="0 0 800 240" role="img" aria-label="IPC logo">
+  <rect width="800" height="240" rx="28" fill="#173b6d"/>
+  <circle cx="180" cy="120" r="70" fill="#f2b63d"/>
+  <path d="M144 120h72" stroke="#173b6d" stroke-width="14" stroke-linecap="round"/>
+  <path d="M180 84v72" stroke="#173b6d" stroke-width="14" stroke-linecap="round"/>
+  <text x="286" y="118" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="50" font-weight="700">IPC</text>
+  <text x="286" y="160" fill="#d3e3f8" font-family="Arial, Helvetica, sans-serif" font-size="24">International Poultry Council</text>
+</svg>

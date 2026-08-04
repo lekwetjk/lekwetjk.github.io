@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="240" viewBox="0 0 800 240" role="img" aria-label="AVEC logo">
+  <rect width="800" height="240" rx="28" fill="#102a43"/>
+  <circle cx="180" cy="120" r="72" fill="#f4b942"/>
+  <path d="M142 120h76" stroke="#ffffff" stroke-width="16" stroke-linecap="round"/>
+  <path d="M180 82v76" stroke="#ffffff" stroke-width="16" stroke-linecap="round"/>
+  <text x="292" y="120" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="54" font-weight="700">AVEC</text>
+  <text x="292" y="162" fill="#dfe8f3" font-family="Arial, Helvetica, sans-serif" font-size="24">European poultry organisations</text>
+</svg>

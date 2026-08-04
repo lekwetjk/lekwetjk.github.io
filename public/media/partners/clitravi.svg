@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="240" viewBox="0 0 800 240" role="img" aria-label="CLITRAVI logo">
+  <rect width="800" height="240" rx="28" fill="#7a1423"/>
+  <rect x="104" y="72" width="124" height="96" rx="16" fill="#ffffff"/>
+  <path d="M136 106h60" stroke="#7a1423" stroke-width="12" stroke-linecap="round"/>
+  <path d="M166 78v56" stroke="#7a1423" stroke-width="12" stroke-linecap="round"/>
+  <text x="268" y="118" fill="#ffffff" font-family="Arial, Helvetica, sans-serif" font-size="46" font-weight="700">CLITRAVI</text>
+  <text x="268" y="160" fill="#f6d2d7" font-family="Arial, Helvetica, sans-serif" font-size="24">Meat processing industry</text>
+</svg>
