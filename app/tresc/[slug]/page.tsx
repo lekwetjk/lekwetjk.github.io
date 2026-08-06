@@ -82,9 +82,13 @@ export default async function ContentDetailPage({
         ? "W Krajowej Radzie Drobiarstwa – Izbie Gospodarczej działa dziewięć komisji branżowych."
       : slug === "zarzad-i-rada-izby"
         ? "Krajowa Rada Drobiarstwa - Izba Gospodarcza jest organizacją samorządu gospodarczego, reprezentującą interesy gospodarcze zrzeszonych w niej przedsiębiorców, w szczególności wobec organów władzy publicznej. Organami Izby są: Walne Zgromadzenie, Rada Izby, Zarząd Izby, Komisja Rewizyjna, Komisja Rozjemcza."
+      : slug === "akty-prawne"
+        ? "Źródłami powszechnie obowiązującego prawa Rzeczypospolitej Polskiej są: Konstytucja, ustawy, ratyfikowane umowy międzynarodowe oraz rozporządzenia. Źródłami powszechnie obowiązującego prawa Rzeczypospolitej Polskiej są na obszarze działania organów, które je ustanowiły, akty prawa miejscowego."
       : slug === "dane-kontaktowe"
         ? "KRD-IG wykonuje kluczowe dla branży drobiarskiej zadania z zakresu hodowli i oceny drobiu. Za realizację zadań związanych z kompetencjami Izby w tym zakresie odpowiada Dział Hodowli i Oceny Drobiu z siedzibą w Poznaniu. Poniżej dane kontaktowe do Specjalistów Działu, któego Kierownikiem jest dr. inż Eugeniusz Wencek."
       : page?.excerpt;
+  const legalEuRegulationText =
+    "Stosuje się je wprost, ponieważ z mocy traktatu mają charakter ogólny, wiążą w całości i są bezpośrednio stosowane w każdym państwie członkowskim od dnia ich wejścia w życie.";
 
   if (!page) {
     return (
@@ -100,8 +104,10 @@ export default async function ContentDetailPage({
   }
 
   const image =
-    slug === "czlonkowie"
-      ? "/media/team-pictogram.svg"
+    slug === "akty-prawne"
+      ? "/media/prawo.png"
+      : slug === "czlonkowie"
+      ? "/media/team.png"
       : slug === "wazne-linki"
         ? "/media/wazne-linki-hero.png"
       : page.images.find(
@@ -116,7 +122,11 @@ export default async function ContentDetailPage({
   const wazneLinkiSubtitle =
     "to szybki dostęp do najważniejszych linków stron i portali internetowych w obszarze rolnictwa i sektora drobiarskiego";
   const shouldUseWideLead = slug === "zarzad-i-rada-izby";
-  const shouldShowLeadText = Boolean(leadText) && slug !== "wazne-linki";
+  const shouldShowLeadText = Boolean(leadText) && slug !== "wazne-linki" && slug !== "czlonkowie";
+  const heroImageClassName = slug === "akty-prawne" ? "article-hero-image-legal" : undefined;
+  const articleLeadClassName = `${
+    shouldUseWideLead ? "article-lead article-lead-full" : "article-lead"
+  }${slug === "akty-prawne" ? " article-lead-full" : ""}`;
 
   return (
     <PageShell>
@@ -136,12 +146,18 @@ export default async function ContentDetailPage({
               )}
             </h1>
             {shouldShowLeadText && (
-              <p className={shouldUseWideLead ? "article-lead article-lead-full" : "article-lead"}>
-                {leadText}
+              <p className={articleLeadClassName}>
+                {slug === "akty-prawne" ? (
+                  <>
+                    {leadText} Rozporządzenia UE: {legalEuRegulationText}
+                  </>
+                ) : (
+                  leadText
+                )}
               </p>
             )}
           </div>
-          {image && <img src={withBasePath(image)} alt="" />}
+          {image && <img src={withBasePath(image)} alt="" className={heroImageClassName} />}
         </div>
       </section>
       <ArticleBody

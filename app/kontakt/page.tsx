@@ -29,7 +29,9 @@ const people = [
   ["Marta Kędel", "Zastępca Dyrektora Generalnego", "m.kedel@krd-ig.pl"],
   ["lek. wet. Jakub Kubacki", "Dyrektor ds. weterynarii i zrównoważonej produkcji", "j.kubacki@krd-ig.pl"],
   ["Eugeniusz Wencek", "Kierownik Działu Hodowli i Oceny Drobiu", "e.wencek@krd-ig.pl"],
+  ["Emilia Smolińska", "Główny Specjalista ds. Administracji i Rozliczeń", "e.smolinska@krd-ig.pl"],
   ["Iwona Kałużna", "Główny Specjalista ds. Hodowli i Oceny Drobiu", "poznan@krd-ig.pl"],
+  ["Marta Baranowska", "Specjalista ds. Kadr i Płac", "m.kopytowska@krd-ig.pl"],
 ];
 
 export default function ContactPage() {

@@ -2147,6 +2147,112 @@ export function ArticleBody({
     );
   }
 
+  if (slug === "akty-prawne") {
+    const normalizedParagraphs = visibleParagraphs
+      .map((paragraph) => paragraph.replace(/\s+/g, " ").trim())
+      .filter(Boolean);
+
+    const domainHeadings = new Set(["POLSKA", "UNIA EUROPEJSKA"]);
+    const categoryHeadingPattern =
+      /^(Bezpieczeństwo żywności|Jakość żywności oraz normy handlowe|Warunki hodowli i dobrostan drobiu|Farmacja weterynaryjna i pozostałości leków|Produkcja ekologiczna|Choroby zakaźne drobiu|Produkty uboczne pochodzenia zwierzęcego, odpady, utylizacja, ochrona środowiska|Inne)$/i;
+    const legalActPattern = /^(Ustawa|Rozporządzenie|Dyrektywa)\b/i;
+
+    type LegalListItem =
+      | { type: "domain"; text: string }
+      | { type: "category"; text: string }
+      | { type: "act"; text: string; href: string };
+
+    const legalItems: LegalListItem[] = [];
+    let currentDomain = "";
+    let currentCategory = "";
+    let linkCursor = 0;
+
+    for (const paragraph of normalizedParagraphs) {
+      const upper = paragraph.toLocaleUpperCase("pl");
+
+      if (domainHeadings.has(upper)) {
+        currentDomain = upper;
+        currentCategory = "";
+        legalItems.push({ type: "domain", text: upper });
+        continue;
+      }
+
+      if (categoryHeadingPattern.test(paragraph)) {
+        currentCategory = paragraph;
+        legalItems.push({ type: "category", text: paragraph });
+        continue;
+      }
+
+      if (/^\(Dz\./i.test(paragraph) && legalItems.length > 0) {
+        const lastItem = legalItems[legalItems.length - 1];
+        if (lastItem.type === "act") {
+          lastItem.text = `${lastItem.text} ${paragraph}`;
+        }
+        continue;
+      }
+
+      if (!legalActPattern.test(paragraph)) {
+        continue;
+      }
+
+      const assignedLink = links[linkCursor];
+      const href = assignedLink ? resolveArticleHref(assignedLink.href) : resolvedSource;
+      linkCursor += 1;
+
+      if (!currentDomain) {
+        currentDomain = "POLSKA";
+        legalItems.push({ type: "domain", text: currentDomain });
+      }
+
+      legalItems.push({ type: "act", text: paragraph, href });
+    }
+
+    return (
+      <div className="article-layout article-layout-full shell">
+        <article className="prose legal-acts-prose">
+          <div className="legal-acts-list" aria-label="Lista aktów prawnych">
+            {legalItems.map((item, index) => {
+              if (item.type === "domain") {
+                return (
+                  <h2 className="legal-domain-heading" key={`legal-domain-${index}-${item.text}`}>
+                    {item.text}
+                  </h2>
+                );
+              }
+
+              if (item.type === "category") {
+                return (
+                  <h3 className="legal-category-heading" key={`legal-category-${index}-${item.text}`}>
+                    {item.text}
+                  </h3>
+                );
+              }
+
+              return (
+                <article className="legal-act-card" key={`legal-act-${index}-${item.text.slice(0, 28)}`}>
+                  <p>
+                    <a
+                      className="legal-act-title-link"
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {item.text}
+                    </a>
+                  </p>
+                </article>
+              );
+            })}
+          </div>
+
+          <a className="source-link source-link-inline" href={resolvedSource}>
+            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
+          </a>
+        </article>
+      </div>
+    );
+  }
+
   if (slug === "bezpieczna-produkcja") {
     return (
       <div className="article-layout article-layout-full shell">

@@ -225,10 +225,6 @@ export default function Home() {
               Poznaj standardy produkcji <Arrow />
             </a>
           </div>
-          <img
-            src={withBasePath("/media/poultry-close.webp")}
-            alt="Biały kurczak w gospodarstwie"
-          />
         </div>
       </section>
 
@@ -246,7 +242,18 @@ export default function Home() {
           <div className="latest-grid">
             {latestNews.map((post) => (
               <article className="latest-card" key={post.slug}>
-                {post.image && <img src={withBasePath(post.image)} alt="" loading="lazy" />}
+                {post.image && (
+                  <img
+                    src={withBasePath(post.image)}
+                    alt=""
+                    loading="lazy"
+                    className={
+                      post.slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026"
+                        ? "latest-card-image-contain"
+                        : undefined
+                    }
+                  />
+                )}
                 <div>
                   <p className="latest-meta">
                     {new Intl.DateTimeFormat("pl-PL", {
