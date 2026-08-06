@@ -65,7 +65,11 @@ export default function KnowledgeBasePage() {
                     <a href={withBasePath(`/tresc/${page.slug}`)} key={page.slug} className="library-card">
                       <span className="library-card-index">{page.section}</span>
                       <h3>{page.title}</h3>
-                      <p>{page.excerpt}</p>
+                      <p>
+                        {page.slug === "akty-prawne"
+                          ? "Aktualna baza krajowych i unijnych aktów prawnych dotyczących branży drobiarskiej"
+                          : page.excerpt}
+                      </p>
                       <span className="library-card-link">
                         Czytaj <Arrow />
                       </span>
