@@ -240,6 +240,10 @@ export function ArticleBody({
       : undefined;
   const dezinformacjaBriefingPdfHref =
     "https://krd-ig.com.pl/wp-content/uploads/2026/04/Czerwona-kartka-dla-dezinformacji-i-kluczowe-wyzwania-rynkowe.pdf";
+  const eurLexDecisionLabel =
+    "Decyzja wykonawcza Komisji (UE) 2026/1796 z dnia 16 lipca 2026 r. zmieniająca załącznik do decyzji wykonawczej (UE) 2023/2447 dotyczącej środków nadzwyczajnych w odniesieniu do ognisk wysoce zjadliwej grypy ptaków w niektórych państwach członkowskich";
+  const eurLexDecisionHref =
+    "https://eur-lex.europa.eu/legal-content/PL/TXT/PDF/?uri=OJ:L_202601796";
   const ijharsAgreementUrlLabel =
     "https://www.gov.pl/web/ijhars/wspolne-zasady-dla-rynku-miesa–ijhars-i-branza-wypracowaly-porozumienia";
   const ijharsAgreementHref =
@@ -744,16 +748,24 @@ export function ArticleBody({
     const chartPadding = { top: 24, right: 24, bottom: 52, left: 80 };
     const plotWidth = chartWidth - chartPadding.left - chartPadding.right;
     const plotHeight = chartHeight - chartPadding.top - chartPadding.bottom;
+    const mapValueToY = (value: number, minValue: number, maxValue: number) => {
+      const span = maxValue - minValue || 1;
+      return chartPadding.top + (1 - (value - minValue) / span) * plotHeight;
+    };
     const maxTotal = yearlySeries.length > 0 ? Math.max(...yearlySeries.map((point) => point.total)) : 1;
-    const minTotal = yearlySeries.length > 0 ? Math.min(...yearlySeries.map((point) => point.total)) : 0;
-    const denominator = maxTotal - minTotal || 1;
+    const minTotal = 0;
+    const totalTickStep = 3000000;
+    const totalAxisMax = Math.max(
+      totalTickStep,
+      Math.ceil(maxTotal / totalTickStep) * totalTickStep,
+    );
+    const totalZeroY = mapValueToY(0, minTotal, totalAxisMax);
 
     const chartPoints = yearlySeries.map((point, index) => {
       const x =
         chartPadding.left +
         (yearlySeries.length <= 1 ? 0 : (index / (yearlySeries.length - 1)) * plotWidth);
-      const y =
-        chartPadding.top + (1 - (point.total - minTotal) / denominator) * plotHeight;
+      const y = mapValueToY(point.total, minTotal, totalAxisMax);
       return { ...point, x, y };
     });
 
@@ -763,18 +775,16 @@ export function ArticleBody({
             .map((point, index) => `${index === 0 ? "M" : "L"}${point.x.toFixed(2)} ${point.y.toFixed(2)}`)
             .join(" ")
         : "";
-    const tickCount = 5;
-    const tickDenominator = Math.max(tickCount - 1, 1);
-    const yTicks = Array.from({ length: tickCount }, (_, index) => {
-      const ratio = index / tickDenominator;
-      const value = maxTotal - ratio * (maxTotal - minTotal);
-      const y = chartPadding.top + ratio * plotHeight;
-      return {
-        y,
+    const yTicks = [] as Array<{ y: number; value: number; label: string }>;
+    for (let value = totalAxisMax; value >= minTotal; value -= totalTickStep) {
+      yTicks.push({
+        y: mapValueToY(value, minTotal, totalAxisMax),
         value,
         label: Math.round(value).toLocaleString("pl-PL"),
-      };
-    });
+      });
+    }
+    const tickCount = 5;
+    const tickDenominator = Math.max(tickCount - 1, 1);
     const barWidth =
       chartPoints.length > 0
         ? Math.min(42, Math.max(12, (plotWidth / chartPoints.length) * 0.56))
@@ -870,7 +880,8 @@ export function ArticleBody({
         : 110;
     const dynamicsMin = Math.max(0, Math.floor(dynamicsMinBase - 2));
     const dynamicsMax = Math.ceil(dynamicsMaxBase + 2);
-    const dynamicsDenominator = dynamicsMax - dynamicsMin || 1;
+    const normalizedDynamicsMin = Math.min(0, dynamicsMin);
+    const dynamicsZeroY = mapValueToY(0, normalizedDynamicsMin, dynamicsMax);
 
     const dynamicsPoints = yearlyDynamicsSeries.map((point, index) => {
       const x =
@@ -878,9 +889,7 @@ export function ArticleBody({
         (yearlyDynamicsSeries.length <= 1
           ? 0
           : (index / (yearlyDynamicsSeries.length - 1)) * plotWidth);
-      const y =
-        chartPadding.top +
-        (1 - (point.dynamics - dynamicsMin) / dynamicsDenominator) * plotHeight;
+      const y = mapValueToY(point.dynamics, normalizedDynamicsMin, dynamicsMax);
       return { ...point, x, y };
     });
 
@@ -893,7 +902,7 @@ export function ArticleBody({
 
     const dynamicsTicks = Array.from({ length: tickCount }, (_, index) => {
       const ratio = index / tickDenominator;
-      const value = dynamicsMax - ratio * (dynamicsMax - dynamicsMin);
+      const value = dynamicsMax - ratio * (dynamicsMax - normalizedDynamicsMin);
       const y = chartPadding.top + ratio * plotHeight;
       return {
         y,
@@ -1012,9 +1021,9 @@ export function ArticleBody({
 
                 <line
                   x1={chartPadding.left}
-                  y1={chartHeight - chartPadding.bottom}
+                  y1={totalZeroY}
                   x2={chartWidth - chartPadding.right}
-                  y2={chartHeight - chartPadding.bottom}
+                  y2={totalZeroY}
                   stroke="#b8b5ad"
                 />
                 <line
@@ -1051,22 +1060,34 @@ export function ArticleBody({
                 <g className="wstawienia-series wstawienia-series-bar">
                   {chartPoints.map((point) => (
                     <g key={`point-bar-${point.year}`}>
-                      <rect
-                        x={point.x - barWidth / 2}
-                        y={point.y}
-                        width={barWidth}
-                        height={chartHeight - chartPadding.bottom - point.y}
-                        fill={point.isPartialYear ? "#d4a24a" : "#3e8a57"}
-                      />
-                      <text
-                        x={point.x}
-                        y={point.y - 8}
-                        textAnchor="middle"
-                        className="wstawienia-chart-value wstawienia-chart-point-value"
-                      >
-                        {Math.round(point.total).toLocaleString("pl-PL")}
-                        {point.isPartialYear ? "*" : ""}
-                      </text>
+                      {(() => {
+                        const rawBarX = point.x - barWidth / 2;
+                        const minBarX = chartPadding.left;
+                        const maxBarX = chartWidth - chartPadding.right - barWidth;
+                        const barX = Math.max(minBarX, Math.min(rawBarX, maxBarX));
+                        const barLabelX = barX + barWidth / 2;
+
+                        return (
+                          <>
+                            <rect
+                              x={barX}
+                              y={Math.min(point.y, totalZeroY)}
+                              width={barWidth}
+                              height={Math.abs(totalZeroY - point.y)}
+                              fill={point.isPartialYear ? "#d4a24a" : "#3e8a57"}
+                            />
+                            <text
+                              x={barLabelX}
+                              y={point.y - 8}
+                              textAnchor="middle"
+                              className="wstawienia-chart-value wstawienia-chart-point-value"
+                            >
+                              {Math.round(point.total).toLocaleString("pl-PL")}
+                              {point.isPartialYear ? "*" : ""}
+                            </text>
+                          </>
+                        );
+                      })()}
                     </g>
                   ))}
                 </g>
@@ -1114,9 +1135,9 @@ export function ArticleBody({
 
                   <line
                     x1={chartPadding.left}
-                    y1={chartHeight - chartPadding.bottom}
+                    y1={dynamicsZeroY}
                     x2={chartWidth - chartPadding.right}
-                    y2={chartHeight - chartPadding.bottom}
+                    y2={dynamicsZeroY}
                     stroke="#b8b5ad"
                   />
                   <line
@@ -1871,6 +1892,20 @@ export function ArticleBody({
       .map((paragraph) => paragraph.trim())
       .filter(Boolean);
 
+    const normalizeSegmentHeadingText = (value: string) =>
+      value
+        .replace(/^\s*##+\s*/u, "")
+        .replace(
+          /^Na czym polega segmentacja rynku drobiu\?i$/iu,
+          "Na czym polega segmentacja rynku drobiu?",
+        )
+        .trim();
+
+    const normalizeSegmentDisplayText = (value: string) =>
+      normalizeSegmentHeadingText(value)
+        .replace(/^\*\*(.+)\*\*$/u, "$1")
+        .trim();
+
     const frenchMarketTable = [
       {
         segment: "Standard",
@@ -1976,7 +2011,7 @@ export function ArticleBody({
     };
 
     const isSectionHeading = (value: string) => {
-      const normalized = value.trim();
+      const normalized = normalizeSegmentHeadingText(value);
 
       return (
         /^Na czym polega segmentacja rynku drobiu\??i?$/i.test(normalized) ||
@@ -2001,14 +2036,16 @@ export function ArticleBody({
         <article className="prose">
           <h2>Segmentacja rynku drobiu</h2>
           {normalizedParagraphs.map((paragraph, index) => {
+            const displayParagraph = normalizeSegmentDisplayText(paragraph);
+
             if (
               /^Podział certyfikowanego mięsa drobiowego we Francji prezentuje się następująco:/i.test(
-                paragraph,
+                displayParagraph,
               )
             ) {
               return (
                 <div className="segment-table-wrap" key={`${index}-${paragraph.slice(0, 24)}`}>
-                  <h2>{paragraph}</h2>
+                  <h2>{displayParagraph}</h2>
                   <table className="segment-table">
                     <thead>
                       <tr>
@@ -2037,10 +2074,10 @@ export function ArticleBody({
               );
             }
 
-            if (/^Wstępna ropozycja segmentacji polskiego drobiu:/i.test(paragraph)) {
+            if (/^Wstępna ropozycja segmentacji polskiego drobiu:/i.test(displayParagraph)) {
               return (
                 <div className="segment-table-wrap" key={`${index}-${paragraph.slice(0, 24)}`}>
-                  <h2>{paragraph}</h2>
+                  <h2>{displayParagraph}</h2>
                   <table className="segment-table">
                     <thead>
                       <tr>
@@ -2069,23 +2106,25 @@ export function ArticleBody({
               );
             }
 
-            if (isTableDataParagraph(paragraph)) {
+            if (isTableDataParagraph(displayParagraph)) {
               return null;
             }
 
-            if (isSectionHeading(paragraph)) {
-              return <h2 key={`${index}-${paragraph.slice(0, 24)}`}>{paragraph}</h2>;
+            if (isSectionHeading(displayParagraph)) {
+              const headingText = normalizeSegmentDisplayText(displayParagraph);
+
+              return <h2 key={`${index}-${paragraph.slice(0, 24)}`}>{headingText}</h2>;
             }
 
-            if (/^Gwarancję /i.test(paragraph)) {
+            if (/^Gwarancj[ęe]/i.test(displayParagraph)) {
               return (
                 <p key={`${index}-${paragraph.slice(0, 24)}`}>
-                  <strong>{paragraph}</strong>
+                  <strong>{displayParagraph}</strong>
                 </p>
               );
             }
 
-            return <p key={`${index}-${paragraph.slice(0, 24)}`}>{paragraph}</p>;
+            return <p key={`${index}-${paragraph.slice(0, 24)}`}>{displayParagraph}</p>;
           })}
 
           {links.length > 0 && (
@@ -2748,6 +2787,7 @@ export function ArticleBody({
           "podlaskie (wszystkie), łódzkie (wszystkie), mazowieckie (ciechanowski, gostyniński, legionowski, makowski, nowodworski, ostrołęcki, ostrowski, płocki, płoński, przasnyski, pułtuski, sochaczewski, warszawski zachodni, wyszkowski), warmińsko-mazurskie (bartoszycki, braniewski, działdowski, elbląski, ełcki, giżycki, gołdapski, kętrzyński, lidzbarski, mrągowski, nidzicki, olecki, olsztyński, ostródzki, piski, szczycieński, węgorzewski)",
       },
     ];
+
 
     return (
       <div className="article-layout article-layout-full shell">
@@ -3674,6 +3714,20 @@ export function ArticleBody({
             );
           }
 
+          if (slug === "komunikat-14643" && paragraph.includes(eurLexDecisionLabel)) {
+            const [beforeLink, afterLink = ""] = paragraph.split(eurLexDecisionLabel);
+
+            return (
+              <p key={`${index}-${paragraph.slice(0, 20)}`}>
+                {beforeLink}
+                <a className="inline-download-link" href={eurLexDecisionHref}>
+                  {eurLexDecisionLabel}
+                </a>
+                {afterLink}
+              </p>
+            );
+          }
+
           if (slug === "wstawienia") {
             return <p key={`${index}-${paragraph.slice(0, 20)}`}>{paragraph}</p>;
           }
@@ -3740,11 +3794,19 @@ export function ArticleBody({
           </section>
         )}
         {slug === "czlonkowie" && (
+          <p>Dodatkowe warstwy mapy i funkcjonalności dostępne są po zalogowaniu</p>
+        )}
+        {slug === "czlonkowie" && (
           <iframe
             src="https://test.mapcreator.pl/krdig/index.php?&menu=hidden"
             width="1024"
             height="768"
           />
+        )}
+        {slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026" && (
+          <p>
+            Opublikowana deklaracja jest dostępna na stronie WOAH pod linkiem: <a className="inline-download-link" href="https://www.woah.org/app/uploads/2026/08/2026-08-poland-hpai-selfd.pdf" target="_blank" rel="noopener noreferrer">https://www.woah.org/en/what-we-offer/self-declared-disease-status</a>
+          </p>
         )}
         <a className="source-link source-link-inline" href={resolvedSource}>
           Zobacz materiał na obecnej stronie KRD-IG <Arrow />
