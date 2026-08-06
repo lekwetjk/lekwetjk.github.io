@@ -72,6 +72,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
+          name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
           path: ./dist/client
 
   # Deployment job
@@ -87,3 +88,4 @@ jobs:
         uses: actions/deploy-pages@v5
         with:
           timeout: 1800000
+          artifact_name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
