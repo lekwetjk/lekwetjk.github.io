@@ -917,6 +917,8 @@ export function ArticleBody({
 
     const lastEditText =
       lastEditIndex !== -1 ? visibleParagraphs[lastEditIndex].trim() : undefined;
+    const formatWstawieniaYearLabel = (year: string) =>
+      year === "2026" ? "2026 (I-VI)" : year;
     const opracowanieLines =
       opracowanieIndex !== -1
         ? visibleParagraphs
@@ -1105,7 +1107,7 @@ export function ArticleBody({
                     textAnchor="middle"
                     className="wstawienia-chart-year"
                   >
-                    {point.year}
+                    {formatWstawieniaYearLabel(point.year)}
                   </text>
                 ))}
               </svg>
@@ -1177,7 +1179,7 @@ export function ArticleBody({
                         textAnchor="middle"
                         className="wstawienia-chart-year"
                       >
-                        {point.year}
+                        {formatWstawieniaYearLabel(point.year)}
                       </text>
                     </g>
                   ))}
