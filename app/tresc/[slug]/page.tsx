@@ -107,7 +107,7 @@ export default async function ContentDetailPage({
     slug === "akty-prawne"
       ? "/media/prawo.png"
       : slug === "czlonkowie"
-      ? "/media/team.png"
+      ? "/media/memb.jpg"
       : slug === "wazne-linki"
         ? "/media/wazne-linki-hero.png"
       : page.images.find(
@@ -127,6 +127,17 @@ export default async function ContentDetailPage({
   const articleLeadClassName = `${
     shouldUseWideLead ? "article-lead article-lead-full" : "article-lead"
   }${slug === "akty-prawne" ? " article-lead-full" : ""}`;
+  const heroImageStyle =
+    slug === "czlonkowie"
+      ? {
+          objectFit: "cover" as const,
+          objectPosition: "center top",
+          WebkitMaskImage:
+            "radial-gradient(160% 132% at 50% 42%, #000 42%, rgba(0,0,0,0.45) 62%, rgba(0,0,0,0.15) 80%, transparent 100%)",
+          maskImage:
+            "radial-gradient(160% 132% at 50% 42%, #000 42%, rgba(0,0,0,0.45) 62%, rgba(0,0,0,0.15) 80%, transparent 100%)",
+        }
+      : undefined;
 
   return (
     <PageShell>
@@ -157,7 +168,14 @@ export default async function ContentDetailPage({
               </p>
             )}
           </div>
-          {image && <img src={withBasePath(image)} alt="" className={heroImageClassName} />}
+          {image && (
+            <img
+              src={withBasePath(image)}
+              alt=""
+              className={heroImageClassName}
+              style={heroImageStyle}
+            />
+          )}
         </div>
       </section>
       <ArticleBody
