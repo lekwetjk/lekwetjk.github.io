@@ -1345,6 +1345,13 @@ blockquote {
   box-shadow: 0 8px 20px rgba(20, 20, 18, 0.05);
 }
 
+.tender-archive .archive-card > img {
+  height: 208px;
+  object-fit: contain;
+  padding: 10px;
+  background: #fff;
+}
+
 .tender-archive .archive-card > div:last-child {
   min-height: 336px;
   padding: 22px;
@@ -1777,6 +1784,16 @@ blockquote {
   text-decoration: underline;
 }
 
+.tender-deadline-highlight {
+  color: #c1121f !important;
+  font-weight: 700 !important;
+}
+
+.prose p.tender-deadline-highlight {
+  color: #c1121f !important;
+  font-weight: 700 !important;
+}
+
 .cennik-download-link {
   display: inline-block;
   padding: 4px 10px;
@@ -1811,6 +1828,13 @@ blockquote {
   letter-spacing: -0.02em;
 }
 
+.article-hero h1.article-title-tender-unified {
+  max-width: 980px;
+  font-size: 34px;
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+}
+
 .prose-alimentaria .alimentaria-list {
   margin: 0 0 22px 22px;
   padding-left: 18px;
@@ -1836,6 +1860,23 @@ blockquote {
   text-wrap: nowrap;
   font-size: inherit;
   letter-spacing: inherit;
+}
+
+.article-hero h1.article-title-tender-split {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.article-title-tender-primary {
+  display: block;
+}
+
+.article-title-tender-secondary {
+  display: block;
+  font-size: 18px;
+  line-height: 1.5;
+  letter-spacing: 0;
 }
 
 .news-media-section {
@@ -3617,6 +3658,11 @@ blockquote {
   .membership-hero h1,
   .contact-hero h1 {
     font-size: clamp(44px, 13vw, 65px);
+  }
+
+  .article-hero h1.article-title-tender-unified {
+    font-size: 26px;
+    line-height: 1.2;
   }
 
   .home-hero-copy > p:not(.eyebrow) {

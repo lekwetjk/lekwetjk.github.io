@@ -302,6 +302,11 @@ export function ArticleBody({
     /(zapytanie-ofertowe|wybor-wykonawcy|zaproszenie-do-skladania-ofert|wyniki-postepowania|uniewaznienie)/.test(
       slug,
     );
+  const shouldHighlightTenderDeadline =
+    slug ===
+    "zapytanie-ofertowe-dot-projektu-ochrona-wizerunku-polskiego-sektora-drobiarskiego-na-rynku-krajowym-wraz-z-przeprowadzeniem-przez-niezalezny-podmiot-badania-efektywnosci-projektu-6";
+  const tenderDeadlineParagraphStart =
+    "Termin składania ofert upływa 24 sierpnia 2026 r.";
   const resolveArticleHref = (href: string) =>
     /^https?:\/\//i.test(href) || href.startsWith("mailto:") || href.startsWith("tel:")
       ? href
@@ -1679,7 +1684,7 @@ export function ArticleBody({
       "Inne",
     ];
 
-    const poultrySpecies = ["Kurczak", "Kaczka", "Gęś", "Indyk", "Inne"];
+    const poultrySpecies = ["Kurczak", "Kaczka", "Gęś", "Indyk", "Perliczka", "Inne"];
     const assortments = ["Świeże", "Mrożone", "Przetwory", "Inne"];
     const certifications = ["BRC", "Halal", "IFS", "Kosher", "QAFP", "Red Tractor", "Inne"];
     const exportPermits = [
@@ -3800,6 +3805,17 @@ export function ArticleBody({
               <h2 key={`${index}-${paragraph.slice(0, 20)}`}>
                 <a href={dezinformacjaBriefingPdfHref}>Śniadanie prasowe - komunikat</a>
               </h2>
+            );
+          }
+
+          if (
+            shouldHighlightTenderDeadline &&
+            trimmedParagraph.startsWith(tenderDeadlineParagraphStart)
+          ) {
+            return (
+              <p className="tender-deadline-highlight" key={`${index}-${paragraph.slice(0, 20)}`}>
+                {paragraph}
+              </p>
             );
           }
 

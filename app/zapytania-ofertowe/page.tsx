@@ -3,6 +3,33 @@ import { NewsArchive } from "../components/NewsArchive";
 import { PageShell } from "../components/SiteChrome";
 import { tenderPosts } from "../lib/content";
 
+function normalizeTenderArchiveTitle(title: string) {
+  const normalized = title.trim();
+  const lower = normalized.toLocaleLowerCase("pl");
+
+  const variants: Array<{ startsWith: string; label: string }> = [
+    { startsWith: "zapytanie ofertowe", label: "ZAPYTANIE OFERTOWE" },
+    { startsWith: "wybór wykonawcy", label: "WYBÓR WYKONAWCY" },
+    { startsWith: "zaproszenie do składania ofert", label: "ZAPROSZENIE DO SKŁADANIA OFERT" },
+    { startsWith: "wyniki postępowania", label: "WYNIKI POSTĘPOWANIA" },
+    {
+      startsWith: "informacja o unieważnieniu zapytania ofertowego",
+      label: "INFORMACJA O UNIEWAŻNIENIU ZAPYTANIA OFERTOWEGO",
+    },
+  ];
+
+  for (const variant of variants) {
+    if (!lower.startsWith(variant.startsWith)) {
+      continue;
+    }
+
+    const suffix = normalized.slice(variant.startsWith.length).trimStart();
+    return suffix ? `${variant.label} ${suffix}` : variant.label;
+  }
+
+  return normalized;
+}
+
 export const metadata: Metadata = {
   title: "Zapytania ofertowe i wybór wykonawcy",
   description:
@@ -30,7 +57,7 @@ export default function TenderRequestsPage() {
   const archive = tenderPosts().map(
     ({ slug, title, date, year, excerpt, categories, image }) => ({
       slug,
-      title,
+      title: normalizeTenderArchiveTitle(title),
       date,
       year,
       excerpt,
@@ -55,7 +82,7 @@ export default function TenderRequestsPage() {
       </section>
       <section className="archive-section">
         <div className="shell tender-archive">
-          <NewsArchive posts={archive} />
+          <NewsArchive posts={archive} forceContainImages />
         </div>
       </section>
     </PageShell>

@@ -13,7 +13,13 @@ type ArchivePost = {
   image: string | null;
 };
 
-export function NewsArchive({ posts }: { posts: ArchivePost[] }) {
+export function NewsArchive({
+  posts,
+  forceContainImages = false,
+}: {
+  posts: ArchivePost[];
+  forceContainImages?: boolean;
+}) {
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("Wszystkie");
   const [year, setYear] = useState("Wszystkie");
@@ -111,6 +117,7 @@ export function NewsArchive({ posts }: { posts: ArchivePost[] }) {
                 alt=""
                 loading="lazy"
                 className={
+                  forceContainImages ||
                   post.slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026"
                     ? "archive-image-contain"
                     : undefined

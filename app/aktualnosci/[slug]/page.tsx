@@ -14,6 +14,9 @@ export default async function NewsDetailPage({
 }) {
   const { slug } = await params;
   const post = postBySlug(slug);
+  const shouldUseTenderSplitTitle =
+    slug ===
+    "zapytanie-ofertowe-dot-projektu-ochrona-wizerunku-polskiego-sektora-drobiarskiego-na-rynku-krajowym-wraz-z-przeprowadzeniem-przez-niezalezny-podmiot-badania-efektywnosci-projektu-6";
   const shouldCompactStopDezinformacjiTitle =
     slug === "kampania-stopdezinformacjizywnosciowej-i-kluczowe-wyzwania-rynkowe";
   const shouldUseAlimentariaTitleSize =
@@ -21,6 +24,15 @@ export default async function NewsDetailPage({
     "polish-poultry-na-alimentaria-2026-rekordowa-edycja-rekordowa-energia-rekordowa-polska";
   const shouldContainWoahLogoImage =
     slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026";
+  const isTenderLikeSlug =
+    /(zapytanie-ofertowe|wybor-wykonawcy|zaproszenie-do-skladania-ofert|wyniki-postepowania|uniewaznienie)/.test(
+      slug,
+    );
+  const shouldHighlightTenderDeadline =
+    slug ===
+    "zapytanie-ofertowe-dot-projektu-ochrona-wizerunku-polskiego-sektora-drobiarskiego-na-rynku-krajowym-wraz-z-przeprowadzeniem-przez-niezalezny-podmiot-badania-efektywnosci-projektu-6";
+  const tenderDeadlineSentence =
+    "Termin składania ofert upływa 24 sierpnia 2026 r. o godz. 10:00.";
 
   if (!post) {
     return (
@@ -34,6 +46,22 @@ export default async function NewsDetailPage({
       </PageShell>
     );
   }
+
+  const tenderSplitTitlePrefix = "ZAPYTANIE OFERTOWE";
+  const tenderSplitTitleSuffix = shouldUseTenderSplitTitle
+    ? post.title.replace(/^Zapytanie ofertowe/i, "").trimStart()
+    : "";
+  const tenderHeadingClassName = isTenderLikeSlug
+    ? "article-title-tender-unified"
+    : undefined;
+  const tenderHeadingStyle = isTenderLikeSlug
+    ? {
+        fontSize: "clamp(26px, 4.2vw, 34px)",
+        lineHeight: 1.18,
+        letterSpacing: "-0.015em",
+        maxWidth: "980px",
+      }
+    : undefined;
 
   return (
     <PageShell>
@@ -49,10 +77,32 @@ export default async function NewsDetailPage({
                 <span className="article-title-hashtag-line">#StopDezinformacjiŻywnościowej</span>
                 <span className="article-title-line">i kluczowe wyzwania rynkowe</span>
               </h1>
+            ) : shouldUseTenderSplitTitle ? (
+              <h1
+                className={`article-title-tender-split${tenderHeadingClassName ? ` ${tenderHeadingClassName}` : ""}`}
+                style={tenderHeadingStyle}
+              >
+                <span className="article-title-tender-primary">{tenderSplitTitlePrefix}</span>
+                {tenderSplitTitleSuffix && (
+                  <span className="article-title-tender-secondary"> {tenderSplitTitleSuffix}</span>
+                )}
+              </h1>
             ) : (
-              <h1 className={shouldUseAlimentariaTitleSize ? "article-title-alimentaria-compact" : undefined}>{post.title}</h1>
+              <h1
+                className={shouldUseAlimentariaTitleSize ? "article-title-alimentaria-compact" : tenderHeadingClassName}
+                style={!shouldUseAlimentariaTitleSize ? tenderHeadingStyle : undefined}
+              >
+                {post.title}
+              </h1>
             )}
-            {post.excerpt && <p>{post.excerpt}</p>}
+            {post.excerpt && shouldHighlightTenderDeadline && post.excerpt.includes(tenderDeadlineSentence) ? (
+              <p>
+                {post.excerpt.split(tenderDeadlineSentence)[0]}
+                <span className="tender-deadline-highlight">{tenderDeadlineSentence}</span>
+              </p>
+            ) : (
+              post.excerpt && <p>{post.excerpt}</p>
+            )}
           </div>
           {post.image && (
             <img

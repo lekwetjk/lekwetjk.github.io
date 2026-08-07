@@ -223,7 +223,68 @@ export const knowledgePages = content.pages.map((page) => ({
   links: normalizeLinks(page.links),
 }));
 
-export const newsPosts = content.posts.map((post) => ({
+const supplementalNewsPosts: NewsPost[] = [
+  {
+    id: 900001,
+    slug:
+      "zapytanie-ofertowe-dot-projektu-ochrona-wizerunku-polskiego-sektora-drobiarskiego-na-rynku-krajowym-wraz-z-przeprowadzeniem-przez-niezalezny-podmiot-badania-efektywnosci-projektu-6",
+    title:
+      "ZAPYTANIE OFERTOWE dot. projektu: „Ochrona wizerunku polskiego sektora drobiarskiego na rynku krajowym” wraz z przeprowadzeniem przez niezależny podmiot badania efektywności projektu (zadania)",
+    date: "2026-08-06T00:00:00",
+    year: 2026,
+    excerpt:
+      "Krajowa Rada Drobiarstwa – Izba Gospodarcza zaprasza do przygotowania i przedstawienia oferty dotyczącej projektu pt. „Ochrona wizerunku polskiego sektora drobiarskiego na rynku krajowym” wraz z przeprowadzeniem przez niezależny podmiot badania efektywności projektu (zadania). Termin składania ofert upływa 24 sierpnia 2026 r. o godz. 10:00.",
+    paragraphs: [
+      "Krajowa Rada Drobiarstwa – Izba Gospodarcza zaprasza do przygotowania i przedstawienia oferty dotyczącej projektu pt. „Ochrona wizerunku polskiego sektora drobiarskiego na rynku krajowym” wraz z przeprowadzeniem przez niezależny podmiot badania efektywności projektu (zadania).",
+      "Termin składania ofert upływa 24 sierpnia 2026 r. o godz. 10:00.",
+      "Treść Zaproszenia —> pobierz.pdf",
+      "Załączniki (1-7) do Zapytania ofertowego —> pobierz.pdf",
+      "Załączniki (1-7) do Zapytania ofertowego w formie edytowalnej —> pobierz.docx",
+      "Załącznik nr 5 do Zapytania ofertowego w formacie .xls —> pobierz.xls",
+    ],
+    links: [
+      {
+        href: "https://krd-ig.com.pl/wp-content/uploads/2026/08/1.-Zaproszenie-do-skladania-ofert-OCHRONA-WIZERUNKU-KRAJ-2026.pdf",
+        label: "pobierz.pdf",
+        document: true,
+      },
+      {
+        href: "https://krd-ig.com.pl/wp-content/uploads/2026/08/2-Zalaczniki-1-7-do-Zapytania-ofertowego.pdf",
+        label: "pobierz.pdf",
+        document: true,
+      },
+      {
+        href: "https://krd-ig.com.pl/wp-content/uploads/2026/08/2-Zalaczniki-1-7-do-Zapytania-ofertowego.docx",
+        label: "pobierz.docx",
+        document: true,
+      },
+      {
+        href: "https://krd-ig.com.pl/wp-content/uploads/2026/08/3.-Zalacznik-nr-5-do-Zapytania-ofertowego-KOSZTORYS.xlsx",
+        label: "pobierz.xls",
+        document: true,
+      },
+    ],
+    categories: ["Aktualności", "Zapytania ofertowe"],
+    image: "/media/zo.png",
+    source:
+      "https://krd-ig.com.pl/zapytanie-ofertowe-dot-projektu-ochrona-wizerunku-polskiego-sektora-drobiarskiego-na-rynku-krajowym-wraz-z-przeprowadzeniem-przez-niezalezny-podmiot-badania-efektywnosci-projektu-6/",
+  },
+];
+
+const supplementalSlugs = new Set(supplementalNewsPosts.map((post) => post.slug));
+
+export const newsPosts = [
+  ...supplementalNewsPosts,
+  ...content.posts
+    .filter((post) => !supplementalSlugs.has(post.slug))
+    .map((post) => ({
+      ...sanitizeNewsPost({
+        ...post,
+        links: normalizeLinks(post.links),
+      }),
+      excerpt: normalizePreviewText(post.excerpt),
+    })),
+].map((post) => ({
   ...sanitizeNewsPost({
     ...post,
     links: normalizeLinks(post.links),
