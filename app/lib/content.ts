@@ -269,6 +269,38 @@ const supplementalNewsPosts: NewsPost[] = [
     source:
       "https://krd-ig.com.pl/zapytanie-ofertowe-dot-projektu-ochrona-wizerunku-polskiego-sektora-drobiarskiego-na-rynku-krajowym-wraz-z-przeprowadzeniem-przez-niezalezny-podmiot-badania-efektywnosci-projektu-6/",
   },
+  {
+    id: 900002,
+    slug: "nowa-strategia-ue-dla-hodowli-wazny-sygnal-dla-sektora-drobiarskiego",
+    title: "Nowa strategia UE dla hodowli – ważny sygnał dla sektora drobiarskiego",
+    date: "2026-08-07T00:00:00",
+    year: 2026,
+    excerpt:
+      "Komisja Europejska przedstawiła nową strategię UE dla sektora hodowlanego, która stawia na konkurencyjność, bezpieczeństwo żywnościowe, dobrostan zwierząt i odporność produkcji. Dla branży drobiarskiej oznacza to zarówno nowe wymagania, jak i szanse na dalszy rozwój.",
+    paragraphs: [
+      "7 lipca 2026 r. Komisja Europejska przedstawiła EU Livestock Strategy, dokument określający długoterminowe podejście UE do produkcji zwierzęcej. Strategia podkreśla strategiczne znaczenie hodowli dla bezpieczeństwa żywnościowego, gospodarki oraz funkcjonowania obszarów wiejskich.",
+      "Jednym z najważniejszych elementów strategii jest zapowiedź dalszych zmian w zakresie dobrostanu kur niosek i brojlerów. Komisja planuje do końca 2026 r. przedstawić propozycje zmian przepisów, obejmujące m.in. stopniowe wycofywanie systemów klatkowych, rozwój praktycznych wskaźników dobrostanu oraz rozwiązania dotyczące uśmiercania jednodniowych kogucików.",
+      "Dla producentów oznacza to konieczność dalszego dostosowywania gospodarstw i inwestowania w technologie poprawiające warunki utrzymania zwierząt.",
+      "Strategia dużą wagę przywiązuje również do zapobiegania chorobom zwierząt. Rozwijane mają być systemy monitorowania, kontroli i zwalczania chorób oraz wykorzystanie narzędzi cyfrowych.",
+      "Dla sektora drobiarskiego szczególne znaczenie ma to w kontekście grypy ptaków. Wzmocnienie bioasekuracji i wcześniejsze wykrywanie zagrożeń mają ograniczać ryzyko strat produkcyjnych oraz zakłóceń w handlu.",
+      "Kolejnym ważnym kierunkiem jest zwiększenie dostępności europejskich źródeł białka paszowego. Strategia jest powiązana z unijnym Protein Action Plan, którego celem jest rozwój produkcji roślin białkowych i nasion oleistych w UE.",
+      "Komisja zwraca uwagę na potrzebę utrzymania konkurencyjności europejskich producentów. Istotnym elementem ma być stosowanie, w granicach zgodnych z zasadami WTO, warunków wzajemności wobec produktów importowanych.",
+      "Strategia wskazuje także na potrzebę zwiększenia inwestycji w cyfryzację, efektywność produkcji, dobrostan, ochronę środowiska i adaptację do zmian klimatu.",
+      "Polska jest jednym z najważniejszych producentów drobiu w UE, dlatego kierunek wyznaczony przez Komisję Europejską będzie miał bezpośrednie znaczenie dla krajowych gospodarstw i przedsiębiorstw.",
+      "Najbliższe lata mogą oznaczać konieczność inwestycji w systemy utrzymania zwierząt, dalsze zwiększanie wymagań dotyczących bioasekuracji, rozwój technologii monitorowania zdrowia i dobrostanu, rosnące znaczenie efektywności wykorzystania paszy i energii oraz nowe wymagania środowiskowe.",
+      "Strategia UE dla sektora hodowlanego nie jest więc zapowiedzią ograniczania produkcji drobiarskiej. To przede wszystkim sygnał, że europejskie drobiarstwo ma pozostać ważnym elementem bezpieczeństwa żywnościowego, ale będzie musiało dalej inwestować w dobrostan, bioasekurację, efektywność i nowoczesne technologie.",
+    ],
+    links: [
+      {
+        href: "https://ec.europa.eu/commission/presscorner/detail/en/ip_26_1834",
+        label: "Komisja Europejska",
+        document: false,
+      },
+    ],
+    categories: ["Aktualności", "Polityka", "Hodowla"],
+    image: "/media/news/logo-komisji-europejskiej.svg",
+    source: "https://ec.europa.eu/commission/presscorner/detail/en/ip_26_1834",
+  },
 ];
 
 const supplementalSlugs = new Set(supplementalNewsPosts.map((post) => post.slug));
