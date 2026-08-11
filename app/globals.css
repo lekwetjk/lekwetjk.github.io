@@ -1963,6 +1963,81 @@ blockquote {
   background: transparent;
 }
 
+.ied-threshold-table-wrap {
+  margin: 20px 0 34px;
+  overflow-x: auto;
+  padding: 12px;
+  border: 1px solid #d5dde6;
+  border-radius: 10px;
+}
+
+.ied-threshold-table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+  border: 1px solid #b9c2cc;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.ied-threshold-table caption {
+  caption-side: top;
+  text-align: left;
+  padding: 2px 4px 12px;
+  font-weight: 700;
+  color: var(--ink);
+  font-size: 14px;
+}
+
+.ied-threshold-table th,
+.ied-threshold-table td {
+  padding: 12px 14px;
+  border: 1px solid #d9e0e8;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.ied-threshold-table thead th {
+  font-weight: 700;
+}
+
+.ied-threshold-table tbody th[scope="row"] {
+  font-weight: 600;
+}
+
+.ied-col-threshold {
+  width: 120px;
+  text-align: center;
+  white-space: nowrap;
+  font-weight: 600;
+}
+
+.ied-col-stock {
+  width: 220px;
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 700px) {
+  .ied-threshold-table-wrap {
+    margin: 16px 0 30px;
+    padding: 8px;
+  }
+
+  .ied-threshold-table {
+    min-width: 540px;
+    font-size: 14px;
+  }
+
+  .ied-threshold-table th,
+  .ied-threshold-table td {
+    padding: 10px 11px;
+  }
+}
+
 .news-media-logos img {
   max-width: 100%;
   max-height: 70px;

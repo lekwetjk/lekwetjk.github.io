@@ -3899,6 +3899,170 @@ export function ArticleBody({
             );
           }
 
+          if (
+            slug ===
+              "ied-2-0-unia-europejska-chce-zmian-w-przepisach-o-ochronie-srodowiska-czy-branza-drobiarska-ma-sie-czego-obawiac" &&
+            (/^Rodzaj drobiu\s*\|\s*Próg\s*\|\s*Orientacyjna maks\. obsada \(szt\.\)$/i.test(trimmedParagraph) ||
+              /^Rodzaj drobiu\s+Próg\s+Orientacyjna maks\. obsada \(szt\.\)$/i.test(trimmedParagraph))
+          ) {
+            const rows = [
+              {
+                species: "Obecny próg (dla porównania)",
+                threshold: "-",
+                stock: "> 40 000 (niezależnie od gatunku)",
+              },
+              { species: "Brojlery", threshold: "280 WPO", stock: "40 000" },
+              { species: "Kury nioski", threshold: "300 WPO", stock: "21 429" },
+              { species: "Indyki", threshold: "280 WPO", stock: "9 334" },
+              { species: "Kaczki", threshold: "280 WPO", stock: "28 000" },
+              { species: "Gęsi", threshold: "280 WPO", stock: "14 000" },
+              { species: "Strusie", threshold: "280 WPO", stock: "800" },
+            ];
+
+            return (
+              <div
+                className="ied-threshold-table-wrap"
+                key={`${index}-${paragraph.slice(0, 20)}`}
+                style={{
+                  margin: "20px 0 34px",
+                  overflowX: "auto",
+                  padding: "12px",
+                  border: "1px solid #d5dde6",
+                  borderRadius: "10px",
+                  background: "transparent",
+                }}
+              >
+                <table
+                  className="ied-threshold-table"
+                  style={{
+                    width: "100%",
+                    minWidth: "620px",
+                    borderCollapse: "collapse",
+                    border: "1px solid #b9c2cc",
+                    fontSize: "15px",
+                    lineHeight: "1.45",
+                    background: "transparent",
+                  }}
+                >
+                  <caption
+                    style={{
+                      textAlign: "left",
+                      padding: "2px 4px 12px",
+                      fontWeight: 700,
+                      fontSize: "14px",
+                    }}
+                  >
+                    Progi WPO dla instalacji drobiarskich (projekt UC99)
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th
+                        style={{
+                          padding: "12px 14px",
+                          border: "1px solid #d9e0e8",
+                          textAlign: "left",
+                          fontWeight: 700,
+                          background: "transparent",
+                        }}
+                      >
+                        Rodzaj drobiu
+                      </th>
+                      <th
+                        style={{
+                          padding: "12px 14px",
+                          border: "1px solid #d9e0e8",
+                          textAlign: "center",
+                          fontWeight: 700,
+                          background: "transparent",
+                        }}
+                      >
+                        Próg
+                      </th>
+                      <th
+                        style={{
+                          padding: "12px 14px",
+                          border: "1px solid #d9e0e8",
+                          textAlign: "right",
+                          fontWeight: 700,
+                          background: "transparent",
+                        }}
+                      >
+                        Orientacyjna maks. obsada (szt.)
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rows.map((row) => (
+                      <tr key={row.species} style={{ background: "transparent" }}>
+                        <th
+                          scope="row"
+                          style={{
+                            padding: "12px 14px",
+                            border: "1px solid #d9e0e8",
+                            textAlign: "left",
+                            fontWeight: 600,
+                            background: "transparent",
+                          }}
+                        >
+                          {row.species}
+                        </th>
+                        <td
+                          className="ied-col-threshold"
+                          style={{
+                            padding: "12px 14px",
+                            border: "1px solid #d9e0e8",
+                            textAlign: "center",
+                            whiteSpace: "nowrap",
+                            fontWeight: 600,
+                            background: "transparent",
+                          }}
+                        >
+                          {row.threshold}
+                        </td>
+                        <td
+                          className="ied-col-stock"
+                          style={{
+                            padding: "12px 14px",
+                            border: "1px solid #d9e0e8",
+                            textAlign: "right",
+                            whiteSpace: "nowrap",
+                            fontVariantNumeric: "tabular-nums",
+                            background: "transparent",
+                          }}
+                        >
+                          {row.stock}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            );
+          }
+
+          if (
+            slug ===
+              "ied-2-0-unia-europejska-chce-zmian-w-przepisach-o-ochronie-srodowiska-czy-branza-drobiarska-ma-sie-czego-obawiac" &&
+            [
+              "Obecny próg (dla porównania) | - | > 40 000 (niezależnie od gatunku)",
+              "Brojlery | 280 WPO | 40 000",
+              "Kury nioski | 300 WPO | 21 429",
+              "Indyki | 280 WPO | 9 334",
+              "Kaczki | 280 WPO | 28 000",
+              "Gęsi | 280 WPO | 14 000",
+              "Strusie | 280 WPO | 800",
+              "Obecny próg (dla porównania)\t-\t> 40 000 (niezależnie od gatunku)",
+              "Brojlery\t280 WPO\t40 000",
+              "Kury nioski\t300 WPO\t21 429",
+              "Indyki\t280 WPO\t9 334",
+              "Kaczki\t280 WPO\t28 000",
+              "Gęsi\t280 WPO\t14 000",
+              "Strusie\t280 WPO\t800",
+            ].includes(trimmedParagraph)
+          ) {
+            return null;
+          }
+
           if (tenderLinked?.hasLink) {
             const shouldRenderAsHeading = index > 0 && looksLikeHeading(trimmedParagraph);
             return shouldRenderAsHeading ? (
