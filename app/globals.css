@@ -1454,6 +1454,13 @@ blockquote {
   height: 476px;
 }
 
+.article-hero-grid > img.article-hero-image-webinar {
+  height: 420px;
+  object-fit: cover;
+  border-radius: 24px;
+  box-shadow: 0 20px 45px rgba(11, 16, 22, 0.12);
+}
+
 .article-kicker {
   margin-bottom: 20px;
 }
@@ -1868,6 +1875,11 @@ blockquote {
   gap: 6px;
 }
 
+.article-hero h1.article-title-webinar {
+  font-size: clamp(24px, 3vw, 32px);
+  line-height: 1.12;
+}
+
 .article-title-tender-primary {
   display: block;
 }
@@ -1899,6 +1911,38 @@ blockquote {
   aspect-ratio: 4 / 3;
   object-fit: cover;
   border: 1px solid var(--line);
+}
+
+.news-media-gallery img.speaker-photo {
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.news-media-gallery img.speaker-photo-pawel {
+  object-position: 50% 40%;
+}
+
+.news-media-gallery img.speaker-photo-jakub {
+  object-position: 50% 40%;
+}
+
+.news-media-gallery img.speaker-photo-sara {
+  object-position: 50% 40%;
+}
+
+.news-media-gallery figcaption {
+  margin-top: 10px;
+  color: var(--ink-soft);
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+.news-media-gallery figcaption strong {
+  color: var(--ink);
+  display: block;
+  text-align: left;
 }
 
 .news-media-logos {

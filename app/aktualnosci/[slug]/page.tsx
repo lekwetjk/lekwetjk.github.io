@@ -24,6 +24,8 @@ export default async function NewsDetailPage({
     "polish-poultry-na-alimentaria-2026-rekordowa-edycja-rekordowa-energia-rekordowa-polska";
   const shouldContainWoahLogoImage =
     slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026";
+  const shouldUseWebinarHeroImage =
+    slug === "szczepienia-przeciwko-nd-w-polsce-doswiadczenia-po-roku-od-obowiazywania-przepisu";
   const isTenderLikeSlug =
     /(zapytanie-ofertowe|wybor-wykonawcy|zaproszenie-do-skladania-ofert|wyniki-postepowania|uniewaznienie)/.test(
       slug,
@@ -89,7 +91,7 @@ export default async function NewsDetailPage({
               </h1>
             ) : (
               <h1
-                className={shouldUseAlimentariaTitleSize ? "article-title-alimentaria-compact" : tenderHeadingClassName}
+                className={shouldUseAlimentariaTitleSize ? "article-title-alimentaria-compact" : shouldUseWebinarHeroImage ? "article-title-webinar" : tenderHeadingClassName}
                 style={!shouldUseAlimentariaTitleSize ? tenderHeadingStyle : undefined}
               >
                 {post.title}
@@ -108,7 +110,7 @@ export default async function NewsDetailPage({
             <img
               src={withBasePath(post.image)}
               alt=""
-              className={shouldContainWoahLogoImage ? "article-hero-image-contain" : undefined}
+              className={shouldContainWoahLogoImage ? "article-hero-image-contain" : shouldUseWebinarHeroImage ? "article-hero-image-webinar" : undefined}
             />
           )}
         </div>

@@ -3878,6 +3878,27 @@ export function ArticleBody({
             );
           }
 
+          if (
+            slug === "szczepienia-przeciwko-nd-w-polsce-doswiadczenia-po-roku-od-obowiazywania-przepisu" &&
+            /^Link do rejestracji:\s*https?:\/\//i.test(trimmedParagraph)
+          ) {
+            const href = trimmedParagraph.replace(/^Link do rejestracji:\s*/i, "").trim();
+
+            return (
+              <p key={`${index}-${paragraph.slice(0, 20)}`}>
+                <strong>Link do rejestracji: </strong>
+                <a
+                  className="inline-download-link"
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {href}
+                </a>
+              </p>
+            );
+          }
+
           if (tenderLinked?.hasLink) {
             const shouldRenderAsHeading = index > 0 && looksLikeHeading(trimmedParagraph);
             return shouldRenderAsHeading ? (
@@ -3914,6 +3935,90 @@ export function ArticleBody({
                   />
                 </a>
               ))}
+            </div>
+          </section>
+        )}
+        {slug === "szczepienia-przeciwko-nd-w-polsce-doswiadczenia-po-roku-od-obowiazywania-przepisu" && (
+          <section className="news-media-section" aria-label="Prelegenci webinaru">
+            <h2>Prelegenci</h2>
+            <div className="news-media-gallery">
+              <figure>
+                <img
+                  src="/media/pawel-gawlik.png"
+                  alt="lek. wet. Paweł Gawlik"
+                  className="speaker-photo speaker-photo-pawel"
+                  style={{ objectPosition: "50% 40%" }}
+                  loading="lazy"
+                />
+                <figcaption>
+                  <strong>lek. wet. Paweł Gawlik</strong>
+                  <br />
+                  Absolwent Wydziału Medycyny Weterynaryjnej UWM w Olsztynie (2007). Specjalista chorób drobiu i
+                  ptaków ozdobnych. Od początku swojej kariery zawodowej związany jest z branżą drobiarską.
+                  Z Animal Pharma (Grupa AviOne) współpracuje od 2007 roku. Obecnie pełni funkcję kierownika gabinetu
+                  weterynaryjnego, konsultanta stad rodzicielskich, koordynatora ds. integracji oraz Project Managera.
+                  Aktywnie uczestniczy w profilaktyce i leczeniu stad drobiu. Specjalizuje się w opiece nad stadami brojlera
+                  kurzego, nioski reprodukcyjnej i wylęgarniami. Współtworzy programy profilaktyki i zapobiegania chorobom
+                  urzędowo zwalczanym. Jego doświadczenie, praktyczne podejście i zaangażowanie w rozwój sektora drobiarskiego
+                  sprawiają, że jest ekspertem cenionym zarówno przez producentów, jak i środowisko weterynaryjne.
+                </figcaption>
+              </figure>
+              <figure>
+                <img
+                  src="/media/jakub-wojciechowski.png"
+                  alt="lek. wet. Jakub Wojciechowski"
+                  className="speaker-photo speaker-photo-jakub"
+                  style={{ objectPosition: "50% 40%" }}
+                  loading="lazy"
+                />
+                <figcaption>
+                  <strong>lek. wet. Jakub Wojciechowski</strong>
+                  <br />
+                  Absolwent Wydziału Medycyny Weterynaryjnej UWM w Olsztynie (2012). Specjalista chorób drobiu.
+                  Na co dzień zarządza oddziałem Vet-Lab Brudzew, gdzie zajmuje się szeroko pojętym sektorem drobiarskim.
+                  W pracy zawodowej opiera się na diagnostyce laboratoryjnej i profilaktyce. Do jego zadań należy m.in.
+                  praktyczne opracowywanie programów szczepień (w tym przeciwko ND), a także monitorowanie ich skuteczności
+                  na fermach. Jest aktywnym uczestnikiem europejskiego projektu EU-JAMRAI 2 (WP 6.2, WG Poultry).
+                  W ramach grupy roboczej angażuje się w wypracowanie i wdrażanie praktycznych rozwiązań mających na celu
+                  ograniczenie lekooporności (AMR) oraz optymalizację zużycia antybiotyków w produkcji drobiu.
+                </figcaption>
+              </figure>
+              <figure>
+                <img
+                  src="/media/sara-losiak.png"
+                  alt="lek. wet. Sara Losiak"
+                  className="speaker-photo speaker-photo-sara"
+                  style={{ objectPosition: "50% 40%" }}
+                  loading="lazy"
+                />
+                <figcaption>
+                  <strong>lek. wet. Sara Losiak</strong>
+                  <br />
+                  Ukończyła studia weterynaryjne na UWM w Olsztynie w 2014 roku. Staż odbywała w klinice drobiu
+                  Staphorst w Holandii. Pracowała jako lekarz drobiu w Dierenkliniek Den Ham, gdzie zajmowała się opieką
+                  nad fermami drobiu rzeźnego, profilaktyką zdrowotną stad oraz programami szczepień.
+                  Od 2022 roku jest związana z Gezondheidscentrum voor Pluimvee (GVP) w Emmen w Holandii.
+                  Centrum Zdrowia Drobiu jest wyspecjalizowaną praktyką weterynaryjną świadczącą usługi dla firm działających
+                  w hodowli drobiu w Holandii i Niemczech. Na co dzień wspiera producentów drobiu w zakresie zdrowia stad,
+                  bioasekuracji oraz optymalizacji wyników produkcyjnych.
+                </figcaption>
+              </figure>
+            </div>
+            <div className="news-callout-box">
+              <p>
+                <strong>Rejestracja:</strong>
+              </p>
+              <p style={{ marginTop: "8px" }}>
+                <a
+                  className="inline-download-link"
+                  href="https://us06web.zoom.us/meeting/register/oYqzTRTDQpCxF9CA6JwJpA"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ display: "inline-block", fontWeight: 700 }}
+                >
+                  Zarejestruj się na webinar
+                </a>
+              </p>
             </div>
           </section>
         )}

@@ -301,6 +301,35 @@ const supplementalNewsPosts: NewsPost[] = [
     image: "/media/news/logo-komisji-europejskiej.svg",
     source: "https://ec.europa.eu/commission/presscorner/detail/en/ip_26_1834",
   },
+  {
+    id: 900003,
+    slug: "szczepienia-przeciwko-nd-w-polsce-doswiadczenia-po-roku-od-obowiazywania-przepisu",
+    title: "Szczepienia przeciwko ND w Polsce – doświadczenia po roku od obowiązywania przepisu",
+    date: "2026-08-11T10:00:00",
+    year: 2026,
+    excerpt:
+      "Webinar poświęcony praktycznym doświadczeniom z wdrażania obowiązkowych szczepień przeciwko chorobie Newcastle w stadach komercyjnych oraz ich znaczeniu dla immunoprofilaktyki drobiu.",
+    paragraphs: [
+      "Webinar odbędzie się 11 sierpnia 2026 r. w godzinach 10:00–11:15.",
+      "Krajowe przepisy dotyczące obowiązkowego szczepienia kur i indyków w stadach komercyjnych zostały opublikowane 28 kwietnia 2025 r., więc ponad rok temu, a jednocześnie niemal dwa lata od pierwszego ogniska ND w Polsce w 2023 r.",
+      "Od dwóch i pół lat na niezliczonych szkoleniach, konferencjach i webinariach temat rzekomego pomoru drobiu jest niemal gwarantowanym punktem każdego wydarzenia. W tym czasie również lekarze weterynarii, hodowcy i Inspekcja Weterynaryjna mierzą się z problemem, jak zaplanować, zorganizować i zweryfikować szczepienia drobiu.",
+      "Niestety potrzeba czasu, aby dobrze wykonane szczepienia przyniosły oczekiwane efekty. Ale co oznaczają dobrze wykonane szczepienia i skuteczny program szczepień? Co wpływa na zbudowanie wysokiej, trwałej, populacyjnej odporności drobiu? Jak wykorzystywać wyniki badań laboratoryjnych do zarządzania immunoprofilaktyką stad? I w końcu – jak to wszystko zastosować w praktyce?",
+      "Na te i inne pytania odpowiedzą nasi prelegenci – lekarze weterynarii i specjaliści, którzy na co dzień z sukcesami zajmują się profilaktyką i leczeniem tysięcy stad drobiu.",
+      "Webinarium skierowane jest do lekarzy weterynarii, pracowników Inspekcji Weterynaryjnej, hodowców i wszystkich, którzy na co dzień mierzą się z wyzwaniem, jakim jest immunoprofilaktyka stad drobiu przeciwko chorobie Newcastle.",
+      "Liczba uczestników jest ograniczona, dlatego zarezerwuj swój czas i zarejestruj się już dziś!",
+      "Link do rejestracji: https://us06web.zoom.us/meeting/register/oYqzTRTDQpCxF9CA6JwJpA",
+    ],
+    links: [
+      {
+        href: "https://us06web.zoom.us/meeting/register/oYqzTRTDQpCxF9CA6JwJpA",
+        label: "Zarejestruj się na webinar",
+        document: false,
+      },
+    ],
+    categories: ["Aktualności", "Webinarium", "Hodowla"],
+    image: "/media/kura.png",
+    source: "https://us06web.zoom.us/meeting/register/oYqzTRTDQpCxF9CA6JwJpA",
+  },
 ];
 
 const supplementalSlugs = new Set(supplementalNewsPosts.map((post) => post.slug));
