@@ -29,6 +29,7 @@ export const metadata: Metadata = {
 export default function NewsPage() {
   const archive = newsPosts
     .filter((post) => !isTenderPost(post))
+    .sort((left, right) => new Date(right.date).getTime() - new Date(left.date).getTime())
     .map(({ slug, title, date, year, excerpt, categories, image }) => ({
       slug,
       title,
