@@ -623,6 +623,92 @@ summary:focus-visible {
   padding: 112px 0;
 }
 
+.commission-ticker {
+  padding: 14px 0 12px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: #f7f8f6;
+}
+
+.commission-ticker-track-wrap {
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent 0, black 7%, black 93%, transparent 100%);
+}
+
+.czlonkowie-map-frame {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-height: 560px;
+  margin-top: 14px;
+  border: 1px solid var(--line);
+  background: #fff;
+}
+
+.commission-ticker-track {
+  width: max-content;
+  display: flex;
+  gap: 14px;
+  padding: 4px 0;
+  animation: commissionTicker 190s linear infinite;
+}
+
+.commission-ticker:hover .commission-ticker-track {
+  animation-play-state: paused;
+}
+
+.commission-ticker-item {
+  width: 220px;
+  flex: 0 0 220px;
+  display: grid;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid #d3d8ce;
+  background: #fff;
+  transition: border-color 140ms ease, transform 140ms ease;
+}
+
+.commission-ticker-item:hover {
+  border-color: #9ead96;
+  transform: translateY(-2px);
+}
+
+.commission-ticker-logo-wrap {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.commission-ticker-logo {
+  max-width: 100%;
+  max-height: 64px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
+.commission-ticker-folder {
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@keyframes commissionTicker {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 .section-intro {
   max-width: 760px;
 }

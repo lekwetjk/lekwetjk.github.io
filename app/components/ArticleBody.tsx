@@ -4,6 +4,7 @@ import { withBasePath } from "../lib/basePath";
 import { Arrow } from "./SiteChrome";
 import { MembershipSignupForm } from "./MembershipSignupForm";
 import { ExternalFavicon } from "./ExternalFavicon";
+import { CommissionTicker } from "./CommissionTicker";
 
 function looksLikeHeading(value: string) {
   return (
@@ -4187,14 +4188,33 @@ export function ArticleBody({
           </section>
         )}
         {slug === "czlonkowie" && (
-          <p>Dodatkowe warstwy mapy i funkcjonalności dostępne są po zalogowaniu</p>
+          <CommissionTicker />
         )}
         {slug === "czlonkowie" && (
           <iframe
-            src="https://test.mapcreator.pl/krdig/index.php?&menu=hidden"
-            width="1024"
+            className="czlonkowie-map-frame"
+            title="Mapa członków KRD-IG"
+            src="https://test.mapcreator.pl/krdig/index.php?menu=hidden"
+            loading="eager"
+            width="100%"
             height="768"
           />
+        )}
+        {slug === "czlonkowie" && (
+          <p style={{ marginTop: "10px" }}>
+            Jeśli mapa nie wyświetla się poprawnie, otwórz ją w nowej karcie: {" "}
+            <a
+              className="inline-download-link"
+              href="https://test.mapcreator.pl/krdig/index.php?menu=hidden"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Otwórz mapę członków KRD-IG
+            </a>
+          </p>
+        )}
+        {slug === "czlonkowie" && (
+          <p>Dodatkowe warstwy mapy i funkcjonalności dostępne są po zalogowaniu</p>
         )}
         {slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026" && (
           <p>
