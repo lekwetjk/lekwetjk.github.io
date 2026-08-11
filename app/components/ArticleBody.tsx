@@ -3624,6 +3624,12 @@ export function ArticleBody({
   }
 
   if (slug === "wazne-linki") {
+    const primaryWaznyLink = {
+      title: "Zintegrowany System Rolniczej Informacji Rynkowej",
+      href: "https://zsrir.minrol.gov.pl/about",
+      logoOverride: withBasePath("/media/partners/zsrir.svg"),
+    };
+
     const headingTitles = visibleParagraphs
       .map((paragraph) => paragraph.trim())
       .filter(
@@ -3693,7 +3699,7 @@ export function ArticleBody({
       })
       .filter((item): item is { title: string; href: string } => item !== null);
 
-    const linkCards = (byLinks.length > 0 ? byLinks : fallbackEntries).map((item) => {
+    const generatedCards = (byLinks.length > 0 ? byLinks : fallbackEntries).map((item) => {
       const normalizedTitle = item.title.toLocaleLowerCase("pl");
       const logoOverride =
         normalizedTitle === "ministerstwo rolnictwa i rozwoju wsi"
@@ -3725,6 +3731,15 @@ export function ArticleBody({
         logoOverride,
       };
     });
+
+    const linkCards = [
+      primaryWaznyLink,
+      ...generatedCards.filter(
+        (item) =>
+          item.href.toLocaleLowerCase("pl") !== primaryWaznyLink.href.toLocaleLowerCase("pl") &&
+          item.title.toLocaleLowerCase("pl") !== primaryWaznyLink.title.toLocaleLowerCase("pl"),
+      ),
+    ];
 
     return (
       <div className="article-layout article-layout-full shell">

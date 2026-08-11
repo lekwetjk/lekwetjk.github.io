@@ -24,6 +24,10 @@ export default async function NewsDetailPage({
     "polish-poultry-na-alimentaria-2026-rekordowa-edycja-rekordowa-energia-rekordowa-polska";
   const shouldContainWoahLogoImage =
     slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026";
+  const shouldContainZsrirLogoImage =
+    slug === "nowy-link-zsrir-w-zakladce-dokumenty";
+  const shouldUseZsrirTitleSize =
+    slug === "nowy-link-zsrir-w-zakladce-dokumenty";
   const shouldUseWebinarHeroImage =
     slug === "szczepienia-przeciwko-nd-w-polsce-doswiadczenia-po-roku-od-obowiazywania-przepisu";
   const isTenderLikeSlug =
@@ -91,7 +95,15 @@ export default async function NewsDetailPage({
               </h1>
             ) : (
               <h1
-                className={shouldUseAlimentariaTitleSize ? "article-title-alimentaria-compact" : shouldUseWebinarHeroImage ? "article-title-webinar" : tenderHeadingClassName}
+                className={
+                  shouldUseAlimentariaTitleSize
+                    ? "article-title-alimentaria-compact"
+                    : shouldUseZsrirTitleSize
+                      ? "article-title-zsrir"
+                      : shouldUseWebinarHeroImage
+                        ? "article-title-webinar"
+                        : tenderHeadingClassName
+                }
                 style={!shouldUseAlimentariaTitleSize ? tenderHeadingStyle : undefined}
               >
                 {post.title}
@@ -110,7 +122,15 @@ export default async function NewsDetailPage({
             <img
               src={withBasePath(post.image)}
               alt=""
-              className={shouldContainWoahLogoImage ? "article-hero-image-contain" : shouldUseWebinarHeroImage ? "article-hero-image-webinar" : undefined}
+              className={
+                shouldContainWoahLogoImage
+                  ? "article-hero-image-contain"
+                  : shouldContainZsrirLogoImage
+                    ? "article-hero-image-zsrir"
+                    : shouldUseWebinarHeroImage
+                      ? "article-hero-image-webinar"
+                      : undefined
+              }
             />
           )}
         </div>

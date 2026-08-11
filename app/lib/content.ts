@@ -396,6 +396,29 @@ const supplementalNewsPosts: NewsPost[] = [
     image: "/media/prawo.png",
     source: "https://www.gov.pl/web/premier",
   },
+  {
+    id: 900005,
+    slug: "nowy-link-zsrir-w-zakladce-dokumenty",
+    title: "W zakładce DOKUMENTY dodaliśmy nowy funkcjonalny link do Zintegrowanego Systemu Rolniczej Informacji Rynkowej",
+    date: "2026-08-11T14:30:00",
+    year: 2026,
+    excerpt:
+      "W sekcji DOKUMENTY udostępniliśmy nowy odnośnik do Zintegrowanego Systemu Rolniczej Informacji Rynkowej (ZSRIR).",
+    paragraphs: [
+      "W zakładce DOKUMENTY dodaliśmy nowy funkcjonalny link do Zintegrowanego Systemu Rolniczej Informacji Rynkowej.",
+      "Dzięki temu użytkownicy serwisu mogą szybciej przejść bezpośrednio do ZSRIR i korzystać z aktualnych informacji rynkowych.",
+    ],
+    links: [
+      {
+        href: "https://zsrir.minrol.gov.pl/about",
+        label: "Zintegrowany System Rolniczej Informacji Rynkowej",
+        document: false,
+      },
+    ],
+    categories: ["Aktualności", "Dokumenty"],
+    image: "/media/partners/zsrir.svg",
+    source: "https://zsrir.minrol.gov.pl/about",
+  },
 ];
 
 const supplementalSlugs = new Set(supplementalNewsPosts.map((post) => post.slug));

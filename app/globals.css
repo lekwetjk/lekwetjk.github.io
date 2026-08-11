@@ -1367,6 +1367,14 @@ blockquote {
   background: #fff;
 }
 
+.archive-card > img.archive-image-zsrir {
+  object-fit: contain;
+  object-position: center;
+  height: 180px;
+  padding: 24px;
+  background: #fff;
+}
+
 .archive-placeholder {
   display: grid;
   place-content: center;
@@ -1394,6 +1402,12 @@ blockquote {
   margin: 19px 0 15px;
   font: 600 25px/1.12 "Aptos", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   letter-spacing: -0.04em;
+}
+
+.archive-card-zsrir h2 {
+  font-size: 18px;
+  line-height: 1.24;
+  letter-spacing: -0.02em;
 }
 
 .archive-card p {
@@ -1532,6 +1546,14 @@ blockquote {
 .article-hero-grid > img.article-hero-image-contain {
   object-fit: contain;
   padding: 18px;
+  background: #fff;
+  border: 1px solid var(--line);
+}
+
+.article-hero-grid > img.article-hero-image-zsrir {
+  object-fit: contain;
+  height: 240px;
+  padding: 20px;
   background: #fff;
   border: 1px solid var(--line);
 }
@@ -1964,6 +1986,11 @@ blockquote {
 .article-hero h1.article-title-webinar {
   font-size: clamp(24px, 3vw, 32px);
   line-height: 1.12;
+}
+
+.article-hero h1.article-title-zsrir {
+  font-size: clamp(32px, 3.4vw, 54px);
+  line-height: 1.08;
 }
 
 .article-title-tender-primary {
@@ -3868,6 +3895,11 @@ blockquote {
   .article-hero h1.article-title-tender-unified {
     font-size: 26px;
     line-height: 1.2;
+  }
+
+  .article-hero h1.article-title-zsrir {
+    font-size: clamp(30px, 8.4vw, 42px);
+    line-height: 1.1;
   }
 
   .home-hero-copy > p:not(.eyebrow) {

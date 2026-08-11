@@ -110,7 +110,10 @@ export function NewsArchive({
 
       <div className="archive-grid">
         {filtered.slice(0, limit).map((post) => (
-          <article className="archive-card" key={post.slug}>
+          <article
+            className={`archive-card${post.slug === "nowy-link-zsrir-w-zakladce-dokumenty" ? " archive-card-zsrir" : ""}`}
+            key={post.slug}
+          >
             {post.image ? (
               <img
                 src={withBasePath(post.image)}
@@ -120,7 +123,9 @@ export function NewsArchive({
                   forceContainImages ||
                   post.slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026"
                     ? "archive-image-contain"
-                    : undefined
+                    : post.slug === "nowy-link-zsrir-w-zakladce-dokumenty"
+                      ? "archive-image-contain archive-image-zsrir"
+                      : undefined
                 }
               />
             ) : (

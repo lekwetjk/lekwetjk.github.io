@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="274" height="100" viewBox="0 0 274 100" role="img" aria-labelledby="title desc">
+  <title id="title">ZSRIR</title>
+  <desc id="desc">Logo Zintegrowanego Systemu Rolniczej Informacji Rynkowej</desc>
+  <rect width="274" height="100" fill="#ffffff"/>
+  <g transform="translate(20 19)">
+    <path d="M0 33C0 18 8 9 20 9v45C8 54 0 46 0 33Z" fill="#99c616"/>
+    <path d="M25 27c0-15 8-24 20-24v45c-12 0-20-9-20-21Z" fill="#007a44"/>
+  </g>
+  <g fill="#3d3f45">
+    <path d="M81 28h44v8L93 67h32v8H77v-8l32-31H81z"/>
+    <path d="M131 28h35c10 0 17 6 17 15 0 7-4 12-11 14 8 2 12 6 12 14 0 10-8 17-20 17h-33v-8h33c7 0 11-4 11-9s-4-8-11-8h-23v-8h23c6 0 10-3 10-8s-4-8-10-8h-33z"/>
+    <path d="M191 28h8v60h-8z"/>
+    <path d="M206 28h35c11 0 18 7 18 17 0 8-4 14-11 17l14 26h-9l-13-24h-26v24h-8zm35 8h-27v20h27c6 0 10-4 10-10 0-5-4-10-10-10Z"/>
+  </g>
+</svg>
