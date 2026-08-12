@@ -234,6 +234,10 @@ export function ArticleBody({
     slug === "czlonkowie"
       ? "https://krd-ig.com.pl/czlonkowie/"
       : source;
+  const sourceLinkLabel =
+    slug === "nowy-link-zsrir-w-zakladce-dokumenty"
+      ? "PRZEJDŹ DO STRONY ZSRIR"
+      : "Zobacz materiał na obecnej stronie KRD-IG";
   const chinaGuideDownloadHref =
     slug === "przedstawicielstwo-w-chinach"
       ? links.find((link) => link.document)?.href ??
@@ -4237,7 +4241,7 @@ export function ArticleBody({
           </p>
         )}
         <a className="source-link source-link-inline" href={resolvedSource}>
-          Zobacz materiał na obecnej stronie KRD-IG <Arrow />
+          {sourceLinkLabel} <Arrow />
         </a>
       </article>
     </div>
