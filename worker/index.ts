@@ -17,6 +17,9 @@ interface D1Database {
 interface Env {
   ASSETS: Fetcher;
   DB: D1Database;
+  OPENAI_API_KEY?: string;
+  OPENAI_MODEL?: string;
+  CHAT_ALLOWED_ORIGIN?: string;
   IMAGES: {
     input(stream: ReadableStream): {
       transform(options: Record<string, unknown>): {
@@ -31,6 +34,265 @@ interface ExecutionContext {
   passThroughOnException(): void;
 }
 
+type RateState = {
+  count: number;
+  resetAt: number;
+};
+
+const CHAT_PATH = "/api/chat";
+const CHAT_HEALTH_PATH = "/api/chat/health";
+const DEFAULT_CHAT_MODEL = "gpt-4.1-mini";
+const MAX_MESSAGE_LENGTH = 800;
+const MAX_BODY_BYTES = 10_000;
+const RATE_LIMIT_WINDOW_MS = 5 * 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 12;
+const OPENAI_TIMEOUT_MS = 15_000;
+const rateLimiter = new Map<string, RateState>();
+
+function createJsonResponse(body: unknown, status = 200, extraHeaders?: Record<string, string>) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      "content-type": "application/json; charset=utf-8",
+      ...extraHeaders,
+    },
+  });
+}
+
+function getRequestOrigin(request: Request) {
+  return request.headers.get("origin")?.trim() ?? "";
+}
+
+function getAllowedOrigin(request: Request, env: Env) {
+  const configured = env.CHAT_ALLOWED_ORIGIN?.trim();
+  const origin = getRequestOrigin(request);
+
+  if (configured) {
+    return configured;
+  }
+
+  if (origin) {
+    return origin;
+  }
+
+  return "*";
+}
+
+function applyCorsHeaders(request: Request, env: Env, headers?: Record<string, string>) {
+  return {
+    "access-control-allow-origin": getAllowedOrigin(request, env),
+    "access-control-allow-methods": "GET,POST,OPTIONS",
+    "access-control-allow-headers": "Content-Type",
+    "vary": "Origin",
+    ...(headers ?? {}),
+  };
+}
+
+function getClientIp(request: Request) {
+  const cfIp = request.headers.get("cf-connecting-ip")?.trim();
+  if (cfIp) {
+    return cfIp;
+  }
+
+  const forwarded = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  return forwarded && forwarded.length > 0 ? forwarded : "unknown";
+}
+
+function isRateLimited(clientIp: string, now = Date.now()) {
+  const state = rateLimiter.get(clientIp);
+
+  if (!state || state.resetAt <= now) {
+    rateLimiter.set(clientIp, {
+      count: 1,
+      resetAt: now + RATE_LIMIT_WINDOW_MS,
+    });
+    return false;
+  }
+
+  if (state.count >= RATE_LIMIT_MAX_REQUESTS) {
+    return true;
+  }
+
+  state.count += 1;
+  return false;
+}
+
+function validateOrigin(request: Request, env: Env) {
+  const configured = env.CHAT_ALLOWED_ORIGIN?.trim();
+  const origin = getRequestOrigin(request);
+
+  if (!configured || !origin) {
+    return true;
+  }
+
+  return configured === origin;
+}
+
+async function parseChatRequest(request: Request): Promise<{ message: string } | { error: string }> {
+  const contentLengthValue = request.headers.get("content-length");
+  if (contentLengthValue) {
+    const contentLength = Number.parseInt(contentLengthValue, 10);
+    if (Number.isFinite(contentLength) && contentLength > MAX_BODY_BYTES) {
+      return { error: "Payload too large" };
+    }
+  }
+
+  const contentType = request.headers.get("content-type") ?? "";
+  if (!contentType.toLowerCase().includes("application/json")) {
+    return { error: "Content-Type must be application/json" };
+  }
+
+  let payload: unknown;
+  try {
+    payload = await request.json();
+  } catch {
+    return { error: "Invalid JSON payload" };
+  }
+
+  const message = (payload as { message?: unknown })?.message;
+  if (typeof message !== "string") {
+    return { error: "Field 'message' must be a string" };
+  }
+
+  const normalized = message.trim();
+  if (normalized.length === 0) {
+    return { error: "Message cannot be empty" };
+  }
+
+  if (normalized.length > MAX_MESSAGE_LENGTH) {
+    return { error: `Message is too long (max ${MAX_MESSAGE_LENGTH} chars)` };
+  }
+
+  return { message: normalized };
+}
+
+function extractResponseText(data: unknown) {
+  const response = data as {
+    output_text?: unknown;
+    output?: Array<{ content?: Array<{ type?: string; text?: unknown }> }>;
+  };
+
+  if (typeof response.output_text === "string" && response.output_text.trim().length > 0) {
+    return response.output_text.trim();
+  }
+
+  const parts = response.output ?? [];
+  for (const item of parts) {
+    const contents = item.content ?? [];
+    for (const contentItem of contents) {
+      if (contentItem.type === "output_text" && typeof contentItem.text === "string") {
+        const trimmed = contentItem.text.trim();
+        if (trimmed.length > 0) {
+          return trimmed;
+        }
+      }
+    }
+  }
+
+  return "";
+}
+
+async function handleChatRequest(request: Request, env: Env): Promise<Response> {
+  const corsHeaders = applyCorsHeaders(request, env);
+
+  if (!validateOrigin(request, env)) {
+    return createJsonResponse({ error: "Origin not allowed" }, 403, corsHeaders);
+  }
+
+  const parsed = await parseChatRequest(request);
+  if ("error" in parsed) {
+    const status = parsed.error === "Payload too large" ? 413 : 400;
+    return createJsonResponse({ error: parsed.error }, status, corsHeaders);
+  }
+
+  const clientIp = getClientIp(request);
+  if (isRateLimited(clientIp)) {
+    return createJsonResponse(
+      { error: "Too many requests. Try again in a few minutes." },
+      429,
+      {
+        ...corsHeaders,
+        "retry-after": String(Math.floor(RATE_LIMIT_WINDOW_MS / 1000)),
+      },
+    );
+  }
+
+  const apiKey = env.OPENAI_API_KEY?.trim();
+  if (!apiKey) {
+    return createJsonResponse(
+      { error: "Chat is not configured. Missing OPENAI_API_KEY." },
+      503,
+      corsHeaders,
+    );
+  }
+
+  const model = env.OPENAI_MODEL?.trim() || DEFAULT_CHAT_MODEL;
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort("upstream timeout"), OPENAI_TIMEOUT_MS);
+
+  let upstreamResponse: Response;
+  try {
+    upstreamResponse = await fetch("https://api.openai.com/v1/responses", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model,
+        max_output_tokens: 300,
+        input: [
+          {
+            role: "system",
+            content: [
+              {
+                type: "input_text",
+                text: "Jestes asystentem KRD-IG. Odpowiadaj zwięźle po polsku i nie podawaj informacji, których nie jesteś pewien.",
+              },
+            ],
+          },
+          {
+            role: "user",
+            content: [{ type: "input_text", text: parsed.message }],
+          },
+        ],
+      }),
+      signal: controller.signal,
+    });
+  } catch {
+    clearTimeout(timeoutId);
+    return createJsonResponse(
+      { error: "Chat service is temporarily unavailable." },
+      502,
+      corsHeaders,
+    );
+  }
+
+  clearTimeout(timeoutId);
+
+  if (!upstreamResponse.ok) {
+    return createJsonResponse(
+      { error: "Model request failed. Try again shortly." },
+      502,
+      corsHeaders,
+    );
+  }
+
+  let responseBody: unknown;
+  try {
+    responseBody = await upstreamResponse.json();
+  } catch {
+    return createJsonResponse({ error: "Unexpected model response." }, 502, corsHeaders);
+  }
+
+  const reply = extractResponseText(responseBody);
+  if (!reply) {
+    return createJsonResponse({ error: "Model returned an empty answer." }, 502, corsHeaders);
+  }
+
+  return createJsonResponse({ reply, model }, 200, corsHeaders);
+}
+
 // Image security config. SVG sources with .svg extension auto-skip the
 // optimization endpoint on the client side (served directly, no proxy).
 // To route SVGs through the optimizer (with security headers), set
@@ -40,6 +302,29 @@ interface ExecutionContext {
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
+
+    if (url.pathname === CHAT_HEALTH_PATH && request.method === "GET") {
+      return createJsonResponse(
+        {
+          ok: true,
+          configured: Boolean(env.OPENAI_API_KEY?.trim()),
+          model: env.OPENAI_MODEL?.trim() || DEFAULT_CHAT_MODEL,
+        },
+        200,
+        applyCorsHeaders(request, env),
+      );
+    }
+
+    if (url.pathname === CHAT_PATH && request.method === "OPTIONS") {
+      return new Response(null, {
+        status: 204,
+        headers: applyCorsHeaders(request, env),
+      });
+    }
+
+    if (url.pathname === CHAT_PATH && request.method === "POST") {
+      return handleChatRequest(request, env);
+    }
 
     if (url.pathname === "/_vinext/image") {
       const allowedWidths = [...DEFAULT_DEVICE_SIZES, ...DEFAULT_IMAGE_SIZES];

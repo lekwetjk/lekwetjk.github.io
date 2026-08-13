@@ -30,6 +30,41 @@ pnpm dev
 
 Aplikacja będzie dostępna lokalnie na porcie 3000 lub kolejnych wolnych portach, w zależności od aktywności innych procesów.
 
+## MVP ChatGPT na stronie
+
+W projekcie jest gotowy endpoint worker `POST /api/chat` i widget czatu w interfejsie.
+
+### Konfiguracja env
+
+1. Skopiuj `.dev.vars.example` do `.dev.vars`.
+2. Ustaw sekret `OPENAI_API_KEY`.
+3. Opcjonalnie ustaw:
+- `OPENAI_MODEL` (domyślnie `gpt-4.1-mini`)
+- `CHAT_ALLOWED_ORIGIN` (np. `https://krd-ig.com.pl`)
+
+`/api/chat` ma podstawowe zabezpieczenia:
+- walidacja JSON i długości wiadomości,
+- limit rozmiaru payloadu,
+- prosty rate limit per IP,
+- timeout requestu do modelu,
+- blokada originu przy ustawionym `CHAT_ALLOWED_ORIGIN`.
+
+### Szybki test działania
+
+Health endpoint (bez klucza też odpowie):
+
+```bash
+curl http://localhost:3000/api/chat/health
+```
+
+Test chat endpoint:
+
+```bash
+curl -X POST http://localhost:3000/api/chat \
+	-H "Content-Type: application/json" \
+	-d '{"message":"Czym zajmuje się KRD-IG?"}'
+```
+
 ## Build produkcyjny
 
 ```bash

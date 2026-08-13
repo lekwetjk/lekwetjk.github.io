@@ -1,5 +1,6 @@
 import { primaryNavigation } from "../lib/content";
 import { withBasePath } from "../lib/basePath";
+import { ChatWidget } from "./ChatWidget";
 
 export function Arrow() {
   return (
@@ -176,6 +177,7 @@ export function PageShell({ children }: { children: React.ReactNode }) {
     <>
       <SiteHeader />
       <main>{children}</main>
+      <ChatWidget />
       <SiteFooter />
     </>
   );
