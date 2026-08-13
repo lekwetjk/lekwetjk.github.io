@@ -34,6 +34,15 @@ export function ChatWidget() {
 
   const endpoint = useMemo(resolveChatEndpoint, []);
 
+  function onQuestionKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (event.key !== "Enter" || event.shiftKey || event.isComposing) {
+      return;
+    }
+
+    event.preventDefault();
+    event.currentTarget.form?.requestSubmit();
+  }
+
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
@@ -118,6 +127,7 @@ export function ChatWidget() {
               placeholder="Np. Jakie dokumenty są potrzebne przy członkostwie?"
               value={input}
               onChange={(event) => setInput(event.target.value)}
+              onKeyDown={onQuestionKeyDown}
               disabled={isLoading}
             />
             <div className="chat-widget-row">
