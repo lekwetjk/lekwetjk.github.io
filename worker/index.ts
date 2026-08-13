@@ -192,6 +192,21 @@ function extractResponseText(data: unknown) {
   return "";
 }
 
+async function readUpstreamErrorExcerpt(response: Response) {
+  try {
+    const text = await response.text();
+    const compact = text.replace(/\s+/g, " ").trim();
+
+    if (!compact) {
+      return "";
+    }
+
+    return compact.slice(0, 240);
+  } catch {
+    return "";
+  }
+}
+
 async function handleChatRequest(request: Request, env: Env): Promise<Response> {
   const corsHeaders = applyCorsHeaders(request, env);
 
@@ -271,8 +286,14 @@ async function handleChatRequest(request: Request, env: Env): Promise<Response> 
   clearTimeout(timeoutId);
 
   if (!upstreamResponse.ok) {
+    const upstreamErrorExcerpt = await readUpstreamErrorExcerpt(upstreamResponse.clone());
     return createJsonResponse(
-      { error: "Model request failed. Try again shortly." },
+      {
+        error: "Model request failed. Try again shortly.",
+        upstream_status: upstreamResponse.status,
+        upstream_status_text: upstreamResponse.statusText,
+        upstream_error_excerpt: upstreamErrorExcerpt,
+      },
       502,
       corsHeaders,
     );
