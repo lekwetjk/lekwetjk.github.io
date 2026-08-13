@@ -47,10 +47,46 @@ jobs:
         run: |
           if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
             echo "Cloudflare deployment credentials are not configured. Skipping deployment."
-            echo "Set repository secrets or variables CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID to enable deployment."
+            echo "Set repository secrets CLOUDFLARE_API_TOKEN and CLOUDFLARE_ACCOUNT_ID to enable deployment."
             exit 0
           fi
           echo "Cloudflare deployment credentials are present"
+
+      - name: Normalize and validate Cloudflare credentials
+        run: |
+          CLEAN_TOKEN="$(printf '%s' "$CLOUDFLARE_API_TOKEN" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+          CLEAN_ACCOUNT_ID="$(printf '%s' "$CLOUDFLARE_ACCOUNT_ID" | tr -d '\r\n' | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
+
+          if [ -z "$CLEAN_TOKEN" ] || [ -z "$CLEAN_ACCOUNT_ID" ]; then
+            echo "Cloudflare credentials are empty after normalization."
+            exit 1
+          fi
+
+          if echo "$CLEAN_TOKEN" | grep -q '[[:space:]]'; then
+            echo "CLOUDFLARE_API_TOKEN contains whitespace. Paste only the raw token value."
+            exit 1
+          fi
+
+          case "$CLEAN_TOKEN" in
+            Bearer*|bearer*)
+              echo "CLOUDFLARE_API_TOKEN must not include the Bearer prefix."
+              exit 1
+              ;;
+          esac
+
+          if [ "${#CLEAN_TOKEN}" -lt 20 ]; then
+            echo "CLOUDFLARE_API_TOKEN looks too short."
+            exit 1
+          fi
+
+          if ! echo "$CLEAN_ACCOUNT_ID" | grep -Eq '^[a-fA-F0-9]{32}$'; then
+            echo "CLOUDFLARE_ACCOUNT_ID should be 32 hex characters."
+            exit 1
+          fi
+
+          echo "CLOUDFLARE_API_TOKEN=$CLEAN_TOKEN" >> "$GITHUB_ENV"
+          echo "CLOUDFLARE_ACCOUNT_ID=$CLEAN_ACCOUNT_ID" >> "$GITHUB_ENV"
+          echo "Cloudflare credentials normalized and validated"
 
       - name: Deploy to Cloudflare Workers
         if: ${{ env.CLOUDFLARE_API_TOKEN != '' && env.CLOUDFLARE_ACCOUNT_ID != '' }}
