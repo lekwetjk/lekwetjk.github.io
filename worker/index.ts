@@ -47,7 +47,7 @@ const MAX_BODY_BYTES = 10_000;
 const RATE_LIMIT_WINDOW_MS = 5 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 12;
 const OPENAI_TIMEOUT_MS = 15_000;
-const SOURCE_SITE_BASE_URL = "https://www.krd-ig.com.pl";
+const SOURCE_SITE_BASE_URL = "https://lekwetjk.github.io";
 const SOURCE_FETCH_TIMEOUT_MS = 8_000;
 const SOURCE_CONTEXT_MAX_CHARS = 12_000;
 const rateLimiter = new Map<string, RateState>();
@@ -311,7 +311,7 @@ async function handleChatRequest(request: Request, env: Env): Promise<Response> 
     return createJsonResponse(
       {
         reply:
-          "Nie moge zweryfikowac odpowiedzi na podstawie strony www.krd-ig.com.pl w tej chwili. Sprobuj ponownie za chwile albo sprawdz bezposrednio strone glowna i wyszukiwarke serwisu.",
+          "Nie moge zweryfikowac odpowiedzi na podstawie strony lekwetjk.github.io w tej chwili. Sprobuj ponownie za chwile albo sprawdz bezposrednio strone glowna i wyszukiwarke serwisu.",
       },
       200,
       corsHeaders,
@@ -339,7 +339,7 @@ async function handleChatRequest(request: Request, env: Env): Promise<Response> 
             content: [
               {
                 type: "input_text",
-                text: "Jestes asystentem KRD-IG. Odpowiadaj wylacznie na podstawie tresci przekazanej w bloku KONTEKST_ZE_STRONY i traktuj go jako jedyne zrodlo prawdy. Nie uzywaj wiedzy ogolnej ani domyslow. Jesli odpowiedz nie wynika wprost z kontekstu, napisz: 'Nie znalazlem potwierdzenia tej informacji na www.krd-ig.com.pl.' i dodaj, jaka podstrone warto sprawdzic. Odpowiadaj zwiezle po polsku.",
+                text: "Jestes asystentem KRD-IG. Odpowiadaj wylacznie na podstawie tresci przekazanej w bloku KONTEKST_ZE_STRONY i traktuj go jako jedyne zrodlo prawdy. Nie uzywaj wiedzy ogolnej ani domyslow. Jesli odpowiedz nie wynika wprost z kontekstu, napisz: 'Nie znalazlem potwierdzenia tej informacji na lekwetjk.github.io.' i dodaj, jaka podstrone warto sprawdzic. Odpowiadaj zwiezle po polsku.",
               },
             ],
           },
