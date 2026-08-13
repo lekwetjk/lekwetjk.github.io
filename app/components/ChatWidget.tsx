@@ -10,6 +10,16 @@ type ChatMessage = {
 
 const MAX_INPUT_CHARS = 800;
 
+function resolveChatEndpoint() {
+  const externalApiBase = process.env.NEXT_PUBLIC_CHAT_API_URL?.trim();
+
+  if (externalApiBase && /^https?:\/\//i.test(externalApiBase)) {
+    return `${externalApiBase.replace(/\/+$/, "")}/api/chat`;
+  }
+
+  return withBasePath("/api/chat");
+}
+
 export function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -22,7 +32,7 @@ export function ChatWidget() {
   ]);
   const [error, setError] = useState<string | null>(null);
 
-  const endpoint = useMemo(() => withBasePath("/api/chat"), []);
+  const endpoint = useMemo(resolveChatEndpoint, []);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();

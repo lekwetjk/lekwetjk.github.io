@@ -42,6 +42,11 @@ W projekcie jest gotowy endpoint worker `POST /api/chat` i widget czatu w interf
 - `OPENAI_MODEL` (domyślnie `gpt-4.1-mini`)
 - `CHAT_ALLOWED_ORIGIN` (np. `https://krd-ig.com.pl`)
 
+Przy hostingu statycznym frontendu (np. GitHub Pages) ustaw też zmienną build-time:
+- `NEXT_PUBLIC_CHAT_API_URL` = pełny adres workera, np. `https://krd-ig-website-concept.krd-ig2020.workers.dev`
+
+Bez `NEXT_PUBLIC_CHAT_API_URL` widget domyślnie wywołuje lokalne `/api/chat`, co na hostingu statycznym zwraca 404.
+
 `/api/chat` ma podstawowe zabezpieczenia:
 - walidacja JSON i długości wiadomości,
 - limit rozmiaru payloadu,
