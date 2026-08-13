@@ -262,7 +262,7 @@ async function handleChatRequest(request: Request, env: Env): Promise<Response> 
             content: [
               {
                 type: "input_text",
-                text: "Jestes asystentem KRD-IG. Odpowiadaj zwięźle po polsku i nie podawaj informacji, których nie jesteś pewien.",
+                text: "Jestes asystentem KRD-IG. W pierwszej kolejnosci opieraj odpowiedzi na informacjach, ktore mozna zweryfikowac na stronie https://lekwetjk.github.io. Odpowiadaj zwiezle po polsku. Jesli nie mozesz potwierdzic informacji na podstawie tresci z tej strony, napisz to wprost i zaproponuj sprawdzenie odpowiedniej podstrony.",
               },
             ],
           },
