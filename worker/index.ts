@@ -47,6 +47,9 @@ const MAX_BODY_BYTES = 10_000;
 const RATE_LIMIT_WINDOW_MS = 5 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 12;
 const OPENAI_TIMEOUT_MS = 15_000;
+const SOURCE_SITE_BASE_URL = "https://www.krd-ig.com.pl";
+const SOURCE_FETCH_TIMEOUT_MS = 8_000;
+const SOURCE_CONTEXT_MAX_CHARS = 12_000;
 const rateLimiter = new Map<string, RateState>();
 
 function createJsonResponse(body: unknown, status = 200, extraHeaders?: Record<string, string>) {
@@ -207,6 +210,68 @@ async function readUpstreamErrorExcerpt(response: Response) {
   }
 }
 
+function stripHtmlToText(html: string) {
+  return html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, " ")
+    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, " ")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+async function fetchSiteText(url: string) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort("source timeout"), SOURCE_FETCH_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(url, {
+      method: "GET",
+      headers: {
+        "user-agent": "KRD-IG-Assistant/1.0",
+      },
+      signal: controller.signal,
+    });
+
+    if (!response.ok) {
+      return "";
+    }
+
+    const html = await response.text();
+    return stripHtmlToText(html);
+  } catch {
+    return "";
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+async function fetchSourceContext(question: string) {
+  const searchUrl = `${SOURCE_SITE_BASE_URL}/?s=${encodeURIComponent(question.slice(0, 180))}`;
+  const [homeText, searchText] = await Promise.all([
+    fetchSiteText(SOURCE_SITE_BASE_URL),
+    fetchSiteText(searchUrl),
+  ]);
+
+  const chunks: string[] = [];
+  if (homeText) {
+    chunks.push(`[ZRODLO: ${SOURCE_SITE_BASE_URL}] ${homeText}`);
+  }
+  if (searchText) {
+    chunks.push(`[ZRODLO: ${searchUrl}] ${searchText}`);
+  }
+
+  const merged = chunks.join("\n\n").trim();
+  if (!merged) {
+    return "";
+  }
+
+  return merged.slice(0, SOURCE_CONTEXT_MAX_CHARS);
+}
+
 async function handleChatRequest(request: Request, env: Env): Promise<Response> {
   const corsHeaders = applyCorsHeaders(request, env);
 
@@ -241,6 +306,18 @@ async function handleChatRequest(request: Request, env: Env): Promise<Response> 
     );
   }
 
+  const sourceContext = await fetchSourceContext(parsed.message);
+  if (!sourceContext) {
+    return createJsonResponse(
+      {
+        reply:
+          "Nie moge zweryfikowac odpowiedzi na podstawie strony www.krd-ig.com.pl w tej chwili. Sprobuj ponownie za chwile albo sprawdz bezposrednio strone glowna i wyszukiwarke serwisu.",
+      },
+      200,
+      corsHeaders,
+    );
+  }
+
   const model = env.OPENAI_MODEL?.trim() || DEFAULT_CHAT_MODEL;
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort("upstream timeout"), OPENAI_TIMEOUT_MS);
@@ -262,7 +339,16 @@ async function handleChatRequest(request: Request, env: Env): Promise<Response> 
             content: [
               {
                 type: "input_text",
-                text: "Jestes asystentem KRD-IG. W pierwszej kolejnosci opieraj odpowiedzi na informacjach, ktore mozna zweryfikowac na stronie https://lekwetjk.github.io. Odpowiadaj zwiezle po polsku. Jesli nie mozesz potwierdzic informacji na podstawie tresci z tej strony, napisz to wprost i zaproponuj sprawdzenie odpowiedniej podstrony.",
+                text: "Jestes asystentem KRD-IG. Odpowiadaj wylacznie na podstawie tresci przekazanej w bloku KONTEKST_ZE_STRONY i traktuj go jako jedyne zrodlo prawdy. Nie uzywaj wiedzy ogolnej ani domyslow. Jesli odpowiedz nie wynika wprost z kontekstu, napisz: 'Nie znalazlem potwierdzenia tej informacji na www.krd-ig.com.pl.' i dodaj, jaka podstrone warto sprawdzic. Odpowiadaj zwiezle po polsku.",
+              },
+            ],
+          },
+          {
+            role: "system",
+            content: [
+              {
+                type: "input_text",
+                text: `KONTEKST_ZE_STRONY:\n${sourceContext}`,
               },
             ],
           },
