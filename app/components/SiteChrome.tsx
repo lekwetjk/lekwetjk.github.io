@@ -135,6 +135,18 @@ export function SiteFooter() {
                 <path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm7 0h3.83v1.64h.05c.53-1 1.82-2.05 3.75-2.05 4.02 0 4.77 2.64 4.77 6.08V21h-4v-5.53c0-1.32-.03-3.02-1.84-3.02-1.84 0-2.12 1.44-2.12 2.93V21h-4V9Z" />
               </svg>
             </a>
+            <a
+              className="footer-partner-link"
+              href="https://dobrydrob.pl/"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Dobry Drób"
+            >
+              <img
+                src="https://dobrydrob.pl/wp-content/uploads/2020/07/logo.png"
+                alt="Dobry Drób"
+              />
+            </a>
           </div>
         </div>
         <div className="footer-column">

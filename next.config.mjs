@@ -11,7 +11,7 @@ const basePath = resolveBasePath();
 
 const nextConfig = {
   output: "export",
-  trailingSlash: true,
+  trailingSlash: false,
   basePath,
   assetPrefix: basePath || undefined,
   env: {

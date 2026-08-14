@@ -24,6 +24,25 @@ test("layout exposes the site metadata expected for production", async () => {
   assert.match(layout, /twitter/);
 });
 
+test("sitemap includes static and dynamic site routes", async () => {
+  const sitemap = await readProjectFile("app/sitemap.ts");
+  const sitemapRoute = await readProjectFile("app/sitemap.xml/route.ts");
+
+  assert.match(sitemap, /https:\/\/lekwetjk\.github\.io/);
+  assert.match(sitemap, /knowledgePages\.map/);
+  assert.match(sitemap, /newsPosts\.map/);
+  assert.match(sitemap, /"zapytania-ofertowe"/);
+  assert.match(sitemapRoute, /application\/xml/);
+});
+
+test("footer links to Dobry Drób with its logo", async () => {
+  const footer = await readProjectFile("app/components/SiteChrome.tsx");
+
+  assert.match(footer, /https:\/\/dobrydrob\.pl\//);
+  assert.match(footer, /wp-content\/uploads\/2020\/07\/logo\.png/);
+  assert.match(footer, /aria-label="Dobry Drób"/);
+});
+
 test("core routes and navigation targets exist in the project", async () => {
   const routes = [
     "o-izbie",

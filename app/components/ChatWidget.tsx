@@ -35,7 +35,7 @@ export function ChatWidget() {
   const endpoint = useMemo(resolveChatEndpoint, []);
 
   function onQuestionKeyDown(event: React.KeyboardEvent<HTMLTextAreaElement>) {
-    if (event.key !== "Enter" || event.shiftKey || event.isComposing) {
+    if (event.key !== "Enter" || event.shiftKey || event.nativeEvent.isComposing) {
       return;
     }
 
@@ -79,7 +79,8 @@ export function ChatWidget() {
         throw new Error("Serwer zwrócił pustą odpowiedź.");
       }
 
-      setMessages((prev) => [...prev, { role: "assistant", content: data.reply.trim() }]);
+      const reply = data.reply.trim();
+      setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
     } catch (caught) {
       const message = caught instanceof Error ? caught.message : "Wystąpił błąd połączenia z asystentem.";
       setError(message);

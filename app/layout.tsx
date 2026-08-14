@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
-const defaultSiteUrl = "https://krd-ig.com.pl";
+const defaultSiteUrl = "https://lekwetjk.github.io";
 const envSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
 
 function normalizeSiteUrl(value?: string) {
