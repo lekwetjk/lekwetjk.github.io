@@ -81,8 +81,10 @@ test("about page renders partner organisations without the resource box", async 
 
   assert.match(source, /slug === "o-nas"/);
   assert.match(source, /partner-organisations/);
-  assert.match(source, /partners\/avec\.svg/);
-  assert.match(source, /partners\/uecbv\.svg/);
-  assert.match(source, /partners\/clitravi\.svg/);
-  assert.match(source, /partners\/ipc\.svg/);
+  assert.match(source, /AVEC_logo-1\.webp/);
+  assert.match(source, /CLITRAVI-LOGO-1\.png/);
+  assert.match(source, /LOGO-IPC-2025\.jpg/);
+  assert.match(source, /Logo-WPSA\.png/);
+  assert.match(source, /ELPHA-LOGO-2025\.jpg/);
+  assert.doesNotMatch(source, /UECBV/);
 });

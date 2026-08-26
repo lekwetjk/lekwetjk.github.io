@@ -316,6 +316,17 @@ export function ArticleBody({
       className: "news-logo-fundusze",
     },
   ];
+  const wofexCampaignMedia = [
+    "https://krd-ig.com.pl/wp-content/uploads/2025/08/2.jpg",
+    "https://krd-ig.com.pl/wp-content/uploads/2025/08/1.jpg",
+    "https://krd-ig.com.pl/wp-content/uploads/2025/08/3-scaled.jpg",
+    "https://krd-ig.com.pl/wp-content/uploads/2025/08/4.jpg",
+    "https://krd-ig.com.pl/wp-content/uploads/2025/08/5.jpg",
+    "https://krd-ig.com.pl/wp-content/uploads/2025/08/6.jpg",
+    "https://krd-ig.com.pl/wp-content/uploads/2025/08/7.jpg",
+    "https://krd-ig.com.pl/wp-content/uploads/2025/06/enjoy-1.png",
+    "https://krd-ig.com.pl/wp-content/uploads/2025/07/logo_Fundusze-Promocji_kolor.png",
+  ];
 
   const visibleParagraphs =
     slug === "o-nas" && language === "pl"
@@ -396,6 +407,68 @@ export function ArticleBody({
       ),
       key: `${keyPrefix}-${chosenLink.href}-${chosenLink.label}`,
     };
+  };
+
+  const renderYoutubeLinks = (paragraph: string) => {
+    const youtubeUrlPattern = /https?:\/\/(?:www\.)?youtube\.com\/watch\?v=[A-Za-z0-9_-]+/g;
+    const matches = paragraph.match(youtubeUrlPattern);
+    if (!matches) {
+      return null;
+    }
+
+    const parts = paragraph.split(youtubeUrlPattern);
+    return parts.flatMap((part, index) => {
+      const nodes: ReactNode[] = [];
+      if (part) {
+        nodes.push(part);
+      }
+      const youtubeUrl = matches[index];
+      if (youtubeUrl) {
+        nodes.push(
+          <a
+            className="inline-download-link"
+            href={youtubeUrl}
+            key={`${youtubeUrl}-${index}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {youtubeUrl}
+          </a>,
+        );
+      }
+      return nodes;
+    });
+  };
+
+  const renderExternalLinks = (paragraph: string) => {
+    const urlPattern = /https?:\/\/[^\s]+/g;
+    const matches = paragraph.match(urlPattern);
+    if (!matches) {
+      return null;
+    }
+
+    const parts = paragraph.split(urlPattern);
+    return parts.flatMap((part, index) => {
+      const nodes: ReactNode[] = [];
+      if (part) {
+        nodes.push(part);
+      }
+      const url = matches[index];
+      if (url) {
+        nodes.push(
+          <a
+            className="inline-download-link"
+            href={url}
+            key={`${url}-${index}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {url}
+          </a>,
+        );
+      }
+      return nodes;
+    });
   };
 
   if (slug === "zarzad-i-rada-izby") {
@@ -1660,7 +1733,13 @@ export function ArticleBody({
           .map((link) => [link.href, link]),
       ).values(),
     ).map((link) => {
-      const href = /^https?:\/\//i.test(link.href) ? link.href : withBasePath(link.href);
+      const sourcePath = /^https?:\/\//i.test(link.href)
+        ? new URL(link.href).pathname
+        : link.href;
+      const campaignSlug = sourcePath.split("/").filter(Boolean).pop();
+      const href = campaignSlug
+        ? withBasePath(`/aktualnosci/${campaignSlug}`)
+        : withBasePath(link.href);
       return {
         title: link.label.trim(),
         href,
@@ -3840,6 +3919,13 @@ export function ArticleBody({
         {visibleParagraphs.map((paragraph, index) => {
           const trimmedParagraph = paragraph.trim();
 
+          if (
+            slug === "polski-i-europejski-drob-na-filipinach-targi-wofex-2025-filipiny" &&
+            /^(?:[1-7]|enjoy)$/i.test(trimmedParagraph)
+          ) {
+            return null;
+          }
+
           const tenderLinked = renderTenderLinkedText(
             trimmedParagraph,
             `${index}-${paragraph.slice(0, 20)}`,
@@ -3875,6 +3961,76 @@ export function ArticleBody({
                 </a>
               </h2>
             );
+          }
+
+          if (
+            (slug === "indyk-ma-wiele-do-dania-podsumowanie-pazdziernika-2024" ||
+              slug === "indyk-ma-wiele-do-dania-podsumowanie-wrzesnia-2024") &&
+            /pobierz\.pdf/i.test(trimmedParagraph)
+          ) {
+            const reportHref =
+              slug === "indyk-ma-wiele-do-dania-podsumowanie-wrzesnia-2024"
+                ? "https://krd-ig.com.pl/wp-content/uploads/2025/01/KRD_Indyk_wrzesien.pdf"
+                : withBasePath("/media/reports/KRD-indyk_pazdziernik.pdf");
+            return (
+              <h2 key={`${index}-${paragraph.slice(0, 20)}`}>
+                {trimmedParagraph.split("–")[0].trim()} –{" "}
+                <a
+                  className="inline-download-link"
+                  href={reportHref}
+                  target={reportHref.startsWith("http") ? "_blank" : undefined}
+                  rel={reportHref.startsWith("http") ? "noopener noreferrer" : undefined}
+                  download={reportHref.startsWith("http") ? undefined : true}
+                >
+                  pobierz.pdf
+                </a>
+              </h2>
+            );
+          }
+
+          if (
+            slug === "indyk-ma-wiele-do-dania-podsumowanie-pazdziernika-2024" ||
+            slug === "indyk-ma-wiele-do-dania-podsumowanie-wrzesnia-2024"
+          ) {
+            if (trimmedParagraph.startsWith("Podjęto współpracę influencerską")) {
+              const influencers = [
+                ["Olga Smile", "https://www.olgasmile.com/"],
+                ["Beata i Igor Gratkowscy", "https://www.instagram.com/praktykulinarni/"],
+                ["Svetlana Tuchak", "https://www.instagram.com/fit_przepisy_od_baletnicy/"],
+                ["Strzelczyk Tomasz", "https://www.instagram.com/oddaszfartucha/"],
+                ["Martyna Sobczak", "https://www.instagram.com/maste_official/"],
+                ["Monika Molecka", "https://www.instagram.com/pysznieczyprzepysznie/"],
+                ["Natalia Maszkowska Food & Travel", "https://www.instagram.com/nathallae/"],
+              ];
+
+              return (
+                <div className="influencer-links" key={`${index}-${paragraph.slice(0, 20)}`}>
+                  <p>Podjęto współpracę influencerską ze znanymi blogerami kulinarnymi i kucharzami w świecie instagramowym, m.in.:</p>
+                  {influencers.map(([name, url]) => (
+                    <p key={url}>
+                      {name}{" "}
+                      <a className="inline-download-link" href={url} target="_blank" rel="noopener noreferrer">
+                        {url}
+                      </a>
+                    </p>
+                  ))}
+                </div>
+              );
+            }
+
+            const linkedExternalText = renderExternalLinks(trimmedParagraph);
+            if (linkedExternalText) {
+              return <p key={`${index}-${paragraph.slice(0, 20)}`}>{linkedExternalText}</p>;
+            }
+
+            const linkedYoutubeText = renderYoutubeLinks(trimmedParagraph);
+            if (linkedYoutubeText) {
+              return index > 0 && looksLikeHeading(trimmedParagraph) ? (
+                <h2 key={`${index}-${paragraph.slice(0, 20)}`}>{linkedYoutubeText}</h2>
+              ) : (
+                <p key={`${index}-${paragraph.slice(0, 20)}`}>{linkedYoutubeText}</p>
+              );
+            }
           }
 
           if (
@@ -4261,6 +4417,18 @@ export function ArticleBody({
                   Zarejestruj się na webinar
                 </a>
               </p>
+            </div>
+          </section>
+        )}
+        {slug === "polski-i-europejski-drob-na-filipinach-targi-wofex-2025-filipiny" && (
+          <section className="news-media-section" aria-label="Zdjęcia kampanii WOFEX 2025">
+            <h2>Zdjęcia kampanii</h2>
+            <div className="news-media-gallery">
+              {wofexCampaignMedia.map((src, index) => (
+                <figure key={src}>
+                  <img src={src} alt={`WOFEX 2025 campaign photo ${index + 1}`} loading="lazy" />
+                </figure>
+              ))}
             </div>
           </section>
         )}

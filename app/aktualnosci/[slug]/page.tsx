@@ -30,6 +30,8 @@ export default async function NewsDetailPage({
     slug === "nowy-link-zsrir-w-zakladce-dokumenty";
   const shouldUseWebinarHeroImage =
     slug === "szczepienia-przeciwko-nd-w-polsce-doswiadczenia-po-roku-od-obowiazywania-przepisu";
+  const shouldUseSeptemberTurkeyImage =
+    slug === "indyk-ma-wiele-do-dania-podsumowanie-wrzesnia-2024";
   const isTenderLikeSlug =
     /(zapytanie-ofertowe|wybor-wykonawcy|zaproszenie-do-skladania-ofert|wyniki-postepowania|uniewaznienie)/.test(
       slug,
@@ -102,6 +104,8 @@ export default async function NewsDetailPage({
                       ? "article-title-zsrir"
                       : shouldUseWebinarHeroImage
                         ? "article-title-webinar"
+                        : shouldUseSeptemberTurkeyImage
+                          ? "article-title-turkey-campaign"
                         : tenderHeadingClassName
                 }
                 style={!shouldUseAlimentariaTitleSize ? tenderHeadingStyle : undefined}
@@ -118,10 +122,12 @@ export default async function NewsDetailPage({
               post.excerpt && <p>{post.excerpt}</p>
             )}
           </div>
-          {post.image && (
+          {(shouldUseSeptemberTurkeyImage || post.image) && (
             <img
-              src={withBasePath(post.image)}
-              alt=""
+              src={withBasePath(
+                shouldUseSeptemberTurkeyImage ? "/media/poultry-promotion.jpg" : post.image,
+              )}
+              alt={shouldUseSeptemberTurkeyImage ? "Poultry promotion campaign" : ""}
               className={
                 shouldContainWoahLogoImage
                   ? "article-hero-image-contain"

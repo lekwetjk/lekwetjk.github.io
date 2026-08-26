@@ -9,25 +9,25 @@ const romanPillarNumbers = ["I", "II", "III", "IV"];
 const developmentPillars = [
   {
     icon: "shield",
-    href: "https://krd-ig.com.pl/bezpieczenstwo-bialkowe/",
+    href: "/tresc/bezpieczenstwo-bialkowe",
     title: "Bezpieczeństwo białkowe",
     text: "Bezpieczeństwo białkowe to kluczowe zagadnienie dla polskiego drobiarstwa. W obliczu zagrożenia wprowadzenia zakazu importu soi GMO, będącej obecnie głównym źródłem białka w paszy, szukanie alternatywnych rozwiązań, które umniejszyłyby dodatkowo znaczenie importu komponentów pasz, jest jednym z naszych priorytetów.",
   },
   {
     icon: "leaf",
-    href: "https://krd-ig.com.pl/jakosc-i-bezpieczenstwo/",
+    href: "/tresc/jakosc-i-bezpieczenstwo",
     title: "Zrównoważony rozwój",
     text: "Polityka zrównoważonego rozwoju to podstawowy cel branży drobiarskiej w Unii Europejskiej. Zachowanie oraz propagowanie standardów kontroli produkcji, dobrostanu zwierząt i ochrony środowiska sprawia, że drób z Polski utrzymuje niezwykle wysoką jakość. Dzięki nim tworzymy bezpieczne i atrakcyjne dla konsumentów produkty.",
   },
   {
     icon: "megaphone",
-    href: "https://krd-ig.com.pl/promocja-drobiu/",
+    href: "/tresc/promocja-drobiu",
     title: "Wizerunek i promocja",
     text: "Podaż w branży drobiarskiej bywa nierzadko większa od popytu, a jego spontaniczny wzrost jest mało prawdopodobny. By rozszerzać rynek zbytu potrzeba wspólnej strategii promowania drobiu jako żywności i ochrony wizerunku całej branży. Musimy przekonywać krajowych i zagranicznych konsumentów do zwiększenia spożycia drobiu.",
   },
   {
     icon: "globe",
-    href: "https://krd-ig.com.pl/globalizacja-rynku/",
+    href: "/tresc/globalizacja-rynku",
     title: "Globalizacja rynku",
     text: "Polska jest obecnie największym producentem drobiu w UE. Należy także do czołówki eksporterów. Musimy wspólnie szukać nowych rynków zbytu i globalnie promować wysokie europejskie standardy produkcji. Właśnie one są podstawą przewagi konkurencyjnej polskiego drobiu na świecie. Polski drób jest już ceniony w Azji i Afryce.",
   },
@@ -174,7 +174,7 @@ export default function Home() {
                 </div>
                 <h3>{pillar.title}</h3>
                 <p>{pillar.text}</p>
-                <a href={pillar.href} target="_blank" rel="noreferrer">
+                <a href={withBasePath(pillar.href)}>
                   Zobacz więcej <Arrow />
                 </a>
               </article>

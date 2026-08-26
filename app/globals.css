@@ -2055,6 +2055,12 @@ blockquote {
   letter-spacing: -0.02em;
 }
 
+.article-hero h1.article-title-turkey-campaign {
+  max-width: 820px;
+  font-size: clamp(30px, 4.6vw, 52px);
+  line-height: 1.08;
+}
+
 .article-hero h1.article-title-alimentaria-compact {
   font-size: 30px;
   line-height: 1.02;
