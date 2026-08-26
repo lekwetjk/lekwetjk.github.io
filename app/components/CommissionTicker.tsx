@@ -1,5 +1,4 @@
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import bannerManifest from "../data/commission-banner.json";
 import { withBasePath } from "../lib/basePath";
 
 type BannerItem = {
@@ -9,37 +8,14 @@ type BannerItem = {
 };
 
 function loadBannerItems(): BannerItem[] {
-  const manifestPath = join(process.cwd(), "app", "data", "commission-banner.json");
-
-  try {
-    const raw = readFileSync(manifestPath, "utf8").replace(/^\uFEFF/, "");
-    const parsed: unknown = JSON.parse(raw);
-
-    if (Array.isArray(parsed)) {
-      return parsed.filter(
-        (item): item is BannerItem =>
-          !!item &&
-          typeof item === "object" &&
-          typeof (item as { folder?: unknown }).folder === "string" &&
-          typeof (item as { fileName?: unknown }).fileName === "string" &&
-          typeof (item as { href?: unknown }).href === "string",
-      );
-    }
-
-    if (
-      parsed &&
-      typeof parsed === "object" &&
-      typeof (parsed as { folder?: unknown }).folder === "string" &&
-      typeof (parsed as { fileName?: unknown }).fileName === "string" &&
-      typeof (parsed as { href?: unknown }).href === "string"
-    ) {
-      return [parsed as BannerItem];
-    }
-
-    return [];
-  } catch {
-    return [];
-  }
+  return bannerManifest.filter(
+    (item): item is BannerItem =>
+      !!item &&
+      typeof item === "object" &&
+      typeof item.folder === "string" &&
+      typeof item.fileName === "string" &&
+      typeof item.href === "string",
+  );
 }
 
 export function CommissionTicker() {

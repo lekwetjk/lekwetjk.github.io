@@ -6,11 +6,11 @@ type SiteLanguage = "pl" | "en";
 
 const englishPrimaryNavigation = [
   { href: "/en/about", label: "ABOUT" },
-  { href: "/en/news", label: "NEWS" },
+  { href: "/aktualnosci", label: "NEWS" },
   { href: "/en/market", label: "MARKET" },
   { href: "/en/quality", label: "QUALITY" },
   { href: "/en/library", label: "KNOWLEDGE" },
-  { href: "/en/documents", label: "DOCUMENTS" },
+  { href: "/baza-wiedzy", label: "DOCUMENTS" },
   { href: "/en/membership", label: "MEMBERSHIP" },
 ];
 
@@ -19,12 +19,12 @@ const englishFooterLinks = {
     { href: "/en/about", label: "About us" },
     { href: "/en/market", label: "Market" },
     { href: "/en/quality", label: "Quality" },
-    { href: "/en/news", label: "News" },
+    { href: "/aktualnosci", label: "News" },
     { href: "/en/membership", label: "Membership" },
   ],
   info: [
     { href: "/en/library", label: "Knowledge library" },
-    { href: "/en/documents", label: "Documents" },
+    { href: "/baza-wiedzy", label: "Documents" },
     { href: "/en/contact", label: "Contact" },
     { href: "/en/privacy", label: "Privacy policy" },
     { href: "/en/cookies", label: "Cookie policy" },
@@ -95,8 +95,8 @@ export function SiteHeader({ language = "pl" as SiteLanguage }) {
           <nav aria-label={isEnglish ? "Utility navigation" : "Nawigacja pomocnicza"}>
             {isEnglish ? (
               <>
-                <a href={withBasePath("/en/news")}>NEWS</a>
-                <a href={withBasePath("/en/documents")}>DOCUMENTS</a>
+                <a href={withBasePath("/aktualnosci")}>NEWS</a>
+                <a href={withBasePath("/baza-wiedzy")}>DOCUMENTS</a>
                 <a href={withBasePath("/en/contact")}>CONTACT</a>
               </>
             ) : (
@@ -165,7 +165,7 @@ export function SiteHeader({ language = "pl" as SiteLanguage }) {
                 </a>
               ))}
               <a href={withBasePath(isEnglish ? "/en/about" : "/dezinformacja")}>{isEnglish ? "ABOUT" : "DEZINFORMACJA"}</a>
-              <a href={withBasePath(isEnglish ? "/en/documents" : "/dokumenty")}>{isEnglish ? "DOCUMENTS" : "DOKUMENTY"}</a>
+              <a href={withBasePath(isEnglish ? "/baza-wiedzy" : "/dokumenty")}>{isEnglish ? "DOCUMENTS" : "DOKUMENTY"}</a>
               <a href={withBasePath(isEnglish ? "/en/membership" : "/czlonkostwo")}>{isEnglish ? "MEMBERSHIP" : "CZŁONKOSTWO"}</a>
               <a href={withBasePath(isEnglish ? "/en/contact" : "/kontakt")}>{isEnglish ? "CONTACT" : "KONTAKT"}</a>
             </nav>

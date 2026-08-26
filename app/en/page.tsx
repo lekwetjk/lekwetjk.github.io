@@ -41,7 +41,7 @@ export default function EnglishHomePage() {
               <a className="button button-primary" href={withBasePath("/en/about")}>
                 Learn more
               </a>
-              <a className="button button-quiet" href={withBasePath("/en/news")}>
+              <a className="button button-quiet" href={withBasePath("/aktualnosci")}> 
                 News
               </a>
             </div>

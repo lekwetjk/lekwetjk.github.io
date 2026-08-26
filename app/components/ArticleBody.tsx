@@ -165,55 +165,76 @@ const boardMembers: BoardPerson[] = [
   },
 ];
 
+const englishBoardMembers = boardMembers.map((member) => ({
+  ...member,
+  role: member.role
+    .replace("Prezes Zarządu", "President of the Management Board")
+    .replace("Wiceprezes Zarządu", "Vice-President of the Management Board")
+    .replace("Przewodniczący Rady Izby", "Chair of the Chamber Council")
+    .replace("Wiceprzewodniczący Rady Izby", "Vice-Chair of the Chamber Council")
+    .replace("Członek Rady Izby", "Member of the Chamber Council")
+    .replace("Dyrektor ds. Public i Government Relations", "Director of Public and Government Relations"),
+  company: member.company
+    .replace("Prezes Zarządu", "President of the Management Board")
+    .replace("Członek Zarządu", "Member of the Management Board")
+    .replace("Dyrektor Zakładu", "Director of the Facility")
+    .replace("Rady Izby", "Chamber Council"),
+}));
+
 const partnerOrganisations = [
   {
     name: "AVEC",
     url: "https://avec-poultry.eu/",
-    logo: "/media/partners/avec.svg",
+    logo: "https://krd-ig.com.pl/wp-content/uploads/2024/08/AVEC_logo-1.webp",
     description:
       "Od 2005 roku KRD-IG reprezentuje polską branżę drobiarską w AVEC. Stowarzyszenie reprezentuje interesy europejskiej branży drobiowej i wypracowuje wspólne rozwiązania dla rynku drobiu w UE.",
-  },
-  {
-    name: "UECBV",
-    url: "https://uecbv.eu/",
-    logo: "/media/partners/uecbv.svg",
-    description:
-      "Europejska organizacja reprezentująca sektor hodowli i handlu żywcem oraz mięsem. UECBV zrzesza federacje z wielu krajów i reprezentuje tysiące firm oraz miejsc pracy.",
+    enDescription:
+      "Since 2005, KRD-IG has represented the Polish poultry sector in AVEC, which represents the interests of the European poultry industry and develops common solutions for the EU poultry market.",
   },
   {
     name: "CLITRAVI",
     url: "https://www.clitravi.com/",
-    logo: "/media/partners/clitravi.svg",
+    logo: "https://krd-ig.com.pl/wp-content/uploads/2025/07/CLITRAVI-LOGO-1.png",
     description:
       "Organizacja branżowa działająca od 1958 roku, reprezentująca interesy europejskiego przemysłu przetwórstwa mięsa w dialogu z instytucjami UE.",
+    enDescription:
+      "An industry organisation operating since 1958 and representing the interests of the European meat-processing industry in dialogue with EU institutions.",
   },
   {
     name: "IPC",
     url: "https://internationalpoultrycouncil.org/",
-    logo: "/media/partners/ipc.svg",
+    logo: "https://krd-ig.com.pl/wp-content/uploads/2025/07/LOGO-IPC-2025.jpg",
     description:
       "Międzynarodowa organizacja reprezentująca globalny sektor drobiu. IPC skupia ponad 75% światowej produkcji mięsa drobiowego i 90% globalnego handlu.",
+    enDescription:
+      "An international organisation representing the global poultry sector. IPC covers more than 75% of global poultry meat production and 90% of global trade.",
   },
   {
     name: "WPSA",
     url: "https://www.wpsa.com/",
-    logo: "/media/partners/wpsa.svg",
+    logo: "https://krd-ig.com.pl/wp-content/uploads/2025/07/Logo-WPSA.png",
     description:
       "Światowa organizacja naukowa rozwijająca wiedzę o drobiarstwie i łącząca badaczy, edukatorów oraz praktyków branży od 1912 roku.",
+    enDescription:
+      "A global scientific organisation developing poultry knowledge and connecting researchers, educators and industry practitioners since 1912.",
   },
   {
     name: "ELPHA",
     url: "https://www.elpha.eu/",
-    logo: "/media/partners/elpha.svg",
+    logo: "https://krd-ig.com.pl/wp-content/uploads/2025/07/ELPHA-LOGO-2025.jpg",
     description:
       "Europejskie stowarzyszenie reprezentujące cały łańcuch produkcji żywca i jaj wylęgowych w UE oraz wspierające konkurencyjną i zrównoważoną produkcję.",
+    enDescription:
+      "A European association representing the entire live poultry and hatching egg production chain in the EU and supporting competitive, sustainable production.",
   },
   {
     name: "FGŻ",
     url: "https://www.fgzrp.pl/",
-    logo: "/media/partners/fgz.svg",
+    logo: "https://fgzrp.pl/files/images/logo/logo30.png",
     description:
       "Federacja Gospodarki Żywnościowej RP z siedzibą w Warszawie, współpracująca z KRD-IG od 2008 roku.",
+    enDescription:
+      "The Federation of Food Economy of the Republic of Poland, based in Warsaw and cooperating with KRD-IG since 2008.",
   },
 ];
 
@@ -222,20 +243,26 @@ export function ArticleBody({
   links,
   source,
   slug,
+  language = "pl",
 }: {
   paragraphs: string[];
   links: ContentLink[];
   source: string;
   slug?: string;
+  language?: "pl" | "en";
 }) {
   const chinaGuideHeadingPattern =
-    /^Poniżej prezentujemy przewodnik eksportera mięsa drobiowego na rynek Chin\.?$/i;
+    language === "en"
+      ? /^Below we present an exporter guide for poultry meat to the Chinese market\.?$/i
+      : /^Poniżej prezentujemy przewodnik eksportera mięsa drobiowego na rynek Chin\.?$/i;
   const resolvedSource =
     slug === "czlonkowie"
       ? "https://krd-ig.com.pl/czlonkowie/"
       : source;
   const sourceLinkLabel =
-    slug === "nowy-link-zsrir-w-zakladce-dokumenty"
+    language === "en"
+      ? "View the source material on the KRD-IG website"
+      : slug === "nowy-link-zsrir-w-zakladce-dokumenty"
       ? "PRZEJDŹ DO STRONY ZSRIR"
       : "Zobacz materiał na obecnej stronie KRD-IG";
   const chinaGuideDownloadHref =
@@ -291,7 +318,7 @@ export function ArticleBody({
   ];
 
   const visibleParagraphs =
-    slug === "o-nas"
+    slug === "o-nas" && language === "pl"
       ? [
           "Informacja o Krajowej Radzie Drobiarstwa – Izbie Gospodarczej w Warszawie. Krajowa Rada Drobiarstwa istnieje od 1991 roku. Od 11 marca 1998r. Krajowa Rada Drobiarstwa posiada statut Izby Gospodarczej. Aktualnie do KRD-IG należy ponad 100 podmiotów gospodarczych.",
           "Celem działalności Krajowej Rady Drobiarstwa – Izby Gospodarczej jest m.in. dalszy rozwój i unowocześnianie polskiego drobiarstwa, ochrona interesów hodowców i producentów drobiu oraz przetwórców mięsa drobiowego, ich integracja, reprezentowanie krajowego drobiarstwa wobec władz państwowych.",
@@ -372,15 +399,20 @@ export function ArticleBody({
   };
 
   if (slug === "zarzad-i-rada-izby") {
+    const displayedBoardMembers = language === "en" ? englishBoardMembers : boardMembers;
+    const boardLabel = language === "en" ? "Member" : "Członek";
+
     return (
       <div className="article-layout board-only-layout shell">
         <article className="prose board-profile-layout">
           <div className="board-section">
-            <h2 className="article-board-heading">Zarząd</h2>
+            <h2 className="article-board-heading">
+              {language === "en" ? "Management Board" : "Zarząd"}
+            </h2>
             <div className="board-people-grid board-people-grid-single">
-              {boardMembers.slice(0, 1).map((member) => (
+              {displayedBoardMembers.slice(0, 1).map((member) => (
                 <article className="board-person-card" key={member.name}>
-                  <p className="board-role-label">Członek</p>
+                  <p className="board-role-label">{boardLabel}</p>
                   <h3>{member.name}</h3>
                   <p className="board-role">{member.role}</p>
                   <p>{member.company}</p>
@@ -398,9 +430,9 @@ export function ArticleBody({
               ))}
             </div>
             <div className="board-people-grid board-people-grid-paired">
-              {boardMembers.slice(1, 3).map((member) => (
+              {displayedBoardMembers.slice(1, 3).map((member) => (
                 <article className="board-person-card" key={member.name}>
-                  <p className="board-role-label">Członek</p>
+                  <p className="board-role-label">{boardLabel}</p>
                   <h3>{member.name}</h3>
                   <p className="board-role">{member.role}</p>
                   <p>{member.company}</p>
@@ -421,12 +453,14 @@ export function ArticleBody({
 
           <div className="board-section">
             <h2 className="article-board-heading">
-              Rada Krajowej Rady Drobiarstwa – Izby Gospodarczej
+              {language === "en"
+                ? "Council of the National Poultry Council - Chamber of Commerce"
+                : "Rada Krajowej Rady Drobiarstwa – Izby Gospodarczej"}
             </h2>
             <div className="board-people-grid">
-              {boardMembers.slice(3).map((member) => (
+              {displayedBoardMembers.slice(3).map((member) => (
                 <article className="board-person-card" key={member.name}>
-                  <p className="board-role-label">Członek</p>
+                  <p className="board-role-label">{boardLabel}</p>
                   <h3>{member.name}</h3>
                   <p className="board-role">{member.role}</p>
                   <p>{member.company}</p>
@@ -462,8 +496,12 @@ export function ArticleBody({
           )}
           <section className="partner-organisations" aria-labelledby="partner-organisations-title">
             <div className="section-intro partner-organisations-header">
-              <p className="eyebrow">Partnerzy i organizacje</p>
-              <h2 id="partner-organisations-title">Organizacje, z którymi współpracujemy</h2>
+              <p className="eyebrow">
+                {language === "en" ? "Partners and organisations" : "Partnerzy i organizacje"}
+              </p>
+              <h2 id="partner-organisations-title">
+                {language === "en" ? "Organisations we work with" : "Organizacje, z którymi współpracujemy"}
+              </h2>
             </div>
             <div className="partner-organisations-grid">
               {partnerOrganisations.map((partner) => (
@@ -476,16 +514,20 @@ export function ArticleBody({
                     <img src={withBasePath(partner.logo)} alt={`${partner.name} logo`} />
                   </div>
                   <div className="partner-card-content">
-                    <span className="partner-card-badge">Partner branżowy</span>
+                    <span className="partner-card-badge">
+                      {language === "en" ? "Industry partner" : "Partner branżowy"}
+                    </span>
                     <h3>{partner.name}</h3>
-                    <p>{partner.description}</p>
+                    <p>{language === "en" ? partner.enDescription : partner.description}</p>
                   </div>
                 </a>
               ))}
             </div>
           </section>
           <a className="source-link" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
+            {language === "en"
+              ? "View the source material on the KRD-IG website"
+              : "Zobacz materiał na obecnej stronie KRD-IG"} <Arrow />
           </a>
         </article>
       </div>
@@ -498,16 +540,23 @@ export function ArticleBody({
     return (
       <div className="article-layout article-layout-full shell">
         <article className="prose">
-          <div className="commission-grid" aria-label="Komisje KRD-IG">
+          <div
+            className="commission-grid"
+            aria-label={language === "en" ? "KRD-IG commissions" : "Komisje KRD-IG"}
+          >
             {commissionNames.map((commissionName, index) => (
               <article className="commission-card" key={`${index}-${commissionName}`}>
-                <span className="commission-card-badge">Komisja KRD-IG</span>
+                <span className="commission-card-badge">
+                  {language === "en" ? "KRD-IG Commission" : "Komisja KRD-IG"}
+                </span>
                 <h2>{commissionName}</h2>
               </article>
             ))}
           </div>
           <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
+            {language === "en"
+              ? "View the source material on the KRD-IG website"
+              : "Zobacz materiał na obecnej stronie KRD-IG"} <Arrow />
           </a>
         </article>
       </div>
@@ -3797,7 +3846,14 @@ export function ArticleBody({
           );
 
           if (slug === "czlonkowie" && index < 2) {
-            const label = index === 0 ? "CZŁONKOWIE" : "KRD-IG";
+            const label =
+              language === "en"
+                ? index === 0
+                  ? "MEMBERS"
+                  : "KRD-IG"
+                : index === 0
+                  ? "CZŁONKOWIE"
+                  : "KRD-IG";
             return (
               <p className="member-title-lockup" key={`${index}-${label}`}>
                 {label}
@@ -3811,9 +3867,11 @@ export function ArticleBody({
           ) {
             return (
               <h2 key={`${index}-${paragraph.slice(0, 20)}`}>
-                Przewodnik eksportera mięsa drobiowego na rynek Chin -{" "}
+                {language === "en"
+                  ? "Exporter guide for poultry meat to the Chinese market - "
+                  : "Przewodnik eksportera mięsa drobiowego na rynek Chin - "}{" "}
                 <a className="inline-download-link" href={chinaGuideDownloadHref}>
-                  kliknij tutaj
+                  {language === "en" ? "click here" : "kliknij tutaj"}
                 </a>
               </h2>
             );
@@ -4212,7 +4270,7 @@ export function ArticleBody({
         {slug === "czlonkowie" && (
           <iframe
             className="czlonkowie-map-frame"
-            title="Mapa członków KRD-IG"
+            title={language === "en" ? "KRD-IG members map" : "Mapa członków KRD-IG"}
             src="https://test.mapcreator.pl/krdig/index.php?menu=hidden"
             loading="eager"
             width="100%"
@@ -4221,19 +4279,25 @@ export function ArticleBody({
         )}
         {slug === "czlonkowie" && (
           <p style={{ marginTop: "10px" }}>
-            Jeśli mapa nie wyświetla się poprawnie, otwórz ją w nowej karcie: {" "}
+            {language === "en"
+              ? "If the map does not display correctly, open it in a new tab: "
+              : "Jeśli mapa nie wyświetla się poprawnie, otwórz ją w nowej karcie: "}{" "}
             <a
               className="inline-download-link"
               href="https://test.mapcreator.pl/krdig/index.php?menu=hidden"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Otwórz mapę członków KRD-IG
+              {language === "en" ? "Open the KRD-IG members map" : "Otwórz mapę członków KRD-IG"}
             </a>
           </p>
         )}
         {slug === "czlonkowie" && (
-          <p>Dodatkowe warstwy mapy i funkcjonalności dostępne są po zalogowaniu</p>
+          <p>
+            {language === "en"
+              ? "Additional map layers and features are available after signing in."
+              : "Dodatkowe warstwy mapy i funkcjonalności dostępne są po zalogowaniu"}
+          </p>
         )}
         {slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026" && (
           <p>

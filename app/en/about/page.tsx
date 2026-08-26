@@ -1,29 +1,12 @@
+import Link from "next/link";
 import { PageShell } from "../../components/SiteChrome";
 import { withBasePath } from "../../lib/basePath";
+import { aboutSectionHref, aboutSections } from "./sections";
 
 const facts = [
   { value: "1991", label: "year of foundation" },
   { value: "9", label: "industry commissions within the chamber" },
   { value: "4", label: "key international organisations and partners" },
-];
-
-const topics = [
-  {
-    title: "Industry representation",
-    text: "We speak on behalf of the Polish poultry sector with public institutions, policy makers and European partners.",
-  },
-  {
-    title: "Market focus",
-    text: "We support producers, traders and processors with data, analysis and practical insight into export and trade conditions.",
-  },
-  {
-    title: "Knowledge and standards",
-    text: "We promote quality, animal welfare, food safety and sustainable production across the value chain.",
-  },
-  {
-    title: "Business cooperation",
-    text: "We build networks among poultry companies and help strengthen the sector's voice in the domestic and international arena.",
-  },
 ];
 
 export default function EnglishAboutPage() {
@@ -60,17 +43,22 @@ export default function EnglishAboutPage() {
       <section className="content-directory">
         <div className="shell">
           <div className="section-intro">
-            <p className="eyebrow">What we do</p>
-            <h2>Focused on the priorities of the sector</h2>
+            <p className="eyebrow">Full information</p>
+            <h2>About us: all English pages</h2>
+            <p>
+              Explore the organisation and its international partnerships, the Board
+              and Council, nine commissions, members and statute. Every tile below
+              leads to an English page.
+            </p>
           </div>
           <div className="directory-grid">
-            {topics.map((item, index) => (
-              <article key={item.title} className="directory-card">
+            {aboutSections.map((item, index) => (
+              <Link key={item.slug} className="directory-card" href={aboutSectionHref(item.slug)}>
                 <span className="card-index">{String(index + 1).padStart(2, "0")}</span>
                 <h3>{item.title}</h3>
-                <p>{item.text}</p>
+                <p>{item.teaser}</p>
                 <span className="directory-card-arrow" aria-hidden="true">↗</span>
-              </article>
+              </Link>
             ))}
           </div>
         </div>
