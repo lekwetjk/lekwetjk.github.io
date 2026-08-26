@@ -271,6 +271,36 @@ const supplementalNewsPosts: NewsPost[] = [
   },
   {
     id: 900002,
+    slug: "rozpoczyl-sie-audyt-komisji-europejskiej-w-brazylii-czy-po-3-wrzesnia-eksport-drobiu-do-ue-bedzie-wznowiony",
+    title:
+      "Rozpoczął się audyt Komisji Europejskiej w Brazylii. Czy po 3 września eksport drobiu do UE będzie wznowiony?",
+    date: "2026-08-26T00:00:00",
+    year: 2026,
+    excerpt:
+      "Brazylia ma szansę wrócić na unijny rynek drobiu, ale ostateczna decyzja zależy od wyniku audytu i dalszych działań Komisji Europejskiej.",
+    paragraphs: [
+      "Brazylia ma szansę wrócić na unijny rynek drobiu, ale ostateczna decyzja zależy od wyniku audytu i dalszych działań Komisji Europejskiej.",
+      "Od 24 sierpnia do 4 września w Brazylii trwa kontrola mająca potwierdzić zgodność z unijnymi zasadami dotyczącymi antybiotyków.",
+      "Nowe przepisy obowiązujące w UE wchodzą w życie 3 września. Jeśli audyt zakończy się pozytywnie, Komisja Europejska może rozważyć wniosek o ponowne włączenie Brazylii do grona krajów uprawnionych do eksportu drobiu i/lub miodu do UE.",
+      "Decyzja zostanie poddana głosowaniu w komitecie PAFF, który spotka się 17–18 września, 20–21 października oraz 16–17 listopada.",
+      "To oznacza, że choć ryzyko chwilowego zamknięcia rynku nadal istnieje, Brazylia nie traci całkowicie szansy na odzyskanie dostępu do unijnego rynku.",
+      "W praktyce kluczowe będzie to, czy audyt potwierdzi zgodność z normami UE, a następnie — kiedy PAFF podejmie ostateczną decyzję.",
+      "W skrócie: audyt w sierpniu ma kluczowe znaczenie, a finalna decyzja może zapadać dopiero po kolejnych posiedzeniach PAFF we wrześniu i później.",
+    ],
+    links: [
+      {
+        href: "https://www.euractiv.com/news/brazilian-chicken-exports-face-eu-halt-despite-last-minute-audit/",
+        label: "Euractiv",
+        document: false,
+      },
+    ],
+    categories: ["Aktualności", "Rynek", "Polityka"],
+    image: "/media/news/logo-komisji-europejskiej.svg",
+    source:
+      "https://www.euractiv.com/news/brazilian-chicken-exports-face-eu-halt-despite-last-minute-audit/",
+  },
+  {
+    id: 900003,
     slug: "nowa-strategia-ue-dla-hodowli-wazny-sygnal-dla-sektora-drobiarskiego",
     title: "Nowa strategia UE dla hodowli – ważny sygnał dla sektora drobiarskiego",
     date: "2026-08-07T00:00:00",
