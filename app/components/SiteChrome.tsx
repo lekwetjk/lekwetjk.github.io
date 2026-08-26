@@ -2,6 +2,35 @@ import { primaryNavigation } from "../lib/content";
 import { withBasePath } from "../lib/basePath";
 import { ChatWidget } from "./ChatWidget";
 
+type SiteLanguage = "pl" | "en";
+
+const englishPrimaryNavigation = [
+  { href: "/en/about", label: "ABOUT" },
+  { href: "/en/news", label: "NEWS" },
+  { href: "/en/market", label: "MARKET" },
+  { href: "/en/quality", label: "QUALITY" },
+  { href: "/en/library", label: "KNOWLEDGE" },
+  { href: "/en/documents", label: "DOCUMENTS" },
+  { href: "/en/membership", label: "MEMBERSHIP" },
+];
+
+const englishFooterLinks = {
+  service: [
+    { href: "/en/about", label: "About us" },
+    { href: "/en/market", label: "Market" },
+    { href: "/en/quality", label: "Quality" },
+    { href: "/en/news", label: "News" },
+    { href: "/en/membership", label: "Membership" },
+  ],
+  info: [
+    { href: "/en/library", label: "Knowledge library" },
+    { href: "/en/documents", label: "Documents" },
+    { href: "/en/contact", label: "Contact" },
+    { href: "/en/privacy", label: "Privacy policy" },
+    { href: "/en/cookies", label: "Cookie policy" },
+  ],
+};
+
 export function Arrow() {
   return (
     <span aria-hidden="true" className="arrow">
@@ -10,35 +39,80 @@ export function Arrow() {
   );
 }
 
-export function Brand({ inverse = false }: { inverse?: boolean }) {
+export function Brand({
+  inverse = false,
+  language = "pl" as SiteLanguage,
+}: {
+  inverse?: boolean;
+  language?: SiteLanguage;
+}) {
+  const isEnglish = language === "en";
+  const logoSrc = "/media/logo-krd-ig.svg";
+
+  if (isEnglish) {
+    return (
+      <a
+        className={`brand brand-en ${inverse ? "brand-en-inverse" : ""}`}
+        href={withBasePath("/")}
+        aria-label="National Poultry Council - Chamber of Commerce — home"
+      >
+        <span
+          className="brand-en-mark"
+          aria-hidden="true"
+          style={{ backgroundImage: `url(${withBasePath(logoSrc)})` }}
+        />
+        <span className="brand-en-divider" aria-hidden="true" />
+        <span className="brand-en-wordmark">
+          <span>NATIONAL POULTRY COUNCIL</span>
+          <span>CHAMBER OF COMMERCE</span>
+        </span>
+      </a>
+    );
+  }
+
   return (
     <a
       className={`brand ${inverse ? "brand-inverse" : ""}`}
       href={withBasePath("/")}
       aria-label="KRD-IG — strona główna"
     >
-      <img src={withBasePath("/media/logo-krd-ig.svg")} alt="KRD-IG" />
+      <img src={withBasePath(logoSrc)} alt="KRD-IG" />
     </a>
   );
 }
 
-export function SiteHeader() {
+export function SiteHeader({ language = "pl" as SiteLanguage }) {
+  const isEnglish = language === "en";
+  const navItems = isEnglish ? englishPrimaryNavigation : primaryNavigation;
+  const altLinkHref = isEnglish ? withBasePath("/") : withBasePath("/en");
+  const langFlagSrc = isEnglish ? "/media/flags/pl.svg" : "/media/flags/uk.svg";
+
   return (
     <>
       <div className="utility-bar">
         <div className="shell utility-inner">
-          <p>Krajowa Rada Drobiarstwa — Izba Gospodarcza</p>
-          <nav aria-label="Nawigacja pomocnicza">
-            <a href={withBasePath("/dezinformacja")}>DEZINFORMACJA</a>
-            <a href={withBasePath("/tresc/kampanie")}>KAMPANIE</a>
-            <a href={withBasePath("/dokumenty")}>DOKUMENTY</a>
-            <a href={withBasePath("/kontakt")}>KONTAKT</a>
+          <p>{isEnglish ? "National Poultry Council - Chamber of Commerce" : "Krajowa Rada Drobiarstwa — Izba Gospodarcza"}</p>
+          <nav aria-label={isEnglish ? "Utility navigation" : "Nawigacja pomocnicza"}>
+            {isEnglish ? (
+              <>
+                <a href={withBasePath("/en/news")}>NEWS</a>
+                <a href={withBasePath("/en/documents")}>DOCUMENTS</a>
+                <a href={withBasePath("/en/contact")}>CONTACT</a>
+              </>
+            ) : (
+              <>
+                <a href={withBasePath("/dezinformacja")}>DEZINFORMACJA</a>
+                <a href={withBasePath("/tresc/kampanie")}>KAMPANIE</a>
+                <a href={withBasePath("/dokumenty")}>DOKUMENTY</a>
+                <a href={withBasePath("/kontakt")}>KONTAKT</a>
+              </>
+            )}
             <a
               className="utility-social-link"
               href="https://x.com/krd_ig"
               target="_blank"
               rel="noopener noreferrer"
-              aria-label="KRD-IG na X"
+              aria-label="KRD-IG on X"
             >
               <svg viewBox="0 0 24 24" role="img" aria-hidden="true">
                 <path d="M18.9 2H22l-6.77 7.74L23 22h-6.1l-4.79-6.95L6.02 22H2.9l7.24-8.28L1 2h6.25l4.33 6.38L18.9 2Zm-1.07 18.15h1.69L6.33 3.76H4.5l13.33 16.39Z" />
@@ -57,43 +131,43 @@ export function SiteHeader() {
             </a>
             <a
               className="utility-lang-link"
-              href="https://krd-ig.com.pl/en/"
-              lang="en"
-              aria-label="English version"
+              href={altLinkHref}
+              lang={isEnglish ? "pl" : "en"}
+              aria-label={isEnglish ? "Polska wersja" : "English version"}
             >
-              <img src={withBasePath("/media/flags/uk.svg")} alt="" aria-hidden="true" />
+              <img src={withBasePath(langFlagSrc)} alt="" aria-hidden="true" />
             </a>
           </nav>
         </div>
       </div>
       <header className="site-header">
         <div className="shell header-inner">
-          <Brand />
-          <nav className="desktop-nav" aria-label="Główna nawigacja">
-            {primaryNavigation.map((item) => (
+          <Brand language={language} />
+          <nav className="desktop-nav" aria-label={isEnglish ? "Main navigation" : "Główna nawigacja"}>
+            {navItems.map((item) => (
               <a href={withBasePath(item.href)} key={item.href}>
                 {item.label}
               </a>
             ))}
           </nav>
-          <a className="button button-primary header-cta" href={withBasePath("/czlonkostwo")}>
-            Członkostwo <Arrow />
+          <a className="button button-primary header-cta" href={withBasePath(isEnglish ? "/en/membership" : "/czlonkostwo")}>
+            {isEnglish ? "Membership" : "Członkostwo"} <Arrow />
           </a>
           <details className="mobile-menu">
-            <summary aria-label="Otwórz menu">
+            <summary aria-label={isEnglish ? "Open menu" : "Otwórz menu"}>
               <span />
               <span />
             </summary>
-            <nav aria-label="Nawigacja mobilna">
-              {primaryNavigation.map((item) => (
+            <nav aria-label={isEnglish ? "Mobile navigation" : "Nawigacja mobilna"}>
+              {navItems.map((item) => (
                 <a href={withBasePath(item.href)} key={item.href}>
                   {item.label}
                 </a>
               ))}
-              <a href={withBasePath("/dezinformacja")}>DEZINFORMACJA</a>
-              <a href={withBasePath("/dokumenty")}>DOKUMENTY</a>
-              <a href={withBasePath("/czlonkostwo")}>CZŁONKOSTWO</a>
-              <a href={withBasePath("/kontakt")}>KONTAKT</a>
+              <a href={withBasePath(isEnglish ? "/en/about" : "/dezinformacja")}>{isEnglish ? "ABOUT" : "DEZINFORMACJA"}</a>
+              <a href={withBasePath(isEnglish ? "/en/documents" : "/dokumenty")}>{isEnglish ? "DOCUMENTS" : "DOKUMENTY"}</a>
+              <a href={withBasePath(isEnglish ? "/en/membership" : "/czlonkostwo")}>{isEnglish ? "MEMBERSHIP" : "CZŁONKOSTWO"}</a>
+              <a href={withBasePath(isEnglish ? "/en/contact" : "/kontakt")}>{isEnglish ? "CONTACT" : "KONTAKT"}</a>
             </nav>
           </details>
         </div>
@@ -102,17 +176,35 @@ export function SiteHeader() {
   );
 }
 
-export function SiteFooter() {
+export function SiteFooter({ language = "pl" as SiteLanguage }) {
+  const isEnglish = language === "en";
+  const serviceLinks = isEnglish ? englishFooterLinks.service : [
+    { href: "/o-izbie", label: "O Izbie" },
+    { href: "/rynek", label: "Rynek i handel" },
+    { href: "/hodowla", label: "Hodowla i ocena" },
+    { href: "/zrownowazony-rozwoj", label: "Jakość i rozwój" },
+    { href: "/aktualnosci", label: "Aktualności" },
+    { href: "/zapytania-ofertowe", label: "Zapytania ofertowe" },
+  ];
+  const infoLinks = isEnglish ? englishFooterLinks.info : [
+    { href: "/baza-wiedzy", label: "Baza wiedzy" },
+    { href: "/dokumenty", label: "Dokumenty i przetargi" },
+    { href: "/czlonkostwo", label: "Członkostwo" },
+    { href: "/tresc/polityka-prywatnosci", label: "Polityka prywatności" },
+    { href: "/tresc/polityka-cookies", label: "Polityka cookies" },
+  ];
+
   return (
     <footer className="site-footer">
       <div className="shell footer-main">
         <div>
-          <Brand inverse />
+          <Brand inverse language={language} />
           <p className="footer-mission">
-            Partner i głos polskiego sektora drobiarskiego w kraju, Europie i
-            na świecie.
+            {isEnglish
+              ? "Partner and voice of the Polish poultry sector at home, in Europe and worldwide."
+              : "Partner i głos polskiego sektora drobiarskiego w kraju, Europie i na świecie."}
           </p>
-          <div className="footer-social" aria-label="Media społecznościowe KRD-IG">
+          <div className="footer-social" aria-label={isEnglish ? "KRD-IG social media" : "Media społecznościowe KRD-IG"}>
             <a
               className="footer-social-link"
               href="https://x.com/krd_ig"
@@ -150,47 +242,52 @@ export function SiteFooter() {
           </div>
         </div>
         <div className="footer-column">
-          <h2 className="footer-section-title">SERWIS</h2>
-          <a href={withBasePath("/o-izbie")}>O Izbie</a>
-          <a href={withBasePath("/rynek")}>Rynek i handel</a>
-          <a href={withBasePath("/hodowla")}>Hodowla i ocena</a>
-          <a href={withBasePath("/zrownowazony-rozwoj")}>Jakość i rozwój</a>
-          <a href={withBasePath("/aktualnosci")}>Aktualności</a>
-          <a href={withBasePath("/zapytania-ofertowe")}>Zapytania ofertowe</a>
+          <h2 className="footer-section-title">{isEnglish ? "SITE" : "SERWIS"}</h2>
+          {serviceLinks.map((item) => (
+            <a href={withBasePath(item.href)} key={item.href}>{item.label}</a>
+          ))}
         </div>
         <div className="footer-column">
-          <h2 className="footer-section-title">INFORMACJE</h2>
-          <a href={withBasePath("/baza-wiedzy")}>Baza wiedzy</a>
-          <a href={withBasePath("/dokumenty")}>Dokumenty i przetargi</a>
-          <a href={withBasePath("/czlonkostwo")}>Członkostwo</a>
-          <a href={withBasePath("/tresc/polityka-prywatnosci")}>Polityka prywatności</a>
-          <a href={withBasePath("/tresc/polityka-cookies")}>Polityka cookies</a>
+          <h2 className="footer-section-title">{isEnglish ? "INFO" : "INFORMACJE"}</h2>
+          {infoLinks.map((item) => (
+            <a href={withBasePath(item.href)} key={item.href}>{item.label}</a>
+          ))}
         </div>
         <div className="footer-column footer-contact">
-          <h2 className="footer-section-title">KONTAKT</h2>
+          <h2 className="footer-section-title">{isEnglish ? "CONTACT" : "KONTAKT"}</h2>
           <a href="mailto:krd-ig@krd-ig.com.pl">krd-ig@krd-ig.com.pl</a>
           <a href="tel:+48228282389">+48 22 828 23 89</a>
           <address>
-            ul. Czackiego 3/5
+            {isEnglish ? "ul. Czackiego 3/5" : "ul. Czackiego 3/5"}
             <br />
             00-043 Warszawa
           </address>
         </div>
       </div>
       <div className="shell footer-bottom">
-        <p>© 2026 Krajowa Rada Drobiarstwa — Izba Gospodarcza</p>
+        <p>
+          {isEnglish
+            ? "© 2026 National Poultry Council - Chamber of Commerce"
+            : "© 2026 Krajowa Rada Drobiarstwa — Izba Gospodarcza"}
+        </p>
       </div>
     </footer>
   );
 }
 
-export function PageShell({ children }: { children: React.ReactNode }) {
+export function PageShell({
+  children,
+  language = "pl" as SiteLanguage,
+}: {
+  children: React.ReactNode;
+  language?: SiteLanguage;
+}) {
   return (
     <>
-      <SiteHeader />
+      <SiteHeader language={language} />
       <main>{children}</main>
       <ChatWidget />
-      <SiteFooter />
+      <SiteFooter language={language} />
     </>
   );
 }
