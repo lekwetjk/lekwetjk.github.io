@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 60 60" role="img" aria-label="Flaga Wielkiej Brytanii">
+  <defs>
+    <clipPath id="clipCircle">
+      <circle cx="30" cy="30" r="30" />
+    </clipPath>
+  </defs>
+  <g clip-path="url(#clipCircle)">
+    <rect width="60" height="60" fill="#012169" />
+    <path d="M-2 6 6-2l56 56-8 8z" fill="#fff" />
+    <path d="M62 6 54-2-2 54l8 8z" fill="#fff" />
+    <path d="M-2 10 10-2l52 52-12 12z" fill="#c8102e" />
+    <path d="M62 10 50-2-2 50l12 12z" fill="#c8102e" />
+    <rect x="24" width="12" height="60" fill="#fff" />
+    <rect y="24" width="60" height="12" fill="#fff" />
+    <rect x="26.5" width="7" height="60" fill="#c8102e" />
+    <rect y="26.5" width="60" height="7" fill="#c8102e" />
+  </g>
+</svg>

@@ -1,0 +1,15 @@
+source_path,target_path,type,action
+/,/,page,keep
+/aktualnosci/,/aktualnosci/,archive,keep
+/aktualnosci/{slug}/,/aktualnosci/{slug}/,post,keep
+/tresc/{slug}/,/baza-wiedzy/{slug}/,knowledge,301
+/baza-wiedzy/,/baza-wiedzy/,archive,keep
+/zapytania-ofertowe/,/zapytania-ofertowe/,archive,keep
+/o-izbie/,/o-izbie/,page,keep
+/rynek/,/rynek/,page,keep
+/hodowla/,/hodowla/,page,keep
+/zrownowazony-rozwoj/,/zrownowazony-rozwoj/,page,keep
+/dezinformacja/,/dezinformacja/,page,keep
+/dokumenty/,/dokumenty/,page,keep
+/czlonkostwo/,/czlonkostwo/,page,keep
+/kontakt/,/kontakt/,page,keep
