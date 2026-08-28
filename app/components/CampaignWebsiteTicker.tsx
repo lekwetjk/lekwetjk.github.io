@@ -6,7 +6,7 @@ const campaignWebsites = [
   { label: "EU Poultry", href: "https://eupoultry.eu/", icon: "globe", logo: "https://eupoultry.eu/wp-content/themes/eupoultry/img/eupoultry.png" },
   { label: "European Quality Poultry", href: "https://european-quality-poultry.eu/en/home-en/", icon: "badge", logo: "https://european-quality-poultry.eu/wp-content/uploads/2020/09/hero.png" },
   { label: "Wings of Quality", href: "http://www.wingsofquality.eu", icon: "wing", logo: "https://wingsofquality.eu/wp-content/uploads/2019/08/logo-8.png" },
-  { label: "Podaj Indyka", href: "http://www.podajindyka.pl/", icon: "turkey", logo: "http://www.podajindyka.pl/public/site/images/logo.png" },
+  { label: "Podaj Indyka", href: "http://www.podajindyka.pl/", icon: "turkey", logo: "https://images.weserv.nl/?url=www.podajindyka.pl%2Fpublic%2Fsite%2Fimages%2Flogo.png" },
 ];
 
 export function CampaignWebsiteTicker() {
