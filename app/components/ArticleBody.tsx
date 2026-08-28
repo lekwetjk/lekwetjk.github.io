@@ -5,6 +5,7 @@ import { Arrow } from "./SiteChrome";
 import { MembershipSignupForm } from "./MembershipSignupForm";
 import { ExternalFavicon } from "./ExternalFavicon";
 import { CommissionTicker } from "./CommissionTicker";
+import { CampaignWebsiteTicker } from "./CampaignWebsiteTicker";
 
 function looksLikeHeading(value: string) {
   return (
@@ -1753,6 +1754,7 @@ export function ArticleBody({
     return (
       <div className="article-layout article-layout-full shell">
         <article className="prose prose-kampanie">
+          <CampaignWebsiteTicker />
           <h2>Realizowane kampanie</h2>
           <p>
             Zestawienie obejmuje aktualne i archiwalne działania promocyjno-edukacyjne KRD-IG.
