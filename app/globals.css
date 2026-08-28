@@ -864,6 +864,9 @@ summary:focus-visible {
 }
 
 .campaign-website-card--badge .campaign-website-logo img {
+  width: 100%;
+  height: auto;
+  max-height: 58px;
   padding: 3px;
 }
 
