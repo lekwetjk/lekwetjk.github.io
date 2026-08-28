@@ -795,7 +795,7 @@ summary:focus-visible {
 
 .campaign-website-card {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
   min-width: 260px;
@@ -844,24 +844,45 @@ summary:focus-visible {
   color: #245b2b;
 }
 
-.campaign-website-icon {
+.campaign-website-logo {
   display: grid;
-  width: 34px;
-  height: 34px;
+  width: 112px;
+  height: 58px;
   place-items: center;
-  border-radius: 50%;
   background: rgba(255, 255, 255, 0.7);
-  color: currentColor;
+  border-radius: 6px;
+  overflow: hidden;
 }
 
-.campaign-website-icon svg {
-  width: 22px;
-  height: 22px;
-  fill: none;
-  stroke: currentColor;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-width: 1.7;
+.campaign-website-logo img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  padding: 7px;
+  object-fit: contain;
+}
+
+.campaign-website-card--badge .campaign-website-logo img {
+  padding: 3px;
+}
+
+.campaign-website-card--globe .campaign-website-logo img {
+  width: 64px;
+  height: 64px;
+  padding: 4px;
+}
+
+.campaign-website-card--wing .campaign-website-logo img {
+  width: 112px;
+  height: 58px;
+  padding: 3px;
+}
+
+.campaign-website-card--turkey .campaign-website-logo img {
+  width: 82px;
+  height: 58px;
+  padding: 3px;
 }
 
 .campaign-website-label {
@@ -875,13 +896,7 @@ summary:focus-visible {
   display: flex;
   min-width: 0;
   flex-direction: column;
-  gap: 5px;
-}
-
-.campaign-website-url {
-  color: var(--muted);
-  font-size: 11px;
-  white-space: nowrap;
+  gap: 8px;
 }
 
 .campaign-website-card .arrow {
