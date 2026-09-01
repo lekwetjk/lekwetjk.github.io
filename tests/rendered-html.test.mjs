@@ -53,6 +53,16 @@ test("tender archive includes the contractor selection post for the national pou
   assert.match(source, /Instytut Badań Internetu i Mediów Społecznościowych sp\. z o\.o\./);
 });
 
+test("tender posts normalize the required filter tags for the archive", async () => {
+  const source = await readProjectFile("app/lib/content.ts");
+
+  assert.match(source, /normalizeTenderCategories/);
+  assert.match(source, /normalizedCategories\.add\("Zapytania ofertowe"\)/);
+  assert.match(source, /normalizedCategories\.add\("Wybór wykonawcy"\)/);
+  assert.match(source, /normalizedCategories\.add\("Zaproszenie do składania ofert"\)/);
+  assert.match(source, /normalizedCategories\.add\("Wyniki postępowania"\)/);
+});
+
 test("core routes and navigation targets exist in the project", async () => {
   const routes = [
     "o-izbie",

@@ -248,7 +248,7 @@ const supplementalNewsPosts: NewsPost[] = [
         document: false,
       },
     ],
-    categories: ["Wybór wykonawcy", "Zapytania ofertowe"],
+    categories: ["Wybór wykonawcy"],
     image: "/media/post-14353.png",
     source:
       "https://krd-ig.com.pl/wybor-wykonawcy-projektu-zadania-pt-ochrona-wizerunku-polskiego-sektora-drobiarskiego-na-rynku-krajowym-wraz-z-przeprowadzeniem-przez-niezalezny-podmiot-badania-efektywnosci-proje-2/",
@@ -293,7 +293,7 @@ const supplementalNewsPosts: NewsPost[] = [
         document: true,
       },
     ],
-    categories: ["Aktualności", "Zapytania ofertowe"],
+    categories: ["Zapytania ofertowe"],
     image: "/media/zo.png",
     source:
       "https://krd-ig.com.pl/zapytanie-ofertowe-dot-projektu-ochrona-wizerunku-polskiego-sektora-drobiarskiego-na-rynku-krajowym-wraz-z-przeprowadzeniem-przez-niezalezny-podmiot-badania-efektywnosci-projektu-6/",
@@ -498,14 +498,60 @@ export const newsPosts = [
     ...post,
     links: normalizeLinks(post.links),
   }),
+  categories: normalizeTenderCategories(post.title, post.categories),
   excerpt: normalizePreviewText(post.excerpt),
 }));
 
+function normalizeTenderCategories(title: string, categories: string[]) {
+  const normalizedCategories = new Set<string>(categories.filter(Boolean));
+  const lowerTitle = title.toLocaleLowerCase("pl");
+
+  const isWinnerTitle = /^wybór wykonawcy\b|^wybor wykonawcy\b|\bwybór wykonawcy\b|\bwybor wykonawcy\b/i.test(lowerTitle);
+  const hasWinnerCategory = categories.some((category) => /^wybór wykonawcy$|^wybor wykonawcy$|\bwybór wykonawcy\b|\bwybor wykonawcy\b/i.test(category));
+
+  if (isWinnerTitle || hasWinnerCategory) {
+    normalizedCategories.delete("Zapytania ofertowe");
+    normalizedCategories.add("Wybór wykonawcy");
+    return Array.from(normalizedCategories);
+  }
+
+  if (/zapytanie ofertowe/i.test(lowerTitle) || categories.some((category) => /zapytania ofertowe/i.test(category))) {
+    normalizedCategories.delete("Wybór wykonawcy");
+    normalizedCategories.add("Zapytania ofertowe");
+  }
+
+  if (/^wybór wykonawcy\b|^wybor wykonawcy\b|\bwybór wykonawcy\b|\bwybor wykonawcy\b/i.test(lowerTitle) || categories.some((category) => /^wybór wykonawcy$|^wybor wykonawcy$|\bwybór wykonawcy\b|\bwybor wykonawcy\b/i.test(category))) {
+    normalizedCategories.add("Wybór wykonawcy");
+  }
+
+  if (/zaproszenie do składania ofert|zaproszenie-do-skladania-ofert/i.test(lowerTitle) || categories.some((category) => /zaproszenie do składania ofert|zaproszenie-do-skladania-ofert/i.test(category))) {
+    normalizedCategories.add("Zaproszenie do składania ofert");
+  }
+
+  if (/wyniki postępowania|wyniki postepowania/i.test(lowerTitle) || categories.some((category) => /wyniki postępowania|wyniki postepowania/i.test(category))) {
+    normalizedCategories.add("Wyniki postępowania");
+  }
+
+  if (/uniewa|unieważn/i.test(lowerTitle) || categories.some((category) => /uniewa|unieważn/i.test(category))) {
+    normalizedCategories.add("Informacja o unieważnieniu");
+  }
+
+  return Array.from(normalizedCategories);
+}
+
 export function isTenderPost(post: NewsPost) {
-  return (
-    post.categories.includes("Zapytania ofertowe") ||
-    post.title.toLocaleUpperCase("pl").startsWith("WYBÓR WYKONAWCY")
+  const normalizedCategories = post.categories.map((category) => category.toLocaleLowerCase("pl"));
+  const title = post.title.toLocaleLowerCase("pl");
+
+  const hasTenderCategory = normalizedCategories.some((category) =>
+    /zapytania ofertowe|zaproszenie do składania ofert|wyniki postępowania|uniewa|unieważn/i.test(category),
   );
+
+  const hasWinnerCategory =
+    /^wybór wykonawcy\b|^wybor wykonawcy\b|\bwybór wykonawcy\b|\bwybor wykonawcy\b/i.test(title) ||
+    normalizedCategories.some((category) => /^wybór wykonawcy$|^wybor wykonawcy$|\bwybór wykonawcy\b|\bwybor wykonawcy\b/i.test(category));
+
+  return hasTenderCategory || hasWinnerCategory || /zapytanie ofertowe\b/i.test(title);
 }
 
 export function tenderPosts() {

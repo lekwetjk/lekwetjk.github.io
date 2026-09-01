@@ -25,13 +25,36 @@ export function NewsArchive({
   const [year, setYear] = useState("Wszystkie");
   const [limit, setLimit] = useState(36);
 
+  const categoryOrder = [
+    "Wszystkie",
+    "Zapytania ofertowe",
+    "Zaproszenie do składania ofert",
+    "Wybór wykonawcy",
+    "Wyniki postępowania",
+    "Informacja o unieważnieniu",
+  ];
+
   const categories = useMemo(
-    () => [
-      "Wszystkie",
-      ...Array.from(new Set(posts.flatMap((post) => post.categories))).sort(
-        (a, b) => a.localeCompare(b, "pl"),
-      ),
-    ],
+    () => {
+      const filteredCategories = Array.from(
+        new Set(
+          posts
+            .flatMap((post) => post.categories)
+            .filter(
+              (category) =>
+                category &&
+                !/^Aktualności$/i.test(category.trim()) &&
+                !/^Wydarzenia$/i.test(category.trim()),
+            ),
+        ),
+      );
+
+      const ordered = categoryOrder.concat(
+        filteredCategories.filter((category) => !categoryOrder.includes(category)),
+      );
+
+      return ordered.filter((value, index, list) => list.indexOf(value) === index);
+    },
     [posts],
   );
   const years = useMemo(
