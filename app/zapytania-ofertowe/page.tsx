@@ -71,7 +71,7 @@ export default function TenderRequestsPage() {
       <section className="archive-hero">
         <div className="shell archive-hero-grid">
           <div>
-            <p className="eyebrow eyebrow-light">Zapytania ofertowe</p>
+            <p className="eyebrow eyebrow-light">Wybór wykonawcy</p>
             <h1>Zapytania ofertowe i wybór wykonawcy</h1>
           </div>
           <p>

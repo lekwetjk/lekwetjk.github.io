@@ -225,6 +225,35 @@ export const knowledgePages = content.pages.map((page) => ({
 
 const supplementalNewsPosts: NewsPost[] = [
   {
+    id: 900000,
+    slug:
+      "wybor-wykonawcy-projektu-zadania-pt-ochrona-wizerunku-polskiego-sektora-drobiarskiego-na-rynku-krajowym-wraz-z-przeprowadzeniem-przez-niezalezny-podmiot-badania-efektywnosci-proje-2",
+    title:
+      "WYBÓR WYKONAWCY projektu (zadania) pt. „Ochrona wizerunku polskiego sektora drobiarskiego na rynku krajowym” wraz z przeprowadzeniem przez niezależny podmiot badania efektywności projektu (zadania)",
+    date: "2026-08-31T00:00:00",
+    year: 2026,
+    excerpt:
+      "Krajowa Rada Drobiarstwa – Izba Gospodarcza wyłoniła wykonawcę projektu pt. „Ochrona wizerunku polskiego sektora drobiarskiego na rynku krajowym”. Realizację zadania przejmie Instytut Badań Internetu i Mediów Społecznościowych sp. z o.o.",
+    paragraphs: [
+      "Krajowa Rada Drobiarstwa – Izba Gospodarcza informuje, że w ramach ogłoszonego w dniu 6 sierpnia 2026 r. Zapytania ofertowego dotyczącego projektu (zadania) pt.: „Ochrona wizerunku polskiego sektora drobiarskiego na rynku krajowym” wraz z przeprowadzeniem przez niezależny podmiot badania efektywności projektu (zadania) wyłoniła Wykonawcę, który zrealizuje ten projekt (zadanie).",
+      "Do biura KRD-IG wpłynęła 1 oferta. W ramach I etapu oceny – ocena spełnienia warunków formalnych – oferta spełniła wymogi formalno-prawne.",
+      "Ocena oferty została dokonana przez Komisję oceniającą (zespół ekspertów KRD-IG). W ramach oceny przedłożonej oferty I etap postępowania – II etap oceny (ocena jakości oferty) został oceniony na 87,66 pkt. na możliwą maksymalną liczbę 100 punktów.",
+      "W II etapie postępowania oferta uzyskała 16 pkt. na 18 możliwych. Wobec powyższego, realizację projektu (zadania) będzie prowadził Oferent – Instytut Badań Internetu i Mediów Społecznościowych sp. z o.o.",
+      "Dziękujemy wszystkim osobom i firmom, które przygotowały oferty i serdecznie gratulujemy wyłonionemu wykonawcy. Zespół KRD-IG zapowiada dalszy rozwój działań promocyjnych i badawczych w obszarze wizerunku polskiego sektora drobiarskiego na rynku krajowym.",
+    ],
+    links: [
+      {
+        href: "https://krd-ig.com.pl/wybor-wykonawcy-projektu-zadania-pt-ochrona-wizerunku-polskiego-sektora-drobiarskiego-na-rynku-krajowym-wraz-z-przeprowadzeniem-przez-niezalezny-podmiot-badania-efektywnosci-proje-2/",
+        label: "Oryginał ogłoszenia na stronie KRD-IG",
+        document: false,
+      },
+    ],
+    categories: ["Wybór wykonawcy", "Zapytania ofertowe"],
+    image: "/media/post-14353.png",
+    source:
+      "https://krd-ig.com.pl/wybor-wykonawcy-projektu-zadania-pt-ochrona-wizerunku-polskiego-sektora-drobiarskiego-na-rynku-krajowym-wraz-z-przeprowadzeniem-przez-niezalezny-podmiot-badania-efektywnosci-proje-2/",
+  },
+  {
     id: 900001,
     slug:
       "zapytanie-ofertowe-dot-projektu-ochrona-wizerunku-polskiego-sektora-drobiarskiego-na-rynku-krajowym-wraz-z-przeprowadzeniem-przez-niezalezny-podmiot-badania-efektywnosci-projektu-6",

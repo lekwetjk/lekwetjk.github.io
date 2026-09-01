@@ -865,9 +865,11 @@ summary:focus-visible {
 
 .campaign-website-card--badge .campaign-website-logo img {
   width: 100%;
-  height: auto;
-  max-height: 58px;
+  height: 100%;
+  max-height: none;
   padding: 3px;
+  object-fit: cover;
+  object-position: top left;
 }
 
 .campaign-website-card--globe .campaign-website-logo img {
@@ -1626,6 +1628,7 @@ blockquote {
 
 .archive-card > img.archive-image-contain {
   object-fit: contain;
+  object-position: center;
   padding: 14px;
   background: #fff;
 }
@@ -1711,6 +1714,8 @@ blockquote {
 .tender-archive .archive-card > img {
   height: 208px;
   object-fit: contain;
+  object-position: center;
+  display: block;
   padding: 10px;
   background: #fff;
 }
@@ -1866,6 +1871,20 @@ blockquote {
   min-width: 0;
   width: 100%;
   max-width: none;
+}
+
+.prose img,
+.prose figure img,
+.prose picture img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 760px;
+  margin: 18px auto;
+  object-fit: contain;
+  object-position: center;
+  background: #fff;
 }
 
 .prose p {

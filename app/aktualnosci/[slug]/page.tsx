@@ -135,7 +135,9 @@ export default async function NewsDetailPage({
                     ? "article-hero-image-zsrir"
                     : shouldUseWebinarHeroImage
                       ? "article-hero-image-webinar"
-                      : undefined
+                      : isTenderLikeSlug
+                        ? "article-hero-image-contain"
+                        : undefined
               }
             />
           )}

@@ -43,6 +43,16 @@ test("footer links to Dobry Drób with its logo", async () => {
   assert.match(footer, /aria-label="Dobry Drób"/);
 });
 
+test("tender archive includes the contractor selection post for the national poultry image protection project", async () => {
+  const source = await readProjectFile("app/lib/content.ts");
+
+  assert.match(
+    source,
+    /wybor-wykonawcy-projektu-zadania-pt-ochrona-wizerunku-polskiego-sektora-drobiarskiego-na-rynku-krajowym-wraz-z-przeprowadzeniem-przez-niezalezny-podmiot-badania-efektywnosci-proje-2/,
+  );
+  assert.match(source, /Instytut Badań Internetu i Mediów Społecznościowych sp\. z o\.o\./);
+});
+
 test("core routes and navigation targets exist in the project", async () => {
   const routes = [
     "o-izbie",
