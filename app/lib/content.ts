@@ -225,6 +225,48 @@ export const knowledgePages = content.pages.map((page) => ({
 
 const supplementalNewsPosts: NewsPost[] = [
   {
+    id: 899999,
+    slug: "ppwr-a-marki-wlasne-odpowiedz-ministerstwa-w-sprawie-statusu-wytworcy",
+    title: "PPWR a marki własne: odpowiedź Ministerstwa w sprawie statusu „wytwórcy”",
+    date: "2026-09-02T00:00:00",
+    year: 2026,
+    excerpt:
+      "Ministerstwo Klimatu i Środowiska potwierdziło stanowisko KRD-IG: status „wytwórcy” w rozumieniu PPWR posiada podmiot zlecający produkcję pod marką własną, a nie wykonawca produkcji kontraktowej.",
+    paragraphs: [
+      "PPWR a marki własne: odpowiedź Ministerstwa w sprawie statusu „wytwórcy”.",
+      "Od 12 sierpnia 2026 r. stosowane są przepisy rozporządzenia Parlamentu Europejskiego i Rady (UE) 2025/40 w sprawie opakowań i odpadów opakowaniowych (PPWR). Jednym z zagadnień budzących istotne wątpliwości przedsiębiorców jest ustalenie, kto posiada status „wytwórcy” w przypadku produktów wytwarzanych na zlecenie i sprzedawanych pod markami własnymi sieci handlowych.",
+      "W praktyce pojawiają się oczekiwania, aby odpowiedzialność za realizację obowiązków wynikających z PPWR przejmowali producenci wykonujący produkcję kontraktową. Problem ten dotyczy różnych sektorów przemysłu spożywczego, w tym branży drobiarskiej, i może wpływać na treść umów oraz relacje przedsiębiorców z sieciami handlowymi.",
+      "W związku z tym Krajowa Rada Drobiarstwa – Izba Gospodarcza wystąpiła do Minister Klimatu i Środowiska Pauliny Hennig-Kloski o pilne przedstawienie oficjalnego stanowiska interpretacyjnego. KRD-IG zwróciła się również do Ministra Rolnictwa i Rozwoju Wsi Stefana Krajewskiego z prośbą o interwencję w tej sprawie.",
+      "W ocenie KRD-IG, przedstawionej w pismach, art. 3 ust. 1 pkt 13 lit. a PPWR wskazuje, że jeżeli przedsiębiorca zleca zaprojektowanie lub wytworzenie opakowania albo produktu w opakowaniu pod własną nazwą lub własnym znakiem towarowym, to właśnie podmiot zlecający – a nie wykonawca produkcji – posiada status „wytwórcy”. KRD-IG podkreśliła również, że status wynikający z rozporządzenia nie powinien być zmieniany poprzez postanowienia umowne lub praktykę handlową.",
+      "W odpowiedzi z 28 sierpnia 2026 r. Departament Gospodarki Odpadami Ministerstwa Klimatu i Środowiska zasadniczo potwierdził ten kierunek interpretacji. Ministerstwo wskazało, że podmiot zlecający zaprojektowanie lub wytworzenie opakowania albo produktu w opakowaniu pod własną nazwą lub znakiem towarowym jest „wytwórcą” w rozumieniu PPWR. Wyjaśniono także, że chociaż „marka własna” nie ma odrębnej definicji prawnej, produkcja pod takim oznaczeniem mieści się w definicji określonej w art. 3 ust. 1 pkt 13 PPWR.",
+      "Zgodnie z odpowiedzią Ministerstwa wytwórca może zlecić wykonanie w jego imieniu oceny zgodności oraz wyznaczyć upoważnionego przedstawiciela do wykonywania określonych zadań. Nie może jednak, jeżeli dany model współpracy odpowiada warunkom opisanym w rozporządzeniu, przenieść na inny podmiot samego statusu wytwórcy oraz związanej z nim odpowiedzialności za wykonanie obowiązków wynikających z PPWR.",
+      "Należy jednocześnie pamiętać o przewidzianym w rozporządzeniu wyjątku dotyczącym mikroprzedsiębiorstw. Ocena konkretnego przypadku powinna zatem uwzględniać jego pełny stan faktyczny oraz treść zawartych umów.",
+      "Zachęcamy przedsiębiorców do zapoznania się z całością korespondencji oraz przeanalizowania jej możliwego wpływu na obowiązki wynikające z PPWR, dokumentację zgodności i relacje kontraktowe z sieciami handlowymi.",
+    ],
+    links: [
+      {
+        href: "/media/reports/ppwr-pismo-mkis-hennig-kloska.pdf",
+        label:
+          "Pismo KRD-IG do Minister Klimatu i Środowiska z 7 sierpnia 2026 r. – pobierz.pdf",
+        document: true,
+      },
+      {
+        href: "/media/reports/ppwr-pismo-mrirw-krajewski.pdf",
+        label: "Pismo do Ministra Rolnictwa i Rozwoju Wsi z 6 sierpnia 2026 r. – pobierz.pdf",
+        document: true,
+      },
+      {
+        href: "/media/reports/ppwr-odpowiedz-dgo-mkis.pdf",
+        label:
+          "Odpowiedź Departamentu Gospodarki Odpadami MKiŚ z 28 sierpnia 2026 r. – pobierz.pdf",
+        document: true,
+      },
+    ],
+    categories: ["Aktualności", "Prawo", "Środowisko"],
+    image: "/media/environment.webp",
+    source: "https://krd-ig.com.pl/",
+  },
+  {
     id: 900000,
     slug:
       "wybor-wykonawcy-projektu-zadania-pt-ochrona-wizerunku-polskiego-sektora-drobiarskiego-na-rynku-krajowym-wraz-z-przeprowadzeniem-przez-niezalezny-podmiot-badania-efektywnosci-proje-2",

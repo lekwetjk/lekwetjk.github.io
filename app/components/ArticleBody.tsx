@@ -3911,6 +3911,118 @@ export function ArticleBody({
     );
   }
 
+  if (slug === "ppwr-a-marki-wlasne-odpowiedz-ministerstwa-w-sprawie-statusu-wytworcy") {
+    const ppwrLinks = new Map(links.map((link) => [link.label, link]));
+    const ministerHennigKloskaLink = ppwrLinks.get(
+      "Pismo KRD-IG do Minister Klimatu i Środowiska z 7 sierpnia 2026 r. – pobierz.pdf",
+    );
+    const ministerKrajewskiLink = ppwrLinks.get(
+      "Pismo do Ministra Rolnictwa i Rozwoju Wsi z 6 sierpnia 2026 r. – pobierz.pdf",
+    );
+    const dgoResponseLink = ppwrLinks.get(
+      "Odpowiedź Departamentu Gospodarki Odpadami MKiŚ z 28 sierpnia 2026 r. – pobierz.pdf",
+    );
+
+    return (
+      <div className="article-layout article-layout-full shell">
+        <article className="prose prose-justified">
+          <p>
+            <strong>
+              PPWR a marki własne: odpowiedź Ministerstwa w sprawie statusu „wytwórcy”.
+            </strong>
+          </p>
+          <p>
+            Od 12 sierpnia 2026 r. stosowane są przepisy rozporządzenia Parlamentu Europejskiego
+            i Rady (UE) 2025/40 w sprawie opakowań i odpadów opakowaniowych (PPWR). Jednym
+            z zagadnień budzących istotne wątpliwości przedsiębiorców jest ustalenie, kto posiada
+            status „<strong>wytwórcy</strong>” w przypadku produktów wytwarzanych na zlecenie
+            i sprzedawanych pod markami własnymi sieci handlowych.
+          </p>
+          <p>
+            W praktyce pojawiają się oczekiwania, aby odpowiedzialność za realizację obowiązków
+            wynikających z PPWR przejmowali producenci wykonujący produkcję kontraktową. Problem
+            ten dotyczy różnych sektorów przemysłu spożywczego, w tym branży drobiarskiej, i może
+            wpływać na treść umów oraz relacje przedsiębiorców z sieciami handlowymi.
+          </p>
+          <p>
+            W związku z tym <strong>Krajowa Rada Drobiarstwa – Izba Gospodarcza</strong> wystąpiła
+            do Minister Klimatu i Środowiska Pauliny Hennig-Kloski o pilne przedstawienie
+            oficjalnego stanowiska interpretacyjnego. KRD-IG zwróciła się również do Ministra
+            Rolnictwa i Rozwoju Wsi Stefana Krajewskiego z prośbą o interwencję w tej sprawie.
+          </p>
+          <p>
+            W ocenie KRD-IG, przedstawionej w pismach, art. 3 ust. 1 pkt 13 lit. a PPWR wskazuje,
+            że jeżeli przedsiębiorca zleca zaprojektowanie lub wytworzenie opakowania albo produktu
+            w opakowaniu pod własną nazwą lub własnym znakiem towarowym, to właśnie podmiot
+            zlecający – a nie wykonawca produkcji – posiada status „wytwórcy”. KRD-IG podkreśliła
+            również, że status wynikający z rozporządzenia nie powinien być zmieniany poprzez
+            postanowienia umowne lub praktykę handlową.
+          </p>
+          <p>
+            W odpowiedzi z 28 sierpnia 2026 r. Departament Gospodarki Odpadami Ministerstwa
+            Klimatu i Środowiska zasadniczo potwierdził ten kierunek interpretacji. Ministerstwo
+            wskazało, że podmiot zlecający zaprojektowanie lub wytworzenie opakowania albo produktu
+            w opakowaniu pod własną nazwą lub znakiem towarowym jest „wytwórcą” w rozumieniu PPWR.
+            Wyjaśniono także, że chociaż „marka własna” nie ma odrębnej definicji prawnej,
+            produkcja pod takim oznaczeniem mieści się w definicji określonej w art. 3 ust. 1 pkt
+            13 PPWR.
+          </p>
+          <p>
+            Zgodnie z odpowiedzią Ministerstwa wytwórca może zlecić wykonanie w jego imieniu oceny
+            zgodności oraz wyznaczyć upoważnionego przedstawiciela do wykonywania określonych
+            zadań. Nie może jednak, jeżeli dany model współpracy odpowiada warunkom opisanym
+            w rozporządzeniu, przenieść na inny podmiot samego statusu wytwórcy oraz związanej
+            z nim odpowiedzialności za wykonanie obowiązków wynikających z PPWR.
+          </p>
+          <p>
+            Należy jednocześnie pamiętać o przewidzianym w rozporządzeniu wyjątku dotyczącym
+            mikroprzedsiębiorstw. Ocena konkretnego przypadku powinna zatem uwzględniać jego pełny
+            stan faktyczny oraz treść zawartych umów.
+          </p>
+          <p>
+            Zachęcamy przedsiębiorców do zapoznania się z całością korespondencji oraz
+            przeanalizowania jej możliwego wpływu na obowiązki wynikające z PPWR, dokumentację
+            zgodności i relacje kontraktowe z sieciami handlowymi.
+          </p>
+
+          <div className="resource-box">
+            {ministerHennigKloskaLink && (
+              <a
+                className="inline-download-link"
+                href={resolveArticleHref(ministerHennigKloskaLink.href)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Pismo KRD-IG do Minister Klimatu i Środowiska z 7 sierpnia 2026 r. – pobierz.pdf
+              </a>
+            )}
+            {ministerKrajewskiLink && (
+              <a
+                className="inline-download-link"
+                href={resolveArticleHref(ministerKrajewskiLink.href)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Pismo do Ministra Rolnictwa i Rozwoju Wsi z 6 sierpnia 2026 r. – pobierz.pdf
+              </a>
+            )}
+            {dgoResponseLink && (
+              <a
+                className="inline-download-link"
+                href={resolveArticleHref(dgoResponseLink.href)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Odpowiedź Departamentu Gospodarki Odpadami MKiŚ z 28 sierpnia 2026 r. –
+                pobierz.pdf
+              </a>
+            )}
+          </div>
+        </article>
+      </div>
+    );
+  }
+
   return (
     <div
       className={`article-layout${shouldUseFullWidthArticleLayout ? " article-layout-full" : ""} shell`}
