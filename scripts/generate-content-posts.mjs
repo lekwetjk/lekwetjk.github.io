@@ -3,7 +3,10 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const contentDir = path.join(__dirname, "..", "content", "aktualnosci");
+const contentSources = [
+  { dir: path.join(__dirname, "..", "content", "aktualnosci"), defaultCategory: "Aktualności" },
+  { dir: path.join(__dirname, "..", "content", "zapytania-ofertowe"), defaultCategory: "Zapytania ofertowe" },
+];
 const outputFile = path.join(__dirname, "..", "app", "data", "generated-posts.json");
 
 function slugify(value) {
@@ -102,14 +105,12 @@ function toParagraphs(body) {
     .filter(Boolean);
 }
 
-async function generate() {
+async function collectPosts(contentDir, defaultCategory) {
   let files = [];
   try {
     files = await readdir(contentDir);
   } catch {
-    await writeFile(outputFile, "[]\n", "utf8");
-    console.log("Brak folderu content/aktualnosci — zapisano pustą listę wpisów.");
-    return;
+    return [];
   }
 
   const postFiles = files.filter(
@@ -134,7 +135,7 @@ async function generate() {
           .split(",")
           .map((item) => item.trim())
           .filter(Boolean)
-      : ["Aktualności"];
+      : [defaultCategory];
     const links = Array.isArray(data.links)
       ? data.links
           .filter((item) => item.label && item.href)
@@ -155,6 +156,15 @@ async function generate() {
       source: data.source || "",
     });
   }
+
+  return posts;
+}
+
+async function generate() {
+  const results = await Promise.all(
+    contentSources.map(({ dir, defaultCategory }) => collectPosts(dir, defaultCategory)),
+  );
+  const posts = results.flat();
 
   posts.sort((left, right) => new Date(right.date).getTime() - new Date(left.date).getTime());
 

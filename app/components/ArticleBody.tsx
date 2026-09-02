@@ -3981,6 +3981,19 @@ export function ArticleBody({
             stan faktyczny oraz treść zawartych umów.
           </p>
           <p>
+            Pod linkiem{" "}
+            <a
+              className="inline-download-link"
+              href="https://op.europa.eu/pl/publication-detail/-/publication/ad14cb8f-8d4f-11f1-9262-01aa75ed71a1"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              https://op.europa.eu/pl/publication-detail/-/publication/ad14cb8f-8d4f-11f1-9262-01aa75ed71a1
+            </a>{" "}
+            znajduje się publikacja Komisji Europejskiej z najczęściej zadawanymi pytaniami
+            w obszarze PPWR.
+          </p>
+          <p>
             Zachęcamy przedsiębiorców do zapoznania się z całością korespondencji oraz
             przeanalizowania jej możliwego wpływu na obowiązki wynikające z PPWR, dokumentację
             zgodności i relacje kontraktowe z sieciami handlowymi.
