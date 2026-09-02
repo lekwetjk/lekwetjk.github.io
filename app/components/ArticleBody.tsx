@@ -1,6 +1,7 @@
 import type { ContentLink } from "../lib/content";
 import type { ReactNode } from "react";
 import { withBasePath } from "../lib/basePath";
+import { renderInlineMarkdown } from "../lib/inlineMarkdown";
 import { Arrow } from "./SiteChrome";
 import { MembershipSignupForm } from "./MembershipSignupForm";
 import { ExternalFavicon } from "./ExternalFavicon";
@@ -4420,10 +4421,12 @@ export function ArticleBody({
             );
           }
 
+          const formattedParagraph = renderInlineMarkdown(paragraph, `${index}-${paragraph.slice(0, 20)}`);
+
           return index > 0 && looksLikeHeading(paragraph) ? (
-            <h2 key={`${index}-${paragraph.slice(0, 20)}`}>{paragraph}</h2>
+            <h2 key={`${index}-${paragraph.slice(0, 20)}`}>{formattedParagraph}</h2>
           ) : (
-            <p key={`${index}-${paragraph.slice(0, 20)}`}>{paragraph}</p>
+            <p key={`${index}-${paragraph.slice(0, 20)}`}>{formattedParagraph}</p>
           );
         })}
         {slug === "kampania-stopdezinformacjizywnosciowej-i-kluczowe-wyzwania-rynkowe" && (

@@ -1,4 +1,5 @@
 import rawContent from "../data/content.json";
+import generatedContentPosts from "../data/generated-posts.json";
 
 export type ContentLink = {
   href: string;
@@ -525,6 +526,7 @@ const supplementalNewsPosts: NewsPost[] = [
 const supplementalSlugs = new Set(supplementalNewsPosts.map((post) => post.slug));
 
 export const newsPosts = [
+  ...(generatedContentPosts as NewsPost[]),
   ...supplementalNewsPosts,
   ...content.posts
     .filter((post) => !supplementalSlugs.has(post.slug))

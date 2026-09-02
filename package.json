@@ -6,6 +6,9 @@
     "node": ">=22.13.0"
   },
   "scripts": {
+    "generate:posts": "node scripts/generate-content-posts.mjs",
+    "predev": "npm run generate:posts",
+    "prebuild": "npm run generate:posts",
     "dev": "vinext dev",
     "build": "vinext build",
     "build:static": "next build",
