@@ -144,7 +144,8 @@ export function NewsArchive({
                 loading="lazy"
                 className={
                   forceContainImages ||
-                  post.slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026"
+                  post.slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026" ||
+                  post.slug === "komisja-europejska-gospodarstwa-rolne-to-nie-zaklady-przemyslowe"
                     ? "archive-image-contain"
                     : post.slug === "nowy-link-zsrir-w-zakladce-dokumenty"
                       ? "archive-image-contain archive-image-zsrir"

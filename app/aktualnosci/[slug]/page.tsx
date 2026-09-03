@@ -23,7 +23,8 @@ export default async function NewsDetailPage({
     slug ===
     "polish-poultry-na-alimentaria-2026-rekordowa-edycja-rekordowa-energia-rekordowa-polska";
   const shouldContainWoahLogoImage =
-    slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026";
+    slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026" ||
+    slug === "komisja-europejska-gospodarstwa-rolne-to-nie-zaklady-przemyslowe";
   const shouldContainZsrirLogoImage =
     slug === "nowy-link-zsrir-w-zakladce-dokumenty";
   const shouldUseZsrirTitleSize =
