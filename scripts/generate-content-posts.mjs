@@ -141,6 +141,7 @@ async function collectPosts(contentDir, defaultCategory) {
           .filter((item) => item.label && item.href)
           .map((item) => ({ href: item.href, label: item.label, document: true }))
       : [];
+    const justify = /^(tak|true|yes)$/i.test(String(data.justify ?? "").trim());
 
     posts.push({
       id: hashId(slug),
@@ -154,6 +155,7 @@ async function collectPosts(contentDir, defaultCategory) {
       categories,
       image: data.image || null,
       source: data.source || "",
+      justify,
     });
   }
 

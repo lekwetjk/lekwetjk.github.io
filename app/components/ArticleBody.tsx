@@ -246,12 +246,14 @@ export function ArticleBody({
   source,
   slug,
   language = "pl",
+  justify = false,
 }: {
   paragraphs: string[];
   links: ContentLink[];
   source: string;
   slug?: string;
   language?: "pl" | "en";
+  justify?: boolean;
 }) {
   const chinaGuideHeadingPattern =
     language === "en"
@@ -3186,6 +3188,7 @@ export function ArticleBody({
   }
 
   const shouldJustifyArticleText =
+    justify ||
     slug === "bezpieczenstwo-bialkowe" ||
     slug === "globalizacja-rynku" ||
     slug === "przedstawicielstwo-w-chinach";

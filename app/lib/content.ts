@@ -31,6 +31,7 @@ export type NewsPost = {
   categories: string[];
   image: string | null;
   source: string;
+  justify?: boolean;
 };
 
 type ContentDatabase = {

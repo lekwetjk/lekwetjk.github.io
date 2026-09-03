@@ -149,6 +149,7 @@ export default async function NewsDetailPage({
         links={post.links}
         source={post.source}
         slug={slug}
+        justify={post.justify}
       />
     </PageShell>
   );

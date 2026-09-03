@@ -21,3 +21,4 @@ Strona sama umieści nowy wpis na liście aktualności, w odpowiedniej kategorii
 | `image` | nie | Ścieżka do obrazka, np. `/media/news/przyklad.jpg` |
 | `source` | nie | Link do materiału źródłowego |
 | `links` | nie | Lista załączników (patrz szablon) |
+| `justify` | nie | Wpisz `tak`, aby wyjustrować tekst akapitów (wyrównanie do obu marginesów) |

@@ -22,7 +22,8 @@
       "Aktualności"
     ],
     "image": "/media/news/ECC.jpg",
-    "source": "https://krd-ig.com.pl/"
+    "source": "https://krd-ig.com.pl/",
+    "justify": false
   },
   {
     "id": 751317,
@@ -46,6 +47,7 @@
       "Aktualności"
     ],
     "image": "/media/news/norka.jpg",
-    "source": "https://krd-ig.com.pl/"
+    "source": "https://krd-ig.com.pl/",
+    "justify": false
   }
 ]
