@@ -89,7 +89,11 @@ export function TerritorialCoverageMap() {
         </div>
       </div>
       <div ref={mapContainerRef} className="territorial-map-frame territorial-map-osm" aria-label="Mapa Polski OpenStreetMap" />
-      <p className="territorial-map-note">Najedź na kolorowy punkt, aby zobaczyć osobę odpowiedzialną i zakres obsługi.</p>
+      <p className="territorial-map-note">
+        Najedź na kolorowy punkt, aby zobaczyć osobę odpowiedzialną i zakres obsługi.
+        <br />
+        Szczegółowe informacje znajdują się w tabeli poniżej.
+      </p>
     </section>
   );
 }
