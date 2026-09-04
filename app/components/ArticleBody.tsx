@@ -7,6 +7,7 @@ import { MembershipSignupForm } from "./MembershipSignupForm";
 import { ExternalFavicon } from "./ExternalFavicon";
 import { CommissionTicker } from "./CommissionTicker";
 import { CampaignWebsiteTicker } from "./CampaignWebsiteTicker";
+import { TerritorialCoverageMap } from "./TerritorialCoverageMap";
 
 function looksLikeHeading(value: string) {
   return (
@@ -3130,6 +3131,7 @@ export function ArticleBody({
           </section>
 
           <h2>TERYTORIALNY ZASIĘG DZIAŁANIA specjalistów ds. hodowli i oceny drobiu</h2>
+          <TerritorialCoverageMap />
           <div className="segment-table-wrap">
             <table className="segment-table">
               <thead>
