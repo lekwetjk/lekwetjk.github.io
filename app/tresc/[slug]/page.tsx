@@ -88,6 +88,10 @@ export default async function ContentDetailPage({
         ? "KRD-IG wykonuje kluczowe dla branży drobiarskiej zadania z zakresu hodowli i oceny drobiu. Za realizację zadań związanych z kompetencjami Izby w tym zakresie odpowiada Dział Hodowli i Oceny Drobiu z siedzibą w Poznaniu. Poniżej dane kontaktowe do Specjalistów Działu, któego Kierownikiem jest dr. inż Eugeniusz Wencek."
       : slug === "dzial-hodowli-i-oceny-drobiu"
         ? "Dział Hodowli i Oceny Drobiu realizuje zadania KRD-IG związane z hodowlą, oceną wartości użytkowej i hodowlanej oraz ochroną zasobów genetycznych drobiu."
+      : slug === "korzysci-z-czlonkostwa"
+        ? "Członkostwo w KRD-IG daje przedsiębiorcom branży drobiarskiej realny wpływ na rozwój rynku, dostęp do wiedzy i udział w projektach krajowych oraz zagranicznych."
+      : slug === "dezinformacja-zywnosciowa"
+        ? "Dezinformacja żywnościowa to fałszywe lub zmanipulowane informacje, które mogą podważać zaufanie konsumentów i powodować realne straty w całym sektorze rolno-spożywczym."
       : page?.excerpt;
   const legalEuRegulationText =
     "Stosuje się je wprost, ponieważ z mocy traktatu mają charakter ogólny, wiążą w całości i są bezpośrednio stosowane w każdym państwie członkowskim od dnia ich wejścia w życie.";
@@ -125,7 +129,12 @@ export default async function ContentDetailPage({
     "to szybki dostęp do najważniejszych linków stron i portali internetowych w obszarze rolnictwa i sektora drobiarskiego";
   const shouldUseWideLead = slug === "zarzad-i-rada-izby";
   const shouldShowLeadText = Boolean(leadText) && slug !== "wazne-linki" && slug !== "czlonkowie";
-  const heroImageClassName = slug === "akty-prawne" ? "article-hero-image-legal" : undefined;
+  const heroImageClassName =
+    slug === "akty-prawne"
+      ? "article-hero-image-legal"
+      : slug === "dezinformacja-zywnosciowa" || slug === "kampanie"
+        ? "article-hero-image-contain"
+        : undefined;
   const articleLeadClassName = `${
     shouldUseWideLead ? "article-lead article-lead-full" : "article-lead"
   }${slug === "akty-prawne" ? " article-lead-full" : ""}`;

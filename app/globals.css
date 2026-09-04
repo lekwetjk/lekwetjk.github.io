@@ -2026,6 +2026,98 @@ blockquote {
   text-align: center;
 }
 
+.prose-membership-benefits .membership-intro {
+  margin-bottom: 44px;
+  color: var(--ink);
+  font-size: 19px;
+  line-height: 1.65;
+}
+
+.prose-membership-benefits h2 {
+  margin-top: 42px;
+  color: var(--ink);
+}
+
+.prose-membership-benefits h3 {
+  margin: 30px 0 12px;
+  color: var(--ink);
+  font: 700 20px/1.2 "Aptos", "Segoe UI", Arial, sans-serif;
+  letter-spacing: 0;
+}
+
+.prose-membership-benefits .membership-category ul {
+  margin: 0 0 26px;
+  padding-left: 24px;
+  list-style: disc;
+}
+
+.prose-membership-benefits .membership-category li {
+  margin-bottom: 10px;
+  padding-left: 6px;
+  text-align: justify;
+  text-justify: inter-word;
+}
+
+.prose-disinformation .disinformation-statement {
+  margin: 0 0 42px;
+  padding: 26px 30px;
+  border-left: 5px solid var(--red);
+  background: #fff8f5;
+}
+
+.prose-disinformation .disinformation-statement p {
+  margin: 0 0 5px;
+  color: var(--ink);
+}
+
+.prose-disinformation .disinformation-statement p:last-child {
+  margin-bottom: 0;
+}
+
+.prose-disinformation .disinformation-label {
+  color: var(--red) !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.prose-disinformation .disinformation-features {
+  display: grid;
+  gap: 18px;
+  margin: 0 0 38px;
+}
+
+.prose-disinformation .disinformation-feature {
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  background: #fbfaf7;
+}
+
+.prose-disinformation .disinformation-feature h3 {
+  margin: 0 0 8px;
+  color: var(--ink);
+  font: 700 20px/1.25 "Aptos", "Segoe UI", Arial, sans-serif;
+  letter-spacing: 0;
+}
+
+.prose-disinformation .disinformation-feature p {
+  margin: 0;
+}
+
+.prose-disinformation .disinformation-consequences {
+  margin: 0 0 34px;
+  padding-left: 24px;
+  list-style: disc;
+}
+
+.prose-disinformation .disinformation-consequences li {
+  margin-bottom: 12px;
+  padding-left: 6px;
+  text-align: justify;
+  text-justify: inter-word;
+}
+
 .prose-jakosc-blocks .jakosc-block {
   display: grid;
   grid-template-columns: 44px minmax(0, 1fr);

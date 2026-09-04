@@ -4042,6 +4042,141 @@ export function ArticleBody({
     );
   }
 
+  if (slug === "korzysci-z-czlonkostwa") {
+    const benefitHeadings = new Set([
+      "Miej wpływ na wykorzystanie środków finansowych Funduszu Promocji Mięsa Drobiowego",
+      "Korzystaj ze zbiorów unikalnej wiedzy i wieloletniego doświadczenia ekspertów KRD-IG",
+      "Uzyskaj dostęp do najświeższych i najrzetelniejszych informacji oraz badań rynkowych",
+      "Eksponuj swoje produkty na krajowych i zagranicznych targach branżowych",
+      "Weź udział w zagranicznych misjach handlowych dedykowanych branży drobiarskiej",
+      "Zaangażuj się w bieżące inicjatywy KRD-IG i rekomenduj przyszłe projekty",
+    ]);
+    const memberHeadings = new Set([
+      "Członkowie zwyczajni:",
+      "Członkowie wspierający:",
+      "Członkowie honorowi",
+      "Członkowie stowarzyszeni",
+    ]);
+    const numberedItems = visibleParagraphs.filter((paragraph) => /^\d+\.\s+/.test(paragraph.trim()));
+    const numberedItemSet = new Set(numberedItems);
+    const rendered: ReactNode[] = [];
+
+    visibleParagraphs.forEach((paragraph, index) => {
+      const trimmed = paragraph.trim();
+      if (index === 0) {
+        return;
+      }
+      if (numberedItemSet.has(trimmed)) {
+        return;
+      }
+
+      if (benefitHeadings.has(trimmed)) {
+        rendered.push(
+          <h2 key={`membership-benefit-heading-${index}`}>
+            <strong>{trimmed}</strong>
+          </h2>,
+        );
+        return;
+      }
+
+      if (memberHeadings.has(trimmed)) {
+        const items = numberedItems.filter((item) => {
+          const itemIndex = visibleParagraphs.indexOf(item);
+          const headingIndex = visibleParagraphs.indexOf(trimmed);
+          const nextHeadingIndex = visibleParagraphs.findIndex(
+            (candidate, candidateIndex) => candidateIndex > headingIndex && memberHeadings.has(candidate.trim()),
+          );
+          return itemIndex > headingIndex && (nextHeadingIndex === -1 || itemIndex < nextHeadingIndex);
+        });
+        rendered.push(
+          <section className="membership-category" key={`membership-category-${index}`}>
+            <h3><strong>{trimmed.replace(/:$/, "")}</strong></h3>
+            <ul>
+              {items.map((item) => (
+                <li key={item}>{renderInlineMarkdown(item.replace(/^\d+\.\s+/, ""), `membership-${item.slice(0, 12)}`)}</li>
+              ))}
+            </ul>
+          </section>,
+        );
+        return;
+      }
+
+      if (trimmed === "Członkowie Krajowej Rady Drobiarstwa-Izby Gospodarczej to:") {
+        rendered.push(<p key={`membership-intro-${index}`}><strong>{trimmed}</strong></p>);
+        return;
+      }
+
+      if (trimmed === "Kto może zostać członkiem KRD-IG?") {
+        rendered.push(<h2 key={`membership-heading-${index}`}><strong>{trimmed}</strong></h2>);
+        return;
+      }
+
+      rendered.push(<p key={`membership-paragraph-${index}`}>{renderInlineMarkdown(paragraph, `membership-${index}`)}</p>);
+    });
+
+    return (
+      <div className="article-layout article-layout-full shell">
+        <article className="prose prose-justified prose-membership-benefits">
+          {rendered}
+          <a className="source-link source-link-inline" href={resolvedSource}>
+            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
+          </a>
+        </article>
+      </div>
+    );
+  }
+
+  if (slug === "dezinformacja-zywnosciowa") {
+    const featureHeadings = visibleParagraphs.slice(7, 15).filter((paragraph) => /^\d+\.\s+/.test(paragraph.trim()));
+    const featureSet = new Set(featureHeadings);
+    const consequenceItems = visibleParagraphs.slice(18).map((paragraph) => paragraph.replace(/^&#x1f538;\s*/, "").trim());
+    const featureDescriptions = new Map(
+      featureHeadings.map((heading) => {
+        const index = visibleParagraphs.indexOf(heading);
+        return [heading, visibleParagraphs[index + 1]];
+      }),
+    );
+
+    return (
+      <div className="article-layout article-layout-full shell">
+        <article className="prose prose-justified prose-disinformation">
+          <div className="disinformation-statement">
+            <p className="disinformation-label">Dezinformacja</p>
+            <p><strong>TO NIE OPINIA.</strong></p>
+            <p>To fałsz i celowa manipulacja mająca realne konsekwencje.</p>
+          </div>
+          <p>
+            W przestrzeni publicznej coraz częściej pojawiają się nieprawdziwe lub zmanipulowane informacje dotyczące
+            żywności, w tym również mięsa drobiowego. Wzbudzają niepokój, podważają zaufanie do krajowych produktów
+            i mogą prowadzić do realnych strat w całym sektorze rolno-spożywczym. W dobie mediów społecznościowych
+            dezinformacja rozprzestrzenia się błyskawicznie, często bez możliwości szybkiego i skutecznego sprostowania.
+          </p>
+          <h2>Czym jest dezinformacja żywnościowa?</h2>
+          <p>{visibleParagraphs[6]}</p>
+          <h2>Cechy dezinformacji żywnościowej</h2>
+          <div className="disinformation-features">
+            {featureHeadings.map((heading) => (
+              <section className="disinformation-feature" key={heading}>
+                <h3><strong>{heading.replace(/^\d+\.\s+/, "")}</strong></h3>
+                <p>{featureDescriptions.get(heading)}</p>
+              </section>
+            ))}
+          </div>
+          <h2>Dlaczego dezinformacja jest niebezpieczna?</h2>
+          <p>{visibleParagraphs[17]}</p>
+          <ul className="disinformation-consequences">
+            {consequenceItems.map((item) => (
+              <li key={item}>{renderInlineMarkdown(item, `disinformation-${item.slice(0, 12)}`)}</li>
+            ))}
+          </ul>
+          <a className="source-link source-link-inline" href={resolvedSource}>
+            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
+          </a>
+        </article>
+      </div>
+    );
+  }
+
   if (slug === "dzial-hodowli-i-oceny-drobiu") {
     const sectionHeadings = new Set([
       "Misja i historia",
