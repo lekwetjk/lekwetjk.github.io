@@ -86,6 +86,8 @@ export default async function ContentDetailPage({
         ? "Źródłami powszechnie obowiązującego prawa Rzeczypospolitej Polskiej są: Konstytucja, ustawy, ratyfikowane umowy międzynarodowe oraz rozporządzenia. Źródłami powszechnie obowiązującego prawa Rzeczypospolitej Polskiej są na obszarze działania organów, które je ustanowiły, akty prawa miejscowego."
       : slug === "dane-kontaktowe"
         ? "KRD-IG wykonuje kluczowe dla branży drobiarskiej zadania z zakresu hodowli i oceny drobiu. Za realizację zadań związanych z kompetencjami Izby w tym zakresie odpowiada Dział Hodowli i Oceny Drobiu z siedzibą w Poznaniu. Poniżej dane kontaktowe do Specjalistów Działu, któego Kierownikiem jest dr. inż Eugeniusz Wencek."
+      : slug === "dzial-hodowli-i-oceny-drobiu"
+        ? "Dział Hodowli i Oceny Drobiu realizuje zadania KRD-IG związane z hodowlą, oceną wartości użytkowej i hodowlanej oraz ochroną zasobów genetycznych drobiu."
       : page?.excerpt;
   const legalEuRegulationText =
     "Stosuje się je wprost, ponieważ z mocy traktatu mają charakter ogólny, wiążą w całości i są bezpośrednio stosowane w każdym państwie członkowskim od dnia ich wejścia w życie.";

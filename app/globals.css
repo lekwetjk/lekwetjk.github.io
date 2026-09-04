@@ -1935,6 +1935,21 @@ blockquote {
   letter-spacing: -0.03em;
 }
 
+.prose-department .department-task-list {
+  margin: 0 0 28px;
+  padding-left: 24px;
+  list-style: disc;
+  color: rgba(25, 25, 24, 0.8);
+}
+
+.prose-department .department-task-list li {
+  margin: 0 0 10px;
+  padding-left: 6px;
+  font: 400 16px/1.74 "Aptos", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  text-align: justify;
+  text-justify: inter-word;
+}
+
 .prose-jakosc-blocks .jakosc-block {
   display: grid;
   grid-template-columns: 44px minmax(0, 1fr);

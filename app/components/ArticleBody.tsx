@@ -4040,6 +4040,77 @@ export function ArticleBody({
     );
   }
 
+  if (slug === "dzial-hodowli-i-oceny-drobiu") {
+    const sectionHeadings = new Set([
+      "Misja i historia",
+      "Główne zadania Działu Hodowli i Oceny Drobiu",
+      "Metodyka",
+      "Aktualności z Działu Hodowli i Oceny Drobiu",
+    ]);
+    const listItems = new Set([
+      "prowadzenie oceny wartości użytkowej i hodowlanej drobiu oraz publikowanie wyników tej oceny,",
+      "prowadzenie systemu informatycznego dla potrzeb oceny wartości użytkowej i hodowlanej drobiu,",
+      "bilansowanie potrzeb i możliwości produkcyjnych w hodowli drobiu,",
+      "prowadzenie specjalistycznych szkoleń zawodowych dla osób prowadzących ocenę wartości użytkowej oraz wydawanie odpowiednich zaświadczeń w tym zakresie,",
+      "ustalanie założeń krajowych programów hodowlanych,",
+      "wydawanie świadectw potwierdzających spełnienie warunków dla drobiu hodowlanego i jaj wylęgowych przywożonych z zagranicy,",
+      "merytoryczne potwierdzanie wniosków o wypłatę dotacji budżetowych dla podmiotów utrzymujących stada zarodowe objęte programem ochrony zasobów genetycznych i stanowiące rezerwę materiału hodowlanego drobiu.",
+      "Prowadzenie oceny wartości użytkowej i hodowlanej drobiu oraz publikowanie wyników tej oceny",
+      "Prowadzenie systemu informatycznego dla potrzeb oceny wartości użytkowej i hodowlanej drobiu",
+      "Bilansowanie potrzeb i możliwości produkcyjnych w hodowli drobiu",
+      "Ustalanie założeń krajowych programów hodowlanych",
+      "Merytoryczne, formalne i rachunkowe potwierdzanie wniosków o wypłatę dotacji budżetowych dla podmiotów utrzymujących stada zarodowe, objęte programem ochrony zasobów genetycznych i stanowiące rezerwę materiału hodowlanego drobiu",
+      "ocena wartości użytkowej drobiu",
+      "ocena wartości hodowlanej drobiu",
+      "znakowanie drobiu",
+      "identyfikacja ptaków",
+      "rozporządzenie z dnia 17 marca 2004 r. zmieniające rozporządzenie w sprawie upoważnienia do prowadzenia oceny wartości użytkowej lub hodowlanej zwierząt oraz do publikowania wyników tej oceny (Dz. U. Nr 49, poz. 474)",
+      "rozporządzenie z dnia 17 marca 2004 r. zmieniające rozporządzenie w sprawie materiału biologicznego wykorzystywanego w rozrodzie zwierząt gospodarskich (Dz. U. Nr 49, poz. 475),",
+      "rozporządzenie z dnia 17 marca 2004 r. zmieniające rozporządzenie w sprawie powierzenia określonym podmiotom prowadzenie niektórych zadań w zakresie oceny wartości użytkowej zwierząt (Dz. U. Nr 50, poz. 488).",
+    ]);
+    const cleanedParagraphs = visibleParagraphs.slice(2);
+    const rendered: ReactNode[] = [];
+    let list: string[] = [];
+
+    const flushList = () => {
+      if (list.length === 0) return;
+      rendered.push(
+        <ul className="department-task-list" key={`department-list-${rendered.length}`}>
+          {list.map((item) => (
+            <li key={item}>{renderInlineMarkdown(item, `department-${item.slice(0, 12)}`)}</li>
+          ))}
+        </ul>,
+      );
+      list = [];
+    };
+
+    cleanedParagraphs.forEach((paragraph, index) => {
+      const trimmed = paragraph.trim();
+      if (listItems.has(trimmed)) {
+        list.push(trimmed);
+        return;
+      }
+      flushList();
+      if (sectionHeadings.has(trimmed)) {
+        rendered.push(<h2 key={`department-heading-${index}`}>{trimmed}</h2>);
+      } else {
+        rendered.push(<p key={`department-paragraph-${index}`}>{renderInlineMarkdown(paragraph, `department-${index}`)}</p>);
+      }
+    });
+    flushList();
+
+    return (
+      <div className="article-layout article-layout-full shell">
+        <article className="prose prose-justified prose-department">
+          {rendered}
+          <a className="source-link source-link-inline" href={resolvedSource}>
+            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
+          </a>
+        </article>
+      </div>
+    );
+  }
+
   return (
     <div
       className={`article-layout${shouldUseFullWidthArticleLayout ? " article-layout-full" : ""} shell`}
