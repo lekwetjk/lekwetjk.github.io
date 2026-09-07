@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { PageShell } from "../../components/SiteChrome";
 import { AUTH_COOKIE_NAME, getMemberLogo, getMemberProfile, verifySessionToken } from "../../lib/auth";
 import MemberProfileSection from "./MemberProfileSection";
+import ExportPermitOptions from "../../admin/uzytkownicy/ExportPermitOptions";
 
 export default async function MemberProfilePage() {
   const cookieStore = await cookies();
@@ -47,6 +48,7 @@ export default async function MemberProfilePage() {
                 {session.role === "admin" && <li><a href="/admin/uzytkownicy">Zarządzanie użytkownikami</a></li>}
               </ul>
             </div>
+            {session.role === "admin" ? <ExportPermitOptions /> : null}
           </div>
         </div>
       </section>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { MemberProfileData } from "../lib/member-profile";
 
 type MembershipSignupFormProps = {
@@ -60,9 +60,19 @@ export function MembershipSignupForm({
   const [selectedAssortments, setSelectedAssortments] = useState<string[]>(initialData?.selectedAssortments ?? []);
   const [selectedCertifications, setSelectedCertifications] = useState<string[]>(initialData?.selectedCertifications ?? []);
   const [selectedExportPermits, setSelectedExportPermits] = useState<string[]>(initialData?.selectedExportPermits ?? []);
+  const [availableExportPermits, setAvailableExportPermits] = useState(exportPermits);
   const [errors, setErrors] = useState<string[]>([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const submissionEmail = "krd-ig@krd-ig.com.pl";
+
+  useEffect(() => {
+    void fetch("/api/member-profile/options")
+      .then((response) => response.ok ? response.json() : null)
+      .then((data: { exportPermits?: string[] } | null) => {
+        if (data?.exportPermits?.length) setAvailableExportPermits(data.exportPermits);
+      })
+      .catch(() => undefined);
+  }, []);
 
   const toggleValue = (
     value: string,
@@ -343,21 +353,19 @@ export function MembershipSignupForm({
         </div>
       </fieldset>
 
-      <fieldset>
-        <legend>Uprawnienia eksportowe</legend>
+      <details className="membership-export-picker">
+        <summary style={{ display: "inline-flex", alignItems: "center", gap: 8, padding: "10px 14px", border: "1px solid #1f3a5f", borderRadius: 6, background: "#1f3a5f", color: "#fff", cursor: "pointer", fontWeight: 700 }}>
+          Zaznacz uprawnienia eksportowe {selectedExportPermits.length ? `(${selectedExportPermits.length} wybr.)` : ""}
+        </summary>
         <div className="membership-chip-grid">
-          {exportPermits.map((item) => (
+          {availableExportPermits.map((item) => (
             <label key={item} className="membership-chip-checkbox">
-              <input
-                type="checkbox"
-                checked={selectedExportPermits.includes(item)}
-                onChange={() => toggleValue(item, selectedExportPermits, setSelectedExportPermits)}
-              />
+              <input type="checkbox" checked={selectedExportPermits.includes(item)} onChange={() => toggleValue(item, selectedExportPermits, setSelectedExportPermits)} />
               <span>{item}</span>
             </label>
           ))}
         </div>
-      </fieldset>
+      </details>
 
       <label className="membership-textarea-label">
         Dodatkowe informacje

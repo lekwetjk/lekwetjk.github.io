@@ -14,21 +14,31 @@ export async function GET() {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
+  const users = await getMemberUsers();
+  const profiles = await Promise.all(users.map(async (user) => ({ user, profile: await getMemberProfile(user.id) })));
+  const maxItems = (key: "selectedScopes" | "selectedSpecies" | "selectedExportPermits") =>
+    Math.max(1, ...profiles.map(({ profile }) => profile?.[key]?.length ?? 0));
+  const scopeColumns = maxItems("selectedScopes");
+  const speciesColumns = maxItems("selectedSpecies");
+  const exportColumns = maxItems("selectedExportPermits");
   const headers = [
     "login", "rola", "osoba do kontaktu", "e-mail", "telefon", "nazwa firmy", "adres firmy",
-    "kod pocztowy", "miasto", "NIP", "strona internetowa", "województwo", "zakres działalności",
-    "gatunek drobiu", "asortyment", "certyfikaty", "uprawnienia eksportowe", "dodatkowe informacje",
+    "kod pocztowy", "miasto", "NIP", "strona internetowa", "województwo",
+    ...Array.from({ length: scopeColumns }, (_, index) => `zakres działalności ${index + 1}`),
+    ...Array.from({ length: speciesColumns }, (_, index) => `gatunek drobiu ${index + 1}`),
+    "asortyment", "certyfikaty",
+    ...Array.from({ length: exportColumns }, (_, index) => `uprawnienie eksportowe ${index + 1}`),
+    "dodatkowe informacje",
   ];
-  const users = await getMemberUsers();
-  const rows = await Promise.all(users.map(async (user) => {
-    const profile = await getMemberProfile(user.id);
+  const rows = profiles.map(({ user, profile }) => {
+    const values = (items: string[] | undefined, count: number) => Array.from({ length: count }, (_, index) => items?.[index] ?? "");
     return [
       user.username, user.role, profile?.contactPerson, profile?.email, profile?.phone, profile?.companyName,
       profile?.streetAddress, profile?.postalCode, profile?.city, profile?.nip, profile?.website,
-      profile?.voivodeship, profile?.selectedScopes, profile?.selectedSpecies, profile?.selectedAssortments,
-      profile?.selectedCertifications, profile?.selectedExportPermits, profile?.notes,
+      profile?.voivodeship, ...values(profile?.selectedScopes, scopeColumns), ...values(profile?.selectedSpecies, speciesColumns),
+      profile?.selectedAssortments, profile?.selectedCertifications, ...values(profile?.selectedExportPermits, exportColumns), profile?.notes,
     ].map(csvCell).join(";");
-  }));
+  });
 
   const csv = `\uFEFF${headers.map(csvCell).join(";")}\r\n${rows.join("\r\n")}\r\n`;
   return new NextResponse(csv, {

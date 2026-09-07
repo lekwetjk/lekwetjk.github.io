@@ -24,6 +24,11 @@ export const memberProfiles = sqliteTable("member_profiles", {
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
+export const memberExportPermitOptions = sqliteTable("member_export_permit_options", {
+  name: text("name").primaryKey(),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
 export const memberDocuments = sqliteTable("member_documents", {
   fileName: text("file_name").primaryKey(),
   title: text("title").notNull(),

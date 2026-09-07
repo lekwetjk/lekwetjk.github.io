@@ -5,6 +5,7 @@ import { PageShell } from "../../components/SiteChrome";
 import { AUTH_COOKIE_NAME, getMemberLogo, getMemberUsers, verifySessionToken } from "../../lib/auth";
 import CreateUserForm from "./CreateUserForm";
 import AdminUsersList from "./AdminUsersList";
+import MemberReport from "./MemberReport";
 
 export default async function AdminUsersPage() {
   const cookieStore = await cookies();
@@ -30,13 +31,15 @@ export default async function AdminUsersPage() {
           <p className="article-kicker">Administracja</p>
           <h1>Zarządzanie użytkownikami</h1>
           <p>Lista użytkowników strefy członków.</p>
-          <a
-            href="/api/admin/users/export"
-            style={{ display: "inline-flex", width: "fit-content", marginTop: 18, padding: "12px 18px", background: "#1f3a5f", color: "white", borderRadius: 8, textDecoration: "none", fontWeight: 700 }}
-          >
-            Pobierz dane członków w formacie .csv
-          </a>
-
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginTop: 18 }}>
+            <a href="/api/admin/users/export" style={{ display: "inline-flex", width: "fit-content", padding: "12px 18px", background: "#1f3a5f", color: "white", borderRadius: 8, textDecoration: "none", fontWeight: 700 }}>
+              Pobierz dane członków w formacie .csv
+            </a>
+            <a href="#raport-czlonkow" style={{ display: "inline-flex", width: "fit-content", padding: "12px 18px", background: "#0f766e", color: "white", borderRadius: 8, textDecoration: "none", fontWeight: 700 }}>
+              Generuj raport
+            </a>
+          </div>
+          <div id="raport-czlonkow"><MemberReport /></div>
           <div style={{ marginTop: 28, marginBottom: 28 }}>
             <CreateUserForm />
           </div>

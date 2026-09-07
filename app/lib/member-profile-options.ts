@@ -6,3 +6,5 @@ export const memberProfileOptions = {
   certifications: ["BRC", "Halal", "IFS", "Kosher", "QAFP", "Red Tractor", "Inne"],
   exportPermits: ["Arabia Saudyjska", "Białoruś", "Chiny", "Egipt", "Japonia", "Kanada", "Korea Pd.", "Kuba", "RPA", "Singapur", "Tajwan", "Ukraina", "USA", "Wietnam", "Inne"],
 };
+
+export const defaultExportPermits = memberProfileOptions.exportPermits;
