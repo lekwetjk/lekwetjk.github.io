@@ -8,7 +8,7 @@ import { ChatWidget } from "./ChatWidget";
 type SiteLanguage = "pl" | "en";
 
 const memberAccountLinks = [
-  { href: "/login/czlonkowie", label: "ZALOGUJ" },
+  { href: "https://krd-ig-website-concept.krd-ig2020.workers.dev/login/czlonkowie", label: "ZALOGUJ" },
 ];
 
 const englishPrimaryNavigation = [
