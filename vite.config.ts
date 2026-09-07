@@ -7,7 +7,6 @@ const SITE_CREATOR_PLACEHOLDER_DATABASE_ID =
   "00000000-0000-4000-8000-000000000000";
 
 const { d1, r2 } = hostingConfig as { d1?: string; r2?: string };
-const isDevelopment = process.env.NODE_ENV !== "production";
 
 // macOS Seatbelt blocks FSEvents, so Codex previews need polling for HMR.
 const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
@@ -43,30 +42,34 @@ process.env.MINIFLARE_REGISTRY_PATH ??= ".wrangler/registry";
 // Wrangler snapshots its log path while the Cloudflare plugin is imported.
 const { cloudflare } = await import("@cloudflare/vite-plugin");
 
-export default defineConfig({
-  server: isCodexSeatbeltSandbox
-    ? { watch: { useFsEvents: false, usePolling: true } }
-    : undefined,
-  build: {
-    rollupOptions: {
-      onwarn(warning: any, defaultHandler: (warning: any) => void) {
-        if (warning?.code === "INEFFECTIVE_DYNAMIC_IMPORT") {
-          return;
-        }
-        defaultHandler(warning);
+export default defineConfig(({ command }) => {
+  const isDevelopment = command === "serve";
+
+  return {
+    server: isCodexSeatbeltSandbox
+      ? { watch: { useFsEvents: false, usePolling: true } }
+      : undefined,
+    build: {
+      rollupOptions: {
+        onwarn(warning: any, defaultHandler: (warning: any) => void) {
+          if (warning?.code === "INEFFECTIVE_DYNAMIC_IMPORT") {
+            return;
+          }
+          defaultHandler(warning);
+        },
       },
     },
-  },
-  plugins: [
-    vinext(),
-    sites(),
-    ...(isDevelopment
-      ? []
-      : [
-          cloudflare({
-            viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
-            config: localBindingConfig,
-          }),
-        ]),
-  ],
+    plugins: [
+      vinext(),
+      sites(),
+      ...(isDevelopment
+        ? []
+        : [
+            cloudflare({
+              viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },
+              config: localBindingConfig,
+            }),
+          ]),
+    ],
+  };
 });
