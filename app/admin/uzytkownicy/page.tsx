@@ -6,6 +6,7 @@ import { AUTH_COOKIE_NAME, getMemberLogo, getMemberUsers, verifySessionToken } f
 import CreateUserForm from "./CreateUserForm";
 import AdminUsersList from "./AdminUsersList";
 import MemberReport from "./MemberReport";
+import ImportUsersForm from "./ImportUsersForm";
 
 export default async function AdminUsersPage() {
   const cookieStore = await cookies();
@@ -42,6 +43,7 @@ export default async function AdminUsersPage() {
           <div id="raport-czlonkow"><MemberReport /></div>
           <div style={{ marginTop: 28, marginBottom: 28 }}>
             <CreateUserForm />
+            <ImportUsersForm />
           </div>
 
           <AdminUsersList users={usersWithLogos} />
