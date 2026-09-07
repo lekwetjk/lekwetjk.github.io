@@ -2,6 +2,8 @@ import { isTenderPost, knowledgePages, newsPosts } from "./lib/content";
 import { withBasePath } from "./lib/basePath";
 import { Arrow, PageShell } from "./components/SiteChrome";
 
+export const dynamic = "force-static";
+
 const latestNews = newsPosts.filter((post) => !isTenderPost(post)).slice(0, 4);
 
 const romanPillarNumbers = ["I", "II", "III", "IV"];
