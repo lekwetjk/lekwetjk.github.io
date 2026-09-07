@@ -5,7 +5,7 @@ declare global {
 }
 
 import { drizzle } from "drizzle-orm/d1";
-import * as schema from "./schema";
+import * as schema from "./schema.ts";
 
 export function getDb() {
   if (!env.DB) {

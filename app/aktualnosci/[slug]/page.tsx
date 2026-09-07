@@ -123,10 +123,12 @@ export default async function NewsDetailPage({
               post.excerpt && <p>{post.excerpt}</p>
             )}
           </div>
-          {(shouldUseSeptemberTurkeyImage || post.image) && (
+          {(shouldUseSeptemberTurkeyImage || Boolean(post.image)) && (
             <img
               src={withBasePath(
-                shouldUseSeptemberTurkeyImage ? "/media/poultry-promotion.jpg" : post.image,
+                shouldUseSeptemberTurkeyImage
+                  ? "/media/poultry-promotion.jpg"
+                  : post.image ?? "/media/poultry-promotion.jpg",
               )}
               alt={shouldUseSeptemberTurkeyImage ? "Poultry promotion campaign" : ""}
               className={

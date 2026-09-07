@@ -1,6 +1,10 @@
+import { cookies } from "next/headers";
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
+
 import { ArticleBody } from "../../components/ArticleBody";
 import { PageShell } from "../../components/SiteChrome";
+import { AUTH_COOKIE_NAME, verifySessionToken } from "../../lib/auth";
 import { withBasePath } from "../../lib/basePath";
 import { knowledgePages, pageBySlug } from "../../lib/content";
 
@@ -74,6 +78,16 @@ export default async function ContentDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+
+  if (slug === "dla-czlonkow") {
+    const cookieStore = await cookies();
+    const session = verifySessionToken(cookieStore.get(AUTH_COOKIE_NAME)?.value);
+
+    if (!session) {
+      redirect(`/login/czlonkowie?redirect=${encodeURIComponent(`/tresc/${slug}`)}`);
+    }
+  }
+
   const page = pageBySlug(slug);
   const leadText =
     slug === "o-nas"
@@ -155,6 +169,22 @@ export default async function ContentDetailPage({
       <section className="article-hero">
         <div className="shell article-hero-grid">
           <div>
+            {slug === "dla-czlonkow" && (
+              <a
+                href="/member/profil"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  marginBottom: 24,
+                  color: "#1f3a5f",
+                  fontWeight: 700,
+                  textDecoration: "none",
+                }}
+              >
+                <span aria-hidden="true">←</span> Powrót
+              </a>
+            )}
             <p className="article-kicker">{page.section}</p>
             <h1 className={slug === "wazne-linki" ? "article-title-wazne-linki" : undefined}>
               {slug === "wazne-linki" ? (

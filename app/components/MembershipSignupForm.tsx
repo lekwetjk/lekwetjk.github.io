@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import type { MemberProfileData } from "../lib/member-profile";
 
 type MembershipSignupFormProps = {
   voivodeships: string[];
@@ -26,6 +27,8 @@ type FormState = {
   consent: boolean;
 };
 
+type MembershipFormInitialData = Partial<MemberProfileData>;
+
 const INITIAL_FORM: FormState = {
   contactPerson: "",
   email: "",
@@ -48,13 +51,15 @@ export function MembershipSignupForm({
   assortments,
   certifications,
   exportPermits,
-}: MembershipSignupFormProps) {
-  const [form, setForm] = useState<FormState>(INITIAL_FORM);
-  const [selectedScopes, setSelectedScopes] = useState<string[]>([]);
-  const [selectedSpecies, setSelectedSpecies] = useState<string[]>([]);
-  const [selectedAssortments, setSelectedAssortments] = useState<string[]>([]);
-  const [selectedCertifications, setSelectedCertifications] = useState<string[]>([]);
-  const [selectedExportPermits, setSelectedExportPermits] = useState<string[]>([]);
+  initialData,
+  saveEndpoint,
+}: MembershipSignupFormProps & { initialData?: MembershipFormInitialData; saveEndpoint?: string }) {
+  const [form, setForm] = useState<FormState>({ ...INITIAL_FORM, ...initialData });
+  const [selectedScopes, setSelectedScopes] = useState<string[]>(initialData?.selectedScopes ?? []);
+  const [selectedSpecies, setSelectedSpecies] = useState<string[]>(initialData?.selectedSpecies ?? []);
+  const [selectedAssortments, setSelectedAssortments] = useState<string[]>(initialData?.selectedAssortments ?? []);
+  const [selectedCertifications, setSelectedCertifications] = useState<string[]>(initialData?.selectedCertifications ?? []);
+  const [selectedExportPermits, setSelectedExportPermits] = useState<string[]>(initialData?.selectedExportPermits ?? []);
   const [errors, setErrors] = useState<string[]>([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const submissionEmail = "krd-ig@krd-ig.com.pl";
@@ -112,7 +117,7 @@ export function MembershipSignupForm({
     if (selectedScopes.length === 0) {
       currentErrors.push("Wybierz minimum jeden zakres działalności.");
     }
-    if (!form.consent) {
+    if (!saveEndpoint && !form.consent) {
       currentErrors.push("Zaznacz zgodę na kontakt w sprawie zgłoszenia.");
     }
 
@@ -157,8 +162,21 @@ export function MembershipSignupForm({
           setIsSubmitted(false);
           return;
         }
-        window.location.href = buildMailtoHref();
-        setIsSubmitted(true);
+        if (saveEndpoint) {
+          void fetch(saveEndpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(summary),
+          })
+            .then(async (response) => {
+              if (!response.ok) throw new Error("Nie udało się zapisać profilu.");
+              setIsSubmitted(true);
+            })
+            .catch((error: unknown) => setErrors([error instanceof Error ? error.message : "Nie udało się zapisać profilu."]));
+        } else {
+          window.location.href = buildMailtoHref();
+          setIsSubmitted(true);
+        }
       }}
       noValidate
     >
@@ -351,15 +369,17 @@ export function MembershipSignupForm({
         />
       </label>
 
-      <label className="membership-consent">
-        <input
-          type="checkbox"
-          checked={form.consent}
-          onChange={(event) => updateField("consent", event.target.checked)}
-          required
-        />
-        <span>Wyrażam zgodę na kontakt w sprawie zgłoszenia członkowskiego. *</span>
-      </label>
+      {!saveEndpoint ? (
+        <label className="membership-consent">
+          <input
+            type="checkbox"
+            checked={form.consent}
+            onChange={(event) => updateField("consent", event.target.checked)}
+            required
+          />
+          <span>Wyrażam zgodę na kontakt w sprawie zgłoszenia członkowskiego. *</span>
+        </label>
+      ) : null}
 
       {errors.length > 0 && (
         <div className="membership-errors" role="alert" aria-live="polite">
@@ -372,15 +392,13 @@ export function MembershipSignupForm({
         </div>
       )}
 
-      <h2 className="membership-submit-title">WYŚLIJ ZGŁOSZENIE</h2>
-      <p className="membership-mail-hint">
-        Po wysłaniu formularza otworzy się nowa wiadomość e-mail na adres {submissionEmail}.
-      </p>
+      <h2 className="membership-submit-title">{saveEndpoint ? "ZAPISZ PROFIL" : "WYŚLIJ ZGŁOSZENIE"}</h2>
+      {!saveEndpoint ? <p className="membership-mail-hint">Po wysłaniu formularza otworzy się nowa wiadomość e-mail na adres {submissionEmail}.</p> : null}
       <button type="submit" className="button button-primary membership-submit-button">
-        Wyślij zgłoszenie
+        {saveEndpoint ? "Zapisz profil" : "Wyślij zgłoszenie"}
       </button>
 
-      {isSubmitted && (
+      {isSubmitted && !saveEndpoint && (
         <div className="membership-success" aria-live="polite">
           <h3>Dziękujemy. Formularz został przekazany do KRD-IG</h3>
           <p>

@@ -1,8 +1,15 @@
+import { cookies } from "next/headers";
+
+import { AUTH_COOKIE_NAME, verifySessionToken } from "../lib/auth";
 import { primaryNavigation } from "../lib/content";
 import { withBasePath } from "../lib/basePath";
 import { ChatWidget } from "./ChatWidget";
 
 type SiteLanguage = "pl" | "en";
+
+const memberAccountLinks = [
+  { href: "/login/czlonkowie", label: "ZALOGUJ" },
+];
 
 const englishPrimaryNavigation = [
   { href: "/en/about", label: "ABOUT" },
@@ -47,7 +54,7 @@ export function Brand({
   language?: SiteLanguage;
 }) {
   const isEnglish = language === "en";
-  const logoSrc = "/media/logo-krd-ig.svg";
+  const logoSrc = isEnglish ? "/media/logo-krd-ig-en.svg" : "/media/logo-krd-ig.svg";
 
   if (isEnglish) {
     return (
@@ -81,7 +88,9 @@ export function Brand({
   );
 }
 
-export function SiteHeader({ language = "pl" as SiteLanguage }) {
+export async function SiteHeader({ language = "pl" as SiteLanguage }) {
+  const cookieStore = await cookies();
+  const session = verifySessionToken(cookieStore.get(AUTH_COOKIE_NAME)?.value);
   const isEnglish = language === "en";
   const navItems = isEnglish ? englishPrimaryNavigation : primaryNavigation;
   const altLinkHref = isEnglish ? withBasePath("/") : withBasePath("/en");
@@ -150,9 +159,47 @@ export function SiteHeader({ language = "pl" as SiteLanguage }) {
               </a>
             ))}
           </nav>
-          <a className="button button-primary header-cta" href={withBasePath(isEnglish ? "/en/membership" : "/czlonkostwo")}>
-            {isEnglish ? "Membership" : "Członkostwo"} <Arrow />
-          </a>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <nav aria-label="Konto członka" style={{ display: "flex", gap: 10, alignItems: "center", fontSize: 13 }}>
+              {session ? (
+                <>
+                  <a href={withBasePath("/member/profil")} style={{ color: "#0f172a", textDecoration: "none", fontWeight: 700 }}>
+                    {session.name || session.username}
+                  </a>
+                  {session.role === "admin" && (
+                    <a href={withBasePath("/admin/uzytkownicy")} style={{ color: "#0f172a", textDecoration: "none" }}>
+                      Admin
+                    </a>
+                  )}
+                  <form action="/member/logout" method="post" style={{ display: "inline-block", margin: 0 }}>
+                    <button
+                      type="submit"
+                      style={{
+                        background: "transparent",
+                        border: "1px solid #cbd5e1",
+                        borderRadius: 999,
+                        padding: "6px 12px",
+                        color: "#0f172a",
+                        cursor: "pointer",
+                        fontWeight: 600,
+                      }}
+                    >
+                      Wyloguj
+                    </button>
+                  </form>
+                </>
+              ) : (
+                memberAccountLinks.map((item) => (
+                  <a key={item.href} href={withBasePath(item.href)} style={{ color: "#0f172a", textDecoration: "none" }}>
+                    {item.label}
+                  </a>
+                ))
+              )}
+            </nav>
+            <a className="button button-primary header-cta" href={withBasePath(isEnglish ? "/en/membership" : "/czlonkostwo")}>
+              {isEnglish ? "Membership" : "Członkostwo"} <Arrow />
+            </a>
+          </div>
           <details className="mobile-menu">
             <summary aria-label={isEnglish ? "Open menu" : "Otwórz menu"}>
               <span />
