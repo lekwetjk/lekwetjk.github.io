@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
 
+export const dynamic = process.env.GITHUB_PAGES_BUILD === "true" ? "force-static" : "auto";
+
 const defaultSiteUrl = "https://lekwetjk.github.io";
 const envSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
 
