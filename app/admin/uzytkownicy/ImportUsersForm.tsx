@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 export default function ImportUsersForm() {
   const [file, setFile] = useState<File | null>(null);
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState<string[]>([]);
   const [isImporting, setIsImporting] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -36,10 +37,10 @@ export default function ImportUsersForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ marginTop: 18, padding: 18, border: "1px solid #d5d9df", borderRadius: 8, display: "grid", gap: 10 }}>
+    <form ref={formRef} onSubmit={handleSubmit} style={{ marginTop: 18, padding: 18, border: "1px solid #d5d9df", borderRadius: 8, display: "grid", gap: 10 }}>
       <h2 style={{ margin: 0 }}>Import członków z CSV</h2>
       <p style={{ margin: 0, color: "#475569", lineHeight: 1.5 }}>Kolumny wymagane: login, nazwa, haslo. Opcjonalnie: rola. Obsługiwane kodowanie: UTF-8, Windows-1250 i UTF-16.</p>
-      <input id="member-users-csv-input" type="file" accept=".csv,text/csv" onChange={(event) => { setFile(event.target.files?.[0] ?? null); setMessage(""); }} style={{ display: "none" }} />
+      <input id="member-users-csv-input" type="file" accept=".csv,text/csv" onChange={(event) => { const selectedFile = event.target.files?.[0] ?? null; setFile(selectedFile); setMessage(""); if (selectedFile) window.setTimeout(() => formRef.current?.requestSubmit(), 0); }} style={{ display: "none" }} />
       <button type="submit" disabled={isImporting} style={{ width: "fit-content", maxWidth: "100%", padding: "10px 14px", background: isImporting ? "#94a3b8" : "#0f766e", color: "#fff", border: 0, borderRadius: 6, fontWeight: 700, cursor: isImporting ? "wait" : "pointer" }}>
         {isImporting ? "Trwa import danych…" : file ? `Importuj: ${file.name}` : "Importuj konta"}
       </button>
