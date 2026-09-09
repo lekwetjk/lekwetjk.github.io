@@ -24,6 +24,7 @@ export type MemberUser = {
   name: string;
   role: MemberRole;
   passwordHash: string;
+  isActive: boolean;
 };
 
 const DEFAULT_MEMBER_USERS: MemberUser[] = [
@@ -34,6 +35,7 @@ const DEFAULT_MEMBER_USERS: MemberUser[] = [
     role: "member",
     passwordHash:
       "fd1a5d2ecc9e98159009f5da7c147abb1571d75f2486c5d576cc379ee47427a927a37d93cebc63dd25d57777dc6cf974b49900be047f09818806de273c53b3e9",
+    isActive: true,
   },
   {
     id: "member-admin",
@@ -42,6 +44,7 @@ const DEFAULT_MEMBER_USERS: MemberUser[] = [
     role: "admin",
     passwordHash:
       "fd1a5d2ecc9e98159009f5da7c147abb1571d75f2486c5d576cc379ee47427a927a37d93cebc63dd25d57777dc6cf974b49900be047f09818806de273c53b3e9",
+    isActive: true,
   },
 ];
 
@@ -105,6 +108,7 @@ export async function getMemberUsers(): Promise<MemberUser[]> {
         name: row.name,
         role: row.role as MemberRole,
         passwordHash: row.passwordHash,
+        isActive: row.isActive !== "false",
       }));
     }
 
@@ -139,7 +143,7 @@ export async function verifyCredentials(username: string, password: string): Pro
     (candidate) => candidate.username.toLowerCase() === cleanedUsername,
   );
 
-  if (!user) {
+  if (!user || !user.isActive) {
     return false;
   }
 
@@ -251,6 +255,7 @@ export async function createMemberAccount(input: {
     name,
     role: input.role,
     passwordHash: hashPassword(input.password),
+    isActive: true,
   };
 
   try {
@@ -261,6 +266,7 @@ export async function createMemberAccount(input: {
       name: user.name,
       role: user.role,
       passwordHash: user.passwordHash,
+      isActive: user.isActive ? "true" : "false",
     });
     return user;
   } catch {
@@ -296,6 +302,26 @@ export async function updateMemberAccount(userId: string, input: { username: str
   }
 
   return (await getMemberUsers()).find((user) => user.id === userId) ?? null;
+}
+
+export async function setMemberAccountActive(userId: string, isActive: boolean) {
+  if (userId === "member-admin") {
+    throw new Error("Primary admin account cannot be blocked.");
+  }
+
+  try {
+    const db = getDb();
+    await db.update(memberUsers).set({ isActive: isActive ? "true" : "false", updatedAt: new Date().toISOString() }).where(eq(memberUsers.id, userId));
+    return isActive;
+  } catch {
+    const users = await getMemberUsers();
+    const index = users.findIndex((user) => user.id === userId);
+    if (index < 0) throw new Error("User not found.");
+    const localUsers = await readLocalMemberUsers();
+    const updatedUser = { ...users[index], isActive };
+    await writeLocalMemberUsers([...localUsers.filter((user) => user.id !== userId), updatedUser]);
+    return isActive;
+  }
 }
 
 export async function deleteMemberAccount(userId: string) {

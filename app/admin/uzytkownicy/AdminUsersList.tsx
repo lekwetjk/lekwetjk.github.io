@@ -51,6 +51,18 @@ export default function AdminUsersList({ users }: { users: UserWithLogo[] }) {
 function UserRow({ user, logo }: UserWithLogo) {
   const detailsRef = useRef<HTMLDetailsElement>(null);
 
+  async function toggleAccountState(nextStatus: boolean) {
+    const response = await fetch(`/api/admin/users/${user.id}/status`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isActive: nextStatus }),
+    });
+
+    if (response.ok) {
+      window.location.reload();
+    }
+  }
+
   return (
     <details ref={detailsRef} style={{ borderTop: "1px solid #e2e8f0" }}>
       <summary style={{ listStyle: "none", display: "grid", gridTemplateColumns: "minmax(0, 1fr) 180px 120px", gap: 16, alignItems: "center", padding: "14px 16px", cursor: "pointer" }}>
@@ -67,17 +79,24 @@ function UserRow({ user, logo }: UserWithLogo) {
       <div style={{ padding: "0 16px 18px", display: "grid", gap: 16 }}>
         <EditUserForm user={{ id: user.id, username: user.username, name: user.name, role: user.role, hasLogo: Boolean(logo) }} onSaved={() => { if (detailsRef.current) detailsRef.current.open = false; }} />
         {user.id !== "member-admin" ? (
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+            <button type="button" onClick={() => void toggleAccountState(!user.isActive)} style={{ padding: "8px 12px", border: "1px solid #d1d5db", borderRadius: 6, background: user.isActive ? "#fef3c7" : "#dcfce7", color: user.isActive ? "#92400e" : "#166534", fontWeight: 700 }}>
+              {user.isActive ? "Zablokuj konto" : "Odblokuj konto"}
+            </button>
+            <form action="/api/admin/users/delete" method="post" style={{ margin: 0 }}>
+              <input type="hidden" name="userId" value={user.id} />
+              <button type="submit" disabled={user.id === "member-admin"} style={{ padding: "8px 12px", border: "1px solid #fecaca", borderRadius: 6, background: "#fff1f2", color: "#b91c1c", fontWeight: 700, opacity: user.id === "member-admin" ? 0.5 : 1 }}>
+                Usuń użytkownika
+              </button>
+            </form>
+          </div>
+        ) : null}
+        {user.id !== "member-admin" ? (
           <details>
             <summary style={{ cursor: "pointer", fontWeight: 700 }}>Profil członkowski</summary>
             <AdminMemberProfileForm userId={user.id} />
           </details>
         ) : null}
-        <form action="/api/admin/users/delete" method="post">
-          <input type="hidden" name="userId" value={user.id} />
-          <button type="submit" disabled={user.id === "member-admin"} style={{ padding: "8px 12px", border: "1px solid #cbd5e1", borderRadius: 6, background: "#fff", opacity: user.id === "member-admin" ? 0.5 : 1 }}>
-            Usuń użytkownika
-          </button>
-        </form>
       </div>
     </details>
   );

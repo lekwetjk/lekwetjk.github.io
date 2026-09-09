@@ -3,6 +3,21 @@ import { NextResponse } from "next/server";
 
 import { AUTH_COOKIE_NAME, createMemberAccount, verifySessionToken } from "../../../../lib/auth";
 
+export function normalizeCsvHeader(value: string) {
+  return value
+    .toLocaleLowerCase("pl")
+    .replace(/[ą]/g, "a")
+    .replace(/[ć]/g, "c")
+    .replace(/[ę]/g, "e")
+    .replace(/[ł]/g, "l")
+    .replace(/[ń]/g, "n")
+    .replace(/[ó]/g, "o")
+    .replace(/[ś]/g, "s")
+    .replace(/[żź]/g, "z")
+    .replace(/[^a-z0-9]+/g, "")
+    .trim();
+}
+
 function parseCsvLine(line: string, separator: string) {
   const values: string[] = [];
   let value = "";
@@ -64,8 +79,8 @@ export async function POST(request: Request) {
   if (lines.length < 2) return NextResponse.json({ error: "CSV musi zawierać nagłówek i co najmniej jeden wiersz." }, { status: 400 });
 
   const separator = lines[0].includes(";") ? ";" : ",";
-  const headers = parseCsvLine(lines[0].toLowerCase(), separator).map((header) => header.replace(/\s+/g, ""));
-  const loginIndex = headers.findIndex((header) => ["login", "username", "nazwa_uzytkownika"].includes(header));
+  const headers = parseCsvLine(lines[0], separator).map((header) => normalizeCsvHeader(header));
+  const loginIndex = headers.findIndex((header) => ["login", "username", "nazwauzytkownika"].includes(header));
   const nameIndex = headers.findIndex((header) => ["nazwa", "name", "imieinazwisko"].includes(header));
   const passwordIndex = headers.findIndex((header) => ["haslo", "password"].includes(header));
   const roleIndex = headers.findIndex((header) => ["rola", "role"].includes(header));

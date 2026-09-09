@@ -3,7 +3,18 @@ import { NextResponse } from "next/server";
 import { AUTH_COOKIE_NAME, createSessionToken, getMemberUsers, verifyCredentials } from "../../../lib/auth";
 
 export async function POST(request: Request) {
-  const body = (await request.json()) as { username?: string; password?: string };
+  let body: { username?: string; password?: string };
+
+  try {
+    const rawBody = await request.text();
+    body = rawBody ? (JSON.parse(rawBody) as { username?: string; password?: string }) : {};
+  } catch {
+    return NextResponse.json(
+      { error: "Nieprawidłowy format danych logowania." },
+      { status: 400 },
+    );
+  }
+
   const username = body.username?.trim() ?? "";
   const password = body.password ?? "";
 

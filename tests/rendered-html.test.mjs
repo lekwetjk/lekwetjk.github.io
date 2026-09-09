@@ -108,3 +108,15 @@ test("about page renders partner organisations without the resource box", async 
   assert.match(source, /ELPHA-LOGO-2025\.jpg/);
   assert.doesNotMatch(source, /UECBV/);
 });
+
+test("CSV import accepts Polish header names with diacritics", async () => {
+  const source = await readProjectFile("app/api/admin/users/import/route.ts");
+
+  assert.match(source, /export function normalizeCsvHeader/);
+  assert.match(source, /\[ą\]/g);
+  assert.match(source, /\[ć\]/g);
+  assert.match(source, /\[ł\]/g);
+  assert.match(source, /\[ó\]/g);
+  assert.match(source, /\[żź\]/g);
+  assert.match(source, /\["haslo", "password"\]/);
+});
