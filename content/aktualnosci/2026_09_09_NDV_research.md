@@ -3,7 +3,7 @@ title: Mniej wirusa w środowisku – nowy kierunek w walce z chorobą Mareka
 date: 2026-09-09
 excerpt: Nowy kierunek, który może pomóc ograniczyć rozprzestrzenianie się choroby Mareka w stadach drobiu, to nie tylko szczepienia, ale też selekcja hodowlana w oparciu o badania poziomu wirusa w piórach
 categories: Aktualności
-image: /media/news/ECC.jpg
+image: /media/news/MD.jpg
 source: https://krd-ig.com.pl/
 links:
   - label: Nazwa dokumentu – pobierz.pdf
