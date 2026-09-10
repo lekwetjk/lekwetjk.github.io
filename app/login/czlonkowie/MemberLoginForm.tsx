@@ -23,10 +23,6 @@ export default function MemberLoginForm() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isResetOpen, setIsResetOpen] = useState(false);
-  const [resetUsername, setResetUsername] = useState("");
-  const [resetMessage, setResetMessage] = useState("");
-  const [resetMessageType, setResetMessageType] = useState<"error" | "success">("success");
-  const [isResetSubmitting, setIsResetSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -88,44 +84,6 @@ export default function MemberLoginForm() {
       setError("Wystąpił błąd podczas logowania. Spróbuj ponownie.");
     } finally {
       setIsSubmitting(false);
-    }
-  }
-
-  async function handlePasswordReset(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    const login = resetUsername.trim() || username.trim();
-    if (!login) {
-      setResetMessageType("error");
-      setResetMessage("Podaj login konta.");
-      return;
-    }
-
-    setResetMessageType("success");
-    setResetMessage("");
-    setIsResetSubmitting(true);
-
-    try {
-      const response = await fetch("/api/member/password-reset", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: login }),
-      });
-      const data = (await response.json().catch(() => ({}))) as { error?: string; message?: string };
-
-      if (!response.ok) {
-        setResetMessageType("error");
-        setResetMessage(data.error ?? "Nie udało się zresetować hasła.");
-        return;
-      }
-
-      setResetMessageType("success");
-      setResetMessage(data.message ?? "Jeżeli konto istnieje i ma przypisany e-mail, wyślemy nowe hasło.");
-    } catch {
-      setResetMessageType("error");
-      setResetMessage("Nie udało się połączyć z usługą resetu hasła.");
-    } finally {
-      setIsResetSubmitting(false);
     }
   }
 
@@ -204,7 +162,6 @@ export default function MemberLoginForm() {
       <button
         type="button"
         onClick={() => {
-          setResetUsername(username);
           setIsResetOpen((current) => !current);
         }}
         style={{ border: "none", background: "transparent", color: "#1f3a5f", cursor: "pointer", fontWeight: 700, padding: 0, textAlign: "left" }}
@@ -213,22 +170,9 @@ export default function MemberLoginForm() {
       </button>
 
       {isResetOpen ? (
-        <form onSubmit={handlePasswordReset} style={{ display: "grid", gap: 10, borderTop: "1px solid #e2e8f0", paddingTop: 12 }}>
-          <label>
-            <div style={{ marginBottom: 6, fontWeight: 600 }}>Login do resetu hasła</div>
-            <input
-              type="text"
-              value={resetUsername}
-              onChange={(event) => setResetUsername(event.target.value)}
-              autoComplete="username"
-              style={{ width: "100%", padding: 12, borderRadius: 8, border: "1px solid #d1d5db" }}
-            />
-          </label>
-          <button type="submit" disabled={isResetSubmitting} style={{ padding: "10px 14px", border: "1px solid #1f3a5f", borderRadius: 8, background: "#fff", color: "#1f3a5f", fontWeight: 700 }}>
-            {isResetSubmitting ? "Wysyłanie..." : "Wyślij nowe hasło"}
-          </button>
-          {resetMessage ? <p style={{ color: resetMessageType === "error" ? "#b91c1c" : "#166534", margin: 0, fontWeight: 600 }}>{resetMessage}</p> : null}
-        </form>
+        <p style={{ color: "#475569", margin: 0, borderTop: "1px solid #e2e8f0", paddingTop: 12, fontWeight: 600 }}>
+          Skontaktuj się z administratorem KRD-IG. Administrator wygeneruje hasło tymczasowe i po zalogowaniu ustawisz własne nowe hasło.
+        </p>
       ) : null}
     </div>
   );
