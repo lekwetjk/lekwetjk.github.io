@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-const DEFAULT_MEMBER_APP_BASE = "https://krd-ig-website-concept.krd-ig2020.workers.dev";
+const DEFAULT_MEMBER_APP_BASE = "https://krd-ig-website-concept.lek-wet-jk.workers.dev";
 
 function resolveMemberAppBase() {
   const configuredBase = process.env.NEXT_PUBLIC_MEMBER_APP_URL?.trim();
@@ -20,8 +20,8 @@ export default function MemberLoginForm() {
   const searchParams = useSearchParams();
   const memberAppBase = useMemo(resolveMemberAppBase, []);
   const [redirectUrl, setRedirectUrl] = useState("");
-  const [username, setUsername] = useState("czlonek");
-  const [password, setPassword] = useState("Test123!");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
