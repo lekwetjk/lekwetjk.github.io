@@ -22,7 +22,6 @@ export default function MemberLoginForm() {
   const [redirectUrl, setRedirectUrl] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [isResetOpen, setIsResetOpen] = useState(false);
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -159,21 +158,9 @@ export default function MemberLoginForm() {
         </div>
       </form>
 
-      <button
-        type="button"
-        onClick={() => {
-          setIsResetOpen((current) => !current);
-        }}
-        style={{ border: "none", background: "transparent", color: "#1f3a5f", cursor: "pointer", fontWeight: 700, padding: 0, textAlign: "left" }}
-      >
-        Nie pamiętam hasła
-      </button>
-
-      {isResetOpen ? (
-        <p style={{ color: "#475569", margin: 0, borderTop: "1px solid #e2e8f0", paddingTop: 12, fontWeight: 600 }}>
-          Skontaktuj się z administratorem KRD-IG. Administrator wygeneruje hasło tymczasowe i po zalogowaniu ustawisz własne nowe hasło.
-        </p>
-      ) : null}
+      <p style={{ color: "#475569", margin: 0, borderTop: "1px solid #e2e8f0", paddingTop: 12, fontWeight: 600 }}>
+        Nie pamiętasz hasła? Skontaktuj się z administratorem KRD-IG. Administrator wygeneruje hasło tymczasowe i po zalogowaniu ustawisz własne nowe hasło.
+      </p>
     </div>
   );
 }
