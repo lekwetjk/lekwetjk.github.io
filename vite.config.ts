@@ -3,28 +3,37 @@ import { defineConfig } from "vite";
 import hostingConfig from "./.openai/hosting.json" with { type: "json" };
 import { sites } from "./build/sites-vite-plugin.ts";
 
-const SITE_CREATOR_DATABASE_ID =
-  process.env.CLOUDFLARE_D1_DATABASE_ID ?? "18db881f-ee60-458d-89cd-ff4043884971";
 const SITE_CREATOR_DATABASE_NAME =
-  process.env.CLOUDFLARE_D1_DATABASE ?? "site-creator-d1";
+  process.env.CLOUDFLARE_D1_DATABASE?.trim() || "site-creator-d1";
 
 const { d1 = "DB", r2 } = hostingConfig as { d1?: string; r2?: string };
 
 // macOS Seatbelt blocks FSEvents, so Codex previews need polling for HMR.
 const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
 
+export function getD1DatabaseConfig(
+  databaseId = process.env.CLOUDFLARE_D1_DATABASE_ID,
+  binding = d1,
+) {
+  const normalizedDatabaseId = databaseId?.trim();
+
+  if (!binding || !normalizedDatabaseId) {
+    return [];
+  }
+
+  return [
+    {
+      binding,
+      database_name: SITE_CREATOR_DATABASE_NAME,
+      database_id: normalizedDatabaseId,
+    },
+  ];
+}
+
 const localBindingConfig = {
   main: "./worker/index.ts",
   compatibility_flags: ["nodejs_compat"],
-  d1_databases: d1
-    ? [
-        {
-          binding: d1,
-          database_name: SITE_CREATOR_DATABASE_NAME,
-          database_id: SITE_CREATOR_DATABASE_ID,
-        },
-      ]
-    : [],
+  d1_databases: getD1DatabaseConfig(),
   r2_buckets: r2
     ? [
         {
