@@ -6,8 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 const DEFAULT_MEMBER_APP_BASE = "https://krd-ig-website-concept.krd-ig2020.workers.dev";
 
 function resolveMemberAppBase() {
-  const configuredBase = process.env.NEXT_PUBLIC_MEMBER_APP_URL?.trim()
-    || process.env.NEXT_PUBLIC_CHAT_API_URL?.trim();
+  const configuredBase = process.env.NEXT_PUBLIC_MEMBER_APP_URL?.trim();
 
   if (configuredBase && /^https?:\/\//i.test(configuredBase)) {
     return configuredBase.replace(/\/+$/, "");
