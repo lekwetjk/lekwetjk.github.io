@@ -27,6 +27,20 @@ export type MemberUser = {
   isActive: boolean;
 };
 
+export function normalizeImportedText(value: string) {
+  return value
+    .replace(/\u00A0/g, " ")
+    .replace(/\u200B/g, "")
+    .replace(/\u200C/g, "")
+    .replace(/\u200D/g, "")
+    .replace(/\uFEFF/g, "")
+    .replace(/[\u2011\u2012\u2013\u2014\u2015]/g, "-")
+    .replace(/[\u2018\u2019]/g, "'")
+    .replace(/[\u201C\u201D]/g, '"')
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 const DEFAULT_MEMBER_USERS: MemberUser[] = [
   {
     id: "member-czlonek",
@@ -236,8 +250,8 @@ export async function createMemberAccount(input: {
   role: MemberRole;
   password: string;
 }) {
-  const username = input.username.trim();
-  const name = input.name.trim();
+  const username = normalizeImportedText(input.username).trim();
+  const name = normalizeImportedText(input.name).trim();
 
   if (!username || !name || !input.password) {
     throw new Error("Username, name and password are required.");
@@ -277,8 +291,8 @@ export async function createMemberAccount(input: {
 }
 
 export async function updateMemberAccount(userId: string, input: { username: string; name: string; role: MemberRole; password?: string }) {
-  const username = input.username.trim();
-  const name = input.name.trim();
+  const username = normalizeImportedText(input.username).trim();
+  const name = normalizeImportedText(input.name).trim();
   if (!username || !name) throw new Error("Login and name are required.");
   const existingUser = (await getMemberUsers()).find((user) => user.username.toLowerCase() === username.toLowerCase() && user.id !== userId);
   if (existingUser) throw new Error("User with this login already exists.");

@@ -9,6 +9,7 @@ type ChatMessage = {
 };
 
 const MAX_INPUT_CHARS = 800;
+const CHAT_FEATURE_DISABLED = false;
 
 function resolveChatEndpoint() {
   const externalApiBase = process.env.NEXT_PUBLIC_CHAT_API_URL?.trim();

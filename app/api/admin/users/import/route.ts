@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-import { AUTH_COOKIE_NAME, createMemberAccount, verifySessionToken } from "../../../../lib/auth";
+import { AUTH_COOKIE_NAME, createMemberAccount, normalizeImportedText, verifySessionToken } from "../../../../lib/auth";
 
 export function normalizeCsvHeader(value: string) {
   return value
@@ -78,6 +78,10 @@ export async function POST(request: Request) {
   const lines = (await decodeCsvFile(file)).replace(/^\uFEFF/, "").split(/\r?\n/).filter((line) => line.trim());
   if (lines.length < 2) return NextResponse.json({ error: "CSV musi zawierać nagłówek i co najmniej jeden wiersz." }, { status: 400 });
 
+  const applyNormalization = (value: string) => normalizeImportedText(value
+    .replace(/\u00A0/g, " ")
+    .replace(/\uFEFF/g, ""));
+
   const separator = lines[0].includes(";") ? ";" : ",";
   const headers = parseCsvLine(lines[0], separator).map((header) => normalizeCsvHeader(header));
   const loginIndex = headers.findIndex((header) => ["login", "username", "nazwauzytkownika"].includes(header));
@@ -92,7 +96,7 @@ export async function POST(request: Request) {
   let created = 0;
   const errors: string[] = [];
   for (let rowIndex = 1; rowIndex < lines.length; rowIndex += 1) {
-    const values = parseCsvLine(lines[rowIndex], separator);
+    const values = parseCsvLine(lines[rowIndex], separator).map((value) => applyNormalization(value));
     try {
       await createMemberAccount({
         username: values[loginIndex] ?? "",

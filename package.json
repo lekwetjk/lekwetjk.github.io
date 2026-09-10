@@ -13,6 +13,7 @@
     "build": "vinext build",
     "build:static": "next build",
     "build:commission-banner": "powershell -ExecutionPolicy Bypass -File ./build_commission_banner.ps1",
+    "members:import:cloudflare": "node scripts/import_member_csv.mjs --remote",
     "start": "vinext start",
     "test": "npm run build && node --test tests/rendered-html.test.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",

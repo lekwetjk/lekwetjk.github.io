@@ -20,6 +20,7 @@ interface Env {
   OPENAI_API_KEY?: string;
   OPENAI_MODEL?: string;
   CHAT_ALLOWED_ORIGIN?: string;
+  CHAT_DEBUG?: string;
   IMAGES: {
     input(stream: ReadableStream): {
       transform(options: Record<string, unknown>): {
@@ -41,6 +42,9 @@ type RateState = {
 
 const CHAT_PATH = "/api/chat";
 const CHAT_HEALTH_PATH = "/api/chat/health";
+const CHAT_FEATURE_DISABLED = false;
+const CHAT_MAX_RETRIES = 2;
+const CHAT_RETRY_BACKOFF_MS = 400;
 const DEFAULT_CHAT_MODEL = "gpt-4.1-mini";
 const MAX_MESSAGE_LENGTH = 800;
 const MAX_BODY_BYTES = 10_000;
@@ -51,6 +55,19 @@ const SOURCE_SITE_BASE_URL = "https://lekwetjk.github.io";
 const SOURCE_FETCH_TIMEOUT_MS = 8_000;
 const SOURCE_CONTEXT_MAX_CHARS = 12_000;
 const rateLimiter = new Map<string, RateState>();
+
+function logChat(env: Env, message: string, details?: Record<string, unknown>) {
+  if (env.CHAT_DEBUG !== "true") {
+    return;
+  }
+
+  if (details && Object.keys(details).length > 0) {
+    console.log(`[chat] ${message}`, details);
+    return;
+  }
+
+  console.log(`[chat] ${message}`);
+}
 
 function createJsonResponse(body: unknown, status = 200, extraHeaders?: Record<string, string>) {
   return new Response(JSON.stringify(body), {
@@ -272,21 +289,76 @@ async function fetchSourceContext(question: string) {
   return merged.slice(0, SOURCE_CONTEXT_MAX_CHARS);
 }
 
+async function fetchOpenAIWithRetry(requestBody: string, apiKey: string, model: string, env: Env) {
+  let lastResponse: Response | null = null;
+
+  for (let attempt = 1; attempt <= CHAT_MAX_RETRIES + 1; attempt += 1) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort("upstream timeout"), OPENAI_TIMEOUT_MS);
+
+    try {
+      logChat(env, "openai request start", { attempt, model });
+      const response = await fetch("https://api.openai.com/v1/responses", {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          authorization: `Bearer ${apiKey}`,
+        },
+        body: requestBody,
+        signal: controller.signal,
+      });
+
+      lastResponse = response;
+
+      if (response.ok || (response.status !== 429 && response.status < 500)) {
+        return response;
+      }
+
+      const excerpt = await readUpstreamErrorExcerpt(response.clone());
+      logChat(env, "openai request retryable failure", {
+        attempt,
+        status: response.status,
+        statusText: response.statusText,
+        excerpt,
+      });
+
+      if (attempt <= CHAT_MAX_RETRIES) {
+        await new Promise((resolve) => setTimeout(resolve, attempt * CHAT_RETRY_BACKOFF_MS));
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      logChat(env, "openai request error", { attempt, message });
+      lastResponse = null;
+
+      if (attempt <= CHAT_MAX_RETRIES) {
+        await new Promise((resolve) => setTimeout(resolve, attempt * CHAT_RETRY_BACKOFF_MS));
+      }
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  return lastResponse ?? new Response(JSON.stringify({ error: "Chat service is temporarily unavailable." }), { status: 502 });
+}
+
 async function handleChatRequest(request: Request, env: Env): Promise<Response> {
   const corsHeaders = applyCorsHeaders(request, env);
 
   if (!validateOrigin(request, env)) {
+    logChat(env, "origin rejected", { origin: getRequestOrigin(request) });
     return createJsonResponse({ error: "Origin not allowed" }, 403, corsHeaders);
   }
 
   const parsed = await parseChatRequest(request);
   if ("error" in parsed) {
+    logChat(env, "invalid chat payload", { error: parsed.error });
     const status = parsed.error === "Payload too large" ? 413 : 400;
     return createJsonResponse({ error: parsed.error }, status, corsHeaders);
   }
 
   const clientIp = getClientIp(request);
   if (isRateLimited(clientIp)) {
+    logChat(env, "rate limit hit", { clientIp });
     return createJsonResponse(
       { error: "Too many requests. Try again in a few minutes." },
       429,
@@ -299,6 +371,7 @@ async function handleChatRequest(request: Request, env: Env): Promise<Response> 
 
   const apiKey = env.OPENAI_API_KEY?.trim();
   if (!apiKey) {
+    logChat(env, "missing api key");
     return createJsonResponse(
       { error: "Chat is not configured. Missing OPENAI_API_KEY." },
       503,
@@ -307,7 +380,10 @@ async function handleChatRequest(request: Request, env: Env): Promise<Response> 
   }
 
   const sourceContext = await fetchSourceContext(parsed.message);
+  logChat(env, "source context ready", { length: sourceContext.length, questionLength: parsed.message.length });
+
   if (!sourceContext) {
+    logChat(env, "source context empty");
     return createJsonResponse(
       {
         reply:
@@ -319,60 +395,44 @@ async function handleChatRequest(request: Request, env: Env): Promise<Response> 
   }
 
   const model = env.OPENAI_MODEL?.trim() || DEFAULT_CHAT_MODEL;
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort("upstream timeout"), OPENAI_TIMEOUT_MS);
-
-  let upstreamResponse: Response;
-  try {
-    upstreamResponse = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
-        authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model,
-        max_output_tokens: 300,
-        input: [
+  const requestBody = JSON.stringify({
+    model,
+    max_output_tokens: 300,
+    input: [
+      {
+        role: "system",
+        content: [
           {
-            role: "system",
-            content: [
-              {
-                type: "input_text",
-                text: "Jestes asystentem KRD-IG. Odpowiadaj wylacznie na podstawie tresci przekazanej w bloku KONTEKST_ZE_STRONY i traktuj go jako jedyne zrodlo prawdy. Nie uzywaj wiedzy ogolnej ani domyslow. Jesli odpowiedz nie wynika wprost z kontekstu, napisz: 'Nie znalazlem potwierdzenia tej informacji na lekwetjk.github.io.' i dodaj, jaka podstrone warto sprawdzic. Odpowiadaj zwiezle po polsku.",
-              },
-            ],
-          },
-          {
-            role: "system",
-            content: [
-              {
-                type: "input_text",
-                text: `KONTEKST_ZE_STRONY:\n${sourceContext}`,
-              },
-            ],
-          },
-          {
-            role: "user",
-            content: [{ type: "input_text", text: parsed.message }],
+            type: "input_text",
+            text: "Jestes asystentem KRD-IG. Odpowiadaj wylacznie na podstawie tresci przekazanej w bloku KONTEKST_ZE_STRONY i traktuj go jako jedyne zrodlo prawdy. Nie uzywaj wiedzy ogolnej ani domyslow. Jesli odpowiedz nie wynika wprost z kontekstu, napisz: 'Nie znalazlem potwierdzenia tej informacji na lekwetjk.github.io.' i dodaj, jaka podstrone warto sprawdzic. Odpowiadaj zwiezle po polsku.",
           },
         ],
-      }),
-      signal: controller.signal,
-    });
-  } catch {
-    clearTimeout(timeoutId);
-    return createJsonResponse(
-      { error: "Chat service is temporarily unavailable." },
-      502,
-      corsHeaders,
-    );
-  }
+      },
+      {
+        role: "system",
+        content: [
+          {
+            type: "input_text",
+            text: `KONTEKST_ZE_STRONY:\n${sourceContext}`,
+          },
+        ],
+      },
+      {
+        role: "user",
+        content: [{ type: "input_text", text: parsed.message }],
+      },
+    ],
+  });
 
-  clearTimeout(timeoutId);
+  const upstreamResponse = await fetchOpenAIWithRetry(requestBody, apiKey, model, env);
 
   if (!upstreamResponse.ok) {
     const upstreamErrorExcerpt = await readUpstreamErrorExcerpt(upstreamResponse.clone());
+    logChat(env, "openai final failure", {
+      status: upstreamResponse.status,
+      statusText: upstreamResponse.statusText,
+      excerpt: upstreamErrorExcerpt,
+    });
     return createJsonResponse(
       {
         error: "Model request failed. Try again shortly.",
@@ -388,15 +448,18 @@ async function handleChatRequest(request: Request, env: Env): Promise<Response> 
   let responseBody: unknown;
   try {
     responseBody = await upstreamResponse.json();
-  } catch {
+  } catch (error) {
+    logChat(env, "openai invalid json", { message: error instanceof Error ? error.message : String(error) });
     return createJsonResponse({ error: "Unexpected model response." }, 502, corsHeaders);
   }
 
   const reply = extractResponseText(responseBody);
   if (!reply) {
+    logChat(env, "openai empty reply");
     return createJsonResponse({ error: "Model returned an empty answer." }, 502, corsHeaders);
   }
 
+  logChat(env, "openai success", { model, replyLength: reply.length });
   return createJsonResponse({ reply, model }, 200, corsHeaders);
 }
 
@@ -413,9 +476,12 @@ const worker = {
     if (url.pathname === CHAT_HEALTH_PATH && request.method === "GET") {
       return createJsonResponse(
         {
-          ok: true,
+          ok: !CHAT_FEATURE_DISABLED,
+          disabled: CHAT_FEATURE_DISABLED,
           configured: Boolean(env.OPENAI_API_KEY?.trim()),
           model: env.OPENAI_MODEL?.trim() || DEFAULT_CHAT_MODEL,
+          retries: CHAT_MAX_RETRIES,
+          message: CHAT_FEATURE_DISABLED ? "Chat is temporarily disabled." : "Chat is enabled.",
         },
         200,
         applyCorsHeaders(request, env),
@@ -430,6 +496,15 @@ const worker = {
     }
 
     if (url.pathname === CHAT_PATH && request.method === "POST") {
+      if (CHAT_FEATURE_DISABLED) {
+        logChat(env, "chat disabled by feature flag");
+        return createJsonResponse(
+          { error: "Chat is temporarily disabled.", disabled: true },
+          503,
+          applyCorsHeaders(request, env),
+        );
+      }
+
       return handleChatRequest(request, env);
     }
 
