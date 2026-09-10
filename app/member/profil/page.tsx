@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { PageShell } from "../../components/SiteChrome";
-import { AUTH_COOKIE_NAME, getMemberLogo, getMemberProfile, verifySessionToken } from "../../lib/auth";
+import { AUTH_COOKIE_NAME, getMemberLogo, getMemberProfile, isMemberPasswordResetRequired, verifySessionToken } from "../../lib/auth";
 import MemberProfileSection from "./MemberProfileSection";
 import ExportPermitOptions from "../../admin/uzytkownicy/ExportPermitOptions";
 
@@ -12,6 +12,10 @@ export default async function MemberProfilePage() {
 
   if (!session) {
     redirect("/login/czlonkowie?redirect=/member/profil");
+  }
+
+  if (await isMemberPasswordResetRequired(session.sub)) {
+    redirect("/member/zmien-haslo?reset=1");
   }
 
   const logo = await getMemberLogo(session.sub);

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { AUTH_COOKIE_NAME, createSessionToken, getMemberUsers, verifyCredentials } from "../../../lib/auth";
+import { AUTH_COOKIE_NAME, createSessionToken, getMemberUsers, isMemberPasswordResetRequired, verifyCredentials } from "../../../lib/auth";
 
 export async function POST(request: Request) {
   let body: { username?: string; password?: string };
@@ -35,7 +35,8 @@ export async function POST(request: Request) {
   }
 
   const sessionToken = createSessionToken(user);
-  const response = NextResponse.json({ ok: true, user: { username: user.username, name: user.name, role: user.role } });
+  const mustChangePassword = await isMemberPasswordResetRequired(user.id);
+  const response = NextResponse.json({ ok: true, mustChangePassword, user: { username: user.username, name: user.name, role: user.role } });
 
   response.cookies.set(AUTH_COOKIE_NAME, sessionToken, {
     httpOnly: true,

@@ -27,6 +27,17 @@ export type MemberUser = {
   isActive: boolean;
 };
 
+async function ensurePasswordResetColumn() {
+  const db = getDb();
+  try {
+    await db.run(sql`ALTER TABLE member_users ADD COLUMN password_reset_required TEXT NOT NULL DEFAULT 'false'`);
+  } catch {
+    // The column already exists, or this database has not been initialized yet.
+  }
+
+  return db;
+}
+
 export function normalizeImportedText(value: string) {
   return value
     .replace(/\u00A0/g, " ")
@@ -85,6 +96,10 @@ async function readLocalMemberLogos(): Promise<Record<string, { content: string;
 
 export function hashPassword(password: string): string {
   return crypto.scryptSync(password, MEMBER_PASSWORD_SALT, 64).toString("hex");
+}
+
+export function generateTemporaryPassword() {
+  return crypto.randomBytes(9).toString("base64url");
 }
 
 export async function ensureMemberUsersSeeded() {
@@ -316,6 +331,41 @@ export async function updateMemberAccount(userId: string, input: { username: str
   }
 
   return (await getMemberUsers()).find((user) => user.id === userId) ?? null;
+}
+
+export async function setMemberPassword(userId: string, password: string, passwordResetRequired = false) {
+  if (password.length < 8) {
+    throw new Error("Hasło musi mieć co najmniej 8 znaków.");
+  }
+
+  try {
+    const db = await ensurePasswordResetColumn();
+    await db.run(sql`UPDATE member_users SET password_hash = ${hashPassword(password)}, password_reset_required = ${passwordResetRequired ? "true" : "false"}, updated_at = CURRENT_TIMESTAMP WHERE id = ${userId}`);
+  } catch {
+    const users = await getMemberUsers();
+    const user = users.find((candidate) => candidate.id === userId);
+    if (!user) throw new Error("User not found.");
+    const localUsers = await readLocalMemberUsers();
+    await writeLocalMemberUsers([
+      ...localUsers.filter((candidate) => candidate.id !== userId),
+      { ...user, passwordHash: hashPassword(password) },
+    ]);
+  }
+}
+
+export async function isMemberPasswordResetRequired(userId: string) {
+  try {
+    const db = await ensurePasswordResetColumn();
+    const row = await db.get<{ passwordResetRequired?: string }>(sql`SELECT password_reset_required AS passwordResetRequired FROM member_users WHERE id = ${userId} LIMIT 1`);
+    return row?.passwordResetRequired === "true";
+  } catch {
+    return false;
+  }
+}
+
+export async function findMemberUserByUsername(username: string) {
+  const normalizedUsername = normalizeImportedText(username).trim().toLowerCase();
+  return (await getMemberUsers()).find((user) => user.username.toLowerCase() === normalizedUsername) ?? null;
 }
 
 export async function setMemberAccountActive(userId: string, isActive: boolean) {
