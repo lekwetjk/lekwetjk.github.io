@@ -471,6 +471,8 @@ async function handleChatRequest(request: Request, env: Env): Promise<Response> 
 
 const worker = {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+    (globalThis as typeof globalThis & { env: Env }).env = env;
+
     const url = new URL(request.url);
 
     if (url.pathname === CHAT_HEALTH_PATH && request.method === "GET") {
