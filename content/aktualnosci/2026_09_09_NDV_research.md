@@ -5,9 +5,6 @@ excerpt: Nowy kierunek, który może pomóc ograniczyć rozprzestrzenianie się 
 categories: Aktualności
 image: /media/news/MD.jpg
 source: https://krd-ig.com.pl/
-links:
-  - label: Nazwa dokumentu – pobierz.pdf
-    href: /media/reports/nazwa-dokumentu.pdf
 ---
 
 **Mniej wirusa w środowisku – nowy kierunek w walce z chorobą Mareka **
