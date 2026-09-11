@@ -267,6 +267,8 @@ export function ArticleBody({
   const sourceLinkLabel =
     language === "en"
       ? "View the source material on the KRD-IG website"
+      : slug === "polska-zglosila-sprzeciw-wobec-niemieckich-przepisow-dotyczacych-oznakowania-zywnosci"
+      ? "Zobacz materiały techniczne Komisji Europejskiej"
       : slug === "nowy-link-zsrir-w-zakladce-dokumenty"
       ? "PRZEJDŹ DO STRONY ZSRIR"
       : "Zobacz materiał na obecnej stronie KRD-IG";
