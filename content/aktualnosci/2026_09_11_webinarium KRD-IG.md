@@ -4,7 +4,6 @@ date: 2026-09-11
 excerpt: „Szczepienia przeciwko chorobie Newcastle – doświadczenia po ponad półtora roku obowiązywania nowych przepisów”
 categories: Aktualności
 image: /media/white-hen.jpg
-source: 
 ---
 
 **Ogromne zainteresowanie towarzyszyło webinarowi poświęconemu szczepieniom przeciwko chorobie Newcastle (ND). Limit miejsc został szybko wyczerpany, co potwierdziło, jak ważny jest to temat dla hodowców drobiu, lekarzy weterynarii, pracowników Inspekcji Weterynaryjnej oraz przedstawicieli branży farmaceutycznej.**
@@ -22,6 +21,6 @@ Perspektywę weterynaryjnego przemysłu farmaceutycznego przedstawił Radosław 
 
 Najważniejszym wnioskiem ze spotkania jest konieczność współpracy całego sektora. Ochrona pojedynczej fermy wpływa również na bezpieczeństwo sąsiednich gospodarstw i całej produkcji drobiarskiej. Wymiana doświadczeń między praktykami, hodowcami, administracją i przemysłem może nie tylko poprawić skuteczność profilaktyki, lecz także pomóc w tworzeniu lepszego, opartego na praktyce prawa.
 
-Webinar został bardzo wysoko oceniony przez uczestników – 96 proc. ankietowanych uznało jego poziom merytoryczny za dobry lub bardzo dobry, a wszyscy respondenci wskazali potrzebę organizowania kolejnych, cyklicznych spotkań poświęconych weterynarii i sektorowi drobiarskiemu. 
+Webinar został bardzo wysoko oceniony przez uczestników – 96 proc. ankietowanych uznało jego poziom merytoryczny za dobry lub bardzo dobry, a wszyscy respondenci wskazali potrzebę organizowania kolejnych, cyklicznych spotkań poświęconych weterynarii i sektorowi drobiarskiemu.
 
 Serdecznie dziękujemy naszym Prelegentom i uczestnikom webinaru za poświęcony czas!!!
