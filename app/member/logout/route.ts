@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 
 import { AUTH_COOKIE_NAME } from "../../lib/auth";
 
-export async function POST(request: Request) {
+function logout(request: Request) {
   const response = NextResponse.redirect(new URL("/login/czlonkowie", request.url), 303);
 
   response.cookies.set(AUTH_COOKIE_NAME, "", {
@@ -15,4 +15,12 @@ export async function POST(request: Request) {
   });
 
   return response;
+}
+
+export async function GET(request: Request) {
+  return logout(request);
+}
+
+export async function POST(request: Request) {
+  return logout(request);
 }
