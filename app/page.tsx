@@ -250,7 +250,8 @@ export default function Home() {
                     alt=""
                     loading="lazy"
                     className={
-                      post.slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026"
+                      post.slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026" ||
+                      post.slug === "polska-zglosila-sprzeciw-wobec-niemieckich-przepisow-dotyczacych-oznakowania-zywnosci"
                         ? "latest-card-image-contain"
                         : undefined
                     }

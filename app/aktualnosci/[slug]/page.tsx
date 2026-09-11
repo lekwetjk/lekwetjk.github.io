@@ -136,11 +136,13 @@ export default async function NewsDetailPage({
                   ? "article-hero-image-contain"
                   : shouldContainZsrirLogoImage
                     ? "article-hero-image-zsrir"
-                    : shouldUseWebinarHeroImage
-                      ? "article-hero-image-webinar"
-                      : isTenderLikeSlug
+                    : post.slug === "polska-zglosila-sprzeciw-wobec-niemieckich-przepisow-dotyczacych-oznakowania-zywnosci"
                         ? "article-hero-image-contain"
-                        : undefined
+                        : shouldUseWebinarHeroImage
+                          ? "article-hero-image-webinar"
+                          : isTenderLikeSlug
+                            ? "article-hero-image-contain"
+                            : undefined
               }
             />
           )}
