@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { AUTH_COOKIE_NAME, verifySessionToken } from "../../../../lib/auth";
 import { saveMemberDocument } from "../../../../lib/member-documents";
 
+const MAX_MEMBER_DOCUMENT_BYTES = 700 * 1024;
 
 export async function POST(request: Request) {
   const cookieStore = await cookies();
@@ -20,13 +21,27 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, error: "Brak pliku." }, { status: 400 });
   }
 
+  if (file.size > MAX_MEMBER_DOCUMENT_BYTES) {
+    return NextResponse.json(
+      { ok: false, error: "Plik jest za duży dla aktualnego magazynu dokumentów. Maksymalny rozmiar to 700 KB." },
+      { status: 413 },
+    );
+  }
+
   const fileName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
-  const buffer = Buffer.from(await file.arrayBuffer());
-  await saveMemberDocument({
-    fileName,
-    content: buffer,
-    contentType: file.type || "application/octet-stream",
-  });
+  try {
+    const buffer = Buffer.from(await file.arrayBuffer());
+    await saveMemberDocument({
+      fileName,
+      content: buffer,
+      contentType: file.type || "application/octet-stream",
+    });
+  } catch {
+    return NextResponse.json(
+      { ok: false, error: "Nie udało się zapisać dokumentu. Spróbuj ponownie lub skontaktuj się z administratorem." },
+      { status: 500 },
+    );
+  }
 
   return NextResponse.json({ ok: true, fileName });
 }
