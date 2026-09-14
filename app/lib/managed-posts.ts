@@ -7,6 +7,12 @@ import type { NewsPost } from "./content";
 
 export const TENDER_CATEGORIES = ["Zapytania ofertowe", "Zaproszenie do składania ofert", "Wybór wykonawcy", "Wyniki postępowania", "Informacja o unieważnieniu"];
 
+async function ensureManagedPostsTable() {
+  const db = getDb();
+  await db.run(`CREATE TABLE IF NOT EXISTS managed_posts (id TEXT PRIMARY KEY NOT NULL, kind TEXT NOT NULL, slug TEXT NOT NULL UNIQUE, title TEXT NOT NULL, excerpt TEXT NOT NULL, content TEXT NOT NULL, category TEXT NOT NULL, image_key TEXT, image_content_type TEXT, source TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, created_by TEXT NOT NULL)`);
+  return db;
+}
+
 function slugify(value: string) {
   return value.toLocaleLowerCase("pl").replace(/ą/g, "a").replace(/ć/g, "c").replace(/ę/g, "e").replace(/ł/g, "l").replace(/ń/g, "n").replace(/ó/g, "o").replace(/[ś]/g, "s").replace(/[żź]/g, "z").replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 }
@@ -16,7 +22,7 @@ function toPost(row: typeof managedPosts.$inferSelect): NewsPost {
 }
 
 export async function listManagedPosts(kind?: "news" | "tender") {
-  const db = getDb();
+  const db = await ensureManagedPostsTable();
   const rows = kind ? await db.select().from(managedPosts).where(eq(managedPosts.kind, kind)).orderBy(desc(managedPosts.createdAt)) : await db.select().from(managedPosts).orderBy(desc(managedPosts.createdAt));
   return rows.map(toPost);
 }
@@ -25,7 +31,7 @@ export async function createManagedPost(input: { kind: "news" | "tender"; title:
   const title = input.title.trim();
   if (!title || !input.excerpt.trim() || !input.content.trim()) throw new Error("Tytuł, opis i treść są wymagane.");
   if (input.kind === "tender" && !TENDER_CATEGORIES.includes(input.category)) throw new Error("Wybierz poprawną kategorię zapytania.");
-  const db = getDb();
+  const db = await ensureManagedPostsTable();
   const id = crypto.randomUUID();
   const slug = `${slugify(title)}-${id.slice(0, 8)}`;
   let imageKey: string | null = null;
