@@ -74,3 +74,63 @@ export async function createManagedPost(input: { kind: "news" | "tender"; title:
   await db.insert(managedPosts).values({ id, kind: input.kind, slug, title, excerpt: input.excerpt.trim(), content: input.content.trim(), category: input.kind === "news" ? "Aktualności" : input.category, imageKey, imageContentType, source: input.source.trim(), attachmentsJson: JSON.stringify(attachments), createdBy: input.createdBy });
   return slug;
 }
+
+type ManagedAttachment = { name: string; key: string };
+
+function parseAttachments(value: string) {
+  try { return JSON.parse(value || "[]") as ManagedAttachment[]; } catch { return []; }
+}
+
+export async function listManagedPostsForAdmin() {
+  const db = await ensureManagedPostsTable();
+  const rows = await db.select().from(managedPosts).orderBy(desc(managedPosts.createdAt));
+  return rows.map((row) => ({
+    id: row.id, kind: row.kind as "news" | "tender", slug: row.slug, title: row.title, excerpt: row.excerpt,
+    content: row.content, category: row.category, source: row.source, createdAt: row.createdAt,
+    image: row.imageKey ? `/api/media/${encodeURIComponent(row.imageKey)}` : null,
+    attachments: parseAttachments(row.attachmentsJson),
+  }));
+}
+
+export async function updateManagedPost(id: string, input: { title: string; excerpt: string; content: string; category: string; source: string; image?: File | null; attachments?: File[] }) {
+  const db = await ensureManagedPostsTable();
+  const rows = await db.select().from(managedPosts).where(eq(managedPosts.id, id)).limit(1);
+  const existing = rows[0];
+  if (!existing) throw new Error("Nie znaleziono wpisu.");
+  if (!input.title.trim() || !input.excerpt.trim() || !input.content.trim()) throw new Error("Tytuł, opis i treść są wymagane.");
+  if (existing.kind === "tender" && !TENDER_CATEGORIES.includes(input.category)) throw new Error("Wybierz poprawną kategorię zapytania.");
+
+  const bucket = getMemberDocumentsBucket();
+  let imageKey = existing.imageKey;
+  let imageContentType = existing.imageContentType;
+  if (input.image?.size) {
+    if (!input.image.type.startsWith("image/")) throw new Error("Dodaj plik graficzny.");
+    const nextKey = `managed-posts/${id}/${input.image.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`;
+    await bucket.put(nextKey, await input.image.arrayBuffer(), { httpMetadata: { contentType: input.image.type } });
+    if (existing.imageKey && existing.imageKey !== nextKey) await bucket.delete(existing.imageKey);
+    imageKey = nextKey;
+    imageContentType = input.image.type;
+  }
+
+  const attachments = parseAttachments(existing.attachmentsJson);
+  for (const attachment of input.attachments ?? []) {
+    if (!/\.(pdf|docx|xlsx)$/i.test(attachment.name)) throw new Error("Załączniki mogą być tylko w formacie PDF, DOCX lub XLSX.");
+    const key = `managed-posts/${id}/attachments/${attachment.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`;
+    await bucket.put(key, await attachment.arrayBuffer(), { httpMetadata: { contentType: attachment.type || "application/octet-stream" } });
+    attachments.push({ name: attachment.name, key });
+  }
+
+  await db.update(managedPosts).set({ title: input.title.trim(), excerpt: input.excerpt.trim(), content: input.content.trim(), category: existing.kind === "news" ? "Aktualności" : input.category, source: input.source.trim(), imageKey, imageContentType, attachmentsJson: JSON.stringify(attachments), updatedAt: new Date().toISOString() }).where(eq(managedPosts.id, id));
+}
+
+export async function deleteManagedPost(id: string) {
+  const db = await ensureManagedPostsTable();
+  const rows = await db.select().from(managedPosts).where(eq(managedPosts.id, id)).limit(1);
+  const existing = rows[0];
+  if (!existing) return false;
+  const bucket = getMemberDocumentsBucket();
+  if (existing.imageKey) await bucket.delete(existing.imageKey);
+  for (const attachment of parseAttachments(existing.attachmentsJson)) await bucket.delete(attachment.key);
+  await db.delete(managedPosts).where(eq(managedPosts.id, id));
+  return true;
+}
