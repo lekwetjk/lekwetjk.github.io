@@ -1,14 +1,10 @@
-import { cookies } from "next/headers";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 
 import { ArticleBody } from "../../components/ArticleBody";
 import { PageShell } from "../../components/SiteChrome";
-import { AUTH_COOKIE_NAME, verifySessionToken } from "../../lib/auth";
 import { withBasePath } from "../../lib/basePath";
 import { knowledgePages, pageBySlug } from "../../lib/content";
-
-export const dynamic = "force-dynamic";
 
 export function generateStaticParams() {
   return knowledgePages.map((page) => ({ slug: page.slug }));
@@ -82,12 +78,7 @@ export default async function ContentDetailPage({
   const { slug } = await params;
 
   if (slug === "dla-czlonkow") {
-    const cookieStore = await cookies();
-    const session = verifySessionToken(cookieStore.get(AUTH_COOKIE_NAME)?.value);
-
-    if (!session) {
-      redirect(`/login/czlonkowie?redirect=${encodeURIComponent(`/tresc/${slug}`)}`);
-    }
+    redirect("/member/epi-geo");
   }
 
   const page = pageBySlug(slug);
