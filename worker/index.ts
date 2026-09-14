@@ -56,7 +56,7 @@ type RateState = {
 
 const CHAT_PATH = "/api/chat";
 const CHAT_HEALTH_PATH = "/api/chat/health";
-const CHAT_FEATURE_DISABLED = false;
+const CHAT_FEATURE_DISABLED = true;
 const CHAT_MAX_RETRIES = 2;
 const CHAT_RETRY_BACKOFF_MS = 400;
 const DEFAULT_CHAT_MODEL = "gpt-4.1-mini";
@@ -513,7 +513,10 @@ const worker = {
       if (CHAT_FEATURE_DISABLED) {
         logChat(env, "chat disabled by feature flag");
         return createJsonResponse(
-          { error: "Chat is temporarily disabled.", disabled: true },
+          {
+            error: "Mam teraz przerwę - spróbuj za chwilę",
+            disabled: true,
+          },
           503,
           applyCorsHeaders(request, env),
         );

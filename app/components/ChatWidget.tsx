@@ -9,7 +9,8 @@ type ChatMessage = {
 };
 
 const MAX_INPUT_CHARS = 800;
-const CHAT_FEATURE_DISABLED = false;
+const CHAT_FEATURE_DISABLED = true;
+const TEMPORARY_BREAK_MESSAGE = "Mam teraz przerwę - spróbuj za chwilę";
 
 function resolveChatEndpoint() {
   const externalApiBase = process.env.NEXT_PUBLIC_CHAT_API_URL?.trim();
@@ -28,7 +29,7 @@ export function ChatWidget() {
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
       role: "assistant",
-      content: "Witaj. Jestem asystentem KRD-IG. Zadaj pytanie, a postaram się pomóc.",
+      content: CHAT_FEATURE_DISABLED ? TEMPORARY_BREAK_MESSAGE : "Witaj. Jestem asystentem KRD-IG. Zadaj pytanie, a postaram się pomóc.",
     },
   ]);
   const [error, setError] = useState<string | null>(null);
@@ -46,6 +47,11 @@ export function ChatWidget() {
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
+    if (CHAT_FEATURE_DISABLED) {
+      setError(TEMPORARY_BREAK_MESSAGE);
+      return;
+    }
 
     const question = input.trim();
     if (!question || isLoading) {
@@ -126,16 +132,20 @@ export function ChatWidget() {
               name="chat-question"
               rows={3}
               maxLength={MAX_INPUT_CHARS}
-              placeholder="Np. Jakie dokumenty są potrzebne przy członkostwie?"
+              placeholder={CHAT_FEATURE_DISABLED ? TEMPORARY_BREAK_MESSAGE : "Np. Jakie dokumenty są potrzebne przy członkostwie?"}
               value={input}
               onChange={(event) => setInput(event.target.value)}
               onKeyDown={onQuestionKeyDown}
-              disabled={isLoading}
+              disabled={isLoading || CHAT_FEATURE_DISABLED}
             />
             <div className="chat-widget-row">
               <small>{input.length}/{MAX_INPUT_CHARS}</small>
-              <button type="submit" className="button button-primary" disabled={isLoading || input.trim().length === 0}>
-                {isLoading ? "Wysyłanie..." : "Wyślij"}
+              <button
+                type="submit"
+                className="button button-primary"
+                disabled={isLoading || input.trim().length === 0 || CHAT_FEATURE_DISABLED}
+              >
+                {CHAT_FEATURE_DISABLED ? "Przerwa" : isLoading ? "Wysyłanie..." : "Wyślij"}
               </button>
             </div>
           </form>
