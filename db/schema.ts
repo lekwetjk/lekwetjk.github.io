@@ -49,3 +49,19 @@ export const wstawieniaMetadata = sqliteTable("wstawienia_metadata", {
   key: text("key").primaryKey(),
   value: text("value").notNull(),
 });
+
+export const managedPosts = sqliteTable("managed_posts", {
+  id: text("id").primaryKey(),
+  kind: text("kind", { enum: ["news", "tender"] }).notNull(),
+  slug: text("slug").notNull().unique(),
+  title: text("title").notNull(),
+  excerpt: text("excerpt").notNull(),
+  content: text("content").notNull(),
+  category: text("category").notNull(),
+  imageKey: text("image_key"),
+  imageContentType: text("image_content_type"),
+  source: text("source").notNull().default(""),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  createdBy: text("created_by").notNull(),
+});

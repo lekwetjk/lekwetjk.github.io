@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { NewsArchive } from "../components/NewsArchive";
+import { ManagedPostsFeed } from "../components/ManagedPostsFeed";
 import { PageShell } from "../components/SiteChrome";
 import { isTenderPost, newsPosts } from "../lib/content";
 
@@ -57,6 +58,7 @@ export default function NewsPage() {
       <section className="archive-section">
         <div className="shell">
           <NewsArchive posts={archive} />
+          <ManagedPostsFeed kind="news" />
         </div>
       </section>
     </PageShell>

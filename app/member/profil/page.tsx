@@ -59,6 +59,12 @@ export default async function MemberProfilePage() {
                 <span style={{ display: "block", marginTop: 6, color: "#475569" }}>Edytuj tabelę, importuj dane CSV i eksportuj całą tabelę.</span>
               </a>
             ) : null}
+            {session.role === "admin" ? (
+              <a href="/admin/publikacje" style={{ display: "block", border: "1px solid #d5d9df", borderRadius: 12, padding: 18, color: "#0f172a", textDecoration: "none" }}>
+                <strong>Dodaj post lub zapytanie ofertowe</strong>
+                <span style={{ display: "block", marginTop: 6, color: "#475569" }}>Publikuj treść i grafikę oraz wybieraj kategorię zapytania ofertowego.</span>
+              </a>
+            ) : null}
             {session.role === "admin" ? <ExportPermitOptions /> : null}
           </div>
         </div>
