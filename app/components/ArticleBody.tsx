@@ -8,6 +8,7 @@ import { ExternalFavicon } from "./ExternalFavicon";
 import { CommissionTicker } from "./CommissionTicker";
 import { CampaignWebsiteTicker } from "./CampaignWebsiteTicker";
 import { TerritorialCoverageMap } from "./TerritorialCoverageMap";
+import { WstawieniaTable } from "./WstawieniaTable";
 
 function looksLikeHeading(value: string) {
   return (
@@ -1079,30 +1080,7 @@ export function ArticleBody({
             przyjętych do wychowu w latach 2015-2026 wraz z dynamiką zmian wielkości zaplecza (%).
           </p>
 
-          <div className="wstawienia-table-wrap" aria-label="Tabela wstawień 2015-2026">
-            <table className="wstawienia-table">
-              <thead>
-                <tr>
-                  <th>Rok</th>
-                  {Array.from({ length: maxValueCount }).map((_, index) => (
-                    <th key={`wstawienia-header-${index}`}>
-                      {columnLabels[index] ?? `Kolumna ${index + 1}`}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {tableRowsWithDynamics.map((row) => (
-                  <tr key={row.year}>
-                    <th scope="row">{row.year}</th>
-                    {Array.from({ length: maxValueCount }).map((_, index) => (
-                      <td key={`${row.year}-${index}`}>{row.values[index] ?? ""}</td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <WstawieniaTable columns={columnLabels.slice(0, maxValueCount)} fallbackRows={tableRowsWithDynamics} />
 
           {chartPoints.length > 0 && (
             <section className="wstawienia-chart" aria-label="Wykres rocznych wstawień">

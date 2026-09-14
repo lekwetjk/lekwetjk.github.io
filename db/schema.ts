@@ -37,3 +37,10 @@ export const memberDocuments = sqliteTable("member_documents", {
   contentType: text("content_type").notNull(),
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
+
+export const wstawieniaRows = sqliteTable("wstawienia_rows", {
+  year: text("year").primaryKey(),
+  valuesJson: text("values_json").notNull(),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedBy: text("updated_by").notNull().default(""),
+});

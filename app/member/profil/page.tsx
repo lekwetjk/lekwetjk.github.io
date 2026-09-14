@@ -53,6 +53,12 @@ export default async function MemberProfilePage() {
                 {session.role === "admin" && <li><a href="/admin/uzytkownicy">Zarządzanie użytkownikami</a></li>}
               </ul>
             </div>
+            {session.role === "admin" ? (
+              <a href="/admin/wstawienia" style={{ display: "block", border: "1px solid #d5d9df", borderRadius: 12, padding: 18, color: "#0f172a", textDecoration: "none" }}>
+                <strong>Wstawienia</strong>
+                <span style={{ display: "block", marginTop: 6, color: "#475569" }}>Edytuj tabelę, importuj dane CSV i eksportuj całą tabelę.</span>
+              </a>
+            ) : null}
             {session.role === "admin" ? <ExportPermitOptions /> : null}
           </div>
         </div>
