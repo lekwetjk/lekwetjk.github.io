@@ -6,6 +6,7 @@ import { managedPosts } from "../../db/schema.ts";
 import type { NewsPost } from "./content";
 
 export const TENDER_CATEGORIES = ["Zapytania ofertowe", "Zaproszenie do składania ofert", "Wybór wykonawcy", "Wyniki postępowania", "Informacja o unieważnieniu"];
+const PRODUCTION_API_BASE = "https://krd-ig-website-concept.lek-wet-jk.workers.dev";
 
 async function ensureManagedPostsTable() {
   const db = getDb();
@@ -21,6 +22,25 @@ function slugify(value: string) {
 function toPost(row: typeof managedPosts.$inferSelect): NewsPost {
   const attachments = JSON.parse(row.attachmentsJson || "[]") as Array<{ name: string; key: string }>;
   return { id: Number.parseInt(row.id.slice(0, 8), 16) || 0, slug: row.slug, title: row.title, date: row.createdAt, year: Number(row.createdAt.slice(0, 4)), excerpt: row.excerpt, paragraphs: row.content.split(/\n\s*\n/).map((item) => item.trim()).filter(Boolean), links: attachments.map((attachment) => ({ label: attachment.name, href: `/api/media/${encodeURIComponent(attachment.key)}`, document: true })), categories: [row.category], image: row.imageKey ? `/api/media/${encodeURIComponent(row.imageKey)}` : null, source: row.source };
+}
+
+export async function getManagedPostBySlug(slug: string) {
+  try {
+    const db = await ensureManagedPostsTable();
+    const rows = await db.select().from(managedPosts).where(eq(managedPosts.slug, slug)).limit(1);
+    return rows[0] ? toPost(rows[0]) : null;
+  } catch {
+    if (process.env.NODE_ENV !== "production") {
+      try {
+        const response = await fetch(`${PRODUCTION_API_BASE}/api/managed-posts`);
+        const data = await response.json() as { posts?: NewsPost[] };
+        return data.posts?.find((post) => post.slug === slug) ?? null;
+      } catch {
+        return null;
+      }
+    }
+    return null;
+  }
 }
 
 export async function listManagedPosts(kind?: "news" | "tender") {

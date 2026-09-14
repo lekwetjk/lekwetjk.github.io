@@ -2,6 +2,7 @@ import { ArticleBody } from "../../components/ArticleBody";
 import { PageShell } from "../../components/SiteChrome";
 import { withBasePath } from "../../lib/basePath";
 import { formatDate, newsPosts, postBySlug } from "../../lib/content";
+import { getManagedPostBySlug } from "../../lib/managed-posts";
 
 export function generateStaticParams() {
   return newsPosts.map((post) => ({ slug: post.slug }));
@@ -13,7 +14,7 @@ export default async function NewsDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = postBySlug(slug);
+  const post = postBySlug(slug) ?? await getManagedPostBySlug(slug);
   const shouldUseTenderSplitTitle =
     slug ===
     "zapytanie-ofertowe-dot-projektu-ochrona-wizerunku-polskiego-sektora-drobiarskiego-na-rynku-krajowym-wraz-z-przeprowadzeniem-przez-niezalezny-podmiot-badania-efektywnosci-projektu-6";

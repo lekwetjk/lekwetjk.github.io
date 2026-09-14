@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { withBasePath } from "../lib/basePath";
 
 type ArchivePost = {
@@ -16,14 +16,32 @@ type ArchivePost = {
 export function NewsArchive({
   posts,
   forceContainImages = false,
+  managedKind,
 }: {
   posts: ArchivePost[];
   forceContainImages?: boolean;
+  managedKind?: "news" | "tender";
 }) {
+  const [allPosts, setAllPosts] = useState(posts);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("Wszystkie");
   const [year, setYear] = useState("Wszystkie");
   const [limit, setLimit] = useState(36);
+
+  useEffect(() => {
+    setAllPosts(posts);
+    if (!managedKind) return;
+
+    void fetch(`/api/managed-posts?kind=${managedKind}`)
+      .then((response) => response.ok ? response.json() : null)
+      .then((data: { posts?: ArchivePost[] } | null) => {
+        if (!data?.posts?.length) return;
+        setAllPosts([...posts, ...data.posts]
+          .filter((post, index, list) => list.findIndex((item) => item.slug === post.slug) === index)
+          .sort((left, right) => new Date(right.date).getTime() - new Date(left.date).getTime()));
+      })
+      .catch(() => undefined);
+  }, [managedKind, posts]);
 
   const categoryOrder = [
     "Wszystkie",
@@ -38,7 +56,7 @@ export function NewsArchive({
     () => {
       const filteredCategories = Array.from(
         new Set(
-          posts
+            allPosts
             .flatMap((post) => post.categories)
             .filter(
               (category) =>
@@ -55,21 +73,21 @@ export function NewsArchive({
 
       return ordered.filter((value, index, list) => list.indexOf(value) === index);
     },
-    [posts],
+    [allPosts],
   );
   const years = useMemo(
     () => [
       "Wszystkie",
-      ...Array.from(new Set(posts.map((post) => String(post.year)))).sort(
+      ...Array.from(new Set(allPosts.map((post) => String(post.year)))).sort(
         (a, b) => Number(b) - Number(a),
       ),
     ],
-    [posts],
+    [allPosts],
   );
 
   const filtered = useMemo(() => {
     const normalizedQuery = query.toLocaleLowerCase("pl").trim();
-    return posts.filter((post) => {
+    return allPosts.filter((post) => {
       const matchesQuery =
         !normalizedQuery ||
         `${post.title} ${post.excerpt}`
@@ -80,7 +98,7 @@ export function NewsArchive({
       const matchesYear = year === "Wszystkie" || String(post.year) === year;
       return matchesQuery && matchesCategory && matchesYear;
     });
-  }, [posts, query, category, year]);
+  }, [allPosts, query, category, year]);
 
   return (
     <>
@@ -132,7 +150,7 @@ export function NewsArchive({
       </p>
 
       <div className="archive-grid">
-        {filtered.slice(0, limit).map((post) => (
+        {filtered.slice(0, limit).map((post, index) => (
           <article
             className={`archive-card${post.slug === "nowy-link-zsrir-w-zakladce-dokumenty" ? " archive-card-zsrir" : ""}`}
             key={post.slug}
@@ -141,7 +159,7 @@ export function NewsArchive({
               <img
                 src={withBasePath(post.image)}
                 alt=""
-                loading="lazy"
+                loading={index === 0 ? "eager" : "lazy"}
                 className={
                   forceContainImages ||
                   post.slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026" ||

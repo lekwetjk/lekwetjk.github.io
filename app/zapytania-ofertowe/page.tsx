@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { NewsArchive } from "../components/NewsArchive";
-import { ManagedPostsFeed } from "../components/ManagedPostsFeed";
 import { PageShell } from "../components/SiteChrome";
 import { tenderPosts } from "../lib/content";
 
@@ -83,8 +82,7 @@ export default function TenderRequestsPage() {
       </section>
       <section className="archive-section">
         <div className="shell tender-archive">
-          <NewsArchive posts={archive} forceContainImages />
-          <ManagedPostsFeed kind="tender" />
+          <NewsArchive posts={archive} forceContainImages managedKind="tender" />
         </div>
       </section>
     </PageShell>
