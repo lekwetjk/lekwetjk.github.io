@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import { getDb, getMemberDocumentsBucket } from "../../db/index.ts";
 import { managedPosts } from "../../db/schema.ts";
 import type { NewsPost } from "./content";
@@ -9,7 +9,7 @@ export const TENDER_CATEGORIES = ["Zapytania ofertowe", "Zaproszenie do składan
 
 async function ensureManagedPostsTable() {
   const db = getDb();
-  await db.run(`CREATE TABLE IF NOT EXISTS managed_posts (id TEXT PRIMARY KEY NOT NULL, kind TEXT NOT NULL, slug TEXT NOT NULL UNIQUE, title TEXT NOT NULL, excerpt TEXT NOT NULL, content TEXT NOT NULL, category TEXT NOT NULL, image_key TEXT, image_content_type TEXT, source TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, created_by TEXT NOT NULL)`);
+  await db.run(sql`CREATE TABLE IF NOT EXISTS managed_posts (id TEXT PRIMARY KEY NOT NULL, kind TEXT NOT NULL, slug TEXT NOT NULL UNIQUE, title TEXT NOT NULL, excerpt TEXT NOT NULL, content TEXT NOT NULL, category TEXT NOT NULL, image_key TEXT, image_content_type TEXT, source TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, created_by TEXT NOT NULL)`);
   return db;
 }
 
