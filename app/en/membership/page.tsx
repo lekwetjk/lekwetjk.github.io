@@ -34,7 +34,7 @@ export default function EnglishMembershipPage() {
             </p>
           </div>
           <div className="subpage-image">
-            <img src={withBasePath("/media/partners/partner1.webp")} alt="Membership and cooperation in the poultry sector" />
+            <img src={withBasePath("/media/white-hen.jpg")} alt="Membership and cooperation in the poultry sector" />
           </div>
         </div>
       </section>

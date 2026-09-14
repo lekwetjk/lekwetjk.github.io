@@ -451,8 +451,6 @@ async function handleChatRequest(request: Request, env: Env): Promise<Response> 
       {
         error: "Model request failed. Try again shortly.",
         upstream_status: upstreamResponse.status,
-        upstream_status_text: upstreamResponse.statusText,
-        upstream_error_excerpt: upstreamErrorExcerpt,
       },
       502,
       corsHeaders,
