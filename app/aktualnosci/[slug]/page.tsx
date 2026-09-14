@@ -154,6 +154,7 @@ export default async function NewsDetailPage({
         source={post.source}
         slug={slug}
         justify={post.justify}
+        categories={post.categories}
       />
     </PageShell>
   );

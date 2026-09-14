@@ -249,6 +249,7 @@ export function ArticleBody({
   slug,
   language = "pl",
   justify = false,
+  categories = [],
 }: {
   paragraphs: string[];
   links: ContentLink[];
@@ -256,6 +257,7 @@ export function ArticleBody({
   slug?: string;
   language?: "pl" | "en";
   justify?: boolean;
+  categories?: string[];
 }) {
   const chinaGuideHeadingPattern =
     language === "en"
@@ -3171,6 +3173,7 @@ export function ArticleBody({
 
   const shouldJustifyArticleText =
     justify ||
+    categories.some((category) => /^(Aktualności|Zapytania ofertowe|Zaproszenie do składania ofert|Wybór wykonawcy|Wyniki postępowania|Informacja o unieważnieniu)$/i.test(category.trim())) ||
     slug === "bezpieczenstwo-bialkowe" ||
     slug === "globalizacja-rynku" ||
     slug === "przedstawicielstwo-w-chinach";
