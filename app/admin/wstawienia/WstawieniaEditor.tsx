@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 type WstawieniaRow = { year: string; values: string[] };
 type WstawieniaData = { columns: string[]; rows: WstawieniaRow[] };
+const MONTHLY_INDEXES = new Set([0, 1, 2, 5, 6, 7, 12, 13, 14, 17, 18, 19]);
 
 function parseCsvLine(line: string) {
   const values: string[] = [];
@@ -32,11 +33,13 @@ export default function WstawieniaEditor() {
   }, []);
 
   function updateCell(rowIndex: number, columnIndex: number, value: string) {
+    if (!MONTHLY_INDEXES.has(columnIndex)) return;
+    const numericValue = value.replace(/[^0-9]/g, "");
     setData((current) => current ? {
       ...current,
       rows: current.rows.map((row, index) => index === rowIndex ? {
         ...row,
-        values: row.values.map((cell, cellIndex) => cellIndex === columnIndex ? value : cell),
+        values: row.values.map((cell, cellIndex) => cellIndex === columnIndex ? numericValue : cell),
       } : row),
     } : current);
   }
@@ -95,7 +98,7 @@ export default function WstawieniaEditor() {
           <thead><tr><th>Rok</th>{data.columns.map((column) => <th key={column}>{column}</th>)}</tr></thead>
           <tbody>{data.rows.map((row, rowIndex) => <tr key={`${row.year}-${rowIndex}`}>
             <th scope="row"><input value={row.year} onChange={(event) => setData({ ...data, rows: data.rows.map((item, index) => index === rowIndex ? { ...item, year: event.target.value } : item) })} style={{ width: 64 }} /></th>
-            {data.columns.map((_, columnIndex) => <td key={`${rowIndex}-${columnIndex}`}><input value={row.values[columnIndex] ?? ""} onChange={(event) => updateCell(rowIndex, columnIndex, event.target.value)} style={{ minWidth: 84 }} /></td>)}
+            {data.columns.map((column, columnIndex) => <td key={`${rowIndex}-${columnIndex}`}><input value={row.values[columnIndex] ?? ""} onChange={(event) => updateCell(rowIndex, columnIndex, event.target.value)} inputMode={MONTHLY_INDEXES.has(columnIndex) ? "numeric" : undefined} disabled={!MONTHLY_INDEXES.has(columnIndex)} aria-label={`${row.year} ${column}`} style={{ minWidth: 84, background: MONTHLY_INDEXES.has(columnIndex) ? "#fff" : "#f1f5f9" }} /></td>)}
           </tr>)}</tbody>
         </table>
       </div>

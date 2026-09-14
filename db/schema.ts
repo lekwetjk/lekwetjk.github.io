@@ -44,3 +44,8 @@ export const wstawieniaRows = sqliteTable("wstawienia_rows", {
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
   updatedBy: text("updated_by").notNull().default(""),
 });
+
+export const wstawieniaMetadata = sqliteTable("wstawienia_metadata", {
+  key: text("key").primaryKey(),
+  value: text("value").notNull(),
+});
