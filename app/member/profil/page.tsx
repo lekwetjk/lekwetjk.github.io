@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 
 import { PageShell } from "../../components/SiteChrome";
 import { AUTH_COOKIE_NAME, getMemberLogo, getMemberProfile, isMemberPasswordResetRequired, verifySessionToken } from "../../lib/auth";
+import { withBasePath } from "../../lib/basePath";
 import MemberProfileSection from "./MemberProfileSection";
 import ExportPermitOptions from "../../admin/uzytkownicy/ExportPermitOptions";
 
@@ -47,7 +48,7 @@ export default async function MemberProfilePage() {
             <div style={{ border: "1px solid #d5d9df", borderRadius: 12, padding: 18 }}>
               <strong>Strefy dostępne:</strong>
               <ul style={{ margin: "12px 0 0 18px" }}>
-                <li><a href="/tresc/dla-czlonkow">Dane Epi-Geo</a></li>
+                <li><a href={withBasePath("/tresc/dla-czlonkow")}>Dane Epi-Geo</a></li>
                 <li><a href="/member/dokumenty">Dokumenty dla członków</a></li>
                 {session.role === "admin" && <li><a href="/admin/uzytkownicy">Zarządzanie użytkownikami</a></li>}
               </ul>

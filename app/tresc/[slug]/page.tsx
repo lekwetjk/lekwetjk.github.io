@@ -8,6 +8,8 @@ import { AUTH_COOKIE_NAME, verifySessionToken } from "../../lib/auth";
 import { withBasePath } from "../../lib/basePath";
 import { knowledgePages, pageBySlug } from "../../lib/content";
 
+export const dynamic = "force-dynamic";
+
 export function generateStaticParams() {
   return knowledgePages.map((page) => ({ slug: page.slug }));
 }
