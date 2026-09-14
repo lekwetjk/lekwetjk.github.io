@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 import { AUTH_COOKIE_NAME, verifySessionToken } from "../../../../lib/auth";
 import { saveMemberDocument } from "../../../../lib/member-documents";
 
-const MAX_MEMBER_DOCUMENT_BYTES = 700 * 1024;
+const MAX_MEMBER_DOCUMENT_BYTES = 100 * 1024 * 1024;
 
 export async function POST(request: Request) {
   const cookieStore = await cookies();
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
 
   if (file.size > MAX_MEMBER_DOCUMENT_BYTES) {
     return NextResponse.json(
-      { ok: false, error: "Plik jest za duży dla aktualnego magazynu dokumentów. Maksymalny rozmiar to 700 KB." },
+      { ok: false, error: "Plik jest za duży. Maksymalny rozmiar bezpośredniego przesyłania to 100 MB." },
       { status: 413 },
     );
   }

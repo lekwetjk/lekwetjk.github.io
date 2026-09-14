@@ -7,6 +7,7 @@ const SITE_CREATOR_DATABASE_NAME =
   process.env.CLOUDFLARE_D1_DATABASE?.trim() || "site-creator-d1";
 
 const { d1 = "DB", r2 } = hostingConfig as { d1?: string; r2?: string };
+const MEMBER_DOCUMENTS_BUCKET = process.env.CLOUDFLARE_MEMBER_DOCUMENTS_BUCKET?.trim() || "krd-ig-member-documents";
 
 // macOS Seatbelt blocks FSEvents, so Codex previews need polling for HMR.
 const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
@@ -34,14 +35,20 @@ const localBindingConfig = {
   main: "./worker/index.ts",
   compatibility_flags: ["nodejs_compat"],
   d1_databases: getD1DatabaseConfig(),
-  r2_buckets: r2
-    ? [
-        {
-          binding: r2,
-          bucket_name: "site-creator-r2",
-        },
-      ]
-    : [],
+  r2_buckets: [
+    {
+      binding: "MEMBER_DOCUMENTS",
+      bucket_name: MEMBER_DOCUMENTS_BUCKET,
+    },
+    ...(r2
+      ? [
+          {
+            binding: r2,
+            bucket_name: "site-creator-r2",
+          },
+        ]
+      : []),
+  ],
 };
 
 // Keep Wrangler and Miniflare state project-local. These are non-secret tool

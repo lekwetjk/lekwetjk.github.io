@@ -5,7 +5,7 @@ import { useState } from "react";
 export default function ExportMemberDocumentsButton() {
   const [status, setStatus] = useState("");
   const [isUploading, setIsUploading] = useState(false);
-    const maxDocumentBytes = 700 * 1024;
+    const maxDocumentBytes = 100 * 1024 * 1024;
 
   async function handleUpload(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -15,7 +15,7 @@ export default function ExportMemberDocumentsButton() {
     }
 
     if (file.size > maxDocumentBytes) {
-      setStatus("Plik jest za duży. Maksymalny rozmiar to 700 KB.");
+      setStatus("Plik jest za duży. Maksymalny rozmiar bezpośredniego przesyłania to 100 MB.");
       event.target.value = "";
       return;
     }
@@ -36,7 +36,7 @@ export default function ExportMemberDocumentsButton() {
 
       if (!response.ok || !data.ok) {
         if (response.status === 413) {
-          throw new Error("Plik jest za duży. Maksymalny rozmiar to 700 KB.");
+          throw new Error("Plik jest za duży. Maksymalny rozmiar bezpośredniego przesyłania to 100 MB.");
         }
 
         throw new Error(data.error ?? "Nie udało się wysłać pliku.");
@@ -77,7 +77,7 @@ export default function ExportMemberDocumentsButton() {
         />
         {isUploading ? "Wysyłanie..." : "Prześlij plik dla członków"}
       </label>
-      <p style={{ margin: 0, color: "#475569", fontSize: 14 }}>PDF, DOC, DOCX, TXT oraz archiwa do 700 KB.</p>
+      <p style={{ margin: 0, color: "#475569", fontSize: 14 }}>PDF, DOC, DOCX, TXT oraz archiwa do 100 MB.</p>
       {status ? <p style={{ margin: 0, color: status.startsWith("Przesłano") ? "#166534" : "#b91c1c" }}>{status}</p> : null}
     </div>
   );

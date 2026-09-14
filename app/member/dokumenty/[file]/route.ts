@@ -17,10 +17,6 @@ export async function GET(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  if (!(await isAllowedMemberDocument(file))) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
   const document = await getMemberDocument(file);
 
   if (document) {

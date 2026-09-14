@@ -14,9 +14,23 @@ interface D1Database {
   };
 }
 
+interface R2Object {
+  body: ReadableStream;
+  httpMetadata?: { contentType?: string };
+  uploaded: Date;
+}
+
+interface R2Bucket {
+  put(key: string, value: ArrayBuffer | Uint8Array | ReadableStream, options?: { httpMetadata?: { contentType?: string } }): Promise<unknown>;
+  get(key: string): Promise<R2Object | null>;
+  delete(key: string): Promise<void>;
+  list(options?: { prefix?: string }): Promise<{ objects: Array<{ key: string; uploaded: Date }> }>;
+}
+
 interface Env {
   ASSETS: Fetcher;
   DB: D1Database;
+  MEMBER_DOCUMENTS: R2Bucket;
   OPENAI_API_KEY?: string;
   OPENAI_MODEL?: string;
   CHAT_ALLOWED_ORIGIN?: string;

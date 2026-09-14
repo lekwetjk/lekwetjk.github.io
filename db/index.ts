@@ -3,6 +3,12 @@ import * as schema from "./schema.ts";
 
 type CloudflareBindings = {
   DB?: any;
+  MEMBER_DOCUMENTS?: {
+    put(key: string, value: ArrayBuffer | Uint8Array | ReadableStream, options?: { httpMetadata?: { contentType?: string } }): Promise<unknown>;
+    get(key: string): Promise<{ body: ReadableStream; httpMetadata?: { contentType?: string }; uploaded: Date } | null>;
+    delete(key: string): Promise<void>;
+    list(options?: { prefix?: string }): Promise<{ objects: Array<{ key: string; uploaded: Date }> }>;
+  };
 };
 
 function getCloudflareBindings() {
@@ -19,4 +25,14 @@ export function getDb() {
   }
 
   return drizzle(bindings.DB, { schema });
+}
+
+export function getMemberDocumentsBucket() {
+  const bucket = getCloudflareBindings()?.MEMBER_DOCUMENTS;
+
+  if (!bucket) {
+    throw new Error("Cloudflare R2 binding `MEMBER_DOCUMENTS` is unavailable.");
+  }
+
+  return bucket;
 }
