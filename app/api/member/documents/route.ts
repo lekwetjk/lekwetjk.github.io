@@ -2,9 +2,9 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
 import { AUTH_COOKIE_NAME, verifySessionToken } from "../../../lib/auth";
-import { listMemberDocuments } from "../../../lib/member-documents";
+import { listMemberDocuments, memberDocumentScope } from "../../../lib/member-documents";
 
-export async function GET() {
+export async function GET(request: Request) {
   const cookieStore = await cookies();
   const session = verifySessionToken(cookieStore.get(AUTH_COOKIE_NAME)?.value);
 
@@ -12,7 +12,12 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const documents = await listMemberDocuments();
+  const scope = memberDocumentScope(request);
+  if (!scope) {
+    return NextResponse.json({ error: "Nieprawidłowa sekcja dokumentów." }, { status: 400 });
+  }
+
+  const documents = await listMemberDocuments(scope);
 
   return NextResponse.json({
     isAdmin: session.role === "admin",

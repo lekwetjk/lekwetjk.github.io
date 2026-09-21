@@ -6,6 +6,16 @@ async function readProjectFile(relativePath) {
   return readFile(new URL(`../${relativePath}`, import.meta.url), "utf8");
 }
 
+test("articles omit legacy site referrals while retaining specific resource links", async () => {
+  const source = await readProjectFile("app/components/ArticleBody.tsx");
+
+  assert.doesNotMatch(source, /Zobacz materiał na obecnej stronie KRD-IG/);
+  assert.doesNotMatch(source, /View the source material on the KRD-IG website/);
+  assert.match(source, /Zobacz materiały techniczne Komisji Europejskiej/);
+  assert.match(source, /PRZEJDŹ DO STRONY ZSRIR/);
+  assert.match(source, /\{sourceLinkLabel \? \(/);
+});
+
 test("home page includes the main KRD-IG sections and messaging", async () => {
   const page = await readProjectFile("app/page.tsx");
 

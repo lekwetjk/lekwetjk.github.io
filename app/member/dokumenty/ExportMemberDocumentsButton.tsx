@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import type { MemberDocumentScope } from "../../lib/member-documents";
 
-export default function ExportMemberDocumentsButton() {
+export default function ExportMemberDocumentsButton({ scope = "documents" }: { scope?: MemberDocumentScope }) {
   const [status, setStatus] = useState("");
   const [isUploading, setIsUploading] = useState(false);
     const maxDocumentBytes = 100 * 1024 * 1024;
@@ -27,7 +28,7 @@ export default function ExportMemberDocumentsButton() {
     setStatus("");
 
     try {
-      const response = await fetch("/api/admin/member-documents/upload", {
+      const response = await fetch(`/api/admin/member-documents/upload?scope=${scope}`, {
         method: "POST",
         body: formData,
       });
@@ -70,14 +71,14 @@ export default function ExportMemberDocumentsButton() {
       >
         <input
           type="file"
-          accept=".pdf,.doc,.docx,.txt,.zip,.rar,.7z,.tar,.gz,.bz2,.xz"
+          accept=".pdf,.doc,.docx,.xlsx,.txt,.zip,.rar,.7z,.tar,.gz,.bz2,.xz"
           onChange={handleUpload}
           disabled={isUploading}
           style={{ display: "none" }}
         />
         {isUploading ? "Wysyłanie..." : "Prześlij plik dla członków"}
       </label>
-      <p style={{ margin: 0, color: "#475569", fontSize: 14 }}>PDF, DOC, DOCX, TXT oraz archiwa do 100 MB.</p>
+      <p style={{ margin: 0, color: "#475569", fontSize: 14 }}>PDF, DOC, DOCX, XLSX, TXT oraz archiwa do 100 MB.</p>
       {status ? <p style={{ margin: 0, color: status.startsWith("Przesłano") ? "#166534" : "#b91c1c" }}>{status}</p> : null}
     </div>
   );

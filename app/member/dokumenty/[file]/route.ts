@@ -2,11 +2,11 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
 import { AUTH_COOKIE_NAME, verifySessionToken } from "../../../lib/auth";
-import { getMemberDocument, isAllowedMemberDocument } from "../../../lib/member-documents";
+import { getMemberDocument, memberDocumentScope } from "../../../lib/member-documents";
 
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ file: string }> },
 ) {
   const { file } = await params;
@@ -17,7 +17,12 @@ export async function GET(
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const document = await getMemberDocument(file);
+  const scope = memberDocumentScope(request);
+  if (!scope) {
+    return NextResponse.json({ error: "Nieprawidłowa sekcja dokumentów." }, { status: 400 });
+  }
+
+  const document = await getMemberDocument(file, scope);
 
   if (document) {
     const { content, contentType } = document;

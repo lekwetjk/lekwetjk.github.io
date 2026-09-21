@@ -2,10 +2,10 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { AUTH_COOKIE_NAME, verifySessionToken } from "../../../../lib/auth";
-import { deleteMemberDocument } from "../../../../lib/member-documents";
+import { deleteMemberDocument, memberDocumentScope } from "../../../../lib/member-documents";
 
 export async function DELETE(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ file: string }> },
 ) {
   const session = verifySessionToken((await cookies()).get(AUTH_COOKIE_NAME)?.value);
@@ -14,8 +14,13 @@ export async function DELETE(
     return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
   }
 
+  const scope = memberDocumentScope(request);
+  if (!scope) {
+    return NextResponse.json({ error: "Nieprawidłowa sekcja dokumentów." }, { status: 400 });
+  }
+
   const { file } = await params;
-  const deleted = await deleteMemberDocument(file);
+  const deleted = await deleteMemberDocument(file, scope);
 
   return deleted
     ? NextResponse.json({ ok: true })

@@ -269,12 +269,12 @@ export function ArticleBody({
       : source;
   const sourceLinkLabel =
     language === "en"
-      ? "View the source material on the KRD-IG website"
+      ? null
       : slug === "polska-zglosila-sprzeciw-wobec-niemieckich-przepisow-dotyczacych-oznakowania-zywnosci"
       ? "Zobacz materiały techniczne Komisji Europejskiej"
       : slug === "nowy-link-zsrir-w-zakladce-dokumenty"
       ? "PRZEJDŹ DO STRONY ZSRIR"
-      : "Zobacz materiał na obecnej stronie KRD-IG";
+      : null;
   const chinaGuideDownloadHref =
     slug === "przedstawicielstwo-w-chinach"
       ? links.find((link) => link.document)?.href ??
@@ -607,11 +607,6 @@ export function ArticleBody({
               ))}
             </div>
           </section>
-          <a className="source-link" href={resolvedSource}>
-            {language === "en"
-              ? "View the source material on the KRD-IG website"
-              : "Zobacz materiał na obecnej stronie KRD-IG"} <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -636,11 +631,6 @@ export function ArticleBody({
               </article>
             ))}
           </div>
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            {language === "en"
-              ? "View the source material on the KRD-IG website"
-              : "Zobacz materiał na obecnej stronie KRD-IG"} <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -1329,9 +1319,6 @@ export function ArticleBody({
             </p>
           )}
 
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -1355,9 +1342,6 @@ export function ArticleBody({
               <p key={`${index}-${paragraph.slice(0, 20)}`}>{paragraph}</p>
             ),
           )}
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -1415,9 +1399,6 @@ export function ArticleBody({
               </li>
             ))}
           </ul>
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -1471,9 +1452,6 @@ export function ArticleBody({
             return <p key={`${index}-${paragraph.slice(0, 20)}`}>{paragraph}</p>;
           })}
 
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -1508,9 +1486,6 @@ export function ArticleBody({
 
             return <p key={`${index}-${paragraph.slice(0, 20)}`}>{paragraph}</p>;
           })}
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -1579,9 +1554,6 @@ export function ArticleBody({
             ))}
           </div>
 
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -1645,9 +1617,6 @@ export function ArticleBody({
             ))}
           </div>
 
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -1761,9 +1730,6 @@ export function ArticleBody({
             ))}
           </ul>
 
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -1858,9 +1824,6 @@ export function ArticleBody({
             exportPermits={exportPermits}
           />
 
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -1928,9 +1891,6 @@ export function ArticleBody({
             ))}
           </div>
 
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -2007,9 +1967,6 @@ export function ArticleBody({
             ))}
           </div>
 
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -2267,9 +2224,6 @@ export function ArticleBody({
             </div>
           )}
 
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -2373,9 +2327,6 @@ export function ArticleBody({
             })}
           </div>
 
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -2427,9 +2378,6 @@ export function ArticleBody({
             istotne z punktu widzenia bezpieczeństwa, kontroli i świadomego wyboru konsumenta.
           </p>
 
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -2567,9 +2515,6 @@ export function ArticleBody({
             ))}
           </div>
 
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -2924,9 +2869,6 @@ export function ArticleBody({
             </section>
           ))}
 
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -2956,9 +2898,6 @@ export function ArticleBody({
               <p key={`${index}-${paragraph.slice(0, 20)}`}>{paragraph}</p>
             );
           })}
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -3163,9 +3102,6 @@ export function ArticleBody({
             </table>
           </div>
 
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -3272,9 +3208,6 @@ export function ArticleBody({
           </p>
           <p>Do zobaczenia na kolejnych wydarzeniach. Wracamy jeszcze silniejsi!</p>
 
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -3738,9 +3671,6 @@ export function ArticleBody({
             </section>
           )}
 
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -3892,9 +3822,6 @@ export function ArticleBody({
             ))}
           </div>
 
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -4101,9 +4028,6 @@ export function ArticleBody({
       <div className="article-layout article-layout-full shell">
         <article className="prose prose-justified prose-membership-benefits">
           {rendered}
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -4152,9 +4076,6 @@ export function ArticleBody({
               <li key={item}>{renderInlineMarkdown(item, `disinformation-${item.slice(0, 12)}`)}</li>
             ))}
           </ul>
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -4223,9 +4144,6 @@ export function ArticleBody({
       <div className="article-layout article-layout-full shell">
         <article className="prose prose-justified prose-department">
           {rendered}
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            Zobacz materiał na obecnej stronie KRD-IG <Arrow />
-          </a>
         </article>
       </div>
     );
@@ -4796,9 +4714,11 @@ export function ArticleBody({
             Opublikowana deklaracja jest dostępna na stronie WOAH pod linkiem: <a className="inline-download-link" href="https://www.woah.org/app/uploads/2026/08/2026-08-poland-hpai-selfd.pdf" target="_blank" rel="noopener noreferrer">https://www.woah.org/en/what-we-offer/self-declared-disease-status</a>
           </p>
         )}
-        <a className="source-link source-link-inline" href={resolvedSource}>
-          {sourceLinkLabel} <Arrow />
-        </a>
+        {sourceLinkLabel ? (
+          <a className="source-link source-link-inline" href={resolvedSource}>
+            {sourceLinkLabel} <Arrow />
+          </a>
+        ) : null}
       </article>
     </div>
   );

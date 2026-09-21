@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import type { MemberDocumentScope } from "../../lib/member-documents";
 
-export default function MemberDocumentsList() {
+export default function MemberDocumentsList({ scope = "documents" }: { scope?: MemberDocumentScope }) {
   const [documents, setDocuments] = useState<Array<{ title: string; href: string; fileName: string; uploadedAt: string }>>([]);
   const [isAdmin, setIsAdmin] = useState(false);
   const [ready, setReady] = useState(false);
@@ -12,7 +13,7 @@ export default function MemberDocumentsList() {
 
     async function loadDocuments() {
       try {
-        const response = await fetch("/api/member/documents");
+        const response = await fetch(`/api/member/documents?scope=${scope}`);
         if (!response.ok) {
           throw new Error("Failed to load documents");
         }
@@ -26,7 +27,7 @@ export default function MemberDocumentsList() {
             title: document.title,
             fileName: document.fileName,
             uploadedAt: document.uploadedAt,
-            href: `/member/dokumenty/${encodeURIComponent(document.fileName)}`,
+            href: `/member/dokumenty/${encodeURIComponent(document.fileName)}?scope=${scope}`,
           })),
         );
       } catch {
@@ -45,7 +46,7 @@ export default function MemberDocumentsList() {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [scope]);
 
   if (!ready) {
     return <p style={{ marginTop: 24 }}>Ładowanie dokumentów…</p>;
@@ -54,7 +55,7 @@ export default function MemberDocumentsList() {
   async function handleDelete(fileName: string) {
     if (!window.confirm(`Usunąć plik ${fileName}?`)) return;
 
-    const response = await fetch(`/api/admin/member-documents/${encodeURIComponent(fileName)}`, { method: "DELETE" });
+    const response = await fetch(`/api/admin/member-documents/${encodeURIComponent(fileName)}?scope=${scope}`, { method: "DELETE" });
     if (response.ok) {
       setDocuments((current) => current.filter((document) => document.fileName !== fileName));
     }

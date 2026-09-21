@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
 import { AUTH_COOKIE_NAME, verifySessionToken } from "../../../../lib/auth";
-import { saveMemberDocument } from "../../../../lib/member-documents";
+import { memberDocumentScope, saveMemberDocument } from "../../../../lib/member-documents";
 
 const MAX_MEMBER_DOCUMENT_BYTES = 100 * 1024 * 1024;
 
@@ -12,6 +12,11 @@ export async function POST(request: Request) {
 
   if (!session || session.role !== "admin") {
     return NextResponse.json({ ok: false, error: "Unauthorized" }, { status: 403 });
+  }
+
+  const scope = memberDocumentScope(request);
+  if (!scope) {
+    return NextResponse.json({ ok: false, error: "Nieprawidłowa sekcja dokumentów." }, { status: 400 });
   }
 
   const formData = await request.formData();
@@ -35,7 +40,7 @@ export async function POST(request: Request) {
       fileName,
       content: buffer,
       contentType: file.type || "application/octet-stream",
-    });
+    }, scope);
   } catch {
     return NextResponse.json(
       { ok: false, error: "Nie udało się zapisać dokumentu. Spróbuj ponownie lub skontaktuj się z administratorem." },

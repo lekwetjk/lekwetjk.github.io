@@ -9,29 +9,59 @@ import { memberDocuments } from "../../db/schema.ts";
 const MEMBER_DOCUMENTS_DIR = path.join(os.tmpdir(), "krd-ig-member-docs");
 const MEMBER_DOCUMENTS_PREFIX = "member-documents/";
 
+export type MemberDocumentScope = "documents" | "epi-geo";
+
+export function memberDocumentScope(request: Request): MemberDocumentScope | null {
+  const scope = new URL(request.url).searchParams.get("scope") ?? "documents";
+  return scope === "documents" || scope === "epi-geo" ? scope : null;
+}
+
+function validFileName(fileName: string) {
+  return /^[a-zA-Z0-9._-]+$/.test(fileName) && fileName !== "." && fileName !== "..";
+}
+
+function documentDirectory(scope: MemberDocumentScope) {
+  return scope === "documents" ? MEMBER_DOCUMENTS_DIR : `${MEMBER_DOCUMENTS_DIR}-epi-geo`;
+}
+
+function documentPrefix(scope: MemberDocumentScope) {
+  return scope === "documents" ? MEMBER_DOCUMENTS_PREFIX : "epi-geo-documents/";
+}
+
+function databaseKey(fileName: string, scope: MemberDocumentScope) {
+  return scope === "documents" ? fileName : `epi-geo/${fileName}`;
+}
+
 function documentTitle(fileName: string) {
   const baseName = path.basename(fileName, path.extname(fileName));
   return baseName.replace(/[-_]+/g, " ").replace(/\s+/g, " ").trim() || fileName;
 }
 
-function documentKey(fileName: string) {
-  return `${MEMBER_DOCUMENTS_PREFIX}${fileName}`;
+function documentKey(fileName: string, scope: MemberDocumentScope) {
+  return `${documentPrefix(scope)}${fileName}`;
 }
 
-async function getDatabaseDocuments() {
+async function getDatabaseDocuments(scope: MemberDocumentScope) {
   const db = getDb();
   await db.run(sql`CREATE TABLE IF NOT EXISTS member_documents (file_name TEXT PRIMARY KEY NOT NULL, title TEXT NOT NULL, content TEXT NOT NULL, content_type TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)`);
-  return db.select().from(memberDocuments).orderBy(desc(memberDocuments.createdAt));
+  const documents = await db.select().from(memberDocuments).orderBy(desc(memberDocuments.createdAt));
+  return documents.flatMap((document) => {
+    const fileName = scope === "documents"
+      ? document.fileName
+      : document.fileName.startsWith("epi-geo/") ? document.fileName.slice("epi-geo/".length) : "";
+    return validFileName(fileName) ? [{ ...document, fileName }] : [];
+  });
 }
 
 export async function saveMemberDocument(input: {
   fileName: string;
   content: Buffer;
   contentType: string;
-}) {
+}, scope: MemberDocumentScope = "documents") {
+  if (!validFileName(input.fileName)) throw new Error("Invalid document filename");
   try {
     const bucket = getMemberDocumentsBucket();
-    await bucket.put(documentKey(input.fileName), input.content, {
+    await bucket.put(documentKey(input.fileName, scope), input.content, {
       httpMetadata: { contentType: input.contentType },
     });
     return true;
@@ -43,7 +73,7 @@ export async function saveMemberDocument(input: {
     const db = getDb();
     await db.run(sql`CREATE TABLE IF NOT EXISTS member_documents (file_name TEXT PRIMARY KEY NOT NULL, title TEXT NOT NULL, content TEXT NOT NULL, content_type TEXT NOT NULL, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)`);
     await db.insert(memberDocuments).values({
-      fileName: input.fileName,
+      fileName: databaseKey(input.fileName, scope),
       title: documentTitle(input.fileName),
       content: input.content.toString("base64"),
       contentType: input.contentType,
@@ -57,20 +87,22 @@ export async function saveMemberDocument(input: {
     });
     return true;
   } catch {
-    await mkdir(MEMBER_DOCUMENTS_DIR, { recursive: true });
-    await writeFile(path.join(MEMBER_DOCUMENTS_DIR, input.fileName), input.content);
+    await mkdir(documentDirectory(scope), { recursive: true });
+    await writeFile(path.join(documentDirectory(scope), input.fileName), input.content);
     return false;
   }
 }
 
-export async function listMemberDocuments() {
+export async function listMemberDocuments(scope: MemberDocumentScope = "documents") {
   const documents = new Map<string, { fileName: string; title: string; uploadedAt: string }>();
 
   try {
     const bucket = getMemberDocumentsBucket();
-    const result = await bucket.list({ prefix: MEMBER_DOCUMENTS_PREFIX });
+    const prefix = documentPrefix(scope);
+    const result = await bucket.list({ prefix });
     for (const object of result.objects) {
-      const fileName = object.key.slice(MEMBER_DOCUMENTS_PREFIX.length);
+      const fileName = object.key.slice(prefix.length);
+      if (!validFileName(fileName)) continue;
       documents.set(fileName, { fileName, title: documentTitle(fileName), uploadedAt: object.uploaded.toISOString() });
     }
   } catch {
@@ -78,7 +110,7 @@ export async function listMemberDocuments() {
   }
 
   try {
-    const databaseDocuments = await getDatabaseDocuments();
+    const databaseDocuments = await getDatabaseDocuments(scope);
     for (const document of databaseDocuments) {
       if (!documents.has(document.fileName)) {
         documents.set(document.fileName, {
@@ -97,19 +129,19 @@ export async function listMemberDocuments() {
   }
 
   try {
-    await mkdir(MEMBER_DOCUMENTS_DIR, { recursive: true });
+    await mkdir(documentDirectory(scope), { recursive: true });
   } catch {
     // Ignore filesystem permission issues in runtime sandboxes and continue with an empty list.
   }
 
   try {
-    const entries = await readdir(MEMBER_DOCUMENTS_DIR, { withFileTypes: true });
+    const entries = await readdir(documentDirectory(scope), { withFileTypes: true });
 
     const documents = await Promise.all(entries
       .filter((entry) => entry.isFile() && entry.name !== ".gitkeep")
       .map(async (entry) => {
         const fileName = entry.name;
-        const details = await stat(path.join(MEMBER_DOCUMENTS_DIR, fileName));
+        const details = await stat(path.join(documentDirectory(scope), fileName));
         return {
           fileName,
           title: documentTitle(fileName),
@@ -123,12 +155,13 @@ export async function listMemberDocuments() {
   }
 }
 
-export async function deleteMemberDocument(fileName: string) {
+export async function deleteMemberDocument(fileName: string, scope: MemberDocumentScope = "documents") {
+  if (!validFileName(fileName)) return false;
   try {
     const bucket = getMemberDocumentsBucket();
-    const existingDocument = await bucket.get(documentKey(fileName));
+    const existingDocument = await bucket.get(documentKey(fileName, scope));
     if (existingDocument) {
-      await bucket.delete(documentKey(fileName));
+      await bucket.delete(documentKey(fileName, scope));
       return true;
     }
   } catch {
@@ -137,11 +170,11 @@ export async function deleteMemberDocument(fileName: string) {
 
   try {
     const db = getDb();
-    await db.delete(memberDocuments).where(eq(memberDocuments.fileName, fileName));
+    await db.delete(memberDocuments).where(eq(memberDocuments.fileName, databaseKey(fileName, scope)));
     return true;
   } catch {
     try {
-      await unlink(path.join(MEMBER_DOCUMENTS_DIR, fileName));
+      await unlink(path.join(documentDirectory(scope), fileName));
       return true;
     } catch {
       return false;
@@ -149,10 +182,11 @@ export async function deleteMemberDocument(fileName: string) {
   }
 }
 
-export async function getMemberDocument(fileName: string) {
+export async function getMemberDocument(fileName: string, scope: MemberDocumentScope = "documents") {
+  if (!validFileName(fileName)) return null;
   try {
     const bucket = getMemberDocumentsBucket();
-    const document = await bucket.get(documentKey(fileName));
+    const document = await bucket.get(documentKey(fileName, scope));
     if (document) {
       return {
         content: document.body,
@@ -164,7 +198,7 @@ export async function getMemberDocument(fileName: string) {
   }
 
   try {
-    const documents = await getDatabaseDocuments();
+    const documents = await getDatabaseDocuments(scope);
     const document = documents.find((candidate) => candidate.fileName === fileName);
     if (document) {
       return {
@@ -178,7 +212,7 @@ export async function getMemberDocument(fileName: string) {
 
   try {
     return {
-      content: await readFile(path.join(MEMBER_DOCUMENTS_DIR, fileName)),
+      content: await readFile(path.join(documentDirectory(scope), fileName)),
       contentType: fileName.toLowerCase().endsWith(".pdf") ? "application/pdf" : "application/octet-stream",
     };
   } catch {
@@ -186,6 +220,6 @@ export async function getMemberDocument(fileName: string) {
   }
 }
 
-export async function isAllowedMemberDocument(fileName: string) {
-  return Boolean(await getMemberDocument(fileName));
+export async function isAllowedMemberDocument(fileName: string, scope: MemberDocumentScope = "documents") {
+  return Boolean(await getMemberDocument(fileName, scope));
 }

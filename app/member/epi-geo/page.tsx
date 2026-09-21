@@ -43,8 +43,8 @@ export default async function MemberEpiGeoPage() {
       <ArticleBody paragraphs={page.paragraphs} links={page.links} source={page.source} slug={page.slug} />
       <section className="simple-hero">
         <div className="shell" style={{ maxWidth: 860, paddingTop: 24, paddingBottom: 56 }}>
-          {isAdmin ? <ExportMemberDocumentsButton /> : null}
-          <MemberDocumentsList />
+          {isAdmin ? <ExportMemberDocumentsButton scope="epi-geo" /> : null}
+          <MemberDocumentsList scope="epi-geo" />
         </div>
       </section>
     </PageShell>
