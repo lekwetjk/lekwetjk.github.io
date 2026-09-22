@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./proposals.css";
+import { getLocalProposals } from "./lib/local-proposals-server";
+import { acceptedProposalIds, pendingProposalIds } from "./lib/local-proposals";
 
 export const dynamic = process.env.GITHUB_PAGES_BUILD === "true" ? "force-static" : "auto";
 
@@ -22,8 +25,8 @@ export const metadata: Metadata = {
     canonical: siteUrl,
   },
   robots: {
-    index: true,
-    follow: true,
+    index: process.env.NODE_ENV !== "development",
+    follow: process.env.NODE_ENV !== "development",
   },
   title: {
     default: "KRD-IG | Partner i głos polskiego sektora drobiarskiego",
@@ -55,14 +58,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const proposals = await getLocalProposals();
   return (
     <html lang="pl">
-      <body>{children}</body>
+      <body data-proposals={Object.entries(proposals).filter(([, enabled]) => enabled).map(([id]) => id).join(" ")}>
+        {process.env.NODE_ENV === "development" ? <div className="proposal-banner"><span>Wdrożone lokalnie: {acceptedProposalIds.length} · Podgląd pozostałych: {pendingProposalIds.filter((id) => proposals[id]).length}/{pendingProposalIds.length}</span><a href="/podglad-zmian">Pozostałe decyzje</a></div> : null}
+        {children}
+      </body>
     </html>
   );
 }

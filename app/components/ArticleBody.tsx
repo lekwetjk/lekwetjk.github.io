@@ -9,6 +9,9 @@ import { CommissionTicker } from "./CommissionTicker";
 import { CampaignWebsiteTicker } from "./CampaignWebsiteTicker";
 import { TerritorialCoverageMap } from "./TerritorialCoverageMap";
 import { WstawieniaTable } from "./WstawieniaTable";
+import { getLocalProposals } from "../lib/local-proposals-server";
+import { cleanProposedParagraph, localContentHref } from "../lib/local-proposal-content";
+import { knowledgePages, newsPosts } from "../lib/content";
 
 function looksLikeHeading(value: string) {
   return (
@@ -242,7 +245,7 @@ const partnerOrganisations = [
   },
 ];
 
-export function ArticleBody({
+export async function ArticleBody({
   paragraphs,
   links,
   source,
@@ -259,6 +262,12 @@ export function ArticleBody({
   justify?: boolean;
   categories?: string[];
 }) {
+  const proposals = await getLocalProposals();
+  const contentTargets = proposals.links ? [
+    ...knowledgePages.map((page) => ({ source: page.source, slug: page.slug, kind: "page" as const })),
+    ...newsPosts.map((post) => ({ source: post.source, slug: post.slug, kind: "post" as const })),
+  ] : [];
+  if (proposals.links) links = links.map((link) => ({ ...link, href: localContentHref(link.href, contentTargets) }));
   const chinaGuideHeadingPattern =
     language === "en"
       ? /^Below we present an exporter guide for poultry meat to the Chinese market\.?$/i
@@ -338,7 +347,7 @@ export function ArticleBody({
     "https://krd-ig.com.pl/wp-content/uploads/2025/07/logo_Fundusze-Promocji_kolor.png",
   ];
 
-  const visibleParagraphs =
+  const originalParagraphs =
     slug === "o-nas" && language === "pl"
       ? [
           "Informacja o Krajowej Radzie Drobiarstwa – Izbie Gospodarczej w Warszawie. Krajowa Rada Drobiarstwa istnieje od 1991 roku. Od 11 marca 1998r. Krajowa Rada Drobiarstwa posiada statut Izby Gospodarczej. Aktualnie do KRD-IG należy ponad 100 podmiotów gospodarczych.",
@@ -349,6 +358,24 @@ export function ArticleBody({
           "Musimy przekonywać krajowych i zagranicznych konsumentów do zwiększenia spożycia drobiu.",
         ]
       : paragraphs;
+  const visibleParagraphs = proposals["text-cleanup"] ? originalParagraphs.map(cleanProposedParagraph) : originalParagraphs;
+
+  if (proposals["text-cleanup"] && ["polityka-cookies", "polityka-prywatnosci", "system-qafp", "e-book-o-dezinformacji-zywnosciowej"].includes(slug ?? "")) {
+    const headings = new Set(["QAFP", "Nauka w służbie wysokiej jakości", "QAFP a polski drób", "Co zapewnia konsumentom drobiu QAFP?", "Zasady zachowania jakości QAFP:", "PRZEWODNIK:", "Dezinformacja w sektorze żywnościowym", "Kompedium wiedzy o dezinformacji żywnościowej"]);
+    const qafpListStart = slug === "system-qafp" ? visibleParagraphs.indexOf("Zasady zachowania jakości QAFP:") : -1;
+    const resources = links.filter((link, index) => links.findIndex((candidate) => candidate.href === link.href) === index).map((link) => slug === "e-book-o-dezinformacji-zywnosciowej" ? { ...link, href: localContentHref(link.href, []) } : link);
+    return <div className="article-layout article-layout-full shell"><article className="prose">
+      {visibleParagraphs.map((paragraph, index) => {
+        if (qafpListStart >= 0 && index > qafpListStart) return null;
+        if (slug === "polityka-cookies" && index >= 2 && index <= 4) return index === 2 ? <ul key="cookie-purposes">{visibleParagraphs.slice(2, 5).map((item) => <li key={item}>{item}</li>)}</ul> : null;
+        if (/^Pobierz (ebook|dokument)/i.test(paragraph)) return null;
+        if (headings.has(paragraph) || /^\d+\.\s+[A-ZĄĆĘŁŃÓŚŹŻ][^.!?]{3,75}$/.test(paragraph)) return <h2 key={index}>{paragraph}</h2>;
+        return <p key={index}>{renderInlineMarkdown(paragraph, `proposal-${index}`)}</p>;
+      })}
+      {qafpListStart >= 0 ? <><p className="proposal-resource-note">Pierwszy punkt listy w materiale źródłowym jest niepełny. Wymaga weryfikacji redakcyjnej.</p><ul>{visibleParagraphs.slice(qafpListStart + 1).map((item, index) => <li key={index}>{item.replace(/\s*•\s*/g, " ")}{/[.!?]$/.test(item) ? "" : ";"}</li>)}</ul></> : null}
+      {resources.length ? <section><h2>Materiały do pobrania</h2><ul>{resources.map((link) => <li key={link.href}><a href={link.href}>{link.label}</a></li>)}</ul></section> : null}
+    </article></div>;
+  }
 
   const isTenderLikeSlug =
     !!slug &&
@@ -1072,7 +1099,7 @@ export function ArticleBody({
             przyjętych do wychowu w latach 2015-2026 wraz z dynamiką zmian wielkości zaplecza (%).
           </p>
 
-          <WstawieniaTable columns={columnLabels.slice(0, maxValueCount)} fallbackRows={tableRowsWithDynamics} />
+          <WstawieniaTable columns={columnLabels.slice(0, maxValueCount)} fallbackRows={tableRowsWithDynamics} transpose={proposals.wstawienia} />
 
           {chartPoints.length > 0 && (
             <section className="wstawienia-chart" aria-label="Wykres rocznych wstawień">
@@ -1639,7 +1666,8 @@ export function ArticleBody({
       return clean.endsWith(".") ? clean : `${clean}.`;
     };
 
-    const datePattern = /^\d{1,2}\s+[a-z]{3}\s+\d{4}$/i;
+    const datePattern = /^\d{1,2}\s+\p{L}{3}\s+\d{4}$/iu;
+    const campaignDateFormatter = new Intl.DateTimeFormat("pl-PL", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
     const normalizedParagraphs = visibleParagraphs.map((paragraph) => paragraph.trim()).filter(Boolean);
     const dateByTitle = new Map<string, string>();
     const summaryByTitle = new Map<string, string>();
@@ -1693,13 +1721,15 @@ export function ArticleBody({
         ? new URL(link.href).pathname
         : link.href;
       const campaignSlug = sourcePath.split("/").filter(Boolean).pop();
+      const campaignPost = newsPosts.find((post) => post.slug === campaignSlug);
       const href = campaignSlug
         ? withBasePath(`/aktualnosci/${campaignSlug}`)
         : withBasePath(link.href);
       return {
         title: link.label.trim(),
         href,
-        date: dateByTitle.get(normalizeText(link.label.trim())),
+        date: dateByTitle.get(normalizeText(link.label.trim())) ??
+          (campaignPost?.date && Number.isFinite(Date.parse(campaignPost.date)) ? campaignDateFormatter.format(new Date(campaignPost.date)) : undefined),
         summary:
           summaryByTitle.get(normalizeText(link.label.trim())) ??
           "Zobacz szczegoly kampanii w materiale zrodlowym.",
@@ -1724,7 +1754,7 @@ export function ArticleBody({
                     <span className="kampanie-title">{item.title.toLocaleUpperCase("pl")}</span>
                     <span className="kampanie-summary">{item.summary}</span>
                   </span>
-                  {item.date && <span className="kampanie-date">{item.date}</span>}
+                  {item.date && <span className="kampanie-date" title="Data publikacji">{item.date}</span>}
                 </a>
               </li>
             ))}
@@ -2122,6 +2152,8 @@ export function ArticleBody({
           <h2>Segmentacja rynku drobiu</h2>
           {normalizedParagraphs.map((paragraph, index) => {
             const displayParagraph = normalizeSegmentDisplayText(paragraph);
+
+            if (proposals["text-cleanup"] && isSectionHeading(displayParagraph) && normalizedParagraphs.slice(0, index).some((previous) => normalizeSegmentDisplayText(previous) === displayParagraph)) return null;
 
             if (
               /^Podział certyfikowanego mięsa drobiowego we Francji prezentuje się następująco:/i.test(
@@ -4036,7 +4068,10 @@ export function ArticleBody({
   if (slug === "dezinformacja-zywnosciowa") {
     const featureHeadings = visibleParagraphs.slice(7, 15).filter((paragraph) => /^\d+\.\s+/.test(paragraph.trim()));
     const featureSet = new Set(featureHeadings);
-    const consequenceItems = visibleParagraphs.slice(18).map((paragraph) => paragraph.replace(/^&#x1f538;\s*/, "").trim());
+    const consequenceItems = visibleParagraphs.slice(18).map((paragraph) => {
+      const text = paragraph.replace(/^&#x1f538;\s*/, "").trim();
+      return proposals["text-cleanup"] ? text.replace(/^[🔸◆♦•]+\s*/u, "") : text;
+    });
     const featureDescriptions = new Map(
       featureHeadings.map((heading) => {
         const index = visibleParagraphs.indexOf(heading);
@@ -4158,6 +4193,10 @@ export function ArticleBody({
       >
         {visibleParagraphs.map((paragraph, index) => {
           const trimmedParagraph = paragraph.trim();
+
+          if (proposals["text-cleanup"] && slug === "rejestry-i-ksiegi" && /przepiór/i.test(visibleParagraphs[index - 1] ?? "")) {
+            return <p key={`quail-${index}`}>{renderInlineMarkdown(trimmedParagraph, `quail-${index}`)}</p>;
+          }
 
           if (
             slug === "polski-i-europejski-drob-na-filipinach-targi-wofex-2025-filipiny" &&

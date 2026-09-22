@@ -12,7 +12,28 @@ async function ensureManagedPostsTable() {
   const db = getDb();
   await db.run(sql`CREATE TABLE IF NOT EXISTS managed_posts (id TEXT PRIMARY KEY NOT NULL, kind TEXT NOT NULL, slug TEXT NOT NULL UNIQUE, title TEXT NOT NULL, excerpt TEXT NOT NULL, content TEXT NOT NULL, category TEXT NOT NULL, image_key TEXT, image_content_type TEXT, source TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, created_by TEXT NOT NULL)`);
   try { await db.run(sql`ALTER TABLE managed_posts ADD COLUMN attachments_json TEXT NOT NULL DEFAULT '[]'`); } catch { /* column exists */ }
+  const columns = await db.all<{ name: string }>(sql`PRAGMA table_info(managed_posts)`);
+  for (const [name, statement] of [
+    ["seo_title", sql`ALTER TABLE managed_posts ADD COLUMN seo_title TEXT NOT NULL DEFAULT ''`],
+    ["seo_description", sql`ALTER TABLE managed_posts ADD COLUMN seo_description TEXT NOT NULL DEFAULT ''`],
+  ] as const) {
+    if (columns.some((column) => column.name === name)) continue;
+    try {
+      await db.run(statement);
+    } catch (error) {
+      const currentColumns = await db.all<{ name: string }>(sql`PRAGMA table_info(managed_posts)`);
+      if (!currentColumns.some((column) => column.name === name)) throw error;
+    }
+  }
   return db;
+}
+
+function validateSeo(input: { seoTitle?: string; seoDescription?: string }) {
+  const seoTitle = input.seoTitle?.trim() ?? "";
+  const seoDescription = input.seoDescription?.trim() ?? "";
+  if (seoTitle.length > 100) throw new Error("Tytuł SEO może mieć maksymalnie 100 znaków.");
+  if (seoDescription.length > 240) throw new Error("Opis SEO może mieć maksymalnie 240 znaków.");
+  return { seoTitle, seoDescription };
 }
 
 function slugify(value: string) {
@@ -21,7 +42,7 @@ function slugify(value: string) {
 
 function toPost(row: typeof managedPosts.$inferSelect): NewsPost {
   const attachments = JSON.parse(row.attachmentsJson || "[]") as Array<{ name: string; key: string }>;
-  return { id: Number.parseInt(row.id.slice(0, 8), 16) || 0, slug: row.slug, title: row.title, date: row.createdAt, year: Number(row.createdAt.slice(0, 4)), excerpt: row.excerpt, paragraphs: row.content.split(/\n\s*\n/).map((item) => item.trim()).filter(Boolean), links: attachments.map((attachment) => ({ label: attachment.name, href: `/api/media/${encodeURIComponent(attachment.key)}`, document: true })), categories: [row.category], image: row.imageKey ? `/api/media/${encodeURIComponent(row.imageKey)}` : null, source: row.source };
+  return { id: Number.parseInt(row.id.slice(0, 8), 16) || 0, slug: row.slug, title: row.title, date: row.createdAt, year: Number(row.createdAt.slice(0, 4)), excerpt: row.excerpt, seoTitle: row.seoTitle, seoDescription: row.seoDescription, paragraphs: row.content.split(/\n\s*\n/).map((item) => item.trim()).filter(Boolean), links: attachments.map((attachment) => ({ label: attachment.name, href: `/api/media/${encodeURIComponent(attachment.key)}`, document: true })), categories: [row.category], image: row.imageKey ? `/api/media/${encodeURIComponent(row.imageKey)}` : null, source: row.source };
 }
 
 export async function getManagedPostBySlug(slug: string) {
@@ -49,7 +70,8 @@ export async function listManagedPosts(kind?: "news" | "tender") {
   return rows.map(toPost);
 }
 
-export async function createManagedPost(input: { kind: "news" | "tender"; title: string; excerpt: string; content: string; category: string; source: string; image?: File | null; attachments?: File[]; createdBy: string }) {
+export async function createManagedPost(input: { kind: "news" | "tender"; title: string; excerpt: string; content: string; category: string; source: string; seoTitle?: string; seoDescription?: string; image?: File | null; attachments?: File[]; createdBy: string }) {
+  const seo = validateSeo(input);
   const title = input.title.trim();
   if (!title || !input.excerpt.trim() || !input.content.trim()) throw new Error("Tytuł, opis i treść są wymagane.");
   if (input.kind === "tender" && !TENDER_CATEGORIES.includes(input.category)) throw new Error("Wybierz poprawną kategorię zapytania.");
@@ -71,7 +93,7 @@ export async function createManagedPost(input: { kind: "news" | "tender"; title:
     await getMemberDocumentsBucket().put(key, await attachment.arrayBuffer(), { httpMetadata: { contentType: attachment.type || "application/octet-stream" } });
     attachments.push({ name: attachment.name, key });
   }
-  await db.insert(managedPosts).values({ id, kind: input.kind, slug, title, excerpt: input.excerpt.trim(), content: input.content.trim(), category: input.kind === "news" ? "Aktualności" : input.category, imageKey, imageContentType, source: input.source.trim(), attachmentsJson: JSON.stringify(attachments), createdBy: input.createdBy });
+  await db.insert(managedPosts).values({ id, kind: input.kind, slug, title, excerpt: input.excerpt.trim(), ...seo, content: input.content.trim(), category: input.kind === "news" ? "Aktualności" : input.category, imageKey, imageContentType, source: input.source.trim(), attachmentsJson: JSON.stringify(attachments), createdBy: input.createdBy });
   return slug;
 }
 
@@ -86,17 +108,19 @@ export async function listManagedPostsForAdmin() {
   const rows = await db.select().from(managedPosts).orderBy(desc(managedPosts.createdAt));
   return rows.map((row) => ({
     id: row.id, kind: row.kind as "news" | "tender", slug: row.slug, title: row.title, excerpt: row.excerpt,
+    seoTitle: row.seoTitle, seoDescription: row.seoDescription,
     content: row.content, category: row.category, source: row.source, createdAt: row.createdAt,
     image: row.imageKey ? `/api/media/${encodeURIComponent(row.imageKey)}` : null,
     attachments: parseAttachments(row.attachmentsJson),
   }));
 }
 
-export async function updateManagedPost(id: string, input: { title: string; excerpt: string; content: string; category: string; source: string; image?: File | null; attachments?: File[] }) {
+export async function updateManagedPost(id: string, input: { title: string; excerpt: string; content: string; category: string; source: string; seoTitle?: string; seoDescription?: string; image?: File | null; attachments?: File[] }) {
   const db = await ensureManagedPostsTable();
   const rows = await db.select().from(managedPosts).where(eq(managedPosts.id, id)).limit(1);
   const existing = rows[0];
   if (!existing) throw new Error("Nie znaleziono wpisu.");
+  const seo = validateSeo({ seoTitle: input.seoTitle ?? existing.seoTitle, seoDescription: input.seoDescription ?? existing.seoDescription });
   if (!input.title.trim() || !input.excerpt.trim() || !input.content.trim()) throw new Error("Tytuł, opis i treść są wymagane.");
   if (existing.kind === "tender" && !TENDER_CATEGORIES.includes(input.category)) throw new Error("Wybierz poprawną kategorię zapytania.");
 
@@ -120,7 +144,7 @@ export async function updateManagedPost(id: string, input: { title: string; exce
     attachments.push({ name: attachment.name, key });
   }
 
-  await db.update(managedPosts).set({ title: input.title.trim(), excerpt: input.excerpt.trim(), content: input.content.trim(), category: existing.kind === "news" ? "Aktualności" : input.category, source: input.source.trim(), imageKey, imageContentType, attachmentsJson: JSON.stringify(attachments), updatedAt: new Date().toISOString() }).where(eq(managedPosts.id, id));
+  await db.update(managedPosts).set({ title: input.title.trim(), excerpt: input.excerpt.trim(), ...seo, content: input.content.trim(), category: existing.kind === "news" ? "Aktualności" : input.category, source: input.source.trim(), imageKey, imageContentType, attachmentsJson: JSON.stringify(attachments), updatedAt: new Date().toISOString() }).where(eq(managedPosts.id, id));
 }
 
 export async function deleteManagedPost(id: string) {

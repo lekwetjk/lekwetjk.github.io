@@ -1,6 +1,8 @@
 import { pagesFor } from "../lib/content";
 import { withBasePath } from "../lib/basePath";
 import { Arrow, PageShell } from "./SiteChrome";
+import { getLocalProposals } from "../lib/local-proposals-server";
+import { proposedPageHref, proposedSummaries } from "../lib/local-proposal-content";
 
 type HubPageProps = {
   eyebrow: string;
@@ -129,7 +131,7 @@ function directoryPreview(
   return truncateText(maybeSentence, maxLength);
 }
 
-export function HubPage({
+export async function HubPage({
   eyebrow,
   title,
   lead,
@@ -142,8 +144,14 @@ export function HubPage({
   previewMaxLength = 260,
   language = "pl",
 }: HubPageProps) {
+  const proposals = await getLocalProposals();
   const pages = pagesFor(slugs);
   const hiddenPreviewSlugs = new Set(hidePreviewForSlugs);
+  const factBand = facts.length > 0 ? (
+    <section className="fact-band" aria-label={language === "en" ? "Key facts" : "Najważniejsze dane"}>
+      <div className="shell fact-band-grid">{facts.map((fact) => <div key={fact.label}><strong>{fact.value}</strong><p>{fact.label}</p></div>)}</div>
+    </section>
+  ) : null;
 
   return (
     <PageShell language={language}>
@@ -160,18 +168,7 @@ export function HubPage({
         </div>
       </section>
 
-      {facts.length > 0 && (
-        <section className="fact-band" aria-label={language === "en" ? "Key facts" : "Najważniejsze dane"}>
-          <div className="shell fact-band-grid">
-            {facts.map((fact) => (
-              <div key={fact.label}>
-                <strong>{fact.value}</strong>
-                <p>{fact.label}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+      {!proposals["compact-header"] ? factBand : null}
 
       <section className="content-directory">
         <div className="shell">
@@ -191,7 +188,7 @@ export function HubPage({
                 href={withBasePath(
                   language === "en"
                     ? englishDirectoryContent[page.slug]?.href ?? `/tresc/${page.slug}`
-                    : `/tresc/${page.slug}`,
+                    : proposals.links ? proposedPageHref(page.slug) : `/tresc/${page.slug}`,
                 )}
                 key={page.slug}
               >
@@ -203,6 +200,7 @@ export function HubPage({
                   <p>
                     {language === "en"
                       ? englishDirectoryContent[page.slug]?.preview ?? page.excerpt
+                      : proposals.summaries ? proposedSummaries[page.slug] ?? ""
                       : directoryPreview(
                           page.paragraphs,
                           page.excerpt,
@@ -219,6 +217,7 @@ export function HubPage({
           </div>
         </div>
       </section>
+      {proposals["compact-header"] ? factBand : null}
     </PageShell>
   );
 }

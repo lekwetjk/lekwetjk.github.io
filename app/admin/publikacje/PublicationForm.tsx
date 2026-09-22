@@ -36,6 +36,11 @@ export default function PublicationForm({ kind }: { kind: "news" | "tender" }) {
     <label>Tytuł<input name="title" required value={title} onChange={(event) => setTitle(event.target.value)} style={{ width: "100%", padding: 10 }} /></label>
     {tender ? <label>Kategoria<select name="category" required defaultValue={tenderCategories[0]} style={{ width: "100%", padding: 10 }}>{tenderCategories.map((category) => <option key={category}>{category}</option>)}</select></label> : null}
     <label>Krótki opis<input name="excerpt" required value={excerpt} onChange={(event) => setExcerpt(event.target.value)} style={{ width: "100%", padding: 10 }} /></label>
+    <fieldset style={{ margin: 0, padding: 0, border: 0, minWidth: 0, display: "grid", gap: 12 }}>
+      <legend>SEO</legend>
+      <label>Tytuł SEO (opcjonalnie)<input name="seoTitle" maxLength={100} placeholder={title} style={{ width: "100%", padding: 10 }} /></label>
+      <label>Opis SEO (opcjonalnie)<textarea name="seoDescription" maxLength={240} rows={3} placeholder={excerpt} style={{ width: "100%", padding: 10 }} /></label>
+    </fieldset>
     <label>Treść
       <div style={{ display: "flex", gap: 6, margin: "6px 0" }}><button type="button" title="Pogrubienie" onClick={() => format("b")}><strong>B</strong></button><button type="button" title="Kursywa" onClick={() => format("i")}><em>I</em></button><button type="button" onClick={() => format("h2")}>Nagłówek</button></div>
       <textarea ref={editorRef} name="content" required rows={10} value={content} onChange={(event) => setContent(event.target.value)} style={{ width: "100%", padding: 10 }} />

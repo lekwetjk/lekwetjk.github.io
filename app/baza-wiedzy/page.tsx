@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { knowledgePages } from "../lib/content";
 import { withBasePath } from "../lib/basePath";
 import { Arrow, PageShell } from "../components/SiteChrome";
+import { getLocalProposals } from "../lib/local-proposals-server";
+import { excludedLibrarySlugs, proposedPageHref, proposedSection, proposedSummaries } from "../lib/local-proposal-content";
 
 export const metadata: Metadata = {
   title: "Baza wiedzy",
@@ -26,9 +28,11 @@ export const metadata: Metadata = {
   },
 };
 
-export default function KnowledgeBasePage() {
+export default async function KnowledgeBasePage() {
+  const proposals = await getLocalProposals();
+  const catalog = proposals.library ? knowledgePages.filter((page) => !excludedLibrarySlugs.has(page.slug)).map((page) => ({ ...page, section: proposedSection(page.slug, page.section) })) : knowledgePages;
   const sections = Array.from(
-    new Set(knowledgePages.map((page) => page.section)),
+    new Set(catalog.map((page) => page.section)),
   );
 
   return (
@@ -43,7 +47,7 @@ export default function KnowledgeBasePage() {
             </p>
           </div>
           <div className="library-count">
-            <strong>{knowledgePages.length}</strong>
+            <strong>{catalog.length}</strong>
             <span>uporządkowanych stron tematycznych</span>
           </div>
         </div>
@@ -51,7 +55,7 @@ export default function KnowledgeBasePage() {
       <section className="library-index">
         <div className="shell">
           {sections.map((section) => {
-            const pages = knowledgePages.filter(
+            const pages = catalog.filter(
               (page) => page.section === section,
             );
             return (
@@ -62,11 +66,11 @@ export default function KnowledgeBasePage() {
                 </div>
                 <div className="library-grid">
                   {pages.map((page) => (
-                    <a href={withBasePath(`/tresc/${page.slug}`)} key={page.slug} className="library-card">
+                    <a href={withBasePath(proposals.library || proposals.links ? proposedPageHref(page.slug) : `/tresc/${page.slug}`)} key={page.slug} className="library-card">
                       <span className="library-card-index">{page.section}</span>
                       <h3>{page.title}</h3>
                       <p>
-                        {page.slug === "akty-prawne"
+                        {proposals.summaries ? proposedSummaries[page.slug] ?? "" : page.slug === "akty-prawne"
                           ? "Aktualna baza krajowych i unijnych aktów prawnych dotyczących branży drobiarskiej"
                           : page.excerpt}
                       </p>

@@ -2745,6 +2745,24 @@ blockquote {
   background: #ece8dd;
 }
 
+.wstawienia-table .wstawienia-row-quarter > :is(th, td) {
+  background: #e4efe7;
+  font-weight: 700;
+}
+
+.wstawienia-table .wstawienia-row-dynamics > :is(th, td) {
+  background: #e5eef8;
+}
+
+.wstawienia-table .wstawienia-row-dynamics-summary > :is(th, td) {
+  background: #fff0c2;
+}
+
+.wstawienia-table [data-annual="true"] > :is(th, td) {
+  color: #b42318;
+  font-weight: 700;
+}
+
 .prose-wstawienia .wstawienia-meta-line {
   margin-bottom: 10px;
   font-size: 15px;

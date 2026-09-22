@@ -8,6 +8,8 @@ type Post = {
   slug: string;
   title: string;
   excerpt: string;
+  seoTitle: string;
+  seoDescription: string;
   content: string;
   category: string;
   source: string;
@@ -65,6 +67,11 @@ export default function ManagedPostsManager() {
         <label>Tytuł<input name="title" defaultValue={post.title} required style={{ width: "100%", padding: 10 }} /></label>
         {post.kind === "tender" ? <label>Kategoria<select name="category" defaultValue={post.category} style={{ width: "100%", padding: 10 }}>{tenderCategories.map((category) => <option key={category}>{category}</option>)}</select></label> : <input type="hidden" name="category" value="Aktualności" />}
         <label>Krótki opis<input name="excerpt" defaultValue={post.excerpt} required style={{ width: "100%", padding: 10 }} /></label>
+        <fieldset style={{ margin: 0, padding: 0, border: 0, minWidth: 0, display: "grid", gap: 10 }}>
+          <legend>SEO</legend>
+          <label>Tytuł SEO (opcjonalnie)<input name="seoTitle" defaultValue={post.seoTitle ?? ""} maxLength={100} placeholder={post.title} style={{ width: "100%", padding: 10 }} /></label>
+          <label>Opis SEO (opcjonalnie)<textarea name="seoDescription" defaultValue={post.seoDescription ?? ""} maxLength={240} rows={3} placeholder={post.excerpt} style={{ width: "100%", padding: 10 }} /></label>
+        </fieldset>
         <label>Treść<textarea name="content" defaultValue={post.content} rows={10} required style={{ width: "100%", padding: 10 }} /></label>
         <label>Nowa grafika (opcjonalnie)<input name="image" type="file" accept="image/jpeg,image/png,image/webp" /></label>
         <label>Dodaj załączniki (PDF, DOCX, XLSX)<input name="attachments" type="file" accept=".pdf,.docx,.xlsx" multiple /></label>

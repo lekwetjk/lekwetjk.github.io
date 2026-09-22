@@ -56,6 +56,8 @@ export const managedPosts = sqliteTable("managed_posts", {
   slug: text("slug").notNull().unique(),
   title: text("title").notNull(),
   excerpt: text("excerpt").notNull(),
+  seoTitle: text("seo_title").notNull().default(""),
+  seoDescription: text("seo_description").notNull().default(""),
   content: text("content").notNull(),
   category: text("category").notNull(),
   imageKey: text("image_key"),

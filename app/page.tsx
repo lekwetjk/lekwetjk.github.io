@@ -1,8 +1,10 @@
 import { isTenderPost, knowledgePages, newsPosts } from "./lib/content";
 import { withBasePath } from "./lib/basePath";
 import { Arrow, PageShell } from "./components/SiteChrome";
+import { getLocalProposals } from "./lib/local-proposals-server";
+import { materialCountLabel } from "./lib/local-proposals";
 
-export const dynamic = "force-static";
+export const dynamic = process.env.NODE_ENV === "development" ? "auto" : "force-static";
 
 const latestNews = newsPosts.filter((post) => !isTenderPost(post)).slice(0, 4);
 
@@ -98,7 +100,8 @@ const pathways = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const proposals = await getLocalProposals();
   return (
     <PageShell>
       <section className="home-hero">
@@ -289,7 +292,7 @@ export default function Home() {
           </div>
           <div className="knowledge-copy">
             <p className="eyebrow">Kompletna baza informacji</p>
-            <h2>{knowledgePages.length + newsPosts.length} materiały w jednej strukturze</h2>
+            <h2>{knowledgePages.length + newsPosts.length} {proposals.counts ? materialCountLabel(knowledgePages.length + newsPosts.length) : "materiały"} w jednej strukturze</h2>
             <p>
               Serwis obejmuje wszystkie strony tematyczne oraz całe archiwum
               komunikatów, wydarzeń, stanowisk, kampanii i zapytań ofertowych

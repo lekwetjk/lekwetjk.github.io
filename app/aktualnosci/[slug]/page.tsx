@@ -3,6 +3,27 @@ import { PageShell } from "../../components/SiteChrome";
 import { withBasePath } from "../../lib/basePath";
 import { formatDate, newsPosts, postBySlug } from "../../lib/content";
 import { getManagedPostBySlug } from "../../lib/managed-posts";
+import type { Metadata } from "next";
+import { getLocalProposals, getLocalSeoDraft } from "../../lib/local-proposals-server";
+
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const proposals = await getLocalProposals();
+  if (!proposals.seo) return {};
+  const { slug } = await params;
+  const post = postBySlug(slug) ?? await getManagedPostBySlug(slug);
+  if (!post) return { title: "Nie znaleziono materiału", robots: { index: false } };
+  const draft = await getLocalSeoDraft(`/aktualnosci/${slug}`);
+  const title = post.seoTitle || draft?.title || post.title;
+  const description = post.seoDescription || draft?.description || post.excerpt;
+  return {
+    title,
+    description,
+    alternates: { canonical: `/aktualnosci/${slug}` },
+    robots: process.env.NODE_ENV === "development" ? { index: false, follow: false } : undefined,
+    openGraph: { title, description, type: "article", url: `/aktualnosci/${slug}`, publishedTime: post.date, images: post.image ? [post.image] : undefined },
+    twitter: { card: post.image ? "summary_large_image" : "summary", title, description, images: post.image ? [post.image] : undefined },
+  };
+}
 
 export function generateStaticParams() {
   return newsPosts.map((post) => ({ slug: post.slug }));

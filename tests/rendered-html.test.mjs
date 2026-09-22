@@ -16,6 +16,24 @@ test("articles omit legacy site referrals while retaining specific resource link
   assert.match(source, /\{sourceLinkLabel \? \(/);
 });
 
+test("campaign dates recognize Polish months and fall back to linked publication metadata", async () => {
+  const source = await readProjectFile("app/components/ArticleBody.tsx");
+  const styles = await readProjectFile("app/proposals.css");
+  assert.ok(source.includes("const datePattern = /^\\d{1,2}\\s+\\p{L}{3}\\s+\\d{4}$/iu;"));
+  assert.ok(source.includes("newsPosts.find((post) => post.slug === campaignSlug)"));
+  assert.ok(source.includes("date: dateByTitle.get(normalizeText(link.label.trim())) ??"));
+  assert.ok(source.includes("campaignDateFormatter.format(new Date(campaignPost.date))"));
+  assert.ok(source.includes('title="Data publikacji"'));
+  assert.doesNotMatch(styles, /\.kampanie-date\s*\{\s*display:\s*none/);
+  const data = JSON.parse(await readProjectFile("app/data/content.json"));
+  for (const [slug, expectedDate] of [
+    ["indyk-ma-wiele-do-dania-podsumowanie-wrzesnia-2024", "2024-10-31"],
+    ["piknik-z-okazji-dnia-dziecka-na-dziedzincu-w-ogrodach-i-na-dziedzincu-kancelarii-prezesa-rady-ministrow", "2022-07-18"],
+  ]) {
+    assert.equal(data.posts.find((post) => post.slug === slug)?.date.slice(0, 10), expectedDate);
+  }
+});
+
 test("home page includes the main KRD-IG sections and messaging", async () => {
   const page = await readProjectFile("app/page.tsx");
 

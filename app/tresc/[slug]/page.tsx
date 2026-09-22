@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 
 import { ArticleBody } from "../../components/ArticleBody";
 import { PageShell } from "../../components/SiteChrome";
 import { withBasePath } from "../../lib/basePath";
 import { knowledgePages, pageBySlug } from "../../lib/content";
+import { getLocalProposals, getLocalSeoDraft } from "../../lib/local-proposals-server";
+import { cleanProposedParagraph, proposedSummaries } from "../../lib/local-proposal-content";
 
 export function generateStaticParams() {
   return knowledgePages.map((page) => ({ slug: page.slug }));
@@ -25,11 +27,13 @@ export async function generateMetadata({
     };
   }
 
-  const title = page.title;
+  const proposals = await getLocalProposals();
+  const draft = proposals.seo ? await getLocalSeoDraft(`/tresc/${slug}`) : null;
+  const title = draft?.title || page.title;
   const description =
-    page.excerpt.trim() ||
+    draft?.description || (proposals.seo ? proposedSummaries[slug] : "") || page.excerpt.trim() ||
     `Informacje o ${page.title} z sekcji ${page.section} w bazie wiedzy KRD-IG.`;
-  const canonicalUrl = `https://krd-ig.com.pl/tresc/${page.slug}`;
+  const canonicalUrl = `/tresc/${page.slug}`;
   const socialImage = slug === "wazne-linki" ? "/media/wazne-linki-hero.png" : undefined;
 
   return {
@@ -76,13 +80,17 @@ export default async function ContentDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
+  const proposals = await getLocalProposals();
+
+  if (proposals.contacts && slug === "kontakt") redirect("/kontakt");
+  if (proposals.links && ["aktualnosci", "zapytania-ofertowe"].includes(slug)) redirect(`/${slug}`);
 
   if (slug === "dla-czlonkow") {
     redirect("/member/epi-geo");
   }
 
   const page = pageBySlug(slug);
-  const leadText =
+  const originalLeadText =
     slug === "o-nas"
       ? "Informacja o Krajowej Radzie Drobiarstwa – Izbie Gospodarczej w Warszawie. Krajowa Rada Drobiarstwa istnieje od 1991 roku. Od 11 marca 1998r. Krajowa Rada Drobiarstwa posiada statut Izby Gospodarczej. Aktualnie do KRD-IG należy ponad 100 podmiotów gospodarczych."
       : slug === "komisje"
@@ -100,24 +108,18 @@ export default async function ContentDetailPage({
       : slug === "dezinformacja-zywnosciowa"
         ? "Dezinformacja żywnościowa to fałszywe lub zmanipulowane informacje, które mogą podważać zaufanie konsumentów i powodować realne straty w całym sektorze rolno-spożywczym."
       : page?.excerpt;
+  const leadText = proposals.summaries ? proposedSummaries[slug] ?? "" : originalLeadText;
   const legalEuRegulationText =
     "Stosuje się je wprost, ponieważ z mocy traktatu mają charakter ogólny, wiążą w całości i są bezpośrednio stosowane w każdym państwie członkowskim od dnia ich wejścia w życie.";
 
   if (!page) {
-    return (
-      <PageShell>
-        <section className="simple-hero">
-          <div className="shell">
-            <h1>Nie znaleziono informacji</h1>
-            <a href={withBasePath("/baza-wiedzy")}>Wróć do bazy wiedzy</a>
-          </div>
-        </section>
-      </PageShell>
-    );
+    notFound();
   }
 
   const image =
-    slug === "akty-prawne"
+    proposals.images && slug === "e-book-o-dezinformacji-zywnosciowej"
+      ? page.images.find((url) => /\/grafika-ebook\.webp(?:\?|$)/.test(url))
+      : slug === "akty-prawne"
       ? "/media/prawo.png"
       : slug === "czlonkowie"
       ? "/media/memb.jpg"
@@ -135,7 +137,7 @@ export default async function ContentDetailPage({
   const wazneLinkiSubtitle =
     "to szybki dostęp do najważniejszych linków stron i portali internetowych w obszarze rolnictwa i sektora drobiarskiego";
   const shouldUseWideLead = slug === "zarzad-i-rada-izby";
-  const shouldShowLeadText = Boolean(leadText) && slug !== "wazne-linki" && slug !== "czlonkowie";
+  const shouldShowLeadText = Boolean(leadText) && slug !== "wazne-linki" && slug !== "czlonkowie" && !(proposals.summaries && ["statut", "kontakt", "dane-kontaktowe", "polityka-prywatnosci", "polityka-cookies"].includes(slug));
   const heroImageClassName =
     slug === "akty-prawne"
       ? "article-hero-image-legal"
@@ -192,7 +194,7 @@ export default async function ContentDetailPage({
             </h1>
             {shouldShowLeadText && (
               <p className={articleLeadClassName}>
-                {slug === "akty-prawne" ? (
+                {slug === "akty-prawne" && !proposals.summaries ? (
                   <>
                     {leadText} Rozporządzenia UE: {legalEuRegulationText}
                   </>
@@ -213,7 +215,7 @@ export default async function ContentDetailPage({
         </div>
       </section>
       <ArticleBody
-        paragraphs={page.paragraphs}
+        paragraphs={proposals["text-cleanup"] ? page.paragraphs.map(cleanProposedParagraph) : page.paragraphs}
         links={page.links}
         source={page.source}
         slug={slug}

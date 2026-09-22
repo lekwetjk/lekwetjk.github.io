@@ -26,6 +26,8 @@ export type NewsPost = {
   date: string;
   year: number;
   excerpt: string;
+  seoTitle?: string;
+  seoDescription?: string;
   paragraphs: string[];
   links: ContentLink[];
   categories: string[];
@@ -202,7 +204,7 @@ function normalizeLinks(links: ContentLink[]) {
   }));
 }
 
-export const knowledgePages = content.pages.map((page) => ({
+export const knowledgePages = content.pages.filter((page) => !["akty-prawne", "nadzwyczajne-srodki-zwalczania-chorob"].includes(page.slug)).map((page) => ({
   ...page,
   paragraphs: page.paragraphs
     .map(cleanContentText)
