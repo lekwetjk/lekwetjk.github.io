@@ -137,7 +137,7 @@ export default async function ContentDetailPage({
   const wazneLinkiSubtitle =
     "to szybki dostęp do najważniejszych linków stron i portali internetowych w obszarze rolnictwa i sektora drobiarskiego";
   const shouldUseWideLead = slug === "zarzad-i-rada-izby";
-  const isMarketArticle = [
+  const shouldJustifyArticleContent = [
     "rynek-drobiu-w-polsce-w-liczbach",
     "raporty",
     "handel-zagraniczny",
@@ -148,6 +148,19 @@ export default async function ContentDetailPage({
     "globalizacja-rynku",
     "bezpieczenstwo-bialkowe",
     "promocja-drobiu",
+    "dzial-hodowli-i-oceny-drobiu",
+    "rejestry-i-ksiegi",
+    "metodyka-i-biuletyny",
+    "wstawienia",
+    "cennik",
+    "pierze-i-puch-certyfikacja",
+    "jakosc-i-bezpieczenstwo",
+    "system-qafp",
+    "bezpieczna-produkcja",
+    "zdrowy-drob",
+    "segmentacja",
+    "dobrostan-zwierzat",
+    "poszanowanie-srodowiska",
   ].includes(slug);
   const shouldShowLeadText = Boolean(leadText) && slug !== "wazne-linki" && slug !== "czlonkowie" && !(proposals.summaries && ["statut", "kontakt", "dane-kontaktowe", "polityka-prywatnosci", "polityka-cookies"].includes(slug));
   const heroImageClassName =
@@ -226,7 +239,7 @@ export default async function ContentDetailPage({
           )}
         </div>
       </section>
-      <div className={isMarketArticle ? "market-article-content" : undefined}>
+      <div className={shouldJustifyArticleContent ? "justified-article-content" : undefined}>
         <ArticleBody
           paragraphs={proposals["text-cleanup"] ? page.paragraphs.map(cleanProposedParagraph) : page.paragraphs}
           links={page.links}

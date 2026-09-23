@@ -1929,7 +1929,7 @@ blockquote {
   text-align: justify;
 }
 
-body .market-article-content article.prose :is(p, li) {
+body .justified-article-content article.prose :is(p, li) {
   text-align: justify;
 }
 
