@@ -1432,34 +1432,46 @@ export async function ArticleBody({
   }
 
   if (slug === "kraje-trzecie") {
-    const downloadHref =
-      "https://krd-ig.com.pl/wp-content/uploads/2024/09/KLUCZOWE-KIERUNKI-EKSPORTOWE-DLA-POLSKIEGO-DROBIARSTWA-1.pdf";
+    const marketParagraphs = [
+      'Według szacunków FAO opublikowanych w czerwcu 2026 r. światowa produkcja mięsa drobiowego wyniosła w 2025 r. około **156,3 mln ton**. Największym producentem były Chiny — 29,2 mln ton, przed Stanami Zjednoczonymi — 24,3 mln ton i Brazylią — 15,6 mln ton. Unia Europejska, traktowana jako jeden obszar gospodarczy, zajmowała czwarte miejsce z produkcją około 14,5 mln ton. Wielkości te obejmują mięso różnych gatunków drobiu i są wyrażone w ekwiwalencie masy tuszy. Na 2026 r. FAO prognozuje wzrost światowej produkcji do około 160,3 mln ton. [FAO, „Food Outlook”, czerwiec 2026, tabela A18](https://openknowledge.fao.org/server/api/core/bitstreams/11877910-a587-4202-b22d-d66e498d76b0/content).',
+      'Polska pozostaje największym producentem mięsa drobiowego w Unii Europejskiej. [Eurostat, lipiec 2026](https://ec.europa.eu/eurostat/fr/web/products-eurostat-news/w/wdn-20260709-1).',
+      'Dywersyfikacja eksportu poza UE pozostaje istotnym kierunkiem rozwoju polskiego sektora drobiarskiego. Potencjał poszczególnych rynków należy jednak oceniać z uwzględnieniem konkurencji, preferencji odbiorców, kosztów dostaw oraz rzeczywistego dostępu weterynaryjnego. Poniżej przedstawiamy charakterystykę czterech wybranych rynków.',
+      'Chiny',
+      'Chiny są dużym rynkiem konsumenckim, ale również znaczącym producentem i coraz ważniejszym eksporterem mięsa kurcząt. Według bilansu USDA z kwietnia 2026 r. chiński import tej kategorii wyniósł w 2025 r. około 297 tys. ton — o około 38% mniej niż rok wcześniej. Od 2024 r. Chiny są eksporterem netto mięsa kurcząt. Rozwoju chińskiego rynku nie należy zatem utożsamiać z automatycznym wzrostem zapotrzebowania na import. Przywołany bilans USDA nie obejmuje kurzych łapek. [USDA, kwiecień 2026](https://apps.fas.usda.gov/psdonline/circulars/livestock_poultry.pdf).',
+      'Potencjał handlowy może dotyczyć określonych asortymentów odpowiadających lokalnym preferencjom, w tym kurzych łapek, stanowiących odrębny segment rynku. [USDA, raport dotyczący Chin, marzec 2026](https://apps.fas.usda.gov/newgainapi/api/Report/DownloadReportByFileName?fileName=Poultry+and+Products+Semi-Annual_Beijing_China+-+People%27s+Republic+of_CH2026-0031.pdf).',
+      'Istotnym krokiem w kierunku przywrócenia dostępu dla polskiego drobiu było podpisanie 3 czerwca 2026 r. protokołu dotyczącego wymagań dla mięsa drobiowego i produktów przetworzonych. Przewiduje on stosowanie regionalizacji na poziomie jednostek NUTS-3. Podpisanie porozumienia nie oznacza jednak automatycznego dopuszczenia dostaw z każdego zakładu. [MRiRW, 3 czerwca 2026](https://www.gov.pl/web/rolnictwo/kolejny-krok-w-kierunku-otwarcia-chinskiego-rynku-dla-polskiego-drobiu), [GIW — Chiny](https://www.wetgiw.gov.pl/handel-eksport-import/chiny).',
+      'Japonia',
+      'Japonia jest dużym, dojrzałym rynkiem mięsa kurcząt i znaczącym importerem. Według bilansu USDA z kwietnia 2026 r. konsumpcja bilansowa tej kategorii wyniosła w 2025 r. około 2,965 mln ton, a import — 1,122 mln ton. Są to dane dotyczące całego rynku, a nie wyłącznie zakupów detalicznych gospodarstw domowych. [USDA, kwiecień 2026](https://apps.fas.usda.gov/psdonline/circulars/livestock_poultry.pdf).',
+      'Możliwości sprzedaży z Polski należy rozpatrywać odrębnie dla mięsa surowego oraz produktów przetworzonych termicznie. Wykaz japońskiego Ministerstwa Rolnictwa, Leśnictwa i Rybołówstwa, zaktualizowany 18 września 2026 r., wskazuje ograniczenia związane z wysoce zjadliwą grypą ptaków obejmujące wszystkie polskie województwa. Przewidziano przy tym określone wyjątki dla produktów wytworzonych przed wskazanymi datami i odpowiednio zabezpieczonych. [MAFF — aktualne ograniczenia importowe](https://www.maff.go.jp/aqs/topix/im/hpai.html).',
+      'Odrębną możliwość rozwoju eksportu stanowią produkty przetworzone. W kwietniu 2026 r. ogłoszono zatwierdzenie pierwszego polskiego zakładu do eksportu przetworzonych produktów drobiowych do Japonii. Dostęp ten wymaga spełnienia szczegółowych warunków i nie oznacza zniesienia ograniczeń dla mięsa surowego. [KOWR, 15 kwietnia 2026](https://www.gov.pl/web/kowr/eksport-polskiego-miesa-do-japonii).',
+      'Republika Południowej Afryki',
+      'Republika Południowej Afryki pozostaje dużym rynkiem mięsa kurcząt, na którym produkcja krajowa jest uzupełniana importem. Według raportu USDA FAS z września 2026 r. produkcja mięsa kurcząt w 2025 r. wyniosła około 1,61 mln ton, a import około 0,3 mln ton. Warunki konkurencji kształtują m.in. koszty produkcji, sytuacja epizootyczna oraz instrumenty ochrony handlu, w tym cła antydumpingowe. [USDA, raport dotyczący RPA, wrzesień 2026](https://apps.fas.usda.gov/newgainapi/api/Report/DownloadReportByFileName?fileName=Poultry+and+Products+Annual_Pretoria_South+Africa+-+Republic+of_SF2026-0031.pdf).',
+      'Rząd RPA wspiera rozwój i modernizację sektora w ramach programu Poultry Master Plan. Dostępne źródła nie uzasadniają jednak generalizujących ocen, że wsparcie publiczne prowadzi do niekonkurencyjności, niedoinwestowania czy nadmiernego zatrudnienia w całej branży. [Rząd RPA — Poultry Master Plan](https://www.gov.za/news/media-statements/trade-industry-and-competition-poultry-master-plan-21-feb-2025).',
+      'Dla polskich przedsiębiorstw kluczową kwestią pozostaje dostęp weterynaryjny. We wrześniu 2026 r. MRiRW nadal informowało o potrzebie finalizacji uzgodnień dotyczących dostępu polskiego drobiu do rynku RPA. Historycznych uprawnień zakładów nie należy więc utożsamiać z możliwością bieżącej realizacji dostaw. Konieczna jest każdorazowa weryfikacja wymagań produktowych, ograniczeń związanych z chorobami drobiu oraz aktualnych zezwoleń. [MRiRW, 3 września 2026](https://www.gov.pl/web/rolnictwo/polska-i-republika-poludniowej-afryki-zaciesniaja-wspolprace-w-sektorze-rolno-spozywczym), [GIW — RPA](https://www.wetgiw.gov.pl/handel-eksport-import/republika-poludniowej-afryki).',
+      'Singapur',
+      'Singapur jest rynkiem silnie uzależnionym od dostaw zagranicznych. Według Singapore Food Agency ponad 90% jego zaopatrzenia w żywność pochodzi z importu, a dywersyfikacja dostawców stanowi ważny element krajowej strategii bezpieczeństwa żywnościowego. Wskaźnik ten dotyczy całej żywności, nie wyłącznie drobiu. [SFA, maj 2026](https://www.sfa.gov.sg/news-publications/newsroom/singapore-food-statistics-2025).',
+      'W 2025 r. całkowita podaż kurcząt wyniosła 215,8 tys. ton, wobec 224,0 tys. ton w 2024 r., co oznacza spadek o około 3,7%. Głównymi źródłami dostaw były Brazylia, Malezja i Stany Zjednoczone. Dane te potwierdzają znaczną skalę rynku, ale nie uzasadniają twierdzenia o nieprzerwanym wzroście konsumpcji. [SFA, „Singapore Food Statistics 2025”](https://www.sfa.gov.sg/docs/default-source/publication/sg-food-statistics/sgfs-2025-publication_060526-fa.pdf).',
+      'Eksport z Polski wymaga odpowiedniego zatwierdzenia zakładu oraz spełnienia wymagań dla konkretnego produktu. W wykazie ograniczeń HPAI według stanu na 23 września 2026 r. Polska nie figurowała. Nie oznacza to jednak automatycznego dopuszczenia wszystkich produktów ani braku innych ograniczeń weterynaryjnych. [SFA — wykaz ograniczeń HPAI](https://www.sfa.gov.sg/docs/default-source/tools-and-resources/resources-for-businesses/list-of-countries-and-regions-suspended-for-hpai.pdf), [GIW — Singapur](https://www.wetgiw.gov.pl/handel-eksport-import/singapur).',
+    ];
     const countryFlags = new Map<string, { src: string; alt: string }>([
       ["CHINY", { src: "/media/flags/cn.svg", alt: "Flaga Chin" }],
       ["JAPONIA", { src: "/media/flags/jp.svg", alt: "Flaga Japonii" }],
-      ["RPA", { src: "/media/flags/za.svg", alt: "Flaga Republiki Południowej Afryki" }],
+      ["REPUBLIKA POŁUDNIOWEJ AFRYKI", { src: "/media/flags/za.svg", alt: "Flaga Republiki Południowej Afryki" }],
       ["SINGAPUR", { src: "/media/flags/sg.svg", alt: "Flaga Singapuru" }],
     ]);
 
     return (
       <div className="article-layout article-layout-full shell">
         <article className="prose prose-justified prose-third-countries">
-          {visibleParagraphs.map((paragraph, index) => {
+          {marketParagraphs.map((paragraph, index) => {
             const normalized = paragraph.trim();
             const normalizedUpper = normalized.toLocaleUpperCase("pl");
             const countryFlag = countryFlags.get(normalizedUpper);
 
-            if (normalizedUpper === "POBIERZ") {
-              return (
-                <h2 className="third-countries-download" key={`${index}-${normalized}`}>
-                  <a href={downloadHref}>POBIERZ</a>
-                </h2>
-              );
-            }
-
             if (countryFlag) {
               return (
                 <h2 className="third-countries-country-heading" key={`${index}-${normalized}`}>
+                  <span>{normalized}</span>
                   <img
                     className="third-countries-flag"
                     src={withBasePath(countryFlag.src)}
@@ -1467,16 +1479,11 @@ export async function ArticleBody({
                     width={36}
                     height={24}
                   />
-                  {normalized}
                 </h2>
               );
             }
 
-            if (index > 0 && looksLikeHeading(paragraph)) {
-              return <h2 key={`${index}-${paragraph.slice(0, 20)}`}>{paragraph}</h2>;
-            }
-
-            return <p key={`${index}-${paragraph.slice(0, 20)}`}>{paragraph}</p>;
+            return <p key={`${index}-${paragraph.slice(0, 20)}`}>{renderInlineMarkdown(paragraph, `third-countries-${index}`)}</p>;
           })}
 
         </article>

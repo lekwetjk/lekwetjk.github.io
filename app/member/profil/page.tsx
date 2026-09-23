@@ -67,6 +67,9 @@ export default async function MemberProfilePage() {
             ) : null}
             {session.role === "admin" ? <ExportPermitOptions /> : null}
           </div>
+          <p style={{ marginTop: 32, overflowWrap: "anywhere" }}>
+            Administrator: <a href="mailto:krd-ig@krd-ig.com.pl">krd-ig@krd-ig.com.pl</a>
+          </p>
         </div>
       </section>
     </PageShell>
