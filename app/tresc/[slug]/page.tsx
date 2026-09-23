@@ -137,6 +137,18 @@ export default async function ContentDetailPage({
   const wazneLinkiSubtitle =
     "to szybki dostęp do najważniejszych linków stron i portali internetowych w obszarze rolnictwa i sektora drobiarskiego";
   const shouldUseWideLead = slug === "zarzad-i-rada-izby";
+  const isMarketArticle = [
+    "rynek-drobiu-w-polsce-w-liczbach",
+    "raporty",
+    "handel-zagraniczny",
+    "unia-europejska",
+    "kraje-trzecie",
+    "eksport-import-z-unii-europejskiej",
+    "przedstawicielstwo-w-chinach",
+    "globalizacja-rynku",
+    "bezpieczenstwo-bialkowe",
+    "promocja-drobiu",
+  ].includes(slug);
   const shouldShowLeadText = Boolean(leadText) && slug !== "wazne-linki" && slug !== "czlonkowie" && !(proposals.summaries && ["statut", "kontakt", "dane-kontaktowe", "polityka-prywatnosci", "polityka-cookies"].includes(slug));
   const heroImageClassName =
     slug === "akty-prawne"
@@ -214,12 +226,14 @@ export default async function ContentDetailPage({
           )}
         </div>
       </section>
-      <ArticleBody
-        paragraphs={proposals["text-cleanup"] ? page.paragraphs.map(cleanProposedParagraph) : page.paragraphs}
-        links={page.links}
-        source={page.source}
-        slug={slug}
-      />
+      <div className={isMarketArticle ? "market-article-content" : undefined}>
+        <ArticleBody
+          paragraphs={proposals["text-cleanup"] ? page.paragraphs.map(cleanProposedParagraph) : page.paragraphs}
+          links={page.links}
+          source={page.source}
+          slug={slug}
+        />
+      </div>
     </PageShell>
   );
 }

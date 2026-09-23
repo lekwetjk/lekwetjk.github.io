@@ -1929,6 +1929,10 @@ blockquote {
   text-align: justify;
 }
 
+body .market-article-content article.prose :is(p, li) {
+  text-align: justify;
+}
+
 .prose h2 {
   margin: 52px 0 18px;
   font: 700 26px/1.15 "Aptos", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
