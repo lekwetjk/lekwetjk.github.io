@@ -16,8 +16,11 @@ type Post = {
   createdAt: string;
   image: string | null;
   imageFit?: "contain" | "cover";
+  imported?: boolean;
   attachments: Array<{ name: string }>;
 };
+
+type ImportablePost = { slug: string; title: string; date: string };
 
 const tenderCategories = ["Zapytania ofertowe", "Zaproszenie do składania ofert", "Wybór wykonawcy", "Wyniki postępowania", "Informacja o unieważnieniu"];
 
@@ -25,12 +28,36 @@ export default function ManagedPostsManager() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [editingId, setEditingId] = useState("");
   const [message, setMessage] = useState("");
+  const [importablePosts, setImportablePosts] = useState<ImportablePost[]>([]);
+  const [importing, setImporting] = useState(false);
 
   async function loadPosts() {
     const response = await fetch("/api/admin/managed-posts");
-    const data = await response.json().catch(() => ({})) as { posts?: Post[]; error?: string };
+    const data = await response.json().catch(() => ({})) as { posts?: Post[]; importablePosts?: ImportablePost[]; error?: string };
     if (!response.ok) throw new Error(data.error ?? "Nie udało się pobrać wpisów.");
     setPosts(data.posts ?? []);
+    setImportablePosts(data.importablePosts ?? []);
+    return data.posts ?? [];
+  }
+
+  async function importPost(slug: string) {
+    setImporting(true);
+    setMessage("");
+    try {
+      const form = new FormData();
+      form.set("action", "import");
+      form.set("slug", slug);
+      const response = await fetch("/api/admin/managed-posts", { method: "POST", body: form });
+      const data = await response.json() as { error?: string };
+      if (!response.ok) throw new Error(data.error ?? "Nie udało się zaimportować wpisu.");
+      const updatedPosts = await loadPosts();
+      setEditingId(updatedPosts.find((post) => post.slug === slug)?.id ?? "");
+      setMessage("Wpis jest dostępny do edycji. Zachowano adres i datę publikacji.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Nie udało się zaimportować wpisu.");
+    } finally {
+      setImporting(false);
+    }
   }
 
   useEffect(() => { void loadPosts().catch((error) => setMessage(error instanceof Error ? error.message : "Nie udało się pobrać wpisów.")); }, []);
@@ -59,6 +86,10 @@ export default function ManagedPostsManager() {
     <h2 style={{ margin: 0 }}>Opublikowane wpisy</h2>
     {message ? <p style={{ margin: 0, color: message.includes("Nie udało") ? "#b91c1c" : "#166534" }}>{message}</p> : null}
     {!posts.length ? <p style={{ margin: 0, color: "#475569" }}>Brak wpisów dodanych z panelu administratora.</p> : null}
+    {importablePosts.map((post) => <article key={post.slug} style={{ border: "1px solid #d5d9df", borderRadius: 8, padding: 18, display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+      <div><strong>{post.title}</strong><small style={{ display: "block", marginTop: 4 }}>Wpis z repozytorium · {new Date(post.date).toLocaleDateString("pl-PL")}</small></div>
+      <button type="button" className="button button-outline" disabled={importing} onClick={() => void importPost(post.slug)}>{importing ? "Importowanie..." : "Włącz edycję w panelu"}</button>
+    </article>)}
     {posts.map((post) => <article key={post.id} style={{ border: "1px solid #d5d9df", borderRadius: 8, padding: 18 }}>
       <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "start", flexWrap: "wrap" }}>
         <div><strong>{post.title}</strong><small style={{ display: "block", color: "#475569", marginTop: 4 }}>{post.kind === "tender" ? post.category : "Aktualność"} · {new Date(post.createdAt).toLocaleDateString("pl-PL")}</small></div>

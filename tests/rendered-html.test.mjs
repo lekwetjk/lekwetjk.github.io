@@ -50,6 +50,23 @@ test("publication image fit reaches archive and article renderers and admin form
   }
 });
 
+test("imported campaign edits take precedence in public views and require an admin import action", async () => {
+  const detail = await readProjectFile("app/aktualnosci/[slug]/page.tsx");
+  assert.equal(detail.match(/resolvePublishedPost\(slug, postBySlug\(slug\)\)/g)?.length, 2);
+  for (const file of ["app/page.tsx", "app/aktualnosci/page.tsx", "app/components/ArticleBody.tsx"]) {
+    assert.match(await readProjectFile(file), /await applyManagedPostOverrides\(/);
+    assert.match(await readProjectFile(file), /await connection\(\)/);
+  }
+  const archive = await readProjectFile("app/components/NewsArchive.tsx");
+  assert.ok(archive.includes("[...data.posts, ...posts]"));
+  const api = await readProjectFile("app/api/admin/managed-posts/route.ts");
+  assert.match(api, /importExistingPost\(String\(form.get\("slug"\) \?\? ""\), session.username\)/);
+  assert.ok(api.indexOf('session.role !== "admin"', api.indexOf("export async function POST")) < api.indexOf('form.get("action") === "import"'));
+  const manager = await readProjectFile("app/admin/publikacje/ManagedPostsManager.tsx");
+  assert.match(manager, /Włącz edycję w panelu/);
+  assert.match(manager, /form.set\("action", "import"\)/);
+});
+
 test("articles omit legacy site referrals while retaining specific resource links", async () => {
   const source = await readProjectFile("app/components/ArticleBody.tsx");
 
@@ -58,6 +75,19 @@ test("articles omit legacy site referrals while retaining specific resource link
   assert.match(source, /Zobacz materiały techniczne Komisji Europejskiej/);
   assert.match(source, /PRZEJDŹ DO STRONY ZSRIR/);
   assert.match(source, /\{sourceLinkLabel \? \(/);
+});
+
+test("deleted imported posts stay hidden in archives and sitemap with an enabled delete action", async () => {
+  const manager = await readProjectFile("app/admin/publikacje/ManagedPostsManager.tsx");
+  assert.doesNotMatch(manager, /disabled=\{post.imported/);
+  assert.match(manager, /window.confirm/);
+  const archive = await readProjectFile("app/components/NewsArchive.tsx");
+  assert.match(archive, /!data.deletedSlugs\?\.includes\(post.slug\)/);
+  assert.doesNotMatch(archive, /if \(!data\?\.posts\?\.length\) return/);
+  assert.match(await readProjectFile("app/api/managed-posts/route.ts"), /deletedSlugs: await listDeletedPostSlugs\(\)/);
+  assert.match(await readProjectFile("app/aktualnosci/[slug]/page.tsx"), /if \(!post\) \{\s*notFound\(\)/);
+  assert.match(await readProjectFile("app/sitemap.ts"), /!deletedRoutes.has\(route\)/);
+  assert.match(await readProjectFile("app/sitemap.xml/route.ts"), /await sitemap\(\)/);
 });
 
 test("campaign dates recognize Polish months and fall back to linked publication metadata", async () => {

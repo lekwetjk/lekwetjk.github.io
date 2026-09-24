@@ -10,6 +10,18 @@
 
 Strona sama umieści nowy wpis na liście aktualności, w odpowiedniej kategorii i z poprawnym formatowaniem — nie trzeba edytować żadnego innego pliku.
 
+## Edycja kampanii „Wybierz Twoje Wartości!” w panelu
+
+Po wdrożeniu otwórz panel `/admin/publikacje` jako administrator i przy tym wpisie wybierz „Włącz edycję w panelu”. Jednorazowy import zachowuje adres, datę publikacji, treść Markdown, logo, justowanie i kategorie. Potem używaj przycisku „Edytuj” jak przy publikacjach dodanych z panelu.
+
+Wersja z bazy ma pierwszeństwo w artykule, aktualnościach, kampaniach i na stronie głównej. Ponowny import nie nadpisuje zmian. Po imporcie dostępne są standardowe działania: „Otwórz wpis”, „Edytuj” i „Usuń”. Usunięcie wymaga potwierdzenia, usuwa wpis z publicznych list oraz mapy strony, a jego adres zwraca 404. W bazie pozostaje znacznik usunięcia, aby plik Markdown ani ponowny import nie przywróciły publikacji. Po imporcie aktualizuj wpis w panelu, nie w pliku.
+
+Pole `created_by` zapisuje konto administratora wykonującego import, a nie autora pierwotnej publikacji. `created_at` zachowuje datę publikacji; `updated_at` wskazuje import lub ostatnią edycję. Historia Git zachowuje pochodzenie oryginału.
+
+### Podgląd lokalny
+
+W trybie development, gdy binding D1 nie jest dostępny, publikacje korzystają z osobnej bazy SQLite w `.wrangler/state/local-managed-posts.sqlite` (Node.js 22.13+). Baza jest wyłączona z Git. Import i edycja tekstu działają po zalogowaniu do lokalnego panelu; nie zmieniają produkcji. Nowa lokalna baza nie zawiera wpisów z produkcyjnego panelu. Wgrywanie nowych grafik i załączników nadal wymaga bindingu R2; istniejące logo importowanej kampanii pozostaje dostępne. W produkcji nie ma zastępczej bazy SQLite.
+
 ## Pola w nagłówku
 
 | Pole | Wymagane | Opis |

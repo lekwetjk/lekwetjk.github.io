@@ -3,10 +3,8 @@ import { withBasePath } from "./lib/basePath";
 import { Arrow, PageShell } from "./components/SiteChrome";
 import { getLocalProposals } from "./lib/local-proposals-server";
 import { materialCountLabel } from "./lib/local-proposals";
-
-export const dynamic = process.env.NODE_ENV === "development" ? "auto" : "force-static";
-
-const latestNews = newsPosts.filter((post) => !isTenderPost(post)).slice(0, 4);
+import { applyManagedPostOverrides } from "./lib/managed-posts";
+import { connection } from "next/server";
 
 const romanPillarNumbers = ["I", "II", "III", "IV"];
 
@@ -101,6 +99,8 @@ const pathways = [
 ];
 
 export default async function Home() {
+  await connection();
+  const latestNews = await applyManagedPostOverrides(newsPosts.filter((post) => !isTenderPost(post)).slice(0, 4));
   const proposals = await getLocalProposals();
   return (
     <PageShell>

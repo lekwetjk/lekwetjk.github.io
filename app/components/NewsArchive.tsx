@@ -35,9 +35,10 @@ export function NewsArchive({
 
     void fetch(`/api/managed-posts?kind=${managedKind}`)
       .then((response) => response.ok ? response.json() : null)
-      .then((data: { posts?: ArchivePost[] } | null) => {
-        if (!data?.posts?.length) return;
-        setAllPosts([...posts, ...data.posts]
+      .then((data: { posts?: ArchivePost[]; deletedSlugs?: string[] } | null) => {
+        if (!data?.posts) return;
+        setAllPosts([...data.posts, ...posts]
+          .filter((post) => !data.deletedSlugs?.includes(post.slug))
           .filter((post, index, list) => list.findIndex((item) => item.slug === post.slug) === index)
           .sort((left, right) => new Date(right.date).getTime() - new Date(left.date).getTime()));
       })

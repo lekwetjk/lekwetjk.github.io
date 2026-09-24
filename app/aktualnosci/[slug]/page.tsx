@@ -2,15 +2,20 @@ import { ArticleBody } from "../../components/ArticleBody";
 import { PageShell } from "../../components/SiteChrome";
 import { withBasePath } from "../../lib/basePath";
 import { formatDate, newsPosts, postBySlug } from "../../lib/content";
-import { getManagedPostBySlug } from "../../lib/managed-posts";
+import { resolvePublishedPost } from "../../lib/managed-posts";
+import { connection } from "next/server";
+import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getLocalProposals, getLocalSeoDraft } from "../../lib/local-proposals-server";
+
+export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const proposals = await getLocalProposals();
   if (!proposals.seo) return {};
   const { slug } = await params;
-  const post = postBySlug(slug) ?? await getManagedPostBySlug(slug);
+  if (slug === "wybierz-twoje-wartosci" || !postBySlug(slug)) await connection();
+  const post = await resolvePublishedPost(slug, postBySlug(slug));
   if (!post) return { title: "Nie znaleziono materiału", robots: { index: false } };
   const draft = await getLocalSeoDraft(`/aktualnosci/${slug}`);
   const title = post.seoTitle || draft?.title || post.title;
@@ -35,7 +40,8 @@ export default async function NewsDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const post = postBySlug(slug) ?? await getManagedPostBySlug(slug);
+  if (slug === "wybierz-twoje-wartosci" || !postBySlug(slug)) await connection();
+  const post = await resolvePublishedPost(slug, postBySlug(slug));
   const shouldUseTenderSplitTitle =
     slug ===
     "zapytanie-ofertowe-dot-projektu-ochrona-wizerunku-polskiego-sektora-drobiarskiego-na-rynku-krajowym-wraz-z-przeprowadzeniem-przez-niezalezny-podmiot-badania-efektywnosci-projektu-6";
@@ -66,16 +72,7 @@ export default async function NewsDetailPage({
     "Termin składania ofert upływa 24 sierpnia 2026 r. o godz. 10:00.";
 
   if (!post) {
-    return (
-      <PageShell>
-        <section className="simple-hero">
-          <div className="shell">
-            <h1>Nie znaleziono materiału</h1>
-            <a href={withBasePath("/aktualnosci")}>Wróć do archiwum</a>
-          </div>
-        </section>
-      </PageShell>
-    );
+    notFound();
   }
 
   const tenderSplitTitlePrefix = "ZAPYTANIE OFERTOWE";

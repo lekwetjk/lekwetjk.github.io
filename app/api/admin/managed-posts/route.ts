@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { AUTH_COOKIE_NAME, verifySessionToken } from "../../../lib/auth";
-import { TENDER_CATEGORIES, createManagedPost, listManagedPostsForAdmin } from "../../../lib/managed-posts";
+import { TENDER_CATEGORIES, createManagedPost, importExistingPost, listImportablePosts, listManagedPostsForAdmin } from "../../../lib/managed-posts";
 
 const PRODUCTION_API_BASE = "https://krd-ig-website-concept.lek-wet-jk.workers.dev";
 
@@ -10,7 +10,7 @@ export async function GET(request: Request) {
   const session = verifySessionToken(sessionToken);
   if (!session || session.role !== "admin") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   try {
-    return NextResponse.json({ posts: await listManagedPostsForAdmin() });
+    return NextResponse.json({ posts: await listManagedPostsForAdmin(), importablePosts: await listImportablePosts() });
   } catch {
     if (new URL(request.url).hostname === "localhost" && sessionToken) {
       const response = await fetch(`${PRODUCTION_API_BASE}/api/managed-posts`);
@@ -29,6 +29,10 @@ export async function POST(request: Request) {
   const form = await request.formData();
   const kind = form.get("kind") === "tender" ? "tender" : "news";
   try {
+    if (form.get("action") === "import") {
+      const slug = await importExistingPost(String(form.get("slug") ?? ""), session.username);
+      return NextResponse.json({ ok: true, slug });
+    }
     const slug = await createManagedPost({ kind, title: String(form.get("title") ?? ""), excerpt: String(form.get("excerpt") ?? ""), seoTitle: String(form.get("seoTitle") ?? ""), seoDescription: String(form.get("seoDescription") ?? ""), imageFit: String(form.get("imageFit") ?? "contain"), content: String(form.get("content") ?? ""), category: String(form.get("category") ?? ""), source: String(form.get("source") ?? ""), image: form.get("image") instanceof File ? form.get("image") as File : null, attachments: form.getAll("attachments").filter((item): item is File => item instanceof File && item.size > 0), createdBy: session.username });
     return NextResponse.json({ ok: true, slug, categories: TENDER_CATEGORIES });
   } catch (error) { return NextResponse.json({ error: error instanceof Error ? error.message : "Nie udało się dodać wpisu." }, { status: 400 }); }

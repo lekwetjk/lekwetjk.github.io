@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { listManagedPosts } from "../../lib/managed-posts";
+import { listDeletedPostSlugs, listManagedPosts } from "../../lib/managed-posts";
 
 const PRODUCTION_API_BASE = "https://krd-ig-website-concept.lek-wet-jk.workers.dev";
 
@@ -8,7 +8,7 @@ export async function GET(request: Request) {
   if (kind && kind !== "news" && kind !== "tender") return NextResponse.json({ error: "Nieprawidłowy typ wpisu." }, { status: 400 });
   const origin = request.headers.get("origin");
   const headers = origin === "http://localhost:3000" ? { "Access-Control-Allow-Origin": origin, Vary: "Origin" } : undefined;
-  try { return NextResponse.json({ posts: await listManagedPosts(kind as "news" | "tender" | undefined) }, { headers }); }
+  try { return NextResponse.json({ posts: await listManagedPosts(kind as "news" | "tender" | undefined), deletedSlugs: await listDeletedPostSlugs() }, { headers }); }
   catch {
     if (new URL(request.url).hostname === "localhost") {
       try {

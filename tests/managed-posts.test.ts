@@ -2,7 +2,9 @@ import assert from "node:assert/strict";
 import { DatabaseSync, type SQLInputValue } from "node:sqlite";
 import test from "node:test";
 
-import { createManagedPost, getManagedPostBySlug, listManagedPosts, listManagedPostsForAdmin, updateManagedPost } from "../app/lib/managed-posts.ts";
+import { applyManagedPostOverrides, createManagedPost, deleteManagedPost, getManagedPostBySlug, importExistingPost, listDeletedPostSlugs, listImportablePosts, listManagedPosts, listManagedPostsForAdmin, resolvePublishedPost, updateManagedPost } from "../app/lib/managed-posts.ts";
+import generatedPosts from "../app/data/generated-posts.json" with { type: "json" };
+import type { NewsPost } from "../app/lib/content.ts";
 
 test("publication SEO and image fit migrate legacy data and persist independently for news and tenders", async () => {
   const runtime = globalThis as typeof globalThis & { env?: { DB?: unknown; MEMBER_DOCUMENTS?: unknown } };
@@ -76,6 +78,46 @@ test("publication SEO and image fit migrate legacy data and persist independentl
       assert.equal((await getManagedPostBySlug(coverSlug))?.imageFit, "cover");
     }
     assert.equal((await listManagedPostsForAdmin()).length, 5);
+    const original = (generatedPosts as NewsPost[]).find((post) => post.slug === "wybierz-twoje-wartosci")!;
+    assert.equal((await resolvePublishedPost(original.slug, original))?.title, original.title);
+    assert.equal((await listImportablePosts()).length, 1);
+    await assert.rejects(importExistingPost("not-allowed", "editor"), /importu/);
+    await importExistingPost(original.slug, "editor");
+    const imported = (await listManagedPostsForAdmin()).find((post) => post.slug === original.slug)!;
+    assert.equal(imported.imported, true);
+    assert.equal(imported.image, original.image);
+    assert.equal(imported.createdAt, original.date);
+    assert.deepEqual((await getManagedPostBySlug(original.slug))?.paragraphs, original.paragraphs);
+    assert.equal((await getManagedPostBySlug(original.slug))?.justify, true);
+    assert.deepEqual((await getManagedPostBySlug(original.slug))?.categories, original.categories);
+    assert.equal(database.prepare("SELECT created_by FROM managed_posts WHERE slug = ?").get(original.slug)?.created_by, "editor");
+    await updateManagedPost(imported.id, { title: "Edited campaign", excerpt: imported.excerpt, category: imported.category, source: imported.source, content: "Edited content", seoTitle: "Edited campaign SEO" });
+    await importExistingPost(original.slug, "another-editor");
+    assert.equal((await listImportablePosts()).length, 0);
+    assert.equal((await listManagedPostsForAdmin()).filter((post) => post.slug === original.slug).length, 1);
+    assert.equal((await resolvePublishedPost(original.slug, original))?.title, "Edited campaign");
+    assert.equal((await resolvePublishedPost(original.slug, original))?.seoTitle, "Edited campaign SEO");
+    assert.equal((await applyManagedPostOverrides([original]))[0].title, "Edited campaign");
+    assert.deepEqual((await getManagedPostBySlug(original.slug))?.paragraphs, ["Edited content"]);
+    assert.equal((await getManagedPostBySlug(original.slug))?.date, original.date);
+    assert.equal(await deleteManagedPost(imported.id), true);
+    assert.equal(await deleteManagedPost(imported.id), false);
+    assert.equal(await getManagedPostBySlug(original.slug), null);
+    assert.equal(await resolvePublishedPost(original.slug, original), undefined);
+    assert.deepEqual(await applyManagedPostOverrides([original]), []);
+    assert.ok((await listDeletedPostSlugs()).includes(original.slug));
+    assert.equal((await listManagedPostsForAdmin()).some((post) => post.slug === original.slug), false);
+    assert.equal((await listManagedPosts()).some((post) => post.slug === original.slug), false);
+    assert.equal((await listImportablePosts()).length, 0);
+    await importExistingPost(original.slug, "editor");
+    assert.equal(await resolvePublishedPost(original.slug, original), undefined);
+    await assert.rejects(updateManagedPost(imported.id, { title: "Restore", excerpt: "Restore", content: "Restore", category: "Aktualności", source: "" }), /Nie znaleziono/);
+    for (const kind of ["news", "tender"] as const) {
+      const normalPost = (await listManagedPostsForAdmin()).find((post) => post.kind === kind)!;
+      assert.equal(await deleteManagedPost(normalPost.id), true);
+      assert.equal(await getManagedPostBySlug(normalPost.slug), null);
+      assert.equal((await listManagedPosts(kind)).some((post) => post.slug === normalPost.slug), false);
+    }
   } finally {
     runtime.env = previousEnv;
     database.close();

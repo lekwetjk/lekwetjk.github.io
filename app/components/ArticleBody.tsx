@@ -12,6 +12,8 @@ import { WstawieniaTable } from "./WstawieniaTable";
 import { getLocalProposals } from "../lib/local-proposals-server";
 import { cleanProposedParagraph, localContentHref } from "../lib/local-proposal-content";
 import { knowledgePages, newsPosts } from "../lib/content";
+import { applyManagedPostOverrides } from "../lib/managed-posts";
+import { connection } from "next/server";
 
 function looksLikeHeading(value: string) {
   return (
@@ -1657,6 +1659,8 @@ export async function ArticleBody({
   }
 
   if (slug === "kampanie") {
+    await connection();
+    const publishedCampaigns = await applyManagedPostOverrides(newsPosts.filter((post) => post.categories.includes("Kampanie")));
     const normalizeText = (value: string) =>
       value
         .trim()
@@ -1744,7 +1748,7 @@ export async function ArticleBody({
       };
     });
 
-    const newCampaigns = newsPosts
+    const newCampaigns = publishedCampaigns
       .filter((post) => post.categories.includes("Kampanie") &&
         !campaignLinks.some((link) => link.href === withBasePath(`/aktualnosci/${post.slug}`)))
       .map((post) => ({

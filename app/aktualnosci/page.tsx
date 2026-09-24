@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { NewsArchive } from "../components/NewsArchive";
 import { PageShell } from "../components/SiteChrome";
 import { isTenderPost, newsPosts } from "../lib/content";
+import { applyManagedPostOverrides } from "../lib/managed-posts";
+import { connection } from "next/server";
 
 export const metadata: Metadata = {
   title: "Aktualności",
@@ -26,8 +28,9 @@ export const metadata: Metadata = {
   },
 };
 
-export default function NewsPage() {
-  const archive = newsPosts
+export default async function NewsPage() {
+  await connection();
+  const archive = (await applyManagedPostOverrides(newsPosts))
     .filter((post) => !isTenderPost(post))
     .sort((left, right) => new Date(right.date).getTime() - new Date(left.date).getTime())
     .map(({ slug, title, date, year, excerpt, categories, image, imageFit }) => ({

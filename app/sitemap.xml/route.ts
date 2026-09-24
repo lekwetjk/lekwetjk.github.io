@@ -9,10 +9,10 @@ function escapeXml(value: string) {
     .replace(/'/g, "&apos;");
 }
 
-export const dynamic = "force-static";
+export const dynamic = "force-dynamic";
 
-export function GET() {
-  const entries = sitemap();
+export async function GET() {
+  const entries = await sitemap();
   const body = entries
     .map(
       (entry) =>

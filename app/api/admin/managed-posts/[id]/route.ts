@@ -22,5 +22,9 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
 export async function DELETE(_request: Request, { params }: { params: Promise<{ id: string }> }) {
   if (!(await requireAdmin())) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   const { id } = await params;
-  return (await deleteManagedPost(id)) ? NextResponse.json({ ok: true }) : NextResponse.json({ error: "Nie znaleziono wpisu." }, { status: 404 });
+  try {
+    return (await deleteManagedPost(id)) ? NextResponse.json({ ok: true }) : NextResponse.json({ error: "Nie znaleziono wpisu." }, { status: 404 });
+  } catch (error) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Nie udało się usunąć wpisu." }, { status: 400 });
+  }
 }
