@@ -4,6 +4,7 @@ date: 2026-09-10
 excerpt: Krótki opis widoczny na liście aktualności.
 categories: Aktualności
 image: /media/news/przyklad.jpg
+imageFit: contain
 source: https://krd-ig.com.pl/
 links:
   - label: Nazwa dokumentu – pobierz.pdf

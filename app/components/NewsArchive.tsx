@@ -11,6 +11,7 @@ type ArchivePost = {
   excerpt: string;
   categories: string[];
   image: string | null;
+  imageFit?: "contain" | "cover";
 };
 
 export function NewsArchive({
@@ -160,8 +161,9 @@ export function NewsArchive({
                 src={withBasePath(post.image)}
                 alt=""
                 loading={index === 0 ? "eager" : "lazy"}
+                style={post.imageFit ? { objectFit: post.imageFit, objectPosition: "center", padding: post.imageFit === "contain" ? 16 : 0 } : undefined}
                 className={
-                  forceContainImages ||
+                  post.imageFit === "contain" || forceContainImages ||
                   post.slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026" ||
                   post.slug === "polska-zglosila-sprzeciw-wobec-niemieckich-przepisow-dotyczacych-oznakowania-zywnosci" ||
                   post.slug === "komisja-europejska-gospodarstwa-rolne-to-nie-zaklady-przemyslowe"

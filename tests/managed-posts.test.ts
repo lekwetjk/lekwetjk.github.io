@@ -4,7 +4,7 @@ import test from "node:test";
 
 import { createManagedPost, getManagedPostBySlug, listManagedPosts, listManagedPostsForAdmin, updateManagedPost } from "../app/lib/managed-posts.ts";
 
-test("publication SEO migrates legacy data and persists independently for news and tenders", async () => {
+test("publication SEO and image fit migrate legacy data and persist independently for news and tenders", async () => {
   const runtime = globalThis as typeof globalThis & { env?: { DB?: unknown; MEMBER_DOCUMENTS?: unknown } };
   const previousEnv = runtime.env;
   const database = new DatabaseSync(":memory:");
@@ -34,6 +34,7 @@ test("publication SEO migrates legacy data and persists independently for news a
     assert.equal(legacy.title, "Original title");
     assert.equal(legacy.seoTitle, "");
     assert.equal(legacy.seoDescription, "");
+    assert.equal(legacy.imageFit, "contain");
     assert.deepEqual(legacy.paragraphs, ["Original content"]);
 
     for (const kind of ["news", "tender"] as const) {
@@ -42,13 +43,21 @@ test("publication SEO migrates legacy data and persists independently for news a
       const adminPost = (await listManagedPostsForAdmin()).find((post) => post.slug === slug)!;
       assert.equal(adminPost.seoTitle, `SEO ${kind}`);
       assert.equal(adminPost.seoDescription, `Description ${kind}`);
+      assert.equal(adminPost.imageFit, "contain");
       const publicPost = (await listManagedPosts(kind)).find((post) => post.slug === slug)!;
       assert.equal(publicPost.seoTitle, `SEO ${kind}`);
       assert.equal(publicPost.title, input.title);
+      assert.equal(publicPost.imageFit, "contain");
+      await updateManagedPost(adminPost.id, { ...input, imageFit: "cover" });
+      assert.equal((await getManagedPostBySlug(slug))?.imageFit, "cover");
+      assert.equal((await listManagedPostsForAdmin()).find((post) => post.slug === slug)?.imageFit, "cover");
+      await assert.rejects(updateManagedPost(adminPost.id, { ...input, imageFit: "stretch" }), /dopasowanie/);
+      await assert.rejects(createManagedPost({ ...input, imageFit: "stretch" }), /dopasowanie/);
 
       await updateManagedPost(adminPost.id, { ...input, seoTitle: "Edited SEO", seoDescription: "Edited description" });
       assert.equal((await getManagedPostBySlug(slug))?.seoTitle, "Edited SEO");
       assert.equal((await getManagedPostBySlug(slug))?.seoDescription, "Edited description");
+      assert.equal((await getManagedPostBySlug(slug))?.imageFit, "cover");
       await updateManagedPost(adminPost.id, { ...input, seoTitle: undefined, seoDescription: undefined });
       assert.equal((await getManagedPostBySlug(slug))?.seoTitle, "Edited SEO");
       await assert.rejects(updateManagedPost(adminPost.id, { ...input, seoTitle: "x".repeat(101) }), /100/);
@@ -63,8 +72,10 @@ test("publication SEO migrates legacy data and persists independently for news a
       assert.equal(cleared?.excerpt, input.excerpt);
       await assert.rejects(createManagedPost({ ...input, seoTitle: "x".repeat(101) }), /100/);
       await assert.rejects(createManagedPost({ ...input, seoDescription: "x".repeat(241) }), /240/);
+      const coverSlug = await createManagedPost({ ...input, imageFit: "cover" });
+      assert.equal((await getManagedPostBySlug(coverSlug))?.imageFit, "cover");
     }
-    assert.equal((await listManagedPostsForAdmin()).length, 3);
+    assert.equal((await listManagedPostsForAdmin()).length, 5);
   } finally {
     runtime.env = previousEnv;
     database.close();

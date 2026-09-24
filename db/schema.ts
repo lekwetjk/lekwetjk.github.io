@@ -62,6 +62,7 @@ export const managedPosts = sqliteTable("managed_posts", {
   category: text("category").notNull(),
   imageKey: text("image_key"),
   imageContentType: text("image_content_type"),
+  imageFit: text("image_fit", { enum: ["contain", "cover"] }).notNull().default("contain"),
   source: text("source").notNull().default(""),
   attachmentsJson: text("attachments_json").notNull().default("[]"),
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),

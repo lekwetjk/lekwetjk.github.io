@@ -1,10 +1,54 @@
 import assert from "node:assert/strict";
-import { access, readFile } from "node:fs/promises";
+import { access, readFile, mkdtemp, mkdir, writeFile, rm } from "node:fs/promises";
+import { execFileSync } from "node:child_process";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import test from "node:test";
 
 async function readProjectFile(relativePath) {
   return readFile(new URL(`../${relativePath}`, import.meta.url), "utf8");
 }
+
+test("publication image fit defaults, overrides and validation work for Markdown news and tenders", async () => {
+  const root = await mkdtemp(path.join(tmpdir(), "publication-image-fit-"));
+  try {
+    for (const directory of ["scripts", "app/data", "content/aktualnosci", "content/zapytania-ofertowe"]) {
+      await mkdir(path.join(root, directory), { recursive: true });
+    }
+    const script = path.join(root, "scripts/generate-content-posts.mjs");
+    await writeFile(script, await readProjectFile("scripts/generate-content-posts.mjs"));
+    for (const kind of ["aktualnosci", "zapytania-ofertowe"]) {
+      for (const fit of ["default", "contain", "cover"]) {
+        await writeFile(path.join(root, `content/${kind}/${fit}.md`), `---\ntitle: ${kind}-${fit}\ndate: 2026-09-24\nimage: /media/example.png\n${fit === "default" ? "" : `imageFit: ${fit}\n`}---\n\nExample content.`);
+      }
+    }
+    execFileSync(process.execPath, [script], { cwd: root, stdio: "pipe" });
+    const posts = JSON.parse(await readFile(path.join(root, "app/data/generated-posts.json"), "utf8"));
+    assert.equal(posts.length, 6);
+    for (const post of posts) {
+      assert.equal(post.imageFit, post.title.endsWith("-cover") ? "cover" : "contain");
+    }
+    await writeFile(path.join(root, "content/aktualnosci/invalid.md"), "---\ntitle: Invalid\ndate: 2026-09-24\nimageFit: stretch\n---\n\nInvalid fit.");
+    assert.throws(() => execFileSync(process.execPath, [script], { cwd: root, stdio: "pipe" }), /imageFit/);
+  } finally {
+    await rm(root, { recursive: true, force: true });
+  }
+});
+
+test("publication image fit reaches archive and article renderers and admin forms", async () => {
+  for (const file of ["app/aktualnosci/page.tsx", "app/zapytania-ofertowe/page.tsx"]) {
+    assert.match(await readProjectFile(file), /image, imageFit/);
+  }
+  for (const file of ["app/components/NewsArchive.tsx", "app/aktualnosci/[slug]/page.tsx", "app/page.tsx"]) {
+    assert.match(await readProjectFile(file), /objectFit: post.imageFit/);
+  }
+  for (const file of ["app/admin/publikacje/PublicationForm.tsx", "app/admin/publikacje/ManagedPostsManager.tsx"]) {
+    assert.match(await readProjectFile(file), /name="imageFit"/);
+  }
+  for (const file of ["app/api/admin/managed-posts/route.ts", "app/api/admin/managed-posts/[id]/route.ts"]) {
+    assert.match(await readProjectFile(file), /form.get\("imageFit"\)/);
+  }
+});
 
 test("articles omit legacy site referrals while retaining specific resource links", async () => {
   const source = await readProjectFile("app/components/ArticleBody.tsx");

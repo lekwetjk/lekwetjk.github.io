@@ -142,6 +142,10 @@ async function collectPosts(contentDir, defaultCategory) {
           .map((item) => ({ href: item.href, label: item.label, document: true }))
       : [];
     const justify = /^(tak|true|yes)$/i.test(String(data.justify ?? "").trim());
+    const imageFit = data.imageFit || "contain";
+    if (!["contain", "cover"].includes(imageFit)) {
+      throw new Error(`Plik ${file}: pole "imageFit" musi mieć wartość "contain" lub "cover".`);
+    }
 
     posts.push({
       id: hashId(slug),
@@ -154,6 +158,7 @@ async function collectPosts(contentDir, defaultCategory) {
       links,
       categories,
       image: data.image || null,
+      imageFit,
       source: data.source || "",
       justify,
     });

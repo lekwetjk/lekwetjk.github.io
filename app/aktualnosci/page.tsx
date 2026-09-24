@@ -30,7 +30,7 @@ export default function NewsPage() {
   const archive = newsPosts
     .filter((post) => !isTenderPost(post))
     .sort((left, right) => new Date(right.date).getTime() - new Date(left.date).getTime())
-    .map(({ slug, title, date, year, excerpt, categories, image }) => ({
+    .map(({ slug, title, date, year, excerpt, categories, image, imageFit }) => ({
       slug,
       title,
       date,
@@ -38,6 +38,7 @@ export default function NewsPage() {
       excerpt,
       categories,
       image,
+      imageFit,
     }));
 
   return (

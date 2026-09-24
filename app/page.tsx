@@ -252,6 +252,7 @@ export default async function Home() {
                     src={withBasePath(post.image)}
                     alt=""
                     loading="lazy"
+                    style={post.imageFit ? { objectFit: post.imageFit, objectPosition: "center", padding: post.imageFit === "contain" ? 16 : 0 } : undefined}
                     className={
                       post.slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026" ||
                       post.slug === "polska-zglosila-sprzeciw-wobec-niemieckich-przepisow-dotyczacych-oznakowania-zywnosci"

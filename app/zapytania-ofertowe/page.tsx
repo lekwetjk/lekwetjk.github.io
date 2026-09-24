@@ -55,7 +55,7 @@ export const metadata: Metadata = {
 
 export default function TenderRequestsPage() {
   const archive = tenderPosts().map(
-    ({ slug, title, date, year, excerpt, categories, image }) => ({
+    ({ slug, title, date, year, excerpt, categories, image, imageFit }) => ({
       slug,
       title: normalizeTenderArchiveTitle(title),
       date,
@@ -63,6 +63,7 @@ export default function TenderRequestsPage() {
       excerpt,
       categories,
       image,
+      imageFit,
     }),
   );
 

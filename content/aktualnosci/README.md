@@ -19,6 +19,7 @@ Strona sama umieści nowy wpis na liście aktualności, w odpowiedniej kategorii
 | `excerpt` | nie | Krótki opis widoczny na liście |
 | `categories` | nie | Kategorie oddzielone przecinkiem, np. `Aktualności, Prawo` |
 | `image` | nie | Ścieżka do obrazka, np. `/media/news/przyklad.jpg` |
+| `imageFit` | nie | `contain` (domyślnie): cały obraz bez przycinania; `cover`: wypełnienie ramki z przycięciem brzegów. Dotyczy kafelków i nagłówka artykułu. |
 | `source` | nie | Link do materiału źródłowego |
 | `links` | nie | Lista załączników (patrz szablon) |
 | `justify` | nie | Wpisz `tak`, aby wyjustrować tekst akapitów (wyrównanie do obu marginesów) |

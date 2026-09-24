@@ -153,6 +153,7 @@ export default async function NewsDetailPage({
                   : post.image ?? "/media/poultry-promotion.jpg",
               )}
               alt={slug === "wybierz-twoje-wartosci" ? "No Random Choice – Wybierz Twoje Wartości!" : shouldUseSeptemberTurkeyImage ? "Poultry promotion campaign" : ""}
+              style={post.imageFit ? { objectFit: post.imageFit, objectPosition: "center", padding: post.imageFit === "contain" ? 16 : 0 } : undefined}
               className={
                 slug === "wybierz-twoje-wartosci"
                   ? "article-hero-image-campaign-logo"

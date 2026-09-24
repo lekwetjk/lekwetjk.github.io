@@ -15,6 +15,7 @@ type Post = {
   source: string;
   createdAt: string;
   image: string | null;
+  imageFit?: "contain" | "cover";
   attachments: Array<{ name: string }>;
 };
 
@@ -74,6 +75,7 @@ export default function ManagedPostsManager() {
         </fieldset>
         <label>Treść<textarea name="content" defaultValue={post.content} rows={10} required style={{ width: "100%", padding: 10 }} /></label>
         <label>Nowa grafika (opcjonalnie)<input name="image" type="file" accept="image/jpeg,image/png,image/webp" /></label>
+        <label>Dopasowanie grafiki<select name="imageFit" defaultValue={post.imageFit ?? "contain"} style={{ width: "100%", padding: 10 }}><option value="contain">Cały obraz</option><option value="cover">Wypełnij ramkę</option></select></label>
         <label>Dodaj załączniki (PDF, DOCX, XLSX)<input name="attachments" type="file" accept=".pdf,.docx,.xlsx" multiple /></label>
         {post.attachments.length ? <small>Obecne załączniki: {post.attachments.map((item) => item.name).join(", ")}</small> : null}
         <label>Link źródłowy<input name="source" type="url" defaultValue={post.source} style={{ width: "100%", padding: 10 }} /></label>

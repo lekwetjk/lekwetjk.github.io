@@ -14,7 +14,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const { id } = await params;
   const form = await request.formData();
   try {
-    await updateManagedPost(id, { title: String(form.get("title") ?? ""), excerpt: String(form.get("excerpt") ?? ""), seoTitle: form.has("seoTitle") ? String(form.get("seoTitle")) : undefined, seoDescription: form.has("seoDescription") ? String(form.get("seoDescription")) : undefined, content: String(form.get("content") ?? ""), category: String(form.get("category") ?? ""), source: String(form.get("source") ?? ""), image: form.get("image") instanceof File ? form.get("image") as File : null, attachments: form.getAll("attachments").filter((item): item is File => item instanceof File && item.size > 0) });
+    await updateManagedPost(id, { title: String(form.get("title") ?? ""), excerpt: String(form.get("excerpt") ?? ""), seoTitle: form.has("seoTitle") ? String(form.get("seoTitle")) : undefined, seoDescription: form.has("seoDescription") ? String(form.get("seoDescription")) : undefined, imageFit: form.has("imageFit") ? String(form.get("imageFit")) : undefined, content: String(form.get("content") ?? ""), category: String(form.get("category") ?? ""), source: String(form.get("source") ?? ""), image: form.get("image") instanceof File ? form.get("image") as File : null, attachments: form.getAll("attachments").filter((item): item is File => item instanceof File && item.size > 0) });
     return NextResponse.json({ ok: true });
   } catch (error) { return NextResponse.json({ error: error instanceof Error ? error.message : "Nie udało się zapisać wpisu." }, { status: 400 }); }
 }

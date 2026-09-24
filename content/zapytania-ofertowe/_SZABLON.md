@@ -4,6 +4,7 @@ date: 2026-09-15
 excerpt: Krótki opis widoczny na liście zapytań ofertowych.
 categories: Zapytania ofertowe
 image: /media/news/przyklad.jpg
+imageFit: contain
 source: https://krd-ig.com.pl/
 links:
   - label: Treść zapytania – pobierz.pdf

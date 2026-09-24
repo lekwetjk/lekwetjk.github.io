@@ -28,6 +28,7 @@ Wpis pojawi się automatycznie na stronie „Zapytania ofertowe” — w odpowie
 | `date` | tak | Data w formacie `RRRR-MM-DD` |
 | `excerpt` | nie | Krótki opis widoczny na liście |
 | `image` | nie | Ścieżka do obrazka, np. `/media/news/przyklad.jpg` |
+| `imageFit` | nie | `contain` (domyślnie): cały obraz bez przycinania; `cover`: wypełnienie ramki z przycięciem brzegów. Dotyczy kafelków i nagłówka artykułu. |
 | `source` | nie | Link do materiału źródłowego |
 | `links` | nie | Lista załączników (patrz szablon) |
 | `justify` | nie | Wpisz `tak`, aby wyjustrować tekst akapitów (wyrównanie do obu marginesów) |

@@ -32,6 +32,7 @@ export type NewsPost = {
   links: ContentLink[];
   categories: string[];
   image: string | null;
+  imageFit?: "contain" | "cover";
   source: string;
   justify?: boolean;
 };
