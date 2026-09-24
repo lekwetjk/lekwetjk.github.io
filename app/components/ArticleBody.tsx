@@ -1735,6 +1735,7 @@ export async function ArticleBody({
       return {
         title: link.label.trim(),
         href,
+        image: null as string | null,
         date: dateByTitle.get(normalizeText(link.label.trim())) ??
           (campaignPost?.date && Number.isFinite(Date.parse(campaignPost.date)) ? campaignDateFormatter.format(new Date(campaignPost.date)) : undefined),
         summary:
@@ -1742,6 +1743,17 @@ export async function ArticleBody({
           "Zobacz szczegoly kampanii w materiale zrodlowym.",
       };
     });
+
+    const newCampaigns = newsPosts
+      .filter((post) => post.categories.includes("Kampanie") &&
+        !campaignLinks.some((link) => link.href === withBasePath(`/aktualnosci/${post.slug}`)))
+      .map((post) => ({
+        title: post.title,
+        href: withBasePath(`/aktualnosci/${post.slug}`),
+        image: post.image,
+        date: campaignDateFormatter.format(new Date(post.date.slice(0, 10))),
+        summary: post.excerpt,
+      }));
 
     return (
       <div className="article-layout article-layout-full shell">
@@ -1754,9 +1766,12 @@ export async function ArticleBody({
           </p>
 
           <ul className="kampanie-list" aria-label="Lista kampanii">
-            {campaignLinks.map((item) => (
+            {[...newCampaigns, ...campaignLinks].map((item) => (
               <li key={`${item.href}-${item.title}`} className="kampanie-list-item">
                 <a href={item.href}>
+                  {item.image && (
+                    <img className="kampanie-logo" src={withBasePath(item.image)} alt={`Logo kampanii ${item.title}`} width={120} height={60} />
+                  )}
                   <span className="kampanie-main">
                     <span className="kampanie-title">{item.title.toLocaleUpperCase("pl")}</span>
                     <span className="kampanie-summary">{item.summary}</span>
@@ -4589,6 +4604,20 @@ export async function ArticleBody({
               <h2 key={tenderLinked.key}>{tenderLinked.node}</h2>
             ) : (
               <p key={tenderLinked.key}>{tenderLinked.node}</p>
+            );
+          }
+
+          if (slug === "wybierz-twoje-wartosci" && paragraph.startsWith("- ")) {
+            if (visibleParagraphs[index - 1]?.startsWith("- ")) return null;
+            const remainingParagraphs = visibleParagraphs.slice(index);
+            const listEnd = remainingParagraphs.findIndex((item) => !item.startsWith("- "));
+            const items = listEnd < 0 ? remainingParagraphs : remainingParagraphs.slice(0, listEnd);
+            return (
+              <ul key={`campaign-list-${index}`}>
+                {items.map((item, itemIndex) => (
+                  <li key={itemIndex}>{renderInlineMarkdown(item.slice(2), `campaign-${index}-${itemIndex}`)}</li>
+                ))}
+              </ul>
             );
           }
 

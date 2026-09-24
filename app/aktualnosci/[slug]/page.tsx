@@ -152,9 +152,11 @@ export default async function NewsDetailPage({
                   ? "/media/poultry-promotion.jpg"
                   : post.image ?? "/media/poultry-promotion.jpg",
               )}
-              alt={shouldUseSeptemberTurkeyImage ? "Poultry promotion campaign" : ""}
+              alt={slug === "wybierz-twoje-wartosci" ? "No Random Choice – Wybierz Twoje Wartości!" : shouldUseSeptemberTurkeyImage ? "Poultry promotion campaign" : ""}
               className={
-                shouldContainWoahLogoImage
+                slug === "wybierz-twoje-wartosci"
+                  ? "article-hero-image-campaign-logo"
+                  : shouldContainWoahLogoImage
                   ? "article-hero-image-contain"
                   : shouldContainZsrirLogoImage
                     ? "article-hero-image-zsrir"

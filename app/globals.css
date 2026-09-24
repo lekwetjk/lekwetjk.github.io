@@ -1818,6 +1818,12 @@ blockquote {
   border: 1px solid var(--line);
 }
 
+.article-hero-grid > img.article-hero-image-campaign-logo {
+  object-fit: contain;
+  height: auto;
+  aspect-ratio: 695 / 238;
+}
+
 .article-hero-grid > img.article-hero-image-zsrir {
   object-fit: contain;
   height: 240px;
@@ -1925,7 +1931,7 @@ blockquote {
   word-break: break-word;
 }
 
-.prose-justified p {
+.prose-justified :is(p, li) {
   text-align: justify;
 }
 
@@ -3075,6 +3081,15 @@ body .justified-article-content article.prose :is(p, li) {
 .kampanie-main {
   display: grid;
   gap: 4px;
+}
+
+.kampanie-list-item .kampanie-logo {
+  width: 120px;
+  height: 60px;
+  object-fit: contain;
+  flex: 0 0 auto;
+  align-self: center;
+  margin: 0;
 }
 
 .kampanie-summary {
