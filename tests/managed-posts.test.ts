@@ -69,6 +69,9 @@ test("publication SEO and image fit migrate legacy data and persist independentl
       await updateManagedPost(adminPost.id, { ...input, seoTitle: "  ", seoDescription: "" });
       const cleared = await getManagedPostBySlug(slug);
       assert.equal(cleared?.seoTitle, "");
+      await updateManagedPost(adminPost.id, { ...input, content: "<b>Bold</b>\n\n<i>Italic</i>\n\n<h2>Heading</h2>" });
+      assert.deepEqual((await getManagedPostBySlug(slug))?.paragraphs, ["**Bold**", "*Italic*", "## Heading"]);
+      assert.equal((await listManagedPostsForAdmin()).find((post) => post.id === adminPost.id)?.content, "**Bold**\n\n*Italic*\n\n## Heading");
       assert.equal(cleared?.seoDescription, "");
       assert.equal(cleared?.title, input.title);
       assert.equal(cleared?.excerpt, input.excerpt);

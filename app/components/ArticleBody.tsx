@@ -4625,9 +4625,11 @@ export async function ArticleBody({
             );
           }
 
-          const formattedParagraph = renderInlineMarkdown(paragraph, `${index}-${paragraph.slice(0, 20)}`);
+          const explicitHeading = paragraph.startsWith("## ");
+          const displayParagraph = explicitHeading ? paragraph.slice(3) : paragraph;
+          const formattedParagraph = renderInlineMarkdown(displayParagraph, `${index}-${displayParagraph.slice(0, 20)}`);
 
-          return index > 0 && looksLikeHeading(paragraph) ? (
+          return explicitHeading || index > 0 && looksLikeHeading(paragraph) ? (
             <h2 key={`${index}-${paragraph.slice(0, 20)}`}>{formattedParagraph}</h2>
           ) : (
             <p key={`${index}-${paragraph.slice(0, 20)}`}>{formattedParagraph}</p>

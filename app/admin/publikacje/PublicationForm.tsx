@@ -1,5 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
+import MarkdownEditor from "./MarkdownEditor";
+import { renderInlineMarkdown } from "../../lib/inlineMarkdown";
 
 const tenderCategories = ["Zapytania ofertowe", "Zaproszenie do składania ofert", "Wybór wykonawcy", "Wyniki postępowania", "Informacja o unieważnieniu"];
 
@@ -16,16 +18,7 @@ export default function PublicationForm({ kind }: { kind: "news" | "tender" }) {
   const [imageFit, setImageFit] = useState<"contain" | "cover">("contain");
   useEffect(() => () => { if (imagePreview) URL.revokeObjectURL(imagePreview); }, [imagePreview]);
   const [attachmentNames, setAttachmentNames] = useState<string[]>([]);
-  const editorRef = useRef<HTMLTextAreaElement>(null);
   const tender = kind === "tender";
-  function format(tag: "b" | "i" | "h2") {
-    const editor = editorRef.current;
-    if (!editor) return;
-    const selected = editor.value.slice(editor.selectionStart, editor.selectionEnd) || "tekst";
-    const replacement = tag === "h2" ? `\n\n<h2>${selected}</h2>\n\n` : `<${tag}>${selected}</${tag}>`;
-    setContent(`${editor.value.slice(0, editor.selectionStart)}${replacement}${editor.value.slice(editor.selectionEnd)}`);
-    editor.focus();
-  }
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault(); setSaving(true); setMessage("");
     const form = event.currentTarget;
@@ -44,8 +37,7 @@ export default function PublicationForm({ kind }: { kind: "news" | "tender" }) {
       <label>Opis SEO (opcjonalnie)<textarea name="seoDescription" maxLength={240} rows={3} placeholder={excerpt} style={{ width: "100%", padding: 10 }} /></label>
     </fieldset>
     <label>Treść
-      <div style={{ display: "flex", gap: 6, margin: "6px 0" }}><button type="button" title="Pogrubienie" onClick={() => format("b")}><strong>B</strong></button><button type="button" title="Kursywa" onClick={() => format("i")}><em>I</em></button><button type="button" onClick={() => format("h2")}>Nagłówek</button></div>
-      <textarea ref={editorRef} name="content" required rows={10} value={content} onChange={(event) => setContent(event.target.value)} style={{ width: "100%", padding: 10 }} />
+      <MarkdownEditor name="content" required rows={10} value={content} onChange={setContent} />
     </label>
     <label className="button button-outline" style={{ width: "fit-content", cursor: "pointer" }}>Dodaj grafikę<input name="image" type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => { const image = event.target.files?.[0]; setImageName(image?.name ?? ""); setImagePreview(image ? URL.createObjectURL(image) : ""); }} style={{ display: "none" }} /></label>
     {imageName ? <small style={{ color: "#166534" }}>Wybrano grafikę: {imageName}</small> : null}
@@ -64,7 +56,9 @@ export default function PublicationForm({ kind }: { kind: "news" | "tender" }) {
           <h1>{title || "Tytuł"}</h1>
           <p>{excerpt}</p>
           {imagePreview ? <img src={imagePreview} alt="Podgląd grafiki" style={{ width: "100%", height: 360, objectFit: imageFit, objectPosition: "center", padding: imageFit === "contain" ? 16 : 0, background: "#fff" }} /> : null}
-          <div dangerouslySetInnerHTML={{ __html: content.replace(/\n/g, "<br />") }} />
+          <div>{content.split(/\n\s*\n/).filter(Boolean).map((paragraph, index) => paragraph.startsWith("## ")
+            ? <h2 key={index}>{renderInlineMarkdown(paragraph.slice(3), `preview-${index}`)}</h2>
+            : <p key={index}>{renderInlineMarkdown(paragraph, `preview-${index}`)}</p>)}</div>
         </article>
       </div>
     ) : null}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import MarkdownEditor from "./MarkdownEditor";
 
 type Post = {
   id: string;
@@ -26,10 +27,14 @@ const tenderCategories = ["Zapytania ofertowe", "Zaproszenie do składania ofert
 
 export default function ManagedPostsManager() {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [editingId, setEditingId] = useState("");
+  const [editing, setEditing] = useState<{ id: string; content: string } | null>(null);
   const [message, setMessage] = useState("");
   const [importablePosts, setImportablePosts] = useState<ImportablePost[]>([]);
   const [importing, setImporting] = useState(false);
+
+  function toggleEditor(post: Post) {
+    setEditing((current) => current?.id === post.id ? null : { id: post.id, content: post.content });
+  }
 
   async function loadPosts() {
     const response = await fetch("/api/admin/managed-posts");
@@ -51,7 +56,8 @@ export default function ManagedPostsManager() {
       const data = await response.json() as { error?: string };
       if (!response.ok) throw new Error(data.error ?? "Nie udało się zaimportować wpisu.");
       const updatedPosts = await loadPosts();
-      setEditingId(updatedPosts.find((post) => post.slug === slug)?.id ?? "");
+      const importedPost = updatedPosts.find((post) => post.slug === slug);
+      setEditing(importedPost ? { id: importedPost.id, content: importedPost.content } : null);
       setMessage("Wpis jest dostępny do edycji. Zachowano adres i datę publikacji.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Nie udało się zaimportować wpisu.");
@@ -68,7 +74,7 @@ export default function ManagedPostsManager() {
     const response = await fetch(`/api/admin/managed-posts/${id}`, { method: "PATCH", body: new FormData(event.currentTarget) });
     const data = await response.json().catch(() => ({})) as { error?: string };
     if (!response.ok) { setMessage(data.error ?? "Nie udało się zapisać wpisu."); return; }
-    setEditingId("");
+    setEditing(null);
     setMessage("Zmiany zostały zapisane.");
     await loadPosts();
   }
@@ -93,9 +99,9 @@ export default function ManagedPostsManager() {
     {posts.map((post) => <article key={post.id} style={{ border: "1px solid #d5d9df", borderRadius: 8, padding: 18 }}>
       <div style={{ display: "flex", justifyContent: "space-between", gap: 12, alignItems: "start", flexWrap: "wrap" }}>
         <div><strong>{post.title}</strong><small style={{ display: "block", color: "#475569", marginTop: 4 }}>{post.kind === "tender" ? post.category : "Aktualność"} · {new Date(post.createdAt).toLocaleDateString("pl-PL")}</small></div>
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}><a className="button button-outline" href={`/aktualnosci/${post.slug}`} target="_blank" rel="noreferrer">Otwórz wpis</a><button type="button" className="button button-outline" disabled={post.id.startsWith("preview-")} title={post.id.startsWith("preview-") ? "Edycja jest dostępna po wdrożeniu na Workerze." : undefined} onClick={() => setEditingId(editingId === post.id ? "" : post.id)}>Edytuj</button><button type="button" disabled={post.id.startsWith("preview-")} title={post.id.startsWith("preview-") ? "Usuwanie jest dostępne po wdrożeniu na Workerze." : undefined} onClick={() => void removePost(post)} style={{ border: "1px solid #fecaca", background: "#fff1f2", color: "#b91c1c", borderRadius: 6, padding: "8px 12px", fontWeight: 700 }}>Usuń</button></div>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}><a className="button button-outline" href={`/aktualnosci/${post.slug}`} target="_blank" rel="noreferrer">Otwórz wpis</a><button type="button" className="button button-outline" disabled={post.id.startsWith("preview-")} title={post.id.startsWith("preview-") ? "Edycja jest dostępna po wdrożeniu na Workerze." : undefined} onClick={() => toggleEditor(post)}>Edytuj</button><button type="button" disabled={post.id.startsWith("preview-")} title={post.id.startsWith("preview-") ? "Usuwanie jest dostępne po wdrożeniu na Workerze." : undefined} onClick={() => void removePost(post)} style={{ border: "1px solid #fecaca", background: "#fff1f2", color: "#b91c1c", borderRadius: 6, padding: "8px 12px", fontWeight: 700 }}>Usuń</button></div>
       </div>
-      {editingId === post.id ? <form onSubmit={(event) => void savePost(event, post.id)} style={{ display: "grid", gap: 10, marginTop: 16 }}>
+      {editing?.id === post.id ? <form onSubmit={(event) => void savePost(event, post.id)} style={{ display: "grid", gap: 10, marginTop: 16 }}>
         <label>Tytuł<input name="title" defaultValue={post.title} required style={{ width: "100%", padding: 10 }} /></label>
         {post.kind === "tender" ? <label>Kategoria<select name="category" defaultValue={post.category} style={{ width: "100%", padding: 10 }}>{tenderCategories.map((category) => <option key={category}>{category}</option>)}</select></label> : <input type="hidden" name="category" value="Aktualności" />}
         <label>Krótki opis<input name="excerpt" defaultValue={post.excerpt} required style={{ width: "100%", padding: 10 }} /></label>
@@ -104,13 +110,13 @@ export default function ManagedPostsManager() {
           <label>Tytuł SEO (opcjonalnie)<input name="seoTitle" defaultValue={post.seoTitle ?? ""} maxLength={100} placeholder={post.title} style={{ width: "100%", padding: 10 }} /></label>
           <label>Opis SEO (opcjonalnie)<textarea name="seoDescription" defaultValue={post.seoDescription ?? ""} maxLength={240} rows={3} placeholder={post.excerpt} style={{ width: "100%", padding: 10 }} /></label>
         </fieldset>
-        <label>Treść<textarea name="content" defaultValue={post.content} rows={10} required style={{ width: "100%", padding: 10 }} /></label>
+        <label>Treść<MarkdownEditor name="content" value={editing.content} onChange={(content) => setEditing((current) => current?.id === post.id ? { ...current, content } : current)} rows={10} required /></label>
         <label>Nowa grafika (opcjonalnie)<input name="image" type="file" accept="image/jpeg,image/png,image/webp" /></label>
         <label>Dopasowanie grafiki<select name="imageFit" defaultValue={post.imageFit ?? "contain"} style={{ width: "100%", padding: 10 }}><option value="contain">Cały obraz</option><option value="cover">Wypełnij ramkę</option></select></label>
         <label>Dodaj załączniki (PDF, DOCX, XLSX)<input name="attachments" type="file" accept=".pdf,.docx,.xlsx" multiple /></label>
         {post.attachments.length ? <small>Obecne załączniki: {post.attachments.map((item) => item.name).join(", ")}</small> : null}
         <label>Link źródłowy<input name="source" type="url" defaultValue={post.source} style={{ width: "100%", padding: 10 }} /></label>
-        <div style={{ display: "flex", gap: 8 }}><button type="submit" className="button button-primary">Zapisz zmiany</button><button type="button" className="button button-outline" onClick={() => setEditingId("")}>Anuluj</button></div>
+        <div style={{ display: "flex", gap: 8 }}><button type="submit" className="button button-primary">Zapisz zmiany</button><button type="button" className="button button-outline" onClick={() => setEditing(null)}>Anuluj</button></div>
       </form> : null}
     </article>)}
   </section>;

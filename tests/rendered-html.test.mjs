@@ -50,6 +50,22 @@ test("publication image fit reaches archive and article renderers and admin form
   }
 });
 
+test("publication editor uses consistent Markdown formatting without raw HTML tags", async () => {
+  const editor = await readProjectFile("app/admin/publikacje/MarkdownEditor.tsx");
+  assert.match(editor, /toggleInline\("\*\*"\)/);
+  assert.match(editor, /setSelectionRange/);
+  assert.doesNotMatch(editor, /<\$\{tag\}>/);
+  for (const file of ["app/admin/publikacje/PublicationForm.tsx", "app/admin/publikacje/ManagedPostsManager.tsx"]) {
+    assert.match(await readProjectFile(file), /<MarkdownEditor/);
+  }
+  assert.doesNotMatch(await readProjectFile("app/admin/publikacje/PublicationForm.tsx"), /dangerouslySetInnerHTML/);
+  const backend = await readProjectFile("app/lib/managed-posts.ts");
+  assert.match(backend, /normalizePublicationMarkdown\(input.content\)/);
+  assert.match(backend, /"\*\*\$1\*\*"/);
+  const renderer = await readProjectFile("app/lib/inlineMarkdown.tsx");
+  assert.match(renderer, /<em key=/);
+});
+
 test("imported campaign edits take precedence in public views and require an admin import action", async () => {
   const detail = await readProjectFile("app/aktualnosci/[slug]/page.tsx");
   assert.equal(detail.match(/resolvePublishedPost\(slug, postBySlug\(slug\)\)/g)?.length, 2);

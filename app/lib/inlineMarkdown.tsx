@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 
-const inlineTokenPattern = /\*\*(.+?)\*\*|\[([^\]]+)\]\(([^)]+)\)/g;
+const inlineTokenPattern = /\*\*\*(.+?)\*\*\*|\*\*(.+?)\*\*|\*([^*\n]+?)\*|\[([^\]]+)\]\(([^)]+)\)/g;
 
-/** Renders a plain-text paragraph, supporting **bold** and [label](url) markdown syntax. */
+/** Renders a plain-text paragraph with basic inline Markdown formatting. */
 export function renderInlineMarkdown(text: string, keyPrefix: string): ReactNode {
-  if (!text.includes("**") && !text.includes("](")) {
+  if (!text.includes("*") && !text.includes("](")) {
     return text;
   }
 
@@ -19,9 +19,13 @@ export function renderInlineMarkdown(text: string, keyPrefix: string): ReactNode
       nodes.push(text.slice(lastIndex, match.index));
     }
 
-    const [, boldText, linkLabel, linkHref] = match;
-    if (boldText !== undefined) {
+    const [, boldItalicText, boldText, italicText, linkLabel, linkHref] = match;
+    if (boldItalicText !== undefined) {
+      nodes.push(<strong key={`${keyPrefix}-bi-${matchIndex}`}><em>{boldItalicText}</em></strong>);
+    } else if (boldText !== undefined) {
       nodes.push(<strong key={`${keyPrefix}-b-${matchIndex}`}>{boldText}</strong>);
+    } else if (italicText !== undefined) {
+      nodes.push(<em key={`${keyPrefix}-i-${matchIndex}`}>{italicText}</em>);
     } else {
       nodes.push(
         <a
