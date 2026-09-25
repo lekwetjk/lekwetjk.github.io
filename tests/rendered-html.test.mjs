@@ -210,6 +210,23 @@ test("core routes and navigation targets exist in the project", async () => {
   );
 });
 
+test("about hub shows its complete hero image without cropping", async () => {
+  const page = await readProjectFile("app/o-izbie/page.tsx");
+  const breedingPage = await readProjectFile("app/hodowla/page.tsx");
+  const hub = await readProjectFile("app/components/HubPage.tsx");
+
+  assert.match(page, /imageAspectRatio="980 \/ 654"/);
+  assert.match(breedingPage, /imageAspectRatio="480 \/ 456"/);
+  assert.match(breedingPage, /imageWidth="80%"/);
+  assert.match(hub, /marginInline: imageWidth \? "auto" : undefined/);
+});
+
+test("food disinformation action displays its square logo without cropping", async () => {
+  const page = await readProjectFile("app/tresc/[slug]/page.tsx");
+
+  assert.match(page, /"akcja-stopdezinformacjizywnosciowej"[\s\S]*"article-hero-image-contain"/);
+});
+
 test("board and council content remains present with mailto links", async () => {
   const source = await readProjectFile("app/components/ArticleBody.tsx");
 

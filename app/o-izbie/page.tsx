@@ -32,6 +32,7 @@ export default function AboutPage() {
       lead="KRD-IG reprezentuje sektor drobiarski wobec administracji krajowej i europejskiej, tworzy przestrzeń współpracy przedsiębiorców oraz działa na rzecz rozwoju produkcji, handlu i jakości."
       image="/media/meat-seasoned.webp"
       imageAlt="Mięso drobiowe z przyprawami i ziołami"
+      imageAspectRatio="980 / 654"
       slugs={[
         "o-nas",
         "zarzad-i-rada-izby",

@@ -32,6 +32,8 @@ export default function BreedingPage() {
       lead="Dział Hodowli i Oceny Drobiu prowadzi księgi i rejestry, ocenę wartości użytkowej i hodowlanej, system danych, znakowanie oraz specjalistyczne materiały dla branży."
       image="/media/breeding-department.webp"
       imageAlt="Działalność hodowlana KRD-IG"
+      imageAspectRatio="480 / 456"
+      imageWidth="80%"
       slugs={[
         "dzial-hodowli-i-oceny-drobiu",
         "rejestry-i-ksiegi",

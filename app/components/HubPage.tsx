@@ -10,6 +10,8 @@ type HubPageProps = {
   lead: string;
   image: string;
   imageAlt: string;
+  imageAspectRatio?: string;
+  imageWidth?: string;
   slugs: string[];
   facts?: Array<{ value: string; label: string }>;
   hidePreviewForSlugs?: string[];
@@ -137,6 +139,8 @@ export async function HubPage({
   lead,
   image,
   imageAlt,
+  imageAspectRatio,
+  imageWidth,
   slugs,
   facts = [],
   hidePreviewForSlugs = [],
@@ -163,7 +167,7 @@ export async function HubPage({
             <p className="subpage-lead">{lead}</p>
           </div>
           <div className="subpage-image">
-            <img src={withBasePath(image)} alt={imageAlt} />
+            <img src={withBasePath(image)} alt={imageAlt} style={imageAspectRatio ? { width: imageWidth, height: "auto", aspectRatio: imageAspectRatio, objectFit: "contain", marginInline: imageWidth ? "auto" : undefined } : undefined} />
           </div>
         </div>
       </section>

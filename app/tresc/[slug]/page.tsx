@@ -166,7 +166,7 @@ export default async function ContentDetailPage({
   const heroImageClassName =
     slug === "akty-prawne"
       ? "article-hero-image-legal"
-      : slug === "dezinformacja-zywnosciowa" || slug === "kampanie"
+      : ["akcja-stopdezinformacjizywnosciowej", "dezinformacja-zywnosciowa", "kampanie"].includes(slug)
         ? "article-hero-image-contain"
         : undefined;
   const articleLeadClassName = `${
