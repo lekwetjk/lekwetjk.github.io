@@ -30,8 +30,9 @@ export default function MarketPage() {
       eyebrow="Rynek i handel"
       title="Dane, eksport i kierunki rozwoju"
       lead="Najważniejsze informacje o skali polskiej produkcji, handlu wewnątrzunijnym, rynkach trzecich, promocji oraz ekonomicznych uwarunkowaniach sektora."
-      image="/media/meat-seasoned.webp"
-      imageAlt="Przyprawione mięso drobiowe"
+      image="/media/trendy.jpg"
+      imageAlt="Trendy i analizy rynku drobiarskiego"
+      imageAspectRatio="740 / 444"
       slugs={[
         "rynek-drobiu-w-polsce-w-liczbach",
         "raporty",

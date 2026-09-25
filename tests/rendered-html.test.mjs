@@ -213,11 +213,14 @@ test("core routes and navigation targets exist in the project", async () => {
 test("about hub shows its complete hero image without cropping", async () => {
   const page = await readProjectFile("app/o-izbie/page.tsx");
   const breedingPage = await readProjectFile("app/hodowla/page.tsx");
+  const marketPage = await readProjectFile("app/rynek/page.tsx");
   const hub = await readProjectFile("app/components/HubPage.tsx");
 
   assert.match(page, /imageAspectRatio="980 \/ 654"/);
   assert.match(breedingPage, /imageAspectRatio="480 \/ 456"/);
   assert.match(breedingPage, /imageWidth="80%"/);
+  assert.match(marketPage, /image="\/media\/trendy\.jpg"/);
+  assert.match(marketPage, /imageAspectRatio="740 \/ 444"/);
   assert.match(hub, /marginInline: imageWidth \? "auto" : undefined/);
 });
 
