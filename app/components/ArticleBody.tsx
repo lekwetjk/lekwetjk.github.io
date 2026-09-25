@@ -360,7 +360,15 @@ export async function ArticleBody({
           "Musimy przekonywać krajowych i zagranicznych konsumentów do zwiększenia spożycia drobiu.",
         ]
       : paragraphs;
-  const visibleParagraphs = proposals["text-cleanup"] ? originalParagraphs.map(cleanProposedParagraph) : originalParagraphs;
+  const cleanedParagraphs = proposals["text-cleanup"] ? originalParagraphs.map(cleanProposedParagraph) : originalParagraphs;
+  const visibleParagraphs = slug === "akcja-stopdezinformacjizywnosciowej"
+    ? cleanedParagraphs
+        .filter((paragraph) => paragraph !== "Dowiedz się więcej na stronie")
+        .map((paragraph) => paragraph.replace(
+          /(?:&#x1f449;|👉) stopdezinformacjizywnosciowej\.pl/,
+          "[👉 stopdezinformacjizywnosciowej.pl](https://stopdezinformacjizywnosciowej.pl/)",
+        ))
+    : cleanedParagraphs;
 
   if (proposals["text-cleanup"] && ["polityka-cookies", "polityka-prywatnosci", "system-qafp", "e-book-o-dezinformacji-zywnosciowej"].includes(slug ?? "")) {
     const headings = new Set(["QAFP", "Nauka w służbie wysokiej jakości", "QAFP a polski drób", "Co zapewnia konsumentom drobiu QAFP?", "Zasady zachowania jakości QAFP:", "PRZEWODNIK:", "Dezinformacja w sektorze żywnościowym", "Kompedium wiedzy o dezinformacji żywnościowej"]);
@@ -4634,6 +4642,17 @@ export async function ArticleBody({
           const explicitHeading = paragraph.startsWith("## ");
           const displayParagraph = explicitHeading ? paragraph.slice(3) : paragraph;
           const formattedParagraph = renderInlineMarkdown(displayParagraph, `${index}-${displayParagraph.slice(0, 20)}`);
+
+          if (
+            slug === "akcja-stopdezinformacjizywnosciowej" &&
+            displayParagraph === "www.stopdezinformacjizywnosciowej.pl"
+          ) {
+            return (
+              <h2 key={`${index}-${paragraph.slice(0, 20)}`}>
+                <a href="https://stopdezinformacjizywnosciowej.pl/">{displayParagraph}</a>
+              </h2>
+            );
+          }
 
           return explicitHeading || index > 0 && looksLikeHeading(paragraph) ? (
             <h2 key={`${index}-${paragraph.slice(0, 20)}`}>{formattedParagraph}</h2>

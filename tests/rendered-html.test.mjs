@@ -221,10 +221,25 @@ test("about hub shows its complete hero image without cropping", async () => {
   assert.match(hub, /marginInline: imageWidth \? "auto" : undefined/);
 });
 
-test("food disinformation action displays its square logo without cropping", async () => {
+test("food disinformation action displays its horizontal logo without cropping", async () => {
+  const articleBody = await readProjectFile("app/components/ArticleBody.tsx");
   const page = await readProjectFile("app/tresc/[slug]/page.tsx");
+  const styles = await readProjectFile("app/globals.css");
 
-  assert.match(page, /"akcja-stopdezinformacjizywnosciowej"[\s\S]*"article-hero-image-contain"/);
+  assert.match(page, /\/media\/stop_dez_clear\.png/);
+  assert.match(page, /"akcja-stopdezinformacjizywnosciowej"[\s\S]*"article-hero-image-logo"/);
+  assert.match(page, /shouldJustifyArticleContent[\s\S]*"akcja-stopdezinformacjizywnosciowej"/);
+  assert.match(articleBody, /displayParagraph === "www\.stopdezinformacjizywnosciowej\.pl"[\s\S]*href="https:\/\/stopdezinformacjizywnosciowej\.pl\/"/);
+  assert.match(articleBody, /\.filter\(\(paragraph\) => paragraph !== "Dowiedz się więcej na stronie"\)/);
+  assert.match(articleBody, /\[👉 stopdezinformacjizywnosciowej\.pl\]\(https:\/\/stopdezinformacjizywnosciowej\.pl\/\)/);
+  assert.match(styles, /\.article-hero-grid > img\.article-hero-image-logo[\s\S]*aspect-ratio: 52 \/ 19[\s\S]*object-fit: contain/);
+});
+
+test("important link card logos keep their proportions inside stable frames", async () => {
+  const styles = await readProjectFile("app/globals.css");
+
+  assert.match(styles, /\.wazne-link-logo \{[\s\S]*width: 72px;[\s\S]*height: 64px;[\s\S]*flex: 0 0 72px;/);
+  assert.match(styles, /\.wazne-link-logo img \{[\s\S]*width: calc\(100% - 12px\);[\s\S]*height: calc\(100% - 12px\);[\s\S]*margin: 0;[\s\S]*object-fit: contain;/);
 });
 
 test("board and council content remains present with mailto links", async () => {

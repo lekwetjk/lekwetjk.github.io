@@ -117,7 +117,9 @@ export default async function ContentDetailPage({
   }
 
   const image =
-    proposals.images && slug === "e-book-o-dezinformacji-zywnosciowej"
+    slug === "akcja-stopdezinformacjizywnosciowej"
+      ? "/media/stop_dez_clear.png"
+    : proposals.images && slug === "e-book-o-dezinformacji-zywnosciowej"
       ? page.images.find((url) => /\/grafika-ebook\.webp(?:\?|$)/.test(url))
       : slug === "akty-prawne"
       ? "/media/prawo.png"
@@ -138,6 +140,7 @@ export default async function ContentDetailPage({
     "to szybki dostęp do najważniejszych linków stron i portali internetowych w obszarze rolnictwa i sektora drobiarskiego";
   const shouldUseWideLead = slug === "zarzad-i-rada-izby";
   const shouldJustifyArticleContent = [
+    "akcja-stopdezinformacjizywnosciowej",
     "rynek-drobiu-w-polsce-w-liczbach",
     "raporty",
     "handel-zagraniczny",
@@ -166,7 +169,9 @@ export default async function ContentDetailPage({
   const heroImageClassName =
     slug === "akty-prawne"
       ? "article-hero-image-legal"
-      : ["akcja-stopdezinformacjizywnosciowej", "dezinformacja-zywnosciowa", "kampanie"].includes(slug)
+      : slug === "akcja-stopdezinformacjizywnosciowej"
+        ? "article-hero-image-logo"
+        : ["dezinformacja-zywnosciowa", "kampanie"].includes(slug)
         ? "article-hero-image-contain"
         : undefined;
   const articleLeadClassName = `${
