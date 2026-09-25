@@ -4210,6 +4210,12 @@ export async function ArticleBody({
     );
   }
 
+  const uploadedAttachments = links.filter((link, index) =>
+    link.document
+    && link.href.startsWith("/api/media/")
+    && links.findIndex((candidate) => candidate.href === link.href) === index,
+  );
+
   return (
     <div
       className={`article-layout${shouldUseFullWidthArticleLayout ? " article-layout-full" : ""} shell`}
@@ -4635,6 +4641,17 @@ export async function ArticleBody({
             <p key={`${index}-${paragraph.slice(0, 20)}`}>{formattedParagraph}</p>
           );
         })}
+        {uploadedAttachments.length ? (
+          <section className="resource-box" aria-label="Pliki do pobrania">
+            <h2>Pliki do pobrania</h2>
+            {uploadedAttachments.map((attachment) => (
+              <a href={resolveArticleHref(attachment.href)} key={attachment.href} download>
+                <span>{attachment.label}</span>
+                <Arrow />
+              </a>
+            ))}
+          </section>
+        ) : null}
         {slug === "kampania-stopdezinformacjizywnosciowej-i-kluczowe-wyzwania-rynkowe" && (
           <section className="news-media-section" aria-label="Zdjęcia i logo kampanii">
             <h2>Zdjęcia</h2>

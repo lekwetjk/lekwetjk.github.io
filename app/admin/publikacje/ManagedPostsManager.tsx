@@ -18,7 +18,7 @@ type Post = {
   image: string | null;
   imageFit?: "contain" | "cover";
   imported?: boolean;
-  attachments: Array<{ name: string }>;
+  attachments: Array<{ name: string; key: string }>;
 };
 
 type ImportablePost = { slug: string; title: string; date: string };
@@ -114,7 +114,7 @@ export default function ManagedPostsManager() {
         <label>Nowa grafika (opcjonalnie)<input name="image" type="file" accept="image/jpeg,image/png,image/webp" /></label>
         <label>Dopasowanie grafiki<select name="imageFit" defaultValue={post.imageFit ?? "contain"} style={{ width: "100%", padding: 10 }}><option value="contain">Cały obraz</option><option value="cover">Wypełnij ramkę</option></select></label>
         <label>Dodaj załączniki (PDF, DOCX, XLSX)<input name="attachments" type="file" accept=".pdf,.docx,.xlsx" multiple /></label>
-        {post.attachments.length ? <small>Obecne załączniki: {post.attachments.map((item) => item.name).join(", ")}</small> : null}
+        {post.attachments.length ? <section className="resource-box" aria-label="Obecne pliki"><h3 style={{ marginTop: 0 }}>Obecne pliki</h3>{post.attachments.map((item) => <a href={`/api/media/${encodeURIComponent(item.key)}`} key={item.key} target="_blank" rel="noreferrer">{item.name}</a>)}</section> : null}
         <label>Link źródłowy<input name="source" type="url" defaultValue={post.source} style={{ width: "100%", padding: 10 }} /></label>
         <div style={{ display: "flex", gap: 8 }}><button type="submit" className="button button-primary">Zapisz zmiany</button><button type="button" className="button button-outline" onClick={() => setEditing(null)}>Anuluj</button></div>
       </form> : null}

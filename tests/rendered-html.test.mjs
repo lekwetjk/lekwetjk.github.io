@@ -68,6 +68,11 @@ test("publication editor uses consistent Markdown formatting without raw HTML ta
   const renderer = await readProjectFile("app/lib/inlineMarkdown.tsx");
   assert.match(renderer, /<em key=/);
   assert.match(renderer, /inline-text-\$\{fontSize\}/);
+  const article = await readProjectFile("app/components/ArticleBody.tsx");
+  assert.match(article, /uploadedAttachments/);
+  assert.match(article, /aria-label="Pliki do pobrania"/);
+  assert.match(await readProjectFile("app/admin/publikacje/PublicationForm.tsx"), /attachmentNames\.length.*Pliki do pobrania/);
+  assert.match(await readProjectFile("app/admin/publikacje/ManagedPostsManager.tsx"), /aria-label="Obecne pliki"/);
 });
 
 test("imported campaign edits take precedence in public views and require an admin import action", async () => {
