@@ -53,6 +53,9 @@ test("publication image fit reaches archive and article renderers and admin form
 test("publication editor uses consistent Markdown formatting without raw HTML tags", async () => {
   const editor = await readProjectFile("app/admin/publikacje/MarkdownEditor.tsx");
   assert.match(editor, /toggleInline\("\*\*"\)/);
+  assert.match(editor, /toggleInline\("_"\)/);
+  assert.match(editor, /aria-label="Rozmiar czcionki"/);
+  assert.match(editor, /setFontSize/);
   assert.match(editor, /setSelectionRange/);
   assert.doesNotMatch(editor, /<\$\{tag\}>/);
   for (const file of ["app/admin/publikacje/PublicationForm.tsx", "app/admin/publikacje/ManagedPostsManager.tsx"]) {
@@ -64,6 +67,7 @@ test("publication editor uses consistent Markdown formatting without raw HTML ta
   assert.match(backend, /"\*\*\$1\*\*"/);
   const renderer = await readProjectFile("app/lib/inlineMarkdown.tsx");
   assert.match(renderer, /<em key=/);
+  assert.match(renderer, /inline-text-\$\{fontSize\}/);
 });
 
 test("imported campaign edits take precedence in public views and require an admin import action", async () => {

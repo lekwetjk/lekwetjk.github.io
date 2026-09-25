@@ -75,6 +75,14 @@ summary:focus-visible {
   outline-offset: 4px;
 }
 
+.inline-text-small {
+  font-size: 0.85em;
+}
+
+.inline-text-large {
+  font-size: 1.2em;
+}
+
 .shell {
   width: min(1280px, calc(100% - 56px));
   margin-inline: auto;

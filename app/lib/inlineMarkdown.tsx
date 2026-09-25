@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 
-const inlineTokenPattern = /\*\*\*(.+?)\*\*\*|\*\*(.+?)\*\*|\*([^*\n]+?)\*|\[([^\]]+)\]\(([^)]+)\)/g;
+const inlineTokenPattern = /\[(small|large)\]([\s\S]+?)\[\/\1\]|\*\*\*(.+?)\*\*\*|\*\*(.+?)\*\*|\*([^*\n]+?)\*|_([^_\n]+?)_|\[([^\]]+)\]\(([^)]+)\)/g;
 
 /** Renders a plain-text paragraph with basic inline Markdown formatting. */
 export function renderInlineMarkdown(text: string, keyPrefix: string): ReactNode {
-  if (!text.includes("*") && !text.includes("](")) {
+  if (!text.includes("*") && !text.includes("_") && !text.includes("](") && !text.includes("[small]") && !text.includes("[large]")) {
     return text;
   }
 
@@ -19,13 +19,16 @@ export function renderInlineMarkdown(text: string, keyPrefix: string): ReactNode
       nodes.push(text.slice(lastIndex, match.index));
     }
 
-    const [, boldItalicText, boldText, italicText, linkLabel, linkHref] = match;
-    if (boldItalicText !== undefined) {
-      nodes.push(<strong key={`${keyPrefix}-bi-${matchIndex}`}><em>{boldItalicText}</em></strong>);
+    const [, fontSize, sizedText, boldItalicText, boldText, asteriskItalicText, underscoreItalicText, linkLabel, linkHref] = match;
+    if (fontSize !== undefined) {
+      nodes.push(<span className={`inline-text-${fontSize}`} key={`${keyPrefix}-size-${matchIndex}`}>{renderInlineMarkdown(sizedText, `${keyPrefix}-size-${matchIndex}`)}</span>);
+    } else if (boldItalicText !== undefined) {
+      nodes.push(<strong key={`${keyPrefix}-bi-${matchIndex}`}><em>{renderInlineMarkdown(boldItalicText, `${keyPrefix}-bi-${matchIndex}`)}</em></strong>);
     } else if (boldText !== undefined) {
-      nodes.push(<strong key={`${keyPrefix}-b-${matchIndex}`}>{boldText}</strong>);
-    } else if (italicText !== undefined) {
-      nodes.push(<em key={`${keyPrefix}-i-${matchIndex}`}>{italicText}</em>);
+      nodes.push(<strong key={`${keyPrefix}-b-${matchIndex}`}>{renderInlineMarkdown(boldText, `${keyPrefix}-b-${matchIndex}`)}</strong>);
+    } else if (asteriskItalicText !== undefined || underscoreItalicText !== undefined) {
+      const italicText = asteriskItalicText ?? underscoreItalicText;
+      nodes.push(<em key={`${keyPrefix}-i-${matchIndex}`}>{renderInlineMarkdown(italicText, `${keyPrefix}-i-${matchIndex}`)}</em>);
     } else {
       nodes.push(
         <a

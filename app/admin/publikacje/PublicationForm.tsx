@@ -49,7 +49,7 @@ export default function PublicationForm({ kind }: { kind: "news" | "tender" }) {
     <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}><button type="button" onClick={() => setPreview(true)} className="button button-outline">Podgląd</button><button type="submit" disabled={saving} className="button button-primary">{saving ? "Publikowanie..." : "Opublikuj"}</button></div>
     {message ? <p style={{ margin: 0, color: message.includes("opublikowany") ? "#166534" : "#b91c1c" }}>{message}</p> : null}
     {preview ? (
-      <div role="dialog" aria-modal="true" style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,.6)", padding: 24, zIndex: 20, overflow: "auto" }}>
+      <div role="dialog" aria-modal="true" style={{ position: "fixed", inset: 0, background: "rgba(15,23,42,.6)", padding: 24, zIndex: 100, overflow: "auto" }}>
         <article style={{ maxWidth: 760, margin: "40px auto", background: "#fff", padding: 28, borderRadius: 8 }}>
           <button type="button" onClick={() => setPreview(false)} style={{ float: "right" }}>Zamknij</button>
           <p>{tender ? "Zapytanie ofertowe" : "Aktualność"}</p>
