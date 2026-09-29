@@ -1502,14 +1502,30 @@ export async function ArticleBody({
   }
 
   if (slug === "handel-zagraniczny") {
+    const latestExportReports = [
+      {
+        label: "POBIERZ RAPORT ZA ROK 2025",
+        href: "/media/reports/eksport-rolno-spozywczy-2025.pdf",
+        document: true,
+      },
+      {
+        label: "POBIERZ RAPORT ZA PIERWSZE PÓŁROCZE 2026",
+        href: "/media/reports/eksport-rolno-spozywczy-pierwsze-polrocze-2026.pdf",
+        document: true,
+      },
+    ];
     const linkByLabel = new Map(
-      links.map((link) => [link.label.trim().toUpperCase(), link]),
+      [...links, ...latestExportReports].map((link) => [link.label.trim().toUpperCase(), link]),
     );
+    const reportParagraphs = [
+      ...visibleParagraphs.map((paragraph) => paragraph.replace("w latach 2022-2024:", "od 2022 roku:")),
+      ...latestExportReports.map((report) => report.label),
+    ];
 
     return (
       <div className="article-layout article-layout-full shell">
         <article className="prose">
-          {visibleParagraphs.map((paragraph, index) => {
+          {reportParagraphs.map((paragraph, index) => {
             const normalized = paragraph.trim();
             const normalizedUpper = normalized.toUpperCase();
             const linkedReport = linkByLabel.get(normalizedUpper);

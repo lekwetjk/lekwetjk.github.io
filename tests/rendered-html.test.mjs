@@ -105,6 +105,12 @@ test("articles omit legacy site referrals while retaining specific resource link
   assert.match(source, /\{sourceLinkLabel \? \(/);
 });
 
+test("foreign trade page links the latest local export reports", async () => {
+  const source = await readProjectFile("app/components/ArticleBody.tsx");
+  assert.match(source, /eksport-rolno-spozywczy-2025\.pdf/);
+  assert.match(source, /eksport-rolno-spozywczy-pierwsze-polrocze-2026\.pdf/);
+});
+
 test("deleted imported posts stay hidden in archives and sitemap with an enabled delete action", async () => {
   const manager = await readProjectFile("app/admin/publikacje/ManagedPostsManager.tsx");
   assert.doesNotMatch(manager, /disabled=\{post.imported/);
