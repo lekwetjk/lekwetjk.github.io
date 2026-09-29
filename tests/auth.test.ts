@@ -6,6 +6,7 @@ import assert from "node:assert/strict";
 import {
   createSessionToken,
   getMemberUsers,
+  hashPassword,
   verifyCredentials,
   verifySessionToken,
 } from "../app/lib/auth.ts";
@@ -24,6 +25,16 @@ test("valid credentials are accepted", async () => {
 
 test("default admin credentials are valid", async () => {
   assert.equal(await verifyCredentials("admin", "Test123!"), true);
+});
+
+test("new password hashes use the Worker-safe versioned format", () => {
+  assert.match(hashPassword("Test123!"), /^pbkdf2-sha256\$10000\$[a-f\d]{32}\$[a-f\d]{64}$/);
+});
+
+test("admin user page loads member logos in one batch", () => {
+  const source = fs.readFileSync(path.join(process.cwd(), "app/admin/uzytkownicy/page.tsx"), "utf8");
+  assert.match(source, /getMemberLogos\(users\.map/);
+  assert.doesNotMatch(source, /Promise\.all\(users\.map/);
 });
 
 test("protected member files exist for export", () => {

@@ -3,7 +3,7 @@ import { readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
-import { eq, sql } from "drizzle-orm";
+import { eq, inArray, sql } from "drizzle-orm";
 
 import { getDb } from "../../db/index.ts";
 import { memberProfiles, memberUserLogos, memberUsers } from "../../db/schema.ts";
@@ -12,6 +12,8 @@ import type { MemberProfileData } from "./member-profile";
 export const AUTH_COOKIE_NAME = "krd_member_session";
 const AUTH_SECRET = process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET ?? "dev-secret-change-me";
 const MEMBER_PASSWORD_SALT = "krd-ig-member-salt";
+const PASSWORD_HASH_PREFIX = "pbkdf2-sha256";
+const PASSWORD_HASH_ITERATIONS = 10_000;
 const LOCAL_MEMBER_USERS_FILE = path.join(os.tmpdir(), "krd-ig-member-users.json");
 const LOCAL_MEMBER_LOGOS_FILE = path.join(os.tmpdir(), "krd-ig-member-logos.json");
 const LOCAL_MEMBER_PROFILES_FILE = path.join(os.tmpdir(), "krd-ig-member-profiles.json");
@@ -59,7 +61,7 @@ const DEFAULT_MEMBER_USERS: MemberUser[] = [
     name: "Członek KRD-IG",
     role: "member",
     passwordHash:
-      "fd1a5d2ecc9e98159009f5da7c147abb1571d75f2486c5d576cc379ee47427a927a37d93cebc63dd25d57777dc6cf974b49900be047f09818806de273c53b3e9",
+      "pbkdf2-sha256$10000$a5c4e3f2918076bd$a57a84de6926f4a31440ac402e1578387c214a1805c57553f6fbbd2ea7e36c60",
     isActive: true,
   },
   {
@@ -68,7 +70,7 @@ const DEFAULT_MEMBER_USERS: MemberUser[] = [
     name: "Administrator",
     role: "admin",
     passwordHash:
-      "fd1a5d2ecc9e98159009f5da7c147abb1571d75f2486c5d576cc379ee47427a927a37d93cebc63dd25d57777dc6cf974b49900be047f09818806de273c53b3e9",
+      "pbkdf2-sha256$10000$d8b7c6a5948372e1$a5bba8ab2bc9c5fa0af55970b27c4576d1ea8fd6ae0cbd2a8f20f48c46322a89",
     isActive: true,
   },
 ];
@@ -95,7 +97,32 @@ async function readLocalMemberLogos(): Promise<Record<string, { content: string;
 }
 
 export function hashPassword(password: string): string {
-  return crypto.scryptSync(password, MEMBER_PASSWORD_SALT, 64).toString("hex");
+  const salt = crypto.randomBytes(16).toString("hex");
+  const hash = crypto.pbkdf2Sync(password, salt, PASSWORD_HASH_ITERATIONS, 32, "sha256").toString("hex");
+  return `${PASSWORD_HASH_PREFIX}$${PASSWORD_HASH_ITERATIONS}$${salt}$${hash}`;
+}
+
+function verifyPassword(password: string, storedHash: string) {
+  const [algorithm, iterationsValue, salt, expectedValue] = storedHash.split("$");
+
+  if (algorithm === PASSWORD_HASH_PREFIX && salt && expectedValue) {
+    const iterations = Number.parseInt(iterationsValue, 10);
+    if (!Number.isSafeInteger(iterations) || iterations <= 0 || iterations > PASSWORD_HASH_ITERATIONS) {
+      return false;
+    }
+
+    const actual = crypto.pbkdf2Sync(password, salt, iterations, 32, "sha256");
+    const expected = Buffer.from(expectedValue, "hex");
+    return actual.length === expected.length && crypto.timingSafeEqual(actual, expected);
+  }
+
+  if (process.env.NODE_ENV !== "production" && /^[a-f\d]{128}$/i.test(storedHash)) {
+    const actual = crypto.scryptSync(password, MEMBER_PASSWORD_SALT, 64);
+    const expected = Buffer.from(storedHash, "hex");
+    return actual.length === expected.length && crypto.timingSafeEqual(actual, expected);
+  }
+
+  return false;
 }
 
 export function generateTemporaryPassword() {
@@ -176,16 +203,7 @@ export async function verifyCredentials(username: string, password: string): Pro
     return false;
   }
 
-  const candidateHash = hashPassword(password);
-  const expectedHash = user.passwordHash;
-  const actual = Buffer.from(candidateHash, "hex");
-  const expected = Buffer.from(expectedHash, "hex");
-
-  if (actual.length !== expected.length) {
-    return false;
-  }
-
-  return crypto.timingSafeEqual(actual, expected);
+  return verifyPassword(password, user.passwordHash);
 }
 
 export async function getCurrentMemberSession(token?: string) {
@@ -216,6 +234,21 @@ export async function getMemberLogo(userId: string) {
     if (logo) return logo;
   }
   return null;
+}
+
+export async function getMemberLogos(userIds: string[]) {
+  if (userIds.length === 0) {
+    return {};
+  }
+
+  try {
+    const db = getDb();
+    const rows = await db.select().from(memberUserLogos).where(inArray(memberUserLogos.userId, userIds));
+    return Object.fromEntries(rows.map((row) => [row.userId, row]));
+  } catch {
+    const logos = await readLocalMemberLogos();
+    return Object.fromEntries(userIds.flatMap((userId) => logos[userId] ? [[userId, logos[userId]]] : []));
+  }
 }
 
 export async function deleteMemberLogo(userId: string) {

@@ -6,7 +6,8 @@ import os from 'node:os';
 
 const inputPath = 'C:/Users/Jakub Kubacki/Documents/rozne/import.csv';
 const DEFAULT_D1_DATABASE = 'site-creator-d1';
-const MEMBER_PASSWORD_SALT = 'krd-ig-member-salt';
+const PASSWORD_HASH_PREFIX = 'pbkdf2-sha256';
+const PASSWORD_HASH_ITERATIONS = 10_000;
 
 function parseArgs(argv) {
   const options = {
@@ -152,7 +153,9 @@ function normalizeImportedText(value) {
 }
 
 function hashPassword(password) {
-  return crypto.scryptSync(password, MEMBER_PASSWORD_SALT, 64).toString('hex');
+  const salt = crypto.randomBytes(16).toString('hex');
+  const hash = crypto.pbkdf2Sync(password, salt, PASSWORD_HASH_ITERATIONS, 32, 'sha256').toString('hex');
+  return `${PASSWORD_HASH_PREFIX}$${PASSWORD_HASH_ITERATIONS}$${salt}$${hash}`;
 }
 
 function sqlString(value) {
