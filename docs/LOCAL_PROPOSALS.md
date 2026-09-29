@@ -63,7 +63,7 @@ Akceptacja w panelu nie publikuje zmian ani nie tworzy commita.
   odmiana liczby materialow, listy QAFP/cookies, akapity przepiorek, obraz ebooka
   i jeden widok kontaktu. Adres PDF ebooka jest poprawny niezaleznie od pakietu links.
 - SEO: metadane wpisow i stron dzialaja na stale. Canonical korzysta z metadataBase
-  ustawionego przez NEXT_PUBLIC_SITE_URL (domyslnie https://lekwetjk.github.io).
+  ustawionego przez NEXT_PUBLIC_SITE_URL (domyslnie https://krd-ig-website-concept.lek-wet-jk.workers.dev).
   Produkcyjne wpisy nie maja developerskiego noindex. Formularze dodawania
   i edycji postow oraz zapytan ofertowych w /admin/publikacje maja opcjonalne
   pola tytulu SEO (100 znakow) i opisu SEO (240 znakow). Sa zapisywane przy

@@ -3,7 +3,6 @@ import { cookies } from "next/headers";
 import { AUTH_COOKIE_NAME, verifySessionToken } from "../lib/auth";
 import { primaryNavigation } from "../lib/content";
 import { withBasePath } from "../lib/basePath";
-import { ChatWidget } from "./ChatWidget";
 
 type SiteLanguage = "pl" | "en";
 
@@ -333,7 +332,6 @@ export function PageShell({
     <>
       <SiteHeader language={language} />
       <main>{children}</main>
-      <ChatWidget />
       <SiteFooter language={language} />
     </>
   );

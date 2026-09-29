@@ -4,9 +4,7 @@ import "./proposals.css";
 import { getLocalProposals } from "./lib/local-proposals-server";
 import { acceptedProposalIds, pendingProposalIds } from "./lib/local-proposals";
 
-export const dynamic = process.env.GITHUB_PAGES_BUILD === "true" ? "force-static" : "auto";
-
-const defaultSiteUrl = "https://lekwetjk.github.io";
+const defaultSiteUrl = "https://krd-ig-website-concept.lek-wet-jk.workers.dev";
 const envSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
 
 function normalizeSiteUrl(value?: string) {

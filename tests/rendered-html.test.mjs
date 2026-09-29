@@ -155,7 +155,7 @@ test("sitemap includes static and dynamic site routes", async () => {
   const sitemap = await readProjectFile("app/sitemap.ts");
   const sitemapRoute = await readProjectFile("app/sitemap.xml/route.ts");
 
-  assert.match(sitemap, /https:\/\/lekwetjk\.github\.io/);
+  assert.match(sitemap, /https:\/\/krd-ig-website-concept\.lek-wet-jk\.workers\.dev/);
   assert.match(sitemap, /knowledgePages\.map/);
   assert.match(sitemap, /newsPosts\.map/);
   assert.match(sitemap, /"zapytania-ofertowe"/);
@@ -168,6 +168,32 @@ test("footer links to Dobry Drób with its logo", async () => {
   assert.match(footer, /https:\/\/dobrydrob\.pl\//);
   assert.match(footer, /wp-content\/uploads\/2020\/07\/logo\.png/);
   assert.match(footer, /aria-label="Dobry Drób"/);
+});
+
+test("site shell does not render the disabled chat assistant", async () => {
+  const siteChrome = await readProjectFile("app/components/SiteChrome.tsx");
+
+  assert.doesNotMatch(siteChrome, /ChatWidget/);
+});
+
+test("disabled chat contains no page self-fetch path", async () => {
+  const worker = await readProjectFile("worker/index.ts");
+
+  assert.match(worker, /const CHAT_FEATURE_DISABLED = true as const;/);
+  assert.doesNotMatch(worker, /SOURCE_SITE_BASE_URL|fetchSourceContext|fetchSiteText/);
+});
+
+test("Cloudflare Worker caches only anonymous public HTML pages", async () => {
+  const worker = await readProjectFile("worker/index.ts");
+
+  assert.match(worker, /const PUBLIC_PAGE_CACHE_SECONDS = 300;/);
+  assert.match(worker, /request\.headers\.has\("cookie"\)/);
+  assert.match(worker, /request\.headers\.has\("authorization"\)/);
+  assert.match(worker, /\["\/api", "\/admin", "\/member", "\/login", "\/podglad-zmian"\]/);
+  assert.match(worker, /if \(!cache\) \{[\s\S]*return handler\.fetch\(request, env, ctx\);/);
+  assert.match(worker, /headers\.set\("x-worker-cache", "HIT"\)/);
+  assert.match(worker, /headers\.set\("x-worker-cache", "MISS"\)/);
+  assert.match(worker, /ctx\.waitUntil\(cache\.put\(request, cacheableResponse\.clone\(\)\)\.catch/);
 });
 
 test("tender archive includes the contractor selection post for the national poultry image protection project", async () => {

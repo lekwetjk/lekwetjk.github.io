@@ -3,7 +3,7 @@ import { knowledgePages, newsPosts } from "./lib/content";
 import { listDeletedPostSlugs } from "./lib/managed-posts";
 import { connection } from "next/server";
 
-const defaultSiteUrl = "https://lekwetjk.github.io";
+const defaultSiteUrl = "https://krd-ig-website-concept.lek-wet-jk.workers.dev";
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim() || defaultSiteUrl;
 
 const staticRoutes = [

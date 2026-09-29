@@ -56,7 +56,7 @@ type RateState = {
 
 const CHAT_PATH = "/api/chat";
 const CHAT_HEALTH_PATH = "/api/chat/health";
-const CHAT_FEATURE_DISABLED = true;
+const CHAT_FEATURE_DISABLED = true as const;
 const CHAT_MAX_RETRIES = 2;
 const CHAT_RETRY_BACKOFF_MS = 400;
 const DEFAULT_CHAT_MODEL = "gpt-4.1-mini";
@@ -65,9 +65,7 @@ const MAX_BODY_BYTES = 10_000;
 const RATE_LIMIT_WINDOW_MS = 5 * 60 * 1000;
 const RATE_LIMIT_MAX_REQUESTS = 12;
 const OPENAI_TIMEOUT_MS = 15_000;
-const SOURCE_SITE_BASE_URL = "https://lekwetjk.github.io";
-const SOURCE_FETCH_TIMEOUT_MS = 8_000;
-const SOURCE_CONTEXT_MAX_CHARS = 12_000;
+const PUBLIC_PAGE_CACHE_SECONDS = 300;
 const rateLimiter = new Map<string, RateState>();
 
 function logChat(env: Env, message: string, details?: Record<string, unknown>) {
@@ -91,6 +89,68 @@ function createJsonResponse(body: unknown, status = 200, extraHeaders?: Record<s
       ...extraHeaders,
     },
   });
+}
+
+function isCacheablePublicPageRequest(request: Request, url: URL) {
+  if (request.method !== "GET" || request.headers.has("cookie") || request.headers.has("authorization")) {
+    return false;
+  }
+
+  if (url.search || !request.headers.get("accept")?.includes("text/html")) {
+    return false;
+  }
+
+  return !["/api", "/admin", "/member", "/login", "/podglad-zmian"].some(
+    (prefix) => url.pathname === prefix || url.pathname.startsWith(`${prefix}/`),
+  );
+}
+
+async function servePublicPage(request: Request, env: Env, ctx: ExecutionContext) {
+  const cache = (globalThis as typeof globalThis & {
+    caches?: CacheStorage & { default?: Cache };
+  }).caches?.default;
+
+  if (!cache) {
+    return handler.fetch(request, env, ctx);
+  }
+
+  let cachedResponse: Response | undefined;
+  try {
+    cachedResponse = await cache.match(request);
+  } catch (error) {
+    console.error("Public page cache lookup failed", error);
+  }
+
+  if (cachedResponse) {
+    const headers = new Headers(cachedResponse.headers);
+    headers.set("x-worker-cache", "HIT");
+    return new Response(cachedResponse.body, {
+      status: cachedResponse.status,
+      statusText: cachedResponse.statusText,
+      headers,
+    });
+  }
+
+  const response = await handler.fetch(request, env, ctx);
+  const contentType = response.headers.get("content-type") ?? "";
+
+  if (!response.ok || !contentType.includes("text/html") || response.headers.has("set-cookie")) {
+    return response;
+  }
+
+  const headers = new Headers(response.headers);
+  headers.set("cache-control", `public, max-age=0, s-maxage=${PUBLIC_PAGE_CACHE_SECONDS}`);
+  headers.set("x-worker-cache", "MISS");
+  const cacheableResponse = new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers,
+  });
+
+  ctx.waitUntil(cache.put(request, cacheableResponse.clone()).catch((error) => {
+    console.error("Public page cache write failed", error);
+  }));
+  return cacheableResponse;
 }
 
 function getRequestOrigin(request: Request) {
@@ -241,68 +301,6 @@ async function readUpstreamErrorExcerpt(response: Response) {
   }
 }
 
-function stripHtmlToText(html: string) {
-  return html
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, " ")
-    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, " ")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&nbsp;/gi, " ")
-    .replace(/&amp;/gi, "&")
-    .replace(/&quot;/gi, '"')
-    .replace(/&#39;/gi, "'")
-    .replace(/\s+/g, " ")
-    .trim();
-}
-
-async function fetchSiteText(url: string) {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort("source timeout"), SOURCE_FETCH_TIMEOUT_MS);
-
-  try {
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "user-agent": "KRD-IG-Assistant/1.0",
-      },
-      signal: controller.signal,
-    });
-
-    if (!response.ok) {
-      return "";
-    }
-
-    const html = await response.text();
-    return stripHtmlToText(html);
-  } catch {
-    return "";
-  } finally {
-    clearTimeout(timeoutId);
-  }
-}
-
-async function fetchSourceContext(question: string) {
-  const searchUrl = `${SOURCE_SITE_BASE_URL}/?s=${encodeURIComponent(question.slice(0, 180))}`;
-  const [homeText, searchText] = await Promise.all([
-    fetchSiteText(SOURCE_SITE_BASE_URL),
-    fetchSiteText(searchUrl),
-  ]);
-
-  const chunks: string[] = [];
-  if (homeText) {
-    chunks.push(`[ZRODLO: ${SOURCE_SITE_BASE_URL}] ${homeText}`);
-  }
-  if (searchText) {
-    chunks.push(`[ZRODLO: ${searchUrl}] ${searchText}`);
-  }
-
-  const merged = chunks.join("\n\n").trim();
-  if (!merged) {
-    return "";
-  }
-
-  return merged.slice(0, SOURCE_CONTEXT_MAX_CHARS);
-}
-
 async function fetchOpenAIWithRetry(requestBody: string, apiKey: string, model: string, env: Env) {
   let lastResponse: Response | null = null;
 
@@ -393,20 +391,7 @@ async function handleChatRequest(request: Request, env: Env): Promise<Response> 
     );
   }
 
-  const sourceContext = await fetchSourceContext(parsed.message);
-  logChat(env, "source context ready", { length: sourceContext.length, questionLength: parsed.message.length });
-
-  if (!sourceContext) {
-    logChat(env, "source context empty");
-    return createJsonResponse(
-      {
-        reply:
-          "Nie moge zweryfikowac odpowiedzi na podstawie strony lekwetjk.github.io w tej chwili. Sprobuj ponownie za chwile albo sprawdz bezposrednio strone glowna i wyszukiwarke serwisu.",
-      },
-      200,
-      corsHeaders,
-    );
-  }
+  const sourceContext = "Asystent jest wyłączony.";
 
   const model = env.OPENAI_MODEL?.trim() || DEFAULT_CHAT_MODEL;
   const requestBody = JSON.stringify({
@@ -534,6 +519,10 @@ const worker = {
           return result.response();
         },
       }, allowedWidths);
+    }
+
+    if (isCacheablePublicPageRequest(request, url)) {
+      return servePublicPage(request, env, ctx);
     }
 
     return handler.fetch(request, env, ctx);
