@@ -88,7 +88,7 @@ const pathways = [
     href: "/zrownowazony-rozwoj",
     index: "03",
     title: "Jakość i rozwój",
-    text: "QAFP, bezpieczeństwo produkcji, dobrostan i środowisko.",
+    text: "Bezpieczeństwo produkcji, dobrostan, środowisko.",
   },
   {
     href: "/dezinformacja",
