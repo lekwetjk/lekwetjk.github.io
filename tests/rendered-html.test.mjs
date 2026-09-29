@@ -78,10 +78,13 @@ test("publication editor uses consistent Markdown formatting without raw HTML ta
 test("imported campaign edits take precedence in public views and require an admin import action", async () => {
   const detail = await readProjectFile("app/aktualnosci/[slug]/page.tsx");
   assert.equal(detail.match(/resolvePublishedPost\(slug, postBySlug\(slug\)\)/g)?.length, 2);
-  for (const file of ["app/page.tsx", "app/aktualnosci/page.tsx", "app/components/ArticleBody.tsx"]) {
-    assert.match(await readProjectFile(file), /await applyManagedPostOverrides\(/);
+  for (const file of ["app/page.tsx", "app/aktualnosci/page.tsx"]) {
+    assert.match(await readProjectFile(file), /await mergeManagedPosts\(/);
     assert.match(await readProjectFile(file), /await connection\(\)/);
   }
+  const articleBody = await readProjectFile("app/components/ArticleBody.tsx");
+  assert.match(articleBody, /await applyManagedPostOverrides\(/);
+  assert.match(articleBody, /await connection\(\)/);
   const archive = await readProjectFile("app/components/NewsArchive.tsx");
   assert.ok(archive.includes("[...data.posts, ...posts]"));
   const api = await readProjectFile("app/api/admin/managed-posts/route.ts");

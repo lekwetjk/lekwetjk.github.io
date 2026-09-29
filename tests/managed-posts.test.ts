@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { DatabaseSync, type SQLInputValue } from "node:sqlite";
 import test from "node:test";
 
-import { applyManagedPostOverrides, createManagedPost, deleteManagedPost, getManagedPostBySlug, importExistingPost, listDeletedPostSlugs, listImportablePosts, listManagedPosts, listManagedPostsForAdmin, resolvePublishedPost, updateManagedPost } from "../app/lib/managed-posts.ts";
+import { applyManagedPostOverrides, createManagedPost, deleteManagedPost, getManagedPostBySlug, importExistingPost, listDeletedPostSlugs, listImportablePosts, listManagedPosts, listManagedPostsForAdmin, mergeManagedPosts, resolvePublishedPost, updateManagedPost } from "../app/lib/managed-posts.ts";
 import generatedPosts from "../app/data/generated-posts.json" with { type: "json" };
 import type { NewsPost } from "../app/lib/content.ts";
 
@@ -50,6 +50,8 @@ test("publication SEO and image fit migrate legacy data and persist independentl
       assert.equal(publicPost.seoTitle, `SEO ${kind}`);
       assert.equal(publicPost.title, input.title);
       assert.equal(publicPost.imageFit, "contain");
+      const mergedPosts = await mergeManagedPosts([], kind);
+      assert.equal(mergedPosts.filter((post) => post.slug === slug).length, 1);
       await updateManagedPost(adminPost.id, { ...input, imageFit: "cover" });
       assert.equal((await getManagedPostBySlug(slug))?.imageFit, "cover");
       assert.equal((await listManagedPostsForAdmin()).find((post) => post.slug === slug)?.imageFit, "cover");

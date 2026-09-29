@@ -102,6 +102,20 @@ export async function applyManagedPostOverrides(posts: NewsPost[]) {
   return resolved.filter((post): post is NewsPost => post !== undefined);
 }
 
+export async function mergeManagedPosts(posts: NewsPost[], kind: "news" | "tender") {
+  const [resolvedPosts, managed, deletedSlugs] = await Promise.all([
+    applyManagedPostOverrides(posts),
+    listManagedPosts(kind),
+    listDeletedPostSlugs(),
+  ]);
+  const deleted = new Set(deletedSlugs);
+
+  return [...managed, ...resolvedPosts]
+    .filter((post) => !deleted.has(post.slug))
+    .filter((post, index, allPosts) => allPosts.findIndex((item) => item.slug === post.slug) === index)
+    .sort((left, right) => new Date(right.date).getTime() - new Date(left.date).getTime());
+}
+
 export async function getManagedPostBySlug(slug: string) {
   return await getManagedPostState(slug) ?? null;
 }

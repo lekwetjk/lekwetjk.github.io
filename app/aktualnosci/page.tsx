@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { NewsArchive } from "../components/NewsArchive";
 import { PageShell } from "../components/SiteChrome";
 import { isTenderPost, newsPosts } from "../lib/content";
-import { applyManagedPostOverrides } from "../lib/managed-posts";
+import { mergeManagedPosts } from "../lib/managed-posts";
 import { connection } from "next/server";
 
 export const metadata: Metadata = {
@@ -30,9 +30,7 @@ export const metadata: Metadata = {
 
 export default async function NewsPage() {
   await connection();
-  const archive = (await applyManagedPostOverrides(newsPosts))
-    .filter((post) => !isTenderPost(post))
-    .sort((left, right) => new Date(right.date).getTime() - new Date(left.date).getTime())
+  const archive = (await mergeManagedPosts(newsPosts.filter((post) => !isTenderPost(post)), "news"))
     .map(({ slug, title, date, year, excerpt, categories, image, imageFit }) => ({
       slug,
       title,
