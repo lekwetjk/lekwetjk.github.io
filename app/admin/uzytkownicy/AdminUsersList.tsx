@@ -6,12 +6,12 @@ import type { MemberUser } from "../../lib/auth";
 import AdminMemberProfileForm from "./AdminMemberProfileForm";
 import EditUserForm from "./EditUserForm";
 
-type UserWithLogo = {
+type UserWithLogoState = {
   user: MemberUser;
-  logo: { content: string; contentType: string } | null;
+  hasLogo: boolean;
 };
 
-export default function AdminUsersList({ users }: { users: UserWithLogo[] }) {
+export default function AdminUsersList({ users }: { users: UserWithLogoState[] }) {
   const [sortBy, setSortBy] = useState<"name" | "role">("name");
   const [descending, setDescending] = useState(false);
 
@@ -41,14 +41,14 @@ export default function AdminUsersList({ users }: { users: UserWithLogo[] }) {
         <span>Rola</span>
         <span>Akcje</span>
       </div>
-      {sortedUsers.map(({ user, logo }) => (
-        <UserRow key={user.id} user={user} logo={logo} />
+      {sortedUsers.map(({ user, hasLogo }) => (
+        <UserRow key={user.id} user={user} hasLogo={hasLogo} />
       ))}
     </div>
   );
 }
 
-function UserRow({ user, logo }: UserWithLogo) {
+function UserRow({ user, hasLogo }: UserWithLogoState) {
   const detailsRef = useRef<HTMLDetailsElement>(null);
 
   async function toggleAccountState(nextStatus: boolean) {
@@ -67,7 +67,7 @@ function UserRow({ user, logo }: UserWithLogo) {
     <details ref={detailsRef} style={{ borderTop: "1px solid #e2e8f0" }}>
       <summary style={{ listStyle: "none", display: "grid", gridTemplateColumns: "minmax(0, 1fr) 180px 120px", gap: 16, alignItems: "center", padding: "14px 16px", cursor: "pointer" }}>
         <span style={{ display: "flex", alignItems: "center", gap: 12, minWidth: 0 }}>
-          {logo ? <img src={`data:${logo.contentType};base64,${logo.content}`} alt={`Logo ${user.name}`} style={{ width: 38, height: 38, objectFit: "contain" }} /> : null}
+          {hasLogo ? <img src={`/api/admin/users/${encodeURIComponent(user.id)}/logo`} alt={`Logo ${user.name}`} style={{ width: 38, height: 38, objectFit: "contain" }} /> : null}
           <span style={{ minWidth: 0 }}>
             <strong style={{ display: "block" }}>{user.name}</strong>
             <small style={{ color: "#475569" }}>Login: {user.username}</small>
@@ -77,7 +77,7 @@ function UserRow({ user, logo }: UserWithLogo) {
         <span style={{ color: "#1f3a5f", fontWeight: 700 }}>Edytuj</span>
       </summary>
       <div style={{ padding: "0 16px 18px", display: "grid", gap: 16 }}>
-        <EditUserForm user={{ id: user.id, username: user.username, name: user.name, role: user.role, hasLogo: Boolean(logo) }} onSaved={() => { if (detailsRef.current) detailsRef.current.open = false; }} />
+        <EditUserForm user={{ id: user.id, username: user.username, name: user.name, role: user.role, hasLogo }} onSaved={() => { if (detailsRef.current) detailsRef.current.open = false; }} />
         {user.id !== "member-admin" ? (
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <button type="button" onClick={() => void toggleAccountState(!user.isActive)} style={{ padding: "8px 12px", border: "1px solid #d1d5db", borderRadius: 6, background: user.isActive ? "#fef3c7" : "#dcfce7", color: user.isActive ? "#92400e" : "#166534", fontWeight: 700 }}>

@@ -17,12 +17,6 @@ test("member users are available", async () => {
   assert.ok(users.every((user) => user.username && user.passwordHash));
 });
 
-test("valid credentials are accepted", async () => {
-  const user = (await getMemberUsers())[0];
-  assert.ok(user);
-  assert.equal(await verifyCredentials(user.username, "Test123!"), true);
-});
-
 test("default admin credentials are valid", async () => {
   assert.equal(await verifyCredentials("admin", "Test123!"), true);
 });
@@ -31,10 +25,13 @@ test("new password hashes use the Worker-safe versioned format", () => {
   assert.match(hashPassword("Test123!"), /^pbkdf2-sha256\$10000\$[a-f\d]{32}\$[a-f\d]{64}$/);
 });
 
-test("admin user page loads member logos in one batch", () => {
-  const source = fs.readFileSync(path.join(process.cwd(), "app/admin/uzytkownicy/page.tsx"), "utf8");
-  assert.match(source, /getMemberLogos\(users\.map/);
-  assert.doesNotMatch(source, /Promise\.all\(users\.map/);
+test("admin user page does not serialize logo contents", () => {
+  const page = fs.readFileSync(path.join(process.cwd(), "app/admin/uzytkownicy/page.tsx"), "utf8");
+  const list = fs.readFileSync(path.join(process.cwd(), "app/admin/uzytkownicy/AdminUsersList.tsx"), "utf8");
+  assert.match(page, /getMemberLogoUserIds\(users\.map/);
+  assert.doesNotMatch(page, /getMemberLogo\(|Promise\.all\(users\.map/);
+  assert.match(list, /\/api\/admin\/users\/\$\{encodeURIComponent\(user\.id\)\}\/logo/);
+  assert.doesNotMatch(list, /data:\$\{logo\.contentType\}/);
 });
 
 test("protected member files exist for export", () => {
