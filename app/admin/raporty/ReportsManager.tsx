@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import readXlsxFile from "read-excel-file/browser";
 
+import { extractBulletinDocumentText } from "../../lib/bulletin-document-client";
 import { shouldCollectBulletinSourceSheet } from "../../lib/bulletin-model";
 
 type ReportSummary = {
@@ -41,8 +42,9 @@ export default function ReportsManager() {
     if (!files.length) return;
     setSaving(true);
     setStatus("Przygotowywanie plików…");
+    let uploadId = "";
     try {
-      let uploadId = "";
+      const stagedDocuments: Array<{ file: File; sourceIndex: number; sha256: string }> = [];
       for (const [index, file] of files.entries()) {
         setStatus(`Przesyłanie i analiza pliku ${index + 1} z ${files.length}: ${file.name}`);
         const stagedForm = new FormData();
@@ -50,9 +52,12 @@ export default function ReportsManager() {
         stagedForm.set("uploadId", uploadId);
         stagedForm.set("source", file);
         const stagedResponse = await fetch("/api/admin/reports", { method: "POST", body: stagedForm });
-        const stagedData = await stagedResponse.json().catch(() => ({})) as { uploadId?: string; sourceIndex?: number; error?: string };
+        const stagedData = await stagedResponse.json().catch(() => ({})) as { uploadId?: string; sourceIndex?: number; sha256?: string; error?: string };
         if (!stagedResponse.ok || !stagedData.uploadId) throw new Error(stagedData.error ?? `Nie udało się przetworzyć pliku „${file.name}”.`);
         uploadId = stagedData.uploadId;
+        if (/\.(pdf|docx)$/i.test(file.name) && stagedData.sourceIndex !== undefined && stagedData.sha256) {
+          stagedDocuments.push({ file, sourceIndex: stagedData.sourceIndex, sha256: stagedData.sha256 });
+        }
         if (/\.xlsx$/i.test(file.name) && stagedData.sourceIndex !== undefined) {
           setStatus(`Analiza pliku ${index + 1} z ${files.length}: ${file.name}`);
           const workbookSheets = await readXlsxFile(file);
@@ -67,6 +72,8 @@ export default function ReportsManager() {
               cellCount += populatedRows.reduce((sum, row) => sum + row.length, 0);
             }
             if (!shouldCollectBulletinSourceSheet(file.name, workbookSheet.sheet)) continue;
+            const stagedCellCount = workbookSheet.data.reduce((sum, row) => sum + row.length, 0);
+            if (stagedCellCount > 500_000) throw new Error(`Arkusz „${workbookSheet.sheet}” zawiera zbyt dużo danych do bezpiecznego przesłania.`);
             const sheetResponse = await fetch("/api/admin/reports", {
               method: "POST", headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ mode: "sheet", uploadId, sourceIndex: stagedData.sourceIndex, sheet: { workbook: file.name, name: workbookSheet.sheet, rows: workbookSheet.data } }),
@@ -82,6 +89,16 @@ export default function ReportsManager() {
           if (!completeResponse.ok) throw new Error(completeData.error ?? `Nie udało się zakończyć analizy pliku „${file.name}”.`);
         }
       }
+      const validationDocument = stagedDocuments.find((item) => /\.docx$/i.test(item.file.name)) ?? stagedDocuments.find((item) => /\.pdf$/i.test(item.file.name));
+      if (!validationDocument) throw new Error("Do walidacji rozdziałów potrzebny jest plik PDF lub DOCX.");
+      setStatus(`Walidacja zgodności z dokumentem: ${validationDocument.file.name}`);
+      const documentText = await extractBulletinDocumentText(validationDocument.file);
+      const documentResponse = await fetch("/api/admin/reports", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mode: "document", uploadId, sourceIndex: validationDocument.sourceIndex, sha256: validationDocument.sha256, text: documentText }),
+      });
+      const documentData = await documentResponse.json().catch(() => ({})) as { error?: string };
+      if (!documentResponse.ok) throw new Error(documentData.error ?? "Nie udało się zweryfikować dokumentu biuletynu.");
       setStatus("Łączenie danych i publikowanie biuletynu…");
       const response = await fetch("/api/admin/reports", {
         method: "POST",
@@ -95,6 +112,12 @@ export default function ReportsManager() {
       setStatus("Raport został opublikowany.");
       await loadReports();
     } catch (error) {
+      if (uploadId) {
+        await fetch("/api/admin/reports", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ mode: "cancel", uploadId }),
+        }).catch(() => undefined);
+      }
       setStatus(error instanceof Error ? error.message : "Nie udało się opublikować raportu.");
     } finally {
       setSaving(false);

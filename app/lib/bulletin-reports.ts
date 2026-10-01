@@ -8,6 +8,7 @@ import readXlsxFile from "read-excel-file/node";
 
 import { getDb, getMemberDocumentsBucket } from "../../db/index.ts";
 import { bulletinReports } from "../../db/schema.ts";
+import { BULLETIN_CHAPTERS, documentContainsBulletinValue, getMissingDocumentChapters, matchingBulletinChapterIds } from "./bulletin-chapters";
 import { buildBulletinModel, getMissingBulletinSections, shouldCollectBulletinSourceSheet, type BulletinModel, type BulletinSourceSheet } from "./bulletin-model";
 
 const LOCAL_REPORTS_DIR = path.join(os.tmpdir(), "krd-ig-bulletin-reports");
@@ -15,6 +16,7 @@ const LOCAL_REPORTS_FILE = path.join(LOCAL_REPORTS_DIR, "reports.json");
 const MAX_FILE_BYTES = 25 * 1024 * 1024;
 const MAX_TOTAL_BYTES = 80 * 1024 * 1024;
 const MAX_CELLS = 5_000_000;
+const MAX_STAGED_SHEET_CELLS = 500_000;
 const ALLOWED_SOURCE_EXTENSION = /\.(xlsx|pdf|docx)$/i;
 const BULLETIN_MODEL_VERSION = 3;
 
@@ -59,10 +61,13 @@ export type BulletinReportData = {
   sheets?: BulletinSheet[];
   model?: BulletinModel;
   modelVersion?: number;
+  validation?: { document: string; chapters: string[] };
 };
 
 type StagedBulletinSource = BulletinReportSource & {
   parsedKeys?: string[];
+  sha256: string;
+  documentTextKey?: string;
   sheetCount: number;
   rowCount: number;
   cellCount: number;
@@ -219,12 +224,7 @@ export async function getBulletinReportData(report: BulletinReport): Promise<Bul
   try {
     const data = JSON.parse(text) as BulletinReportData;
     if (data.model && data.modelVersion === BULLETIN_MODEL_VERSION) return data;
-    if (data.model && data.modelVersion === 2) {
-      delete data.sheets;
-      data.modelVersion = BULLETIN_MODEL_VERSION;
-      await putObject(report.dataKey, Buffer.from(JSON.stringify(data), "utf8"), "application/json");
-      return data;
-    }
+    if (data.model && data.modelVersion === 2) return data;
     const modelSheets: BulletinSourceSheet[] = [];
     for (const source of report.sources.filter((item) => /\.xlsx$/i.test(item.name))) {
       const sourceObject = await getObject(source.key);
@@ -274,11 +274,13 @@ export async function stageBulletinReportSource(input: { uploadId?: string; file
   const prefix = `bulletin-report-uploads/${uploadId}`;
   const key = `${prefix}/sources/${index}-${safeFileName(input.file.name)}`;
   const fileBytes = Buffer.from(await input.file.arrayBuffer());
+  const sha256 = crypto.createHash("sha256").update(fileBytes).digest("hex");
   await putObject(key, fileBytes, input.file.type || "application/octet-stream");
   manifest.sources.push({
     name: input.file.name,
     key,
     parsedKeys: [],
+    sha256,
     contentType: input.file.type || "application/octet-stream",
     size: input.file.size,
     sheetCount: 0,
@@ -286,7 +288,25 @@ export async function stageBulletinReportSource(input: { uploadId?: string; file
     cellCount: 0,
   });
   await putObject(manifestKey, Buffer.from(JSON.stringify(manifest), "utf8"), "application/json");
-  return { uploadId, sourceIndex: index - 1, sourceCount: manifest.sources.length };
+  return { uploadId, sourceIndex: index - 1, sourceCount: manifest.sources.length, sha256 };
+}
+
+export async function stageBulletinDocumentText(input: {
+  uploadId: string;
+  sourceIndex: number;
+  sha256: string;
+  text: string;
+  createdBy: string;
+}) {
+  const manifestKey = stagedManifestKey(input.uploadId);
+  const manifest = await readJsonObject<StagedBulletinUpload>(manifestKey);
+  if (!manifest || manifest.createdBy !== input.createdBy) throw new Error("Nie znaleziono przesłanych plików raportu.");
+  const source = manifest.sources[input.sourceIndex];
+  if (!source || !/\.(pdf|docx)$/i.test(source.name) || source.sha256 !== input.sha256) throw new Error("Tekst kontrolny nie odpowiada przesłanemu dokumentowi.");
+  if (typeof input.text !== "string" || input.text.length < 100 || input.text.length > 2_000_000) throw new Error("Dokument ma nieprawidłowy rozmiar tekstu kontrolnego.");
+  source.documentTextKey = `bulletin-report-uploads/${input.uploadId}/documents/${input.sourceIndex}.txt`;
+  await putObject(source.documentTextKey, Buffer.from(input.text, "utf8"), "text/plain; charset=utf-8");
+  await putObject(manifestKey, Buffer.from(JSON.stringify(manifest), "utf8"), "application/json");
 }
 
 export async function stageBulletinReportSheet(input: {
@@ -303,11 +323,22 @@ export async function stageBulletinReportSheet(input: {
   if (!shouldCollectBulletinSourceSheet(source.name, input.sheet.name)) throw new Error("Nieobsługiwany arkusz źródłowy.");
   if (!Array.isArray(input.sheet.rows)) throw new Error("Nieprawidłowe dane arkusza.");
   const cellCount = input.sheet.rows.reduce((sum, row) => sum + (Array.isArray(row) ? row.length : 0), 0);
-  if (cellCount > MAX_CELLS) throw new Error("Arkusz zawiera zbyt dużo danych.");
+  if (cellCount > MAX_STAGED_SHEET_CELLS) throw new Error("Pojedynczy arkusz zawiera zbyt dużo danych do bezpiecznego przesłania.");
   const parsedKey = `bulletin-report-uploads/${input.uploadId}/parsed/${input.sourceIndex}-${source.parsedKeys?.length ?? 0}.json`;
   await putObject(parsedKey, Buffer.from(JSON.stringify(input.sheet), "utf8"), "application/json");
   source.parsedKeys = [...(source.parsedKeys ?? []), parsedKey];
   await putObject(manifestKey, Buffer.from(JSON.stringify(manifest), "utf8"), "application/json");
+}
+
+export async function cancelStagedBulletinReport(input: { uploadId: string; createdBy: string }) {
+  const manifestKey = stagedManifestKey(input.uploadId);
+  const manifest = await readJsonObject<StagedBulletinUpload>(manifestKey);
+  if (!manifest) return;
+  if (manifest.createdBy !== input.createdBy) throw new Error("Nieprawidłowa sesja przesyłania plików.");
+  await Promise.all([
+    manifestKey,
+    ...manifest.sources.flatMap((source) => [source.key, ...(source.parsedKeys ?? []), ...(source.documentTextKey ? [source.documentTextKey] : [])]),
+  ].map(deleteObject));
 }
 
 export async function completeStagedBulletinSource(input: {
@@ -348,10 +379,14 @@ export async function finalizeStagedBulletinReport(input: { uploadId: string; mo
   if (cellCount > MAX_CELLS) throw new Error("Arkusze zawierają zbyt dużo danych. Limit publikacji wynosi 5 000 000 komórek.");
 
   const modelSheets: BulletinSourceSheet[] = [];
+  let parsedCellCount = 0;
   for (const source of manifest.sources) {
     for (const parsedKey of source.parsedKeys ?? []) {
       const parsedSheet = await readJsonObject<BulletinSourceSheet>(parsedKey);
-      if (parsedSheet) modelSheets.push(parsedSheet);
+      if (!parsedSheet) continue;
+      parsedCellCount += parsedSheet.rows.reduce((sum, row) => sum + (Array.isArray(row) ? row.length : 0), 0);
+      if (parsedCellCount > MAX_CELLS) throw new Error("Arkusze zawierają zbyt dużo danych. Limit publikacji wynosi 5 000 000 komórek.");
+      modelSheets.push(parsedSheet);
     }
   }
   const model = buildBulletinModel(modelSheets, input.year, input.month);
@@ -359,10 +394,49 @@ export async function finalizeStagedBulletinReport(input: { uploadId: string; mo
   if (missingSections.length) {
     throw new Error(`Nie można opublikować niekompletnego biuletynu. Brak danych dla sekcji: ${missingSections.join(", ")}. Sprawdź, czy wybrano wszystkie pliki XLSX i czy ich arkusze zachowują oczekiwaną strukturę.`);
   }
+  const missingModelChapters = model.chapters?.filter((chapter) => chapter.status === "missing") ?? [];
+  if (missingModelChapters.length) throw new Error(`Nie można opublikować biuletynu. Nie wydobyto danych dla rozdziałów: ${missingModelChapters.map((chapter) => chapter.title).join(", ")}.`);
+
+  const validationSource = manifest.sources.find((source) => /\.docx$/i.test(source.name) && source.documentTextKey)
+    ?? manifest.sources.find((source) => /\.pdf$/i.test(source.name) && source.documentTextKey);
+  if (!validationSource?.documentTextKey) throw new Error("Nie udało się zweryfikować rozdziałów z wersją PDF lub DOCX.");
+  const validationObject = await getObject(validationSource.documentTextKey);
+  if (!validationObject) throw new Error("Nie znaleziono tekstu kontrolnego dokumentu.");
+  const documentText = validationObject.body instanceof Uint8Array
+    ? Buffer.from(validationObject.body).toString("utf8")
+    : await new Response(validationObject.body).text();
+  const missingDocumentChapters = getMissingDocumentChapters(documentText);
+  if (missingDocumentChapters.length) throw new Error(`Dokument ${validationSource.name} nie potwierdza rozdziałów: ${missingDocumentChapters.map((chapter) => chapter.title).join(", ")}.`);
+  const tradeExportKg = model.trade.filter((row) => row.direction === "Eksport" && row.group === "0207").reduce((sum, row) => sum + row.kg, 0);
+  const speciesExportKg = model.species.reduce((sum, row) => sum + row.kg, 0);
+  if (tradeExportKg && speciesExportKg && Math.abs(tradeExportKg - speciesExportKg) / tradeExportKg > 0.005) {
+    throw new Error("Suma eksportu CN 0207 różni się między źródłem szczegółowym i zestawieniem gatunków o ponad 0,5%.");
+  }
+  const validatedEuValue = model.euMarket?.find((item) => documentContainsBulletinValue(documentText, item.value))?.value;
+  const representativeValues = [
+    ["produkcja", model.summary.latestProduction],
+    ["eksport CN 0207", tradeExportKg],
+    ["wartość eksportu", model.summary.exportEur],
+    ["eksport według gatunków", model.species[0]?.kg],
+    ["ceny jaj", model.eggs[0]?.value],
+    ["pisklęta indycze", model.chicks?.find((item) => item.name.toLocaleLowerCase("pl").includes("indycz"))?.value],
+    ["dane rynku UE", validatedEuValue],
+  ] as const;
+  if (model.euMarket?.length && validatedEuValue === undefined) throw new Error(`Dokument ${validationSource.name} nie potwierdza wartości dla sekcji: dane rynku UE.`);
+  const unmatchedValues = representativeValues.flatMap(([label, value]) => typeof value === "number" ? [[label, value] as const] : [])
+    .filter(([, value]) => !documentContainsBulletinValue(documentText, value));
+  if (unmatchedValues.length) throw new Error(`Dokument ${validationSource.name} nie potwierdza wartości dla sekcji: ${unmatchedValues.map(([label]) => label).join(", ")}.`);
+  const coveredChapterIds = new Set(modelSheets.flatMap((sheet) => matchingBulletinChapterIds(sheet.workbook, sheet.name)));
+  const missingSourceChapters = BULLETIN_CHAPTERS.filter((chapter) => chapter.sourceRules.length && !coveredChapterIds.has(chapter.id));
+  if (missingSourceChapters.length) throw new Error(`Nie znaleziono pasujących danych XLSX dla rozdziałów: ${missingSourceChapters.map((chapter) => chapter.title).join(", ")}.`);
 
   const id = crypto.randomUUID();
   const dataKey = `bulletin-reports/${id}/report.json`;
-  await putObject(dataKey, Buffer.from(JSON.stringify({ model, modelVersion: BULLETIN_MODEL_VERSION } satisfies BulletinReportData), "utf8"), "application/json");
+  await putObject(dataKey, Buffer.from(JSON.stringify({
+    model,
+    modelVersion: BULLETIN_MODEL_VERSION,
+    validation: { document: validationSource.name, chapters: BULLETIN_CHAPTERS.map((chapter) => chapter.id) },
+  } satisfies BulletinReportData), "utf8"), "application/json");
   const report: BulletinReport = {
     id,
     slug,
@@ -370,14 +444,14 @@ export async function finalizeStagedBulletinReport(input: { uploadId: string; mo
     month: input.month,
     year: input.year,
     dataKey,
-    sources: manifest.sources.map(({ parsedKeys: _parsedKeys, sheetCount: _sheetCount, rowCount: _rowCount, cellCount: _cellCount, ...source }) => source),
+    sources: manifest.sources.map(({ parsedKeys: _parsedKeys, sha256: _sha256, documentTextKey: _documentTextKey, sheetCount: _sheetCount, rowCount: _rowCount, cellCount: _cellCount, ...source }) => source),
     sheetCount,
     rowCount,
     createdAt: new Date().toISOString(),
     createdBy: input.createdBy,
   };
   await saveReport(report);
-  await Promise.all([manifestKey, ...manifest.sources.flatMap((source) => source.parsedKeys ?? [])].map(deleteObject));
+  await Promise.all([manifestKey, ...manifest.sources.flatMap((source) => [...(source.parsedKeys ?? []), ...(source.documentTextKey ? [source.documentTextKey] : [])])].map(deleteObject));
   return report;
 }
 

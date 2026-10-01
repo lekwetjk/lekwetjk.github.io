@@ -1,3 +1,5 @@
+import { BULLETIN_CHAPTERS, matchingBulletinChapterIds, type BulletinChapterId } from "./bulletin-chapters.ts";
+
 export type BulletinSourceSheet = {
   workbook: string;
   name: string;
@@ -47,6 +49,18 @@ export type BulletinMetric = {
   annual?: number;
 };
 
+export type BulletinChapter = {
+  id: BulletinChapterId;
+  title: string;
+  status: "complete" | "missing";
+  count: number;
+  highlights: BulletinMetric[];
+};
+
+export type BulletinEuMetric = BulletinMetric & {
+  market: "Drób" | "Jaja";
+};
+
 export type BulletinSpecies = {
   name: string;
   kg: number;
@@ -60,14 +74,23 @@ export type BulletinCountry = {
   eur: number;
 };
 
+export type BulletinDirection = BulletinCountry & {
+  year: number;
+};
+
 export type BulletinModel = {
   indicators: BulletinIndicator[];
   series: BulletinSeries[];
   trade: BulletinTradeRow[];
   species: BulletinSpecies[];
   countries: BulletinCountry[];
+  geography?: BulletinCountry[];
+  mainDirections?: BulletinDirection[];
   feed: BulletinMetric[];
   eggs: BulletinMetric[];
+  chicks?: BulletinMetric[];
+  euMarket?: BulletinEuMetric[];
+  chapters?: BulletinChapter[];
   summary: {
     latestProduction: number | null;
     latestProductionYear: number | null;
@@ -127,9 +150,25 @@ function cellAddress(column: string, row: number) {
   return `${column}${row}`;
 }
 
+function columnName(index: number) {
+  let name = "";
+  for (let value = index + 1; value > 0; value = Math.floor((value - 1) / 26)) {
+    name = String.fromCharCode(((value - 1) % 26) + 65) + name;
+  }
+  return name;
+}
+
+function isEggSourceSheet(workbook: string, sheetName: string) {
+  const normalizedSheet = normalizedName(sheetName);
+  const eggWorkbook = hasWords(workbook, ["jaja"]) || hasWords(workbook, ["eggs"]);
+  return normalizedSheet.startsWith("sprzedaz z pakowania")
+    || ((eggWorkbook || normalizedSheet.includes("jaj")) && ["sprzedaz", "pakow", "ceny"].some((word) => normalizedSheet.includes(word)));
+}
+
 export function shouldCollectBulletinSourceSheet(workbook: string, sheetName: string) {
   const normalizedSheet = normalizedName(sheetName);
   return (
+    matchingBulletinChapterIds(workbook, sheetName).length > 0 ||
     (hasWords(workbook, ["produkcja", "inflacja"]) && normalizedSheet === "arkusz1") ||
     normalizedSheet.startsWith("ceny m ne tuszka skup sprze") ||
     normalizedSheet.startsWith("cen sprzed tuszka kurc file ind") ||
@@ -137,7 +176,7 @@ export function shouldCollectBulletinSourceSheet(workbook: string, sheetName: st
     (hasWords(workbook, ["gatunki", "drobiu"]) && normalizedSheet === "tabela") ||
     normalizedSheet === "drob pl" ||
     normalizedSheet === "skup drobiu polska" ||
-    normalizedSheet.startsWith("sprzedaz z pakowania") ||
+    isEggSourceSheet(workbook, sheetName) ||
     ["eksport 0207", "eksport 1602", "import 0207", "import 1602"].includes(normalizedSheet)
   );
 }
@@ -149,6 +188,10 @@ export function buildBulletinModel(sheets: BulletinSourceSheet[], reportYear: nu
   const species: BulletinSpecies[] = [];
   const feed: BulletinMetric[] = [];
   const eggs: BulletinMetric[] = [];
+  const chicks: BulletinMetric[] = [];
+  const euMarket: BulletinEuMetric[] = [];
+  const geography: BulletinCountry[] = [];
+  const mainDirections: BulletinDirection[] = [];
 
   function addIndicator(
     sheet: BulletinSourceSheet,
@@ -179,6 +222,17 @@ export function buildBulletinModel(sheets: BulletinSourceSheet[], reportYear: nu
       points.push([String(year), productionValue]);
     }
     if (points.length) series.push({ label: "Produkcja roczna — zakłady 10+ osób", unit: "tys. t", points, note: "GUS; produkcja mięsa drobiowego w zakładach zatrudniających co najmniej 10 osób." });
+    const indexYears = production.rows[71] ?? [];
+    const indexValues = production.rows[72] ?? [];
+    const indexPoints: [string, number][] = [];
+    for (let index = 1; index < indexYears.length; index += 1) {
+      const year = Number.parseInt(text(indexYears[index]), 10);
+      const currentValue = number(indexValues[index]);
+      if (!Number.isInteger(year) || currentValue === null) continue;
+      addIndicator(production, cellAddress(columnName(index), 73), "Roczny wskaźnik cen towarów i usług konsumpcyjnych", "Wskaźniki cen", year, String(year), currentValue, "%", "GUS; inflacja ogółem");
+      indexPoints.push([String(year), currentValue]);
+    }
+    if (indexPoints.length) series.push({ label: "Roczny wskaźnik cen", unit: "%", points: indexPoints, note: "GUS; inflacja ogółem w ujęciu rocznym." });
   }
 
   const priceConfigs: [string, [string, string[]][]][] = [
@@ -232,6 +286,32 @@ export function buildBulletinModel(sheets: BulletinSourceSheet[], reportYear: nu
     }
   }
 
+  const gooseSheet = sheets.find((sheet) => hasWords(sheet.name, ["eksport", "gesi", "intra", "ue"]));
+  if (gooseSheet) {
+    const points: [string, number][] = [];
+    for (let row = 6; row <= 17; row += 1) {
+      const currentValue = number(valueAt(gooseSheet, row, "B"));
+      if (currentValue === null) continue;
+      const month = text(valueAt(gooseSheet, row, "A"));
+      points.push([month, currentValue]);
+      addIndicator(gooseSheet, cellAddress("B", row), "Eksport piskląt gęsich wewnątrz UE", "Pisklęta", reportYear, `${month} ${reportYear}`, currentValue, "tys. szt.", "Eurostat; handel wewnątrzunijny");
+    }
+    if (points.length) series.push({ label: "Eksport piskląt gęsich wewnątrz UE", unit: "tys. szt.", points, note: "Eurostat; dane miesięczne." });
+  }
+
+  const chickSheet = sheets.find((sheet) => hasWords(sheet.name, ["wykorzystanie", "pisklat"]));
+  if (chickSheet) {
+    for (let row = 7; row <= 17; row += 1) {
+      const name = text(valueAt(chickSheet, row, "B"));
+      if (!name) continue;
+      const values = chickSheet.rows[row - 1]?.slice(3, 15).map(number).filter((value): value is number => value !== null) ?? [];
+      if (!values.length) continue;
+      const total = values.reduce((sum, value) => sum + value, 0);
+      chicks.push({ name, value: total });
+      addIndicator(chickSheet, cellAddress("D", row), name, "Pisklęta", reportYear, `I–${MONTHS_ROMAN[Math.min(values.length, 12) - 1]} ${reportYear}`, total, "tys. szt.", "GUS/Eurostat; suma dostępnych miesięcy");
+    }
+  }
+
   const speciesSheet = sheets.find((sheet) => hasWords(sheet.workbook, ["gatunki", "drobiu"]) && sheetNameIs(sheet, "tabela"));
   if (speciesSheet) {
     const tradePeriod = MONTHS_ROMAN[Math.max(1, reportMonth - 1) - 1];
@@ -269,18 +349,47 @@ export function buildBulletinModel(sheets: BulletinSourceSheet[], reportYear: nu
     }
   }
 
-  const eggSheet = sheets.find((sheet) => normalizedName(sheet.name).startsWith("sprzedaz z pakowania"));
-  if (eggSheet) {
+  const poultryMarketSheet = sheets.find((sheet) => hasWords(sheet.name, ["sprzedaz", "skup", "tabela"]));
+  if (poultryMarketSheet) {
+    const week = weekFromWorkbook(poultryMarketSheet.workbook);
+    for (let row = 7; row <= 18; row += 1) {
+      const name = text(valueAt(poultryMarketSheet, row, "B"));
+      const current = number(valueAt(poultryMarketSheet, row, "C"));
+      if (!name || current === null) continue;
+      addIndicator(poultryMarketSheet, cellAddress("C", row), name, "Rynek mięsa drobiowego", reportYear, week ? `tydzień ${week} / ${reportYear}` : `${MONTHS_ROMAN[reportMonth - 1]} ${reportYear}`, current / 1000, "zł/kg", "ZSRIR; średnie ceny skupu i sprzedaży");
+    }
+  }
+
+  const eggCandidates = sheets
+    .filter((sheet) => isEggSourceSheet(sheet.workbook, sheet.name))
+    .map((sheet) => {
+      let system = "";
+      const metrics: Array<{ row: number; column: number; name: string; current: number; previous?: number; annual?: number }> = [];
+      sheet.rows.forEach((row, rowIndex) => {
+        const sizeIndex = row.findIndex((value) => ["XL", "L", "M", "S"].includes(text(value).toUpperCase()));
+        if (sizeIndex < 1) return;
+        system = text(row[sizeIndex - 1]) || system;
+        const current = number(row[sizeIndex + 1]);
+        if (!system || current === null) return;
+        metrics.push({
+          row: rowIndex + 1,
+          column: sizeIndex + 1,
+          name: `${system} / ${text(row[sizeIndex]).toUpperCase()}`,
+          current,
+          previous: number(row[sizeIndex + 2]) ?? undefined,
+          annual: number(row[sizeIndex + 3]) ?? undefined,
+        });
+      });
+      return { sheet, metrics };
+    })
+    .sort((left, right) => right.metrics.length - left.metrics.length);
+  const eggCandidate = eggCandidates.find((candidate) => candidate.metrics.length >= 2);
+  if (eggCandidate) {
+    const { sheet: eggSheet, metrics } = eggCandidate;
     const week = weekFromWorkbook(eggSheet.workbook);
-    let system = "";
-    for (let row = 9; row <= 24; row += 1) {
-      system = text(valueAt(eggSheet, row, "B")) || system;
-      const size = text(valueAt(eggSheet, row, "C"));
-      const current = number(valueAt(eggSheet, row, "D"));
-      if (!system || !["XL", "L", "M", "S"].includes(size) || current === null) continue;
-      const name = `${system} / ${size}`;
-      eggs.push({ name, value: current, previous: number(valueAt(eggSheet, row, "E")) ?? undefined, annual: number(valueAt(eggSheet, row, "F")) ?? undefined });
-      addIndicator(eggSheet, cellAddress("D", row), `Jaja — ${name}`, "Jaja", reportYear, week ? `tydzień ${week} / ${reportYear}` : `${MONTHS_ROMAN[reportMonth - 1]} ${reportYear}`, current, "zł/100 szt.", "MRiRW; ceny sprzedaży z zakładów pakowania");
+    for (const metric of metrics) {
+      eggs.push({ name: metric.name, value: metric.current, previous: metric.previous, annual: metric.annual });
+      addIndicator(eggSheet, cellAddress(columnName(metric.column), metric.row), `Jaja — ${metric.name}`, "Jaja", reportYear, week ? `tydzień ${week} / ${reportYear}` : `${MONTHS_ROMAN[reportMonth - 1]} ${reportYear}`, metric.current, "zł/100 szt.", "MRiRW; ceny sprzedaży z zakładów pakowania");
     }
   }
 
@@ -289,6 +398,8 @@ export function buildBulletinModel(sheets: BulletinSourceSheet[], reportYear: nu
     ["EKSPORT 1602", "G", "J"],
     ["IMPORT 0207", "J", "M"],
     ["IMPORT 1602", "J", "M"],
+    ["EKSPORT 0105", "H", "K"],
+    ["IMPORT 0105", "J", "M"],
   ];
   for (const [sheetName, massColumn, valueColumn] of tradeConfigs) {
     const tradeSheet = sheets.find((sheet) => sheetNameIs(sheet, sheetName));
@@ -330,6 +441,42 @@ export function buildBulletinModel(sheets: BulletinSourceSheet[], reportYear: nu
     trade.push(...aggregated.values());
   }
 
+  const geographySheet = sheets.find((sheet) => hasWords(sheet.workbook, ["kierunki", "geograficzne"]) && sheetNameIs(sheet, "Arkusz1"));
+  if (geographySheet) {
+    for (const row of geographySheet.rows.slice(5)) {
+      const name = text(row[1]);
+      const kg = number(row[2]);
+      const eur = number(row[5]);
+      if (name && kg !== null && eur !== null) geography.push({ name, kg, eur });
+    }
+  }
+
+  const directionsSheet = sheets.find((sheet) => hasWords(sheet.workbook, ["kierunki", "exportowe"]) && sheetNameIs(sheet, "Arkusz1"));
+  if (directionsSheet) {
+    let country = "";
+    for (const row of directionsSheet.rows.slice(5)) {
+      country = text(row[1]) || country;
+      const year = number(row[2]);
+      const kg = number(row[4]);
+      const eur = number(row[7]);
+      if (country && year !== null && kg !== null && eur !== null) mainDirections.push({ name: country, year, kg, eur });
+    }
+  }
+
+  const continentSheet = sheets.find((sheet) => hasWords(sheet.workbook, ["kierunki", "geograficzne"]) && sheetNameIs(sheet, "Arkusz2"));
+  const continentSourceCount = continentSheet?.rows.filter((row) => row.some((value) => Boolean(text(value))) && row.some((value) => number(value) !== null)).length ?? 0;
+
+    for (const euSheet of sheets.filter((sheet) => hasWords(sheet.name, ["ue", "kraje"]) && (hasWords(sheet.name, ["miesiecznie"]) || /\bmc\b/.test(normalizedName(sheet.name))))) {
+      const market = hasWords(euSheet.workbook, ["jaja"]) ? "Jaja" : "Drób";
+      for (const row of euSheet.rows.slice(4)) {
+        if (text(row[2]) !== "EUR") continue;
+        const latest = row.slice(3, 16).map(number).filter((value): value is number => value !== null).at(-1);
+        const name = text(row[1]);
+        if (!name || latest === undefined) continue;
+        euMarket.push({ market, name, value: latest });
+      }
+    }
+
   const countryMap = new Map<string, BulletinCountry>();
   for (const row of trade.filter((item) => item.direction === "Eksport" && item.group === "0207")) {
     const country = countryMap.get(row.country) ?? { name: row.country, kg: 0, eur: 0 };
@@ -343,6 +490,45 @@ export function buildBulletinModel(sheets: BulletinSourceSheet[], reportYear: nu
   const exportKg = species.reduce((sum, item) => sum + item.kg, 0) || trade.filter((item) => item.direction === "Eksport" && item.group === "0207").reduce((sum, item) => sum + item.kg, 0);
   const exportEur = species.reduce((sum, item) => sum + item.eur, 0) || trade.filter((item) => item.direction === "Eksport" && item.group === "0207").reduce((sum, item) => sum + item.eur, 0);
   const ueKg = species.reduce((sum, item) => sum + item.ue, 0);
+  const productionKg = (latestProduction?.[1] ?? 0) * 1_000_000;
+  const chapterCount = (id: BulletinChapterId) => {
+    switch (id) {
+      case "key-facts": return indicators.length;
+      case "continents": return continentSourceCount;
+      case "production": return productionPoints.length;
+      case "price-indices": return series.find((item) => item.label === "Roczny wskaźnik cen")?.points.length ?? 0;
+      case "poultry-prices": return indicators.filter((item) => item.category === "Ceny" || item.category === "Rynek mięsa drobiowego").length;
+      case "export-share": return productionKg && exportKg ? 1 : 0;
+      case "meat-import": return trade.filter((item) => item.direction === "Import" && item.group !== "0105").length;
+      case "meat-export": return trade.filter((item) => item.direction === "Eksport" && item.group !== "0105").length;
+      case "live-import": return trade.filter((item) => item.direction === "Import" && item.group === "0105").length;
+      case "live-export": return trade.filter((item) => item.direction === "Eksport" && item.group === "0105").length;
+      case "export-geography": return geography.length;
+      case "main-directions": return mainDirections.length;
+      case "species-export": return species.length;
+      case "hatcheries-trade": return indicators.filter((item) => item.category === "Wylęgi").length;
+      case "goose-chicks": return series.find((item) => item.label.startsWith("Eksport piskląt gęsich"))?.points.length ?? 0;
+      case "breeding-chicks": return chicks.length;
+      case "turkey-placements": return chicks.filter((item) => normalizedName(item.name).includes("indycz")).length;
+      case "poultry-market": return indicators.filter((item) => item.category === "Ceny tygodniowe" || item.category === "Rynek mięsa drobiowego").length;
+      case "egg-market": return eggs.length;
+      case "eu-market": return euMarket.length;
+    }
+  };
+  const chapterHighlights = (id: BulletinChapterId): BulletinMetric[] => {
+    if (id === "export-share" && productionKg && exportKg) return [{ name: "Udział eksportu w produkcji", value: exportKg / productionKg * 100 }];
+    if (id === "export-geography") return geography.slice(0, 3).map((item) => ({ name: item.name, value: item.kg }));
+    if (id === "main-directions") return mainDirections.slice(-3).map((item) => ({ name: `${item.name} (${item.year})`, value: item.kg }));
+    if (id === "turkey-placements") return chicks.filter((item) => normalizedName(item.name).includes("indycz")).slice(0, 3);
+    if (id === "breeding-chicks") return chicks.slice(0, 3);
+    if (id === "egg-market") return eggs.slice(0, 3);
+    if (id === "eu-market") return euMarket.slice(0, 3);
+    return [];
+  };
+  const chapters = BULLETIN_CHAPTERS.map((chapter) => {
+    const count = chapterCount(chapter.id);
+    return { id: chapter.id, title: chapter.title, status: count > 0 ? "complete" as const : "missing" as const, count, highlights: chapterHighlights(chapter.id) };
+  });
 
   return {
     indicators,
@@ -350,8 +536,13 @@ export function buildBulletinModel(sheets: BulletinSourceSheet[], reportYear: nu
     trade,
     species,
     countries: [...countryMap.values()].sort((left, right) => right.kg - left.kg),
+    geography,
+    mainDirections,
     feed,
     eggs,
+    chicks,
+    euMarket,
+    chapters,
     summary: {
       latestProduction: latestProduction?.[1] ?? null,
       latestProductionYear: latestProduction ? Number(latestProduction[0]) : null,

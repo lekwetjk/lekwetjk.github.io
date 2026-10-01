@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { AUTH_COOKIE_NAME, verifySessionToken } from "../../../lib/auth";
-import { completeStagedBulletinSource, finalizeStagedBulletinReport, listBulletinReports, stageBulletinReportSheet, stageBulletinReportSource } from "../../../lib/bulletin-reports";
+import { cancelStagedBulletinReport, completeStagedBulletinSource, finalizeStagedBulletinReport, listBulletinReports, stageBulletinDocumentText, stageBulletinReportSheet, stageBulletinReportSource } from "../../../lib/bulletin-reports";
 
 function publicReport(report: Awaited<ReturnType<typeof listBulletinReports>>[number]) {
   return {
@@ -46,6 +46,17 @@ export async function POST(request: Request) {
           uploadId: String(input.uploadId ?? ""), sourceIndex: Number(input.sourceIndex), sheetCount: Number(input.sheetCount),
           rowCount: Number(input.rowCount), cellCount: Number(input.cellCount), createdBy: session.username,
         });
+        return NextResponse.json({ ok: true });
+      }
+      if (input.mode === "document") {
+        await stageBulletinDocumentText({
+          uploadId: String(input.uploadId ?? ""), sourceIndex: Number(input.sourceIndex), sha256: String(input.sha256 ?? ""),
+          text: String(input.text ?? ""), createdBy: session.username,
+        });
+        return NextResponse.json({ ok: true });
+      }
+      if (input.mode === "cancel") {
+        await cancelStagedBulletinReport({ uploadId: String(input.uploadId ?? ""), createdBy: session.username });
         return NextResponse.json({ ok: true });
       }
       const report = await finalizeStagedBulletinReport({

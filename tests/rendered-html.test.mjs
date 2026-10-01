@@ -121,6 +121,8 @@ test("report archive is public while bulletins and PDF files remain member-only"
   const reportStorage = await readProjectFile("app/lib/bulletin-reports.ts");
   const reportsApi = await readProjectFile("app/api/admin/reports/route.ts");
   const reportsManager = await readProjectFile("app/admin/raporty/ReportsManager.tsx");
+  const chapters = await readProjectFile("app/lib/bulletin-chapters.ts");
+  const documentClient = await readProjectFile("app/lib/bulletin-document-client.ts");
   const loginForm = await readProjectFile("app/login/czlonkowie/MemberLoginForm.tsx");
   const passwordForm = await readProjectFile("app/member/zmien-haslo/ChangePasswordForm.tsx");
   const profile = await readProjectFile("app/member/profil/page.tsx");
@@ -143,11 +145,18 @@ test("report archive is public while bulletins and PDF files remain member-only"
   assert.doesNotMatch(reportStorage, /JSON\.stringify\(\{ sheets, model/);
   assert.doesNotMatch(reportStorage, /function trimRows/);
   assert.match(reportStorage, /stageBulletinReportSource/);
+  assert.match(reportStorage, /cancelStagedBulletinReport/);
+  assert.match(reportStorage, /MAX_STAGED_SHEET_CELLS = 500_000/);
   assert.match(reportStorage, /finalizeStagedBulletinReport/);
   assert.match(reportsApi, /form\.get\("mode"\) === "stage"/);
   assert.match(reportsApi, /request\.headers\.get\("content-type"\).*application\/json/);
+  assert.match(reportsApi, /input\.mode === "cancel"/);
   assert.match(reportsManager, /from "read-excel-file\/browser"/);
   assert.match(reportsManager, /mode: "sheet"/);
+  assert.match(reportsManager, /mode: "cancel"/);
+  assert.match(documentClient, /pdfjs-dist\/build\/pdf\.worker\.min\.mjs\?url/);
+  assert.match(documentClient, /word\/document\.xml/);
+  assert.equal((chapters.match(/id: "/g) ?? []).length, 20);
   assert.match(reportStorage, /Biuletyn informacyjny \"\$\{POLISH_MONTHS\[month - 1\]\}, \$\{year\}\"/);
   assert.doesNotMatch(reportStorage, /Biuletyn informacyjny[^\n]*narastająco/);
   assert.match(loginForm, /window\.location\.assign\(redirectTo\)/);

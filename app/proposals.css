@@ -165,6 +165,12 @@ body[data-proposals~="typography"] .desktop-nav { grid-column: 1 / -1; grid-row:
 .ib-fact:nth-child(2) > span,.ib-fact:nth-child(5) > span { color: currentColor; opacity: .7; }
 .ib-fact strong { display: block; margin-bottom: 10px; font: 700 clamp(30px,4vw,52px)/.98 Cambria,"Book Antiqua",serif; overflow-wrap: anywhere; }
 .ib-fact p { margin: 0; line-height: 1.45; }
+.ib-chapter-index { margin-top: 76px; border-top: 2px solid var(--ib-ink); }
+.ib-chapter-index > article { display: grid; grid-template-columns: 90px minmax(0,1fr); gap: 12px 28px; padding: 26px 0; border-bottom: 1px solid var(--ib-line); }
+.ib-chapter-index > article > span { grid-row: 1 / span 2; color: var(--ib-coral); font: 700 28px/1 Cambria,"Book Antiqua",serif; font-variant-numeric: tabular-nums; }
+.ib-chapter-index h2 { margin: 0; font-size: clamp(22px,3vw,34px); line-height: 1.1; }
+.ib-chapter-index p { margin: 0; color: var(--ib-muted); }
+.ib-chapter-index .ib-table-shell { grid-column: 2; margin-top: 8px; }
 .ib-panel { min-width: 0; padding: clamp(24px,4vw,42px); border: 1px solid var(--ib-line); background: rgba(255,255,255,.9); }
 .ib-panel h3 { margin: 0 0 8px; font-size: 27px; }
 .ib-panel-note { margin: 0 0 24px; color: var(--ib-muted); font-size: 14px; line-height: 1.5; }
@@ -238,6 +244,7 @@ body[data-proposals~="typography"] .desktop-nav { grid-column: 1 / -1; grid-row:
   .ib-section-heading { display: block; margin-top: 58px; }
   .ib-section-heading p { margin-top: 14px; }
   .ib-facts,.ib-detail-grid { grid-template-columns: 1fr; }
+  .ib-chapter-index > article { grid-template-columns: 54px minmax(0,1fr); }
   .ib-fact { min-height: 0; }
   .ib-fact > span { margin-bottom: 20px; }
   .ib-trade-controls,.ib-data-toolbar { grid-template-columns: 1fr; }
