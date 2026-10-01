@@ -111,6 +111,42 @@ test("foreign trade page links the latest local export reports", async () => {
   assert.match(source, /eksport-rolno-spozywczy-pierwsze-polrocze-2026\.pdf/);
 });
 
+test("report archive is public while bulletins and PDF files remain member-only", async () => {
+  const middleware = await readProjectFile("middleware.ts");
+  const reportPage = await readProjectFile("app/tresc/[slug]/page.tsx");
+  const articleBody = await readProjectFile("app/components/ArticleBody.tsx");
+  const reports = await readProjectFile("app/components/BulletinReports.tsx");
+  const bulletin = await readProjectFile("app/components/InteractiveBulletin.tsx");
+  const pdfRoute = await readProjectFile("app/api/member/reports/[id]/pdf/route.ts");
+  const reportStorage = await readProjectFile("app/lib/bulletin-reports.ts");
+  const loginForm = await readProjectFile("app/login/czlonkowie/MemberLoginForm.tsx");
+  const passwordForm = await readProjectFile("app/member/zmien-haslo/ChangePasswordForm.tsx");
+  const profile = await readProjectFile("app/member/profil/page.tsx");
+  const worker = await readProjectFile("worker/index.ts");
+  assert.match(middleware, /pathname === "\/tresc\/raporty" && !request\.nextUrl\.searchParams\.get\("raport"\)/);
+  assert.match(middleware, /`\$\{pathname\}\$\{request\.nextUrl\.search\}`/);
+  assert.match(middleware, /pathname === "\/login\/czlonkowie"/);
+  assert.match(middleware, /safeMemberRedirect\(request\.nextUrl\.searchParams\.get\("redirect"\)\)/);
+  assert.match(reportPage, /if \(selectedSlug\)/);
+  assert.match(reportPage, /reportBulletinHref=\{reportBulletinHref\}/);
+  assert.match(articleBody, /Biuletyn informacyjny KRD-IG/);
+  assert.match(articleBody, /report-material-link-featured/);
+  assert.match(reports, /<span>Otwórz biuletyn<\/span>/);
+  assert.doesNotMatch(bulletin, /Arkusze źródłowe|Źródła i kontrola danych|\/sources\//);
+  assert.match(bulletin, /\/api\/member\/reports\/\$\{report\.id\}\/pdf/);
+  assert.match(pdfRoute, /verifySessionToken/);
+  assert.match(pdfRoute, /"Content-Type": "application\/pdf"/);
+  assert.match(reportStorage, /Biuletyn informacyjny \"\$\{POLISH_MONTHS\[month - 1\]\}, \$\{year\}\"/);
+  assert.doesNotMatch(reportStorage, /Biuletyn informacyjny[^\n]*narastająco/);
+  assert.match(loginForm, /window\.location\.assign\(redirectTo\)/);
+  assert.doesNotMatch(loginForm, /router\.push\(redirectTo\)/);
+  assert.match(passwordForm, /window\.location\.assign\(safeMemberRedirect\(searchParams\.get\("redirect"\)\)\)/);
+  await assert.rejects(readProjectFile("app/api/member/reports/[id]/sources/[sourceIndex]/route.ts"));
+  assert.match(worker, /"\/tresc\/raporty"/);
+  assert.ok(profile.indexOf('href="/admin/raporty"') < profile.indexOf('href="/admin/wstawienia"'));
+  assert.match(profile, /href="\/tresc\/raporty">Raporty/);
+});
+
 test("deleted imported posts stay hidden in archives and sitemap with an enabled delete action", async () => {
   const manager = await readProjectFile("app/admin/publikacje/ManagedPostsManager.tsx");
   assert.doesNotMatch(manager, /disabled=\{post.imported/);
@@ -198,7 +234,7 @@ test("Cloudflare Worker caches only anonymous public HTML pages", async () => {
   assert.match(worker, /const PUBLIC_PAGE_CACHE_SECONDS = 300;/);
   assert.match(worker, /request\.headers\.has\("cookie"\)/);
   assert.match(worker, /request\.headers\.has\("authorization"\)/);
-  assert.match(worker, /\["\/api", "\/admin", "\/member", "\/login", "\/podglad-zmian"\]/);
+  assert.match(worker, /\["\/api", "\/admin", "\/member", "\/login", "\/podglad-zmian", "\/tresc\/raporty"\]/);
   assert.match(worker, /if \(!cache\) \{[\s\S]*return handler\.fetch\(request, env, ctx\);/);
   assert.match(worker, /headers\.set\("x-worker-cache", "HIT"\)/);
   assert.match(worker, /headers\.set\("x-worker-cache", "MISS"\)/);

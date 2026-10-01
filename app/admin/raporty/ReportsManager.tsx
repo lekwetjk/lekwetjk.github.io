@@ -1,0 +1,90 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+type ReportSummary = {
+  id: string;
+  slug: string;
+  title: string;
+  sheetCount: number;
+  rowCount: number;
+  sourceCount: number;
+  createdAt: string;
+};
+
+const months = ["styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec", "lipiec", "sierpień", "wrzesień", "październik", "listopad", "grudzień"];
+
+export default function ReportsManager() {
+  const [reports, setReports] = useState<ReportSummary[]>([]);
+  const [status, setStatus] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [fileNames, setFileNames] = useState<string[]>([]);
+
+  async function loadReports() {
+    const response = await fetch("/api/admin/reports");
+    const data = await response.json() as { reports?: ReportSummary[]; error?: string };
+    if (!response.ok) throw new Error(data.error ?? "Nie udało się pobrać raportów.");
+    setReports(data.reports ?? []);
+  }
+
+  useEffect(() => { void loadReports().catch((error) => setStatus(error instanceof Error ? error.message : "Nie udało się pobrać raportów.")); }, []);
+
+  async function publish(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    setSaving(true);
+    setStatus("Analizowanie arkuszy i publikowanie raportu…");
+    try {
+      const response = await fetch("/api/admin/reports", { method: "POST", body: new FormData(form) });
+      const data = await response.json().catch(() => ({})) as { error?: string };
+      if (!response.ok) throw new Error(data.error ?? "Nie udało się opublikować raportu.");
+      form.reset();
+      setFileNames([]);
+      setStatus("Raport został opublikowany.");
+      await loadReports();
+    } catch (error) {
+      setStatus(error instanceof Error ? error.message : "Nie udało się opublikować raportu.");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function remove(report: ReportSummary) {
+    if (!window.confirm(`Usunąć publikację „${report.title}”?`)) return;
+    const response = await fetch(`/api/admin/reports/${report.id}`, { method: "DELETE" });
+    const data = await response.json().catch(() => ({})) as { error?: string };
+    if (!response.ok) { setStatus(data.error ?? "Nie udało się usunąć raportu."); return; }
+    setReports((current) => current.filter((item) => item.id !== report.id));
+    setStatus("Raport został usunięty.");
+  }
+
+  const currentMonth = new Date().getMonth() + 1;
+  return (
+    <div className="report-admin-layout">
+      <form className="report-create-form" onSubmit={publish}>
+        <h2>Nowy biuletyn</h2>
+        <div className="report-period-grid">
+          <label>Miesiąc<select name="month" defaultValue={currentMonth}>{months.map((month, index) => <option value={index + 1} key={month}>{month}</option>)}</select></label>
+          <label>Rok<input name="year" type="number" min="2020" max="2100" defaultValue={new Date().getFullYear()} required /></label>
+        </div>
+        <label className="report-file-picker">
+          <span>Wybierz pliki źródłowe</span>
+          <input name="sources" type="file" accept=".xlsx,.pdf,.docx" multiple required onChange={(event) => setFileNames(Array.from(event.target.files ?? []).map((file) => file.name))} />
+        </label>
+        <small>Wymagane: XLSX i PDF. Opcjonalnie: DOCX. Maksymalnie 25 MB na plik i 80 MB łącznie.</small>
+        {fileNames.length ? <ul className="report-selected-files">{fileNames.map((name) => <li key={name}>{name}</li>)}</ul> : null}
+        <button className="button button-primary" type="submit" disabled={saving}>{saving ? "Tworzenie raportu…" : "Utwórz i opublikuj"}</button>
+        {status ? <p className={status.includes("został") ? "report-status-success" : "report-status"} aria-live="polite">{status}</p> : null}
+      </form>
+      <section className="report-admin-list">
+        <div className="report-admin-list-heading"><h2>Opublikowane</h2><a href="/tresc/raporty">Otwórz stronę raportów</a></div>
+        {!reports.length ? <p>Brak opublikowanych biuletynów.</p> : reports.map((report) => (
+          <article key={report.id}>
+            <div><strong>{report.title}</strong><small>{report.sheetCount} ark. · {report.rowCount.toLocaleString("pl-PL")} wierszy · {report.sourceCount} źródeł</small></div>
+            <button type="button" onClick={() => void remove(report)}>Usuń</button>
+          </article>
+        ))}
+      </section>
+    </div>
+  );
+}

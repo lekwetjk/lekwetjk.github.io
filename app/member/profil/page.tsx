@@ -50,9 +50,16 @@ export default async function MemberProfilePage() {
               <ul style={{ margin: "12px 0 0 18px" }}>
                 <li><a href={withBasePath("/member/epi-geo")}>Dane Epi-Geo</a></li>
                 <li><a href="/member/dokumenty">Dokumenty dla członków</a></li>
+                <li><a href="/tresc/raporty">Raporty</a></li>
                 {session.role === "admin" && <li><a href="/admin/uzytkownicy">Zarządzanie użytkownikami</a></li>}
               </ul>
             </div>
+            {session.role === "admin" ? (
+              <a href="/admin/raporty" style={{ display: "block", border: "1px solid #d5d9df", borderRadius: 12, padding: 18, color: "#0f172a", textDecoration: "none" }}>
+                <strong>Raporty</strong>
+                <span style={{ display: "block", marginTop: 6, color: "#475569" }}>Twórz interaktywne biuletyny z plików XLSX, PDF i DOCX.</span>
+              </a>
+            ) : null}
             {session.role === "admin" ? (
               <a href="/admin/wstawienia" style={{ display: "block", border: "1px solid #d5d9df", borderRadius: 12, padding: 18, color: "#0f172a", textDecoration: "none" }}>
                 <strong>Wstawienia</strong>

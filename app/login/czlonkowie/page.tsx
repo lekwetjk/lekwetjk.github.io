@@ -1,19 +1,7 @@
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-
 import { PageShell } from "../../components/SiteChrome";
-import { AUTH_COOKIE_NAME, verifySessionToken } from "../../lib/auth";
 import MemberLoginForm from "./MemberLoginForm";
 
-export default async function MemberLoginPage() {
-  const cookieStore = await cookies();
-  const sessionToken = cookieStore.get(AUTH_COOKIE_NAME)?.value;
-  const session = verifySessionToken(sessionToken);
-
-  if (session) {
-    redirect("/member/profil");
-  }
-
+export default function MemberLoginPage() {
   return (
     <PageShell>
       <section className="simple-hero">

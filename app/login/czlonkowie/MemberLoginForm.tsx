@@ -3,6 +3,8 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
+import { safeMemberRedirect } from "../../lib/member-redirect";
+
 const DEFAULT_MEMBER_APP_BASE = "https://krd-ig-website-concept.lek-wet-jk.workers.dev";
 
 function resolveMemberAppBase() {
@@ -76,9 +78,14 @@ export default function MemberLoginForm() {
         return;
       }
 
-      const redirectTo = data.mustChangePassword ? "/member/zmien-haslo?reset=1" : searchParams.get("redirect") ?? "/member/profil";
-      router.push(redirectTo);
-      router.refresh();
+      const redirectTo = safeMemberRedirect(searchParams.get("redirect"));
+      if (data.mustChangePassword) {
+        const passwordParams = new URLSearchParams({ reset: "1" });
+        if (redirectTo !== "/member/profil") passwordParams.set("redirect", redirectTo);
+        window.location.assign(`/member/zmien-haslo?${passwordParams.toString()}`);
+        return;
+      }
+      window.location.assign(redirectTo);
     } catch {
       setError("Wystąpił błąd podczas logowania. Spróbuj ponownie.");
     } finally {

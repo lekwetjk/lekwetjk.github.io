@@ -100,7 +100,7 @@ function isCacheablePublicPageRequest(request: Request, url: URL) {
     return false;
   }
 
-  return !["/api", "/admin", "/member", "/login", "/podglad-zmian"].some(
+  return !["/api", "/admin", "/member", "/login", "/podglad-zmian", "/tresc/raporty"].some(
     (prefix) => url.pathname === prefix || url.pathname.startsWith(`${prefix}/`),
   );
 }

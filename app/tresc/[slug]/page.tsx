@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 
 import { ArticleBody } from "../../components/ArticleBody";
+import { BulletinReports } from "../../components/BulletinReports";
 import { PageShell } from "../../components/SiteChrome";
+import { AUTH_COOKIE_NAME, verifySessionToken } from "../../lib/auth";
 import { withBasePath } from "../../lib/basePath";
+import { listBulletinReports } from "../../lib/bulletin-reports";
 import { knowledgePages, pageBySlug } from "../../lib/content";
 import { getLocalProposals, getLocalSeoDraft } from "../../lib/local-proposals-server";
 import { cleanProposedParagraph, proposedSummaries } from "../../lib/local-proposal-content";
@@ -76,10 +80,24 @@ export async function generateMetadata({
 
 export default async function ContentDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ raport?: string }>;
 }) {
   const { slug } = await params;
+
+  if (slug === "raporty") {
+    const selectedSlug = (await searchParams).raport;
+    if (selectedSlug) {
+      const session = verifySessionToken((await cookies()).get(AUTH_COOKIE_NAME)?.value);
+      if (!session) {
+        redirect(`/login/czlonkowie?redirect=${encodeURIComponent(`/tresc/raporty?raport=${selectedSlug}`)}`);
+      }
+      return <PageShell><BulletinReports selectedSlug={selectedSlug} /></PageShell>;
+    }
+  }
+
   const proposals = await getLocalProposals();
 
   if (proposals.contacts && slug === "kontakt") redirect("/kontakt");
@@ -188,6 +206,8 @@ export default async function ContentDetailPage({
             "radial-gradient(160% 132% at 50% 42%, #000 42%, rgba(0,0,0,0.45) 62%, rgba(0,0,0,0.15) 80%, transparent 100%)",
         }
       : undefined;
+  const latestBulletin = slug === "raporty" ? (await listBulletinReports())[0] : null;
+  const reportBulletinHref = latestBulletin ? `/tresc/raporty?raport=${latestBulletin.slug}` : undefined;
 
   return (
     <PageShell>
@@ -250,6 +270,7 @@ export default async function ContentDetailPage({
           links={page.links}
           source={page.source}
           slug={slug}
+          reportBulletinHref={reportBulletinHref}
         />
       </div>
     </PageShell>

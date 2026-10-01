@@ -255,6 +255,7 @@ export async function ArticleBody({
   language = "pl",
   justify = false,
   categories = [],
+  reportBulletinHref,
 }: {
   paragraphs: string[];
   links: ContentLink[];
@@ -263,6 +264,7 @@ export async function ArticleBody({
   language?: "pl" | "en";
   justify?: boolean;
   categories?: string[];
+  reportBulletinHref?: string;
 }) {
   const proposals = await getLocalProposals();
   const contentTargets = proposals.links ? [
@@ -1427,6 +1429,14 @@ export async function ArticleBody({
           <h2>Materiały i raporty</h2>
           {introParagraph && <p>{introParagraph}</p>}
           <ul className="report-material-list">
+            {reportBulletinHref ? (
+              <li>
+                <a className="report-material-link report-material-link-featured" href={reportBulletinHref}>
+                  <span><strong>Biuletyn informacyjny KRD-IG</strong><small>Strefa chroniona</small></span>
+                  <Arrow />
+                </a>
+              </li>
+            ) : null}
             {reportItems.map((item) => (
               <li key={item.href}>
                 <a className="report-material-link" href={item.href}>

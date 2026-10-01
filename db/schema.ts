@@ -50,6 +50,20 @@ export const wstawieniaMetadata = sqliteTable("wstawienia_metadata", {
   value: text("value").notNull(),
 });
 
+export const bulletinReports = sqliteTable("bulletin_reports", {
+  id: text("id").primaryKey(),
+  slug: text("slug").notNull().unique(),
+  title: text("title").notNull(),
+  month: text("month").notNull(),
+  year: text("year").notNull(),
+  dataKey: text("data_key").notNull(),
+  sourcesJson: text("sources_json").notNull().default("[]"),
+  sheetCount: text("sheet_count").notNull().default("0"),
+  rowCount: text("row_count").notNull().default("0"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  createdBy: text("created_by").notNull(),
+});
+
 export const managedPosts = sqliteTable("managed_posts", {
   id: text("id").primaryKey(),
   kind: text("kind", { enum: ["news", "tender"] }).notNull(),

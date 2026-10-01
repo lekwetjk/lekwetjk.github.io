@@ -2676,6 +2676,26 @@ body .justified-article-content article.prose :is(p, li) {
   color: var(--red);
 }
 
+.report-material-link-featured {
+  min-height: 86px;
+  padding: 18px;
+  border-left: 4px solid var(--red);
+  background: #f3f5f2;
+  letter-spacing: 0;
+}
+
+.report-material-link-featured > span {
+  display: grid;
+  gap: 5px;
+}
+
+.report-material-link-featured small {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
 .prose-third-countries .third-countries-download a {
   display: inline-flex;
   align-items: center;

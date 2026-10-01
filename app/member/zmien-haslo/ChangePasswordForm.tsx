@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+
+import { safeMemberRedirect } from "../../lib/member-redirect";
 
 export default function ChangePasswordForm() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const isAfterReset = searchParams.get("reset") === "1";
   const [currentPassword, setCurrentPassword] = useState("");
@@ -42,8 +43,7 @@ export default function ChangePasswordForm() {
         return;
       }
 
-      router.push("/member/profil");
-      router.refresh();
+      window.location.assign(safeMemberRedirect(searchParams.get("redirect")));
     } catch {
       setMessage("Nie udało się połączyć z usługą zmiany hasła.");
     } finally {
