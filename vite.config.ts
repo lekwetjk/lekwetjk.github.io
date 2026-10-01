@@ -65,7 +65,7 @@ export default defineConfig(({ command }) => {
 
   return {
     optimizeDeps: {
-      exclude: ["read-excel-file", "read-excel-file/web-worker"],
+      exclude: ["read-excel-file", "read-excel-file/node"],
     },
     server: isCodexSeatbeltSandbox
       ? { watch: { useFsEvents: false, usePolling: true } }

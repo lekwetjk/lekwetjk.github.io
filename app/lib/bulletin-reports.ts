@@ -4,7 +4,7 @@ import os from "node:os";
 import path from "node:path";
 
 import { eq, sql } from "drizzle-orm";
-import readXlsxFile from "read-excel-file/web-worker";
+import readXlsxFile from "read-excel-file/node";
 
 import { getDb, getMemberDocumentsBucket } from "../../db/index.ts";
 import { bulletinReports } from "../../db/schema.ts";
@@ -194,9 +194,9 @@ export async function getBulletinReportData(report: BulletinReport): Promise<Bul
       const sourceObject = await getObject(source.key);
       if (!sourceObject) continue;
       const sourceBytes = sourceObject.body instanceof Uint8Array
-        ? new Uint8Array(sourceObject.body)
-        : new Uint8Array(await new Response(sourceObject.body).arrayBuffer());
-      const workbookSheets = await readXlsxFile(new File([sourceBytes], source.name, { type: source.contentType }));
+        ? Buffer.from(sourceObject.body)
+        : Buffer.from(await new Response(sourceObject.body).arrayBuffer());
+      const workbookSheets = await readXlsxFile(sourceBytes);
       for (const workbookSheet of workbookSheets) {
         if (shouldCollectBulletinSourceSheet(source.name, workbookSheet.sheet)) {
           modelSheets.push({ workbook: source.name, name: workbookSheet.sheet, rows: workbookSheet.data });
@@ -238,7 +238,7 @@ export async function createBulletinReport(input: { month: number; year: number;
   const modelSheets: BulletinSourceSheet[] = [];
   let cellCount = 0;
   for (const file of input.files.filter((candidate) => /\.xlsx$/i.test(candidate.name))) {
-    const workbookSheets = await readXlsxFile(file);
+    const workbookSheets = await readXlsxFile(Buffer.from(await file.arrayBuffer()));
     for (const workbookSheet of workbookSheets) {
       if (shouldCollectBulletinSourceSheet(file.name, workbookSheet.sheet)) {
         modelSheets.push({ workbook: file.name, name: workbookSheet.sheet, rows: workbookSheet.data });

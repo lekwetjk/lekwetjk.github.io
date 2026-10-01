@@ -136,6 +136,8 @@ test("report archive is public while bulletins and PDF files remain member-only"
   assert.match(bulletin, /\/api\/member\/reports\/\$\{report\.id\}\/pdf/);
   assert.match(pdfRoute, /verifySessionToken/);
   assert.match(pdfRoute, /"Content-Type": "application\/pdf"/);
+  assert.match(reportStorage, /from "read-excel-file\/node"/);
+  assert.doesNotMatch(reportStorage, /read-excel-file\/web-worker/);
   assert.match(reportStorage, /Biuletyn informacyjny \"\$\{POLISH_MONTHS\[month - 1\]\}, \$\{year\}\"/);
   assert.doesNotMatch(reportStorage, /Biuletyn informacyjny[^\n]*narastająco/);
   assert.match(loginForm, /window\.location\.assign\(redirectTo\)/);
