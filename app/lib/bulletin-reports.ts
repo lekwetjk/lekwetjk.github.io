@@ -61,6 +61,19 @@ export type BulletinReportData = {
   modelVersion?: number;
 };
 
+type StagedBulletinSource = BulletinReportSource & {
+  parsedKey?: string;
+  sheetCount: number;
+  rowCount: number;
+  cellCount: number;
+};
+
+type StagedBulletinUpload = {
+  id: string;
+  createdBy: string;
+  sources: StagedBulletinSource[];
+};
+
 function safeFileName(value: string) {
   return value.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9._-]/g, "-");
 }
@@ -126,7 +139,8 @@ async function writeLocalReports(reports: BulletinReport[]) {
 async function putObject(key: string, value: ArrayBuffer | Uint8Array, contentType: string) {
   try {
     await getMemberDocumentsBucket().put(key, value, { httpMetadata: { contentType } });
-  } catch {
+  } catch (error) {
+    if (!(error instanceof Error) || !error.message.includes("binding `MEMBER_DOCUMENTS` is unavailable")) throw error;
     await mkdir(LOCAL_REPORTS_DIR, { recursive: true });
     await writeFile(localObjectPath(key), Buffer.from(value instanceof ArrayBuffer ? new Uint8Array(value) : value));
   }
@@ -136,8 +150,8 @@ async function getObject(key: string) {
   try {
     const object = await getMemberDocumentsBucket().get(key);
     if (object) return object;
-  } catch {
-    // Local previews use the temporary filesystem when R2 is unavailable.
+  } catch (error) {
+    if (!(error instanceof Error) || !error.message.includes("binding `MEMBER_DOCUMENTS` is unavailable")) throw error;
   }
   try {
     const content = await readFile(localObjectPath(key));
@@ -148,8 +162,38 @@ async function getObject(key: string) {
 }
 
 async function deleteObject(key: string) {
-  try { await getMemberDocumentsBucket().delete(key); } catch { /* Local preview fallback below. */ }
+  try {
+    await getMemberDocumentsBucket().delete(key);
+  } catch (error) {
+    if (!(error instanceof Error) || !error.message.includes("binding `MEMBER_DOCUMENTS` is unavailable")) throw error;
+  }
   try { await unlink(localObjectPath(key)); } catch { /* The local object may not exist. */ }
+}
+
+async function readJsonObject<T>(key: string): Promise<T | null> {
+  const object = await getObject(key);
+  if (!object) return null;
+  const content = object.body instanceof Uint8Array
+    ? Buffer.from(object.body).toString("utf8")
+    : await new Response(object.body).text();
+  try { return JSON.parse(content) as T; } catch { return null; }
+}
+
+function stagedManifestKey(uploadId: string) {
+  return `bulletin-report-uploads/${uploadId}/manifest.json`;
+}
+
+async function saveReport(report: BulletinReport) {
+  try {
+    const db = await ensureReportsTable();
+    await db.insert(bulletinReports).values({
+      id: report.id, slug: report.slug, title: report.title, month: String(report.month), year: String(report.year),
+      dataKey: report.dataKey, sourcesJson: JSON.stringify(report.sources), sheetCount: String(report.sheetCount),
+      rowCount: String(report.rowCount), createdAt: report.createdAt, createdBy: report.createdBy,
+    });
+  } catch {
+    await writeLocalReports([report, ...(await readLocalReports())]);
+  }
 }
 
 export async function listBulletinReports() {
@@ -211,6 +255,109 @@ export async function getBulletinPdf(reportId: string) {
   if (!report || !source) return null;
   const object = await getObject(source.key);
   return object ? { report, source, object } : null;
+}
+
+export async function stageBulletinReportSource(input: { uploadId?: string; file: File; createdBy: string }) {
+  if (!ALLOWED_SOURCE_EXTENSION.test(input.file.name)) throw new Error("Dozwolone są pliki XLSX, PDF i DOCX.");
+  if (input.file.size > MAX_FILE_BYTES) throw new Error("Pojedynczy plik nie może przekraczać 25 MB.");
+
+  const uploadId = input.uploadId && /^[a-f\d-]{36}$/i.test(input.uploadId) ? input.uploadId : crypto.randomUUID();
+  const manifestKey = stagedManifestKey(uploadId);
+  const existing = await readJsonObject<StagedBulletinUpload>(manifestKey);
+  if (existing && existing.createdBy !== input.createdBy) throw new Error("Nieprawidłowa sesja przesyłania plików.");
+  const manifest = existing ?? { id: uploadId, createdBy: input.createdBy, sources: [] };
+  if (manifest.sources.reduce((sum, source) => sum + source.size, 0) + input.file.size > MAX_TOTAL_BYTES) {
+    throw new Error("Łączny rozmiar plików nie może przekraczać 80 MB.");
+  }
+
+  const index = manifest.sources.length + 1;
+  const prefix = `bulletin-report-uploads/${uploadId}`;
+  const key = `${prefix}/sources/${index}-${safeFileName(input.file.name)}`;
+  let parsedKey: string | undefined;
+  let sheetCount = 0;
+  let rowCount = 0;
+  let cellCount = 0;
+  const fileBytes = Buffer.from(await input.file.arrayBuffer());
+  if (/\.xlsx$/i.test(input.file.name)) {
+    const modelSheets: BulletinSourceSheet[] = [];
+    const workbookSheets = await readXlsxFile(fileBytes);
+    for (const workbookSheet of workbookSheets) {
+      if (shouldCollectBulletinSourceSheet(input.file.name, workbookSheet.sheet)) {
+        modelSheets.push({ workbook: input.file.name, name: workbookSheet.sheet, rows: workbookSheet.data });
+      }
+      const populatedRows = workbookSheet.data.filter((row) => row.some(hasCellValue));
+      if (!populatedRows.length) continue;
+      sheetCount += 1;
+      rowCount += populatedRows.length;
+      cellCount += populatedRows.reduce((sum, row) => sum + row.length, 0);
+    }
+    parsedKey = `${prefix}/parsed/${index}.json`;
+    await putObject(parsedKey, Buffer.from(JSON.stringify(modelSheets), "utf8"), "application/json");
+  }
+
+  await putObject(key, fileBytes, input.file.type || "application/octet-stream");
+  manifest.sources.push({
+    name: input.file.name,
+    key,
+    parsedKey,
+    contentType: input.file.type || "application/octet-stream",
+    size: input.file.size,
+    sheetCount,
+    rowCount,
+    cellCount,
+  });
+  await putObject(manifestKey, Buffer.from(JSON.stringify(manifest), "utf8"), "application/json");
+  return { uploadId, sourceCount: manifest.sources.length };
+}
+
+export async function finalizeStagedBulletinReport(input: { uploadId: string; month: number; year: number; createdBy: string }) {
+  if (!Number.isInteger(input.month) || input.month < 1 || input.month > 12) throw new Error("Wybierz poprawny miesiąc.");
+  if (!Number.isInteger(input.year) || input.year < 2020 || input.year > 2100) throw new Error("Wybierz poprawny rok.");
+  const manifestKey = stagedManifestKey(input.uploadId);
+  const manifest = await readJsonObject<StagedBulletinUpload>(manifestKey);
+  if (!manifest || manifest.createdBy !== input.createdBy) throw new Error("Nie znaleziono przesłanych plików raportu.");
+  if (!manifest.sources.some((source) => /\.xlsx$/i.test(source.name))) throw new Error("Do utworzenia interaktywnych tabel potrzebny jest co najmniej jeden plik XLSX.");
+  if (!manifest.sources.some((source) => /\.pdf$/i.test(source.name))) throw new Error("Do publikacji potrzebny jest biuletyn w wersji PDF.");
+
+  const slug = `biuletyn-informacyjny-${input.year}-${String(input.month).padStart(2, "0")}`;
+  if (await getBulletinReport(slug)) throw new Error("Biuletyn dla tego miesiąca i roku jest już opublikowany.");
+  const sheetCount = manifest.sources.reduce((sum, source) => sum + source.sheetCount, 0);
+  const rowCount = manifest.sources.reduce((sum, source) => sum + source.rowCount, 0);
+  const cellCount = manifest.sources.reduce((sum, source) => sum + source.cellCount, 0);
+  if (!sheetCount) throw new Error("Nie znaleziono niepustych arkuszy w plikach XLSX.");
+  if (cellCount > MAX_CELLS) throw new Error("Arkusze zawierają zbyt dużo danych. Limit publikacji wynosi 5 000 000 komórek.");
+
+  const modelSheets: BulletinSourceSheet[] = [];
+  for (const source of manifest.sources) {
+    if (!source.parsedKey) continue;
+    const parsedSheets = await readJsonObject<BulletinSourceSheet[]>(source.parsedKey);
+    if (parsedSheets) modelSheets.push(...parsedSheets);
+  }
+  const model = buildBulletinModel(modelSheets, input.year, input.month);
+  const missingSections = getMissingBulletinSections(model);
+  if (missingSections.length) {
+    throw new Error(`Nie można opublikować niekompletnego biuletynu. Brak danych dla sekcji: ${missingSections.join(", ")}. Sprawdź, czy wybrano wszystkie pliki XLSX i czy ich arkusze zachowują oczekiwaną strukturę.`);
+  }
+
+  const id = crypto.randomUUID();
+  const dataKey = `bulletin-reports/${id}/report.json`;
+  await putObject(dataKey, Buffer.from(JSON.stringify({ model, modelVersion: BULLETIN_MODEL_VERSION } satisfies BulletinReportData), "utf8"), "application/json");
+  const report: BulletinReport = {
+    id,
+    slug,
+    title: bulletinTitle(input.month, input.year),
+    month: input.month,
+    year: input.year,
+    dataKey,
+    sources: manifest.sources.map(({ parsedKey: _parsedKey, sheetCount: _sheetCount, rowCount: _rowCount, cellCount: _cellCount, ...source }) => source),
+    sheetCount,
+    rowCount,
+    createdAt: new Date().toISOString(),
+    createdBy: input.createdBy,
+  };
+  await saveReport(report);
+  await Promise.all([manifestKey, ...manifest.sources.flatMap((source) => source.parsedKey ? [source.parsedKey] : [])].map(deleteObject));
+  return report;
 }
 
 export async function createBulletinReport(input: { month: number; year: number; files: File[]; createdBy: string }) {
@@ -278,16 +425,7 @@ export async function createBulletinReport(input: { month: number; year: number;
     createdBy: input.createdBy,
   };
 
-  try {
-    const db = await ensureReportsTable();
-    await db.insert(bulletinReports).values({
-      id: report.id, slug: report.slug, title: report.title, month: String(report.month), year: String(report.year),
-      dataKey: report.dataKey, sourcesJson: JSON.stringify(report.sources), sheetCount: String(report.sheetCount),
-      rowCount: String(report.rowCount), createdAt: report.createdAt, createdBy: report.createdBy,
-    });
-  } catch {
-    await writeLocalReports([report, ...(await readLocalReports())]);
-  }
+  await saveReport(report);
   return report;
 }
 

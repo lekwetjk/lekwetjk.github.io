@@ -32,10 +32,31 @@ export default function ReportsManager() {
   async function publish(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
+    const sourceInput = form.elements.namedItem("sources") as HTMLInputElement | null;
+    const files = Array.from(sourceInput?.files ?? []);
+    const formData = new FormData(form);
+    if (!files.length) return;
     setSaving(true);
-    setStatus("Analizowanie arkuszy i publikowanie raportu…");
+    setStatus("Przygotowywanie plików…");
     try {
-      const response = await fetch("/api/admin/reports", { method: "POST", body: new FormData(form) });
+      let uploadId = "";
+      for (const [index, file] of files.entries()) {
+        setStatus(`Przesyłanie i analiza pliku ${index + 1} z ${files.length}: ${file.name}`);
+        const stagedForm = new FormData();
+        stagedForm.set("mode", "stage");
+        stagedForm.set("uploadId", uploadId);
+        stagedForm.set("source", file);
+        const stagedResponse = await fetch("/api/admin/reports", { method: "POST", body: stagedForm });
+        const stagedData = await stagedResponse.json().catch(() => ({})) as { uploadId?: string; error?: string };
+        if (!stagedResponse.ok || !stagedData.uploadId) throw new Error(stagedData.error ?? `Nie udało się przetworzyć pliku „${file.name}”.`);
+        uploadId = stagedData.uploadId;
+      }
+      setStatus("Łączenie danych i publikowanie biuletynu…");
+      const response = await fetch("/api/admin/reports", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ uploadId, month: Number(formData.get("month")), year: Number(formData.get("year")) }),
+      });
       const data = await response.json().catch(() => ({})) as { error?: string };
       if (!response.ok) throw new Error(data.error ?? "Nie udało się opublikować raportu.");
       form.reset();

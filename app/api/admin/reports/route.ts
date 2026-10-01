@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { AUTH_COOKIE_NAME, verifySessionToken } from "../../../lib/auth";
-import { createBulletinReport, listBulletinReports } from "../../../lib/bulletin-reports";
+import { finalizeStagedBulletinReport, listBulletinReports, stageBulletinReportSource } from "../../../lib/bulletin-reports";
 
 function publicReport(report: Awaited<ReturnType<typeof listBulletinReports>>[number]) {
   return {
@@ -32,14 +32,28 @@ export async function POST(request: Request) {
   const session = await getAdmin();
   if (!session) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   try {
+    if (request.headers.get("content-type")?.includes("application/json")) {
+      const input = await request.json() as { uploadId?: string; month?: number; year?: number };
+      const report = await finalizeStagedBulletinReport({
+        uploadId: input.uploadId ?? "",
+        month: Number(input.month),
+        year: Number(input.year),
+        createdBy: session.username,
+      });
+      return NextResponse.json({ ok: true, report: publicReport(report) });
+    }
     const form = await request.formData();
-    const report = await createBulletinReport({
-      month: Number(form.get("month")),
-      year: Number(form.get("year")),
-      files: form.getAll("sources").filter((item): item is File => item instanceof File && item.size > 0),
-      createdBy: session.username,
-    });
-    return NextResponse.json({ ok: true, report: publicReport(report) });
+    if (form.get("mode") === "stage") {
+      const file = form.get("source");
+      if (!(file instanceof File) || !file.size) return NextResponse.json({ error: "Brak pliku." }, { status: 400 });
+      const staged = await stageBulletinReportSource({
+        uploadId: String(form.get("uploadId") ?? "") || undefined,
+        file,
+        createdBy: session.username,
+      });
+      return NextResponse.json({ ok: true, ...staged });
+    }
+    return NextResponse.json({ error: "Nieobsługiwany tryb przesyłania." }, { status: 400 });
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Nie udało się utworzyć raportu." }, { status: 400 });
   }
