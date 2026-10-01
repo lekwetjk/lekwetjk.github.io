@@ -79,12 +79,32 @@ export type BulletinModel = {
 
 const MONTHS_ROMAN = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"];
 
+const REQUIRED_SECTIONS = [
+  ["production", "produkcja"],
+  ["prices", "ceny skupu i sprzedaży"],
+  ["hatcheries", "wylęgi"],
+  ["species", "handel według gatunków"],
+  ["trade", "handel szczegółowy"],
+  ["feed", "pasze"],
+  ["poultry", "tygodniowe ceny drobiu"],
+  ["eggs", "jaja"],
+] as const;
+
 function text(value: unknown) {
   return value === null || value === undefined ? "" : String(value).trim();
 }
 
 function number(value: unknown) {
   return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
+function normalizedName(value: string) {
+  return value.toLocaleLowerCase("pl").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ł/g, "l").replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+function hasWords(value: string, words: string[]) {
+  const normalized = normalizedName(value);
+  return words.every((word) => normalized.includes(normalizedName(word)));
 }
 
 function columnIndex(column: string) {
@@ -95,14 +115,12 @@ function valueAt(sheet: BulletinSourceSheet, row: number, column: string) {
   return sheet.rows[row - 1]?.[columnIndex(column)];
 }
 
-function findSheet(sheets: BulletinSourceSheet[], workbookPart: string, sheetName: string) {
-  const part = workbookPart.toLocaleLowerCase("pl");
-  return sheets.find((sheet) => sheet.workbook.toLocaleLowerCase("pl").includes(part) && sheet.name === sheetName);
+function sheetNameIs(sheet: BulletinSourceSheet, expected: string) {
+  return normalizedName(sheet.name) === normalizedName(expected);
 }
 
-function sheetsFrom(sheets: BulletinSourceSheet[], workbookPart: string) {
-  const part = workbookPart.toLocaleLowerCase("pl");
-  return sheets.filter((sheet) => sheet.workbook.toLocaleLowerCase("pl").includes(part));
+function weekFromWorkbook(workbook: string) {
+  return Number(workbook.match(/(?:^|[^0-9])(\d{1,2})[_ .-]+20\d{2}(?:[^0-9]|$)/)?.[1]) || null;
 }
 
 function cellAddress(column: string, row: number) {
@@ -110,20 +128,21 @@ function cellAddress(column: string, row: number) {
 }
 
 export function shouldCollectBulletinSourceSheet(workbook: string, sheetName: string) {
-  const name = workbook.toLocaleLowerCase("pl");
+  const normalizedSheet = normalizedName(sheetName);
   return (
-    (name.includes("produkcja_inflacja") && sheetName === "Arkusz1") ||
-    (name.includes("ceny skupu sprzedazy") && ["CENY m-ne TUSZKA skup sprze (2)", "Cen.sprzed TUSZKA kurc file ind"].includes(sheetName)) ||
-    (name.includes("eurostat_wyl") && sheetName.startsWith("wylęgi")) ||
-    (name.includes("gatunki drobiu") && sheetName === "tabela") ||
-    (name.includes("10.pasze") && sheetName === "DRÓB PL") ||
-    (name.includes("4.drób") && sheetName === "SKUP DROBIU POLSKA") ||
-    (name.includes("8.jaja") && sheetName === "SPRZEDAŻ-Z. PAKOWANIA") ||
-    (name.includes("krd_vii") && ["EKSPORT 0207", "EKSPORT 1602", "IMPORT 0207", "IMPORT 1602"].includes(sheetName))
+    (hasWords(workbook, ["produkcja", "inflacja"]) && normalizedSheet === "arkusz1") ||
+    normalizedSheet.startsWith("ceny m ne tuszka skup sprze") ||
+    normalizedSheet.startsWith("cen sprzed tuszka kurc file ind") ||
+    normalizedSheet.startsWith("wylegi") ||
+    (hasWords(workbook, ["gatunki", "drobiu"]) && normalizedSheet === "tabela") ||
+    normalizedSheet === "drob pl" ||
+    normalizedSheet === "skup drobiu polska" ||
+    normalizedSheet.startsWith("sprzedaz z pakowania") ||
+    ["eksport 0207", "eksport 1602", "import 0207", "import 1602"].includes(normalizedSheet)
   );
 }
 
-export function buildBulletinModel(sheets: BulletinSourceSheet[], reportYear: number): BulletinModel {
+export function buildBulletinModel(sheets: BulletinSourceSheet[], reportYear: number, reportMonth: number): BulletinModel {
   const indicators: BulletinIndicator[] = [];
   const series: BulletinSeries[] = [];
   const trade: BulletinTradeRow[] = [];
@@ -147,7 +166,7 @@ export function buildBulletinModel(sheets: BulletinSourceSheet[], reportYear: nu
     indicators.push({ indicator, category, year, period, value: numericValue, unit, source: sheet.workbook, sheet: sheet.name, cell, scope });
   }
 
-  const production = findSheet(sheets, "produkcja_inflacja", "Arkusz1");
+  const production = sheets.find((sheet) => hasWords(sheet.workbook, ["produkcja", "inflacja"]) && sheetNameIs(sheet, "Arkusz1"));
   if (production) {
     const points: [string, number][] = [];
     const header = production.rows[3] ?? [];
@@ -162,7 +181,6 @@ export function buildBulletinModel(sheets: BulletinSourceSheet[], reportYear: nu
     if (points.length) series.push({ label: "Produkcja roczna — zakłady 10+ osób", unit: "tys. t", points, note: "GUS; produkcja mięsa drobiowego w zakładach zatrudniających co najmniej 10 osób." });
   }
 
-  const prices = sheetsFrom(sheets, "ceny skupu sprzedazy");
   const priceConfigs: [string, [string, string[]][]][] = [
     ["CENY m-ne TUSZKA skup sprze (2)", [
       ["Kurczęta — skup", ["B", "C", "D", "E", "F"]],
@@ -176,7 +194,7 @@ export function buildBulletinModel(sheets: BulletinSourceSheet[], reportYear: nu
     ]],
   ];
   for (const [sheetName, groups] of priceConfigs) {
-    const priceSheet = prices.find((sheet) => sheet.name === sheetName);
+    const priceSheet = sheets.find((sheet) => sheetNameIs(sheet, sheetName));
     if (!priceSheet) continue;
     for (const [label, columns] of groups) {
       columns.forEach((column, yearOffset) => {
@@ -194,7 +212,7 @@ export function buildBulletinModel(sheets: BulletinSourceSheet[], reportYear: nu
     }
   }
 
-  for (const hatchery of sheetsFrom(sheets, "eurostat_wyl").filter((sheet) => sheet.name.startsWith("wylęgi"))) {
+  for (const hatchery of sheets.filter((sheet) => normalizedName(sheet.name).startsWith("wylegi"))) {
     const label = text(valueAt(hatchery, 1, "A")) || hatchery.name;
     const unit = hatchery.name.includes("brojler") ? "mln szt." : "tys. szt.";
     const header = hatchery.rows[3] ?? [];
@@ -214,8 +232,9 @@ export function buildBulletinModel(sheets: BulletinSourceSheet[], reportYear: nu
     }
   }
 
-  const speciesSheet = findSheet(sheets, "gatunki drobiu", "tabela");
+  const speciesSheet = sheets.find((sheet) => hasWords(sheet.workbook, ["gatunki", "drobiu"]) && sheetNameIs(sheet, "tabela"));
   if (speciesSheet) {
+    const tradePeriod = MONTHS_ROMAN[Math.max(1, reportMonth - 1) - 1];
     for (const column of ["C", "D", "E", "F", "G"]) {
       const name = text(valueAt(speciesSheet, 4, column));
       const kg = number(valueAt(speciesSheet, 5, column));
@@ -223,12 +242,12 @@ export function buildBulletinModel(sheets: BulletinSourceSheet[], reportYear: nu
       const ue = number(valueAt(speciesSheet, 11, column));
       if (!name || kg === null || eur === null || ue === null) continue;
       species.push({ name, kg, eur, ue });
-      addIndicator(speciesSheet, cellAddress(column, 5), `Eksport CN 0207 — masa — ${name}`, "Handel", reportYear, `I–VII ${reportYear}`, kg, "kg", "Dane wstępne; mięso i podroby; CN 0207");
-      addIndicator(speciesSheet, cellAddress(column, 9), `Eksport CN 0207 — wartość — ${name}`, "Handel", reportYear, `I–VII ${reportYear}`, eur, "EUR", "Dane wstępne; mięso i podroby; CN 0207");
+      addIndicator(speciesSheet, cellAddress(column, 5), `Eksport CN 0207 — masa — ${name}`, "Handel", reportYear, `I–${tradePeriod} ${reportYear}`, kg, "kg", "Dane wstępne; mięso i podroby; CN 0207");
+      addIndicator(speciesSheet, cellAddress(column, 9), `Eksport CN 0207 — wartość — ${name}`, "Handel", reportYear, `I–${tradePeriod} ${reportYear}`, eur, "EUR", "Dane wstępne; mięso i podroby; CN 0207");
     }
   }
 
-  const feedSheet = findSheet(sheets, "10.pasze", "DRÓB PL");
+  const feedSheet = sheets.find((sheet) => sheetNameIs(sheet, "DRÓB PL"));
   if (feedSheet) {
     for (let row = 9; row <= 17; row += 1) {
       const current = number(valueAt(feedSheet, row, "D"));
@@ -237,20 +256,22 @@ export function buildBulletinModel(sheets: BulletinSourceSheet[], reportYear: nu
       const previous = number(valueAt(feedSheet, row, "E")) ?? undefined;
       const annual = number(valueAt(feedSheet, row, "F")) ?? undefined;
       feed.push({ name, value: current, previous, annual });
-      addIndicator(feedSheet, cellAddress("D", row), name, "Pasze", reportYear, `VIII ${reportYear}`, current, "zł/t", "MRiRW; średnia cena sprzedaży pasz");
+      addIndicator(feedSheet, cellAddress("D", row), name, "Pasze", reportYear, `${MONTHS_ROMAN[reportMonth - 1]} ${reportYear}`, current, "zł/t", "MRiRW; średnia cena sprzedaży pasz");
     }
   }
 
-  const poultrySheet = findSheet(sheets, "4.drób", "SKUP DROBIU POLSKA");
+  const poultrySheet = sheets.find((sheet) => sheetNameIs(sheet, "SKUP DROBIU POLSKA"));
   if (poultrySheet) {
+    const week = weekFromWorkbook(poultrySheet.workbook);
     for (let row = 8; row <= 14; row += 1) {
       const name = text(valueAt(poultrySheet, row, "B"));
-      if (name) addIndicator(poultrySheet, cellAddress("C", row), `Skup — ${name}`, "Ceny tygodniowe", reportYear, `tydzień 38 / ${reportYear}`, valueAt(poultrySheet, row, "C"), "zł/t", "MRiRW; cena skupu netto");
+      if (name) addIndicator(poultrySheet, cellAddress("C", row), `Skup — ${name}`, "Ceny tygodniowe", reportYear, week ? `tydzień ${week} / ${reportYear}` : `${MONTHS_ROMAN[reportMonth - 1]} ${reportYear}`, valueAt(poultrySheet, row, "C"), "zł/t", "MRiRW; cena skupu netto");
     }
   }
 
-  const eggSheet = findSheet(sheets, "8.jaja", "SPRZEDAŻ-Z. PAKOWANIA");
+  const eggSheet = sheets.find((sheet) => normalizedName(sheet.name).startsWith("sprzedaz z pakowania"));
   if (eggSheet) {
+    const week = weekFromWorkbook(eggSheet.workbook);
     let system = "";
     for (let row = 9; row <= 24; row += 1) {
       system = text(valueAt(eggSheet, row, "B")) || system;
@@ -259,11 +280,10 @@ export function buildBulletinModel(sheets: BulletinSourceSheet[], reportYear: nu
       if (!system || !["XL", "L", "M", "S"].includes(size) || current === null) continue;
       const name = `${system} / ${size}`;
       eggs.push({ name, value: current, previous: number(valueAt(eggSheet, row, "E")) ?? undefined, annual: number(valueAt(eggSheet, row, "F")) ?? undefined });
-      addIndicator(eggSheet, cellAddress("D", row), `Jaja — ${name}`, "Jaja", reportYear, `tydzień 38 / ${reportYear}`, current, "zł/100 szt.", "MRiRW; ceny sprzedaży z zakładów pakowania");
+      addIndicator(eggSheet, cellAddress("D", row), `Jaja — ${name}`, "Jaja", reportYear, week ? `tydzień ${week} / ${reportYear}` : `${MONTHS_ROMAN[reportMonth - 1]} ${reportYear}`, current, "zł/100 szt.", "MRiRW; ceny sprzedaży z zakładów pakowania");
     }
   }
 
-  const tradeFileSheets = sheetsFrom(sheets, "krd_vii");
   const tradeConfigs: [string, string, string][] = [
     ["EKSPORT 0207", "H", "K"],
     ["EKSPORT 1602", "G", "J"],
@@ -271,7 +291,7 @@ export function buildBulletinModel(sheets: BulletinSourceSheet[], reportYear: nu
     ["IMPORT 1602", "J", "M"],
   ];
   for (const [sheetName, massColumn, valueColumn] of tradeConfigs) {
-    const tradeSheet = tradeFileSheets.find((sheet) => sheet.name === sheetName);
+    const tradeSheet = sheets.find((sheet) => sheetNameIs(sheet, sheetName));
     if (!tradeSheet) continue;
     const aggregated = new Map<string, BulletinTradeRow>();
     tradeSheet.rows.forEach((row, index) => {
@@ -340,4 +360,18 @@ export function buildBulletinModel(sheets: BulletinSourceSheet[], reportYear: nu
       euShare: exportKg && ueKg ? ueKg / exportKg * 100 : null,
     },
   };
+}
+
+export function getMissingBulletinSections(model: BulletinModel) {
+  const present = {
+    production: model.summary.latestProduction !== null,
+    prices: model.indicators.some((item) => item.category === "Ceny"),
+    hatcheries: model.indicators.some((item) => item.category === "Wylęgi"),
+    species: model.species.length > 0,
+    trade: model.trade.length > 0 && model.countries.length > 0,
+    feed: model.feed.length > 0,
+    poultry: model.indicators.some((item) => item.category === "Ceny tygodniowe"),
+    eggs: model.eggs.length > 0,
+  };
+  return REQUIRED_SECTIONS.filter(([key]) => !present[key]).map(([, label]) => label);
 }

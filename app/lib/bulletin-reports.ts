@@ -8,7 +8,7 @@ import readXlsxFile from "read-excel-file/web-worker";
 
 import { getDb, getMemberDocumentsBucket } from "../../db/index.ts";
 import { bulletinReports } from "../../db/schema.ts";
-import { buildBulletinModel, shouldCollectBulletinSourceSheet, type BulletinModel, type BulletinSourceSheet } from "./bulletin-model";
+import { buildBulletinModel, getMissingBulletinSections, shouldCollectBulletinSourceSheet, type BulletinModel, type BulletinSourceSheet } from "./bulletin-model";
 
 const LOCAL_REPORTS_DIR = path.join(os.tmpdir(), "krd-ig-bulletin-reports");
 const LOCAL_REPORTS_FILE = path.join(LOCAL_REPORTS_DIR, "reports.json");
@@ -16,6 +16,7 @@ const MAX_FILE_BYTES = 25 * 1024 * 1024;
 const MAX_TOTAL_BYTES = 80 * 1024 * 1024;
 const MAX_CELLS = 5_000_000;
 const ALLOWED_SOURCE_EXTENSION = /\.(xlsx|pdf|docx)$/i;
+const BULLETIN_MODEL_VERSION = 2;
 
 const POLISH_MONTHS = [
   "styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec",
@@ -57,6 +58,7 @@ export type BulletinSheet = {
 export type BulletinReportData = {
   sheets: BulletinSheet[];
   model?: BulletinModel;
+  modelVersion?: number;
 };
 
 function safeFileName(value: string) {
@@ -186,7 +188,7 @@ export async function getBulletinReportData(report: BulletinReport): Promise<Bul
     : await new Response(object.body).text();
   try {
     const data = JSON.parse(text) as BulletinReportData;
-    if (data.model) return data;
+    if (data.model && data.modelVersion === BULLETIN_MODEL_VERSION) return data;
     const modelSheets: BulletinSourceSheet[] = [];
     for (const source of report.sources.filter((item) => /\.xlsx$/i.test(item.name))) {
       const sourceObject = await getObject(source.key);
@@ -201,7 +203,8 @@ export async function getBulletinReportData(report: BulletinReport): Promise<Bul
         }
       }
     }
-    data.model = buildBulletinModel(modelSheets, report.year);
+    data.model = buildBulletinModel(modelSheets, report.year, report.month);
+    data.modelVersion = BULLETIN_MODEL_VERSION;
     await putObject(report.dataKey, Buffer.from(JSON.stringify(data), "utf8"), "application/json");
     return data;
   } catch {
@@ -250,7 +253,11 @@ export async function createBulletinReport(input: { month: number; year: number;
     }
   }
   if (!sheets.length) throw new Error("Nie znaleziono niepustych arkuszy w plikach XLSX.");
-  const model = buildBulletinModel(modelSheets, input.year);
+  const model = buildBulletinModel(modelSheets, input.year, input.month);
+  const missingSections = getMissingBulletinSections(model);
+  if (missingSections.length) {
+    throw new Error(`Nie można opublikować niekompletnego biuletynu. Brak danych dla sekcji: ${missingSections.join(", ")}. Sprawdź, czy wybrano wszystkie pliki XLSX i czy ich arkusze zachowują oczekiwaną strukturę.`);
+  }
 
   const id = crypto.randomUUID();
   const prefix = `bulletin-reports/${id}`;
@@ -261,7 +268,7 @@ export async function createBulletinReport(input: { month: number; year: number;
     await putObject(key, await file.arrayBuffer(), file.type || "application/octet-stream");
     sources.push({ name: file.name, key, contentType: file.type || "application/octet-stream", size: file.size });
   }
-  await putObject(dataKey, Buffer.from(JSON.stringify({ sheets, model } satisfies BulletinReportData), "utf8"), "application/json");
+  await putObject(dataKey, Buffer.from(JSON.stringify({ sheets, model, modelVersion: BULLETIN_MODEL_VERSION } satisfies BulletinReportData), "utf8"), "application/json");
 
   const report: BulletinReport = {
     id,

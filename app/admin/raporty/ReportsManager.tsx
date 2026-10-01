@@ -71,7 +71,7 @@ export default function ReportsManager() {
           <span>Wybierz pliki źródłowe</span>
           <input name="sources" type="file" accept=".xlsx,.pdf,.docx" multiple required onChange={(event) => setFileNames(Array.from(event.target.files ?? []).map((file) => file.name))} />
         </label>
-        <small>Wymagane: XLSX i PDF. Opcjonalnie: DOCX. Maksymalnie 25 MB na plik i 80 MB łącznie.</small>
+        <small>Wymagane: PDF oraz pełny pakiet XLSX dla produkcji, cen, wylęgów, handlu, pasz, drobiu i jaj. Opcjonalnie: DOCX. System nie opublikuje biuletynu z brakującą sekcją.</small>
         {fileNames.length ? <ul className="report-selected-files">{fileNames.map((name) => <li key={name}>{name}</li>)}</ul> : null}
         <button className="button button-primary" type="submit" disabled={saving}>{saving ? "Tworzenie raportu…" : "Utwórz i opublikuj"}</button>
         {status ? <p className={status.includes("został") ? "report-status-success" : "report-status"} aria-live="polite">{status}</p> : null}
