@@ -5,6 +5,7 @@ import pdfWorkerUrl from "pdfjs-dist/build/pdf.worker.min.mjs?url";
 GlobalWorkerOptions.workerSrc = pdfWorkerUrl;
 
 const MAX_DOCUMENT_TEXT_LENGTH = 2_000_000;
+const WORDPROCESSING_NAMESPACE = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
 
 function normalizeExtractedText(value: string) {
   return value.replace(/\u00a0/g, " ").replace(/[ \t]+/g, " ").replace(/\s*\n\s*/g, "\n").trim().slice(0, MAX_DOCUMENT_TEXT_LENGTH);
@@ -16,8 +17,11 @@ async function extractDocxText(file: File) {
   if (!documentXml) throw new Error("Plik DOCX nie zawiera dokumentu tekstowego.");
   const xml = new DOMParser().parseFromString(strFromU8(documentXml), "application/xml");
   if (xml.querySelector("parsererror")) throw new Error("Nie udało się odczytać struktury DOCX.");
-  return [...xml.getElementsByTagNameNS("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "p")]
-    .map((paragraph) => paragraph.textContent?.trim() ?? "")
+  return [...xml.getElementsByTagNameNS(WORDPROCESSING_NAMESPACE, "p")]
+    .map((paragraph) => [...paragraph.getElementsByTagNameNS(WORDPROCESSING_NAMESPACE, "t")]
+      .map((textNode) => textNode.textContent ?? "")
+      .join("")
+      .trim())
     .filter(Boolean)
     .join("\n");
 }

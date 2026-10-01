@@ -156,6 +156,8 @@ test("report archive is public while bulletins and PDF files remain member-only"
   assert.match(reportsManager, /mode: "cancel"/);
   assert.match(documentClient, /pdfjs-dist\/build\/pdf\.worker\.min\.mjs\?url/);
   assert.match(documentClient, /word\/document\.xml/);
+  assert.match(documentClient, /getElementsByTagNameNS\(WORDPROCESSING_NAMESPACE, "t"\)/);
+  assert.doesNotMatch(documentClient, /paragraph\.textContent/);
   assert.equal((chapters.match(/id: "/g) ?? []).length, 20);
   assert.match(reportStorage, /Biuletyn informacyjny \"\$\{POLISH_MONTHS\[month - 1\]\}, \$\{year\}\"/);
   assert.doesNotMatch(reportStorage, /Biuletyn informacyjny[^\n]*narastająco/);
