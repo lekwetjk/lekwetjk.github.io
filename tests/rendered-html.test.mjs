@@ -120,6 +120,7 @@ test("report archive is public while bulletins and PDF files remain member-only"
   const pdfRoute = await readProjectFile("app/api/member/reports/[id]/pdf/route.ts");
   const reportStorage = await readProjectFile("app/lib/bulletin-reports.ts");
   const reportsApi = await readProjectFile("app/api/admin/reports/route.ts");
+  const reportsManager = await readProjectFile("app/admin/raporty/ReportsManager.tsx");
   const loginForm = await readProjectFile("app/login/czlonkowie/MemberLoginForm.tsx");
   const passwordForm = await readProjectFile("app/member/zmien-haslo/ChangePasswordForm.tsx");
   const profile = await readProjectFile("app/member/profil/page.tsx");
@@ -145,6 +146,8 @@ test("report archive is public while bulletins and PDF files remain member-only"
   assert.match(reportStorage, /finalizeStagedBulletinReport/);
   assert.match(reportsApi, /form\.get\("mode"\) === "stage"/);
   assert.match(reportsApi, /request\.headers\.get\("content-type"\).*application\/json/);
+  assert.match(reportsManager, /from "read-excel-file\/browser"/);
+  assert.match(reportsManager, /mode: "sheet"/);
   assert.match(reportStorage, /Biuletyn informacyjny \"\$\{POLISH_MONTHS\[month - 1\]\}, \$\{year\}\"/);
   assert.doesNotMatch(reportStorage, /Biuletyn informacyjny[^\n]*narastająco/);
   assert.match(loginForm, /window\.location\.assign\(redirectTo\)/);

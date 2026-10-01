@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { AUTH_COOKIE_NAME, verifySessionToken } from "../../../lib/auth";
-import { finalizeStagedBulletinReport, listBulletinReports, stageBulletinReportSource } from "../../../lib/bulletin-reports";
+import { completeStagedBulletinSource, finalizeStagedBulletinReport, listBulletinReports, stageBulletinReportSheet, stageBulletinReportSource } from "../../../lib/bulletin-reports";
 
 function publicReport(report: Awaited<ReturnType<typeof listBulletinReports>>[number]) {
   return {
@@ -33,9 +33,23 @@ export async function POST(request: Request) {
   if (!session) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   try {
     if (request.headers.get("content-type")?.includes("application/json")) {
-      const input = await request.json() as { uploadId?: string; month?: number; year?: number };
+      const input = await request.json() as Record<string, unknown>;
+      if (input.mode === "sheet") {
+        await stageBulletinReportSheet({
+          uploadId: String(input.uploadId ?? ""), sourceIndex: Number(input.sourceIndex),
+          sheet: input.sheet as Parameters<typeof stageBulletinReportSheet>[0]["sheet"], createdBy: session.username,
+        });
+        return NextResponse.json({ ok: true });
+      }
+      if (input.mode === "complete") {
+        await completeStagedBulletinSource({
+          uploadId: String(input.uploadId ?? ""), sourceIndex: Number(input.sourceIndex), sheetCount: Number(input.sheetCount),
+          rowCount: Number(input.rowCount), cellCount: Number(input.cellCount), createdBy: session.username,
+        });
+        return NextResponse.json({ ok: true });
+      }
       const report = await finalizeStagedBulletinReport({
-        uploadId: input.uploadId ?? "",
+        uploadId: String(input.uploadId ?? ""),
         month: Number(input.month),
         year: Number(input.year),
         createdBy: session.username,

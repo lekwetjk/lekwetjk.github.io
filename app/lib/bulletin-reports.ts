@@ -62,7 +62,7 @@ export type BulletinReportData = {
 };
 
 type StagedBulletinSource = BulletinReportSource & {
-  parsedKey?: string;
+  parsedKeys?: string[];
   sheetCount: number;
   rowCount: number;
   cellCount: number;
@@ -273,41 +273,61 @@ export async function stageBulletinReportSource(input: { uploadId?: string; file
   const index = manifest.sources.length + 1;
   const prefix = `bulletin-report-uploads/${uploadId}`;
   const key = `${prefix}/sources/${index}-${safeFileName(input.file.name)}`;
-  let parsedKey: string | undefined;
-  let sheetCount = 0;
-  let rowCount = 0;
-  let cellCount = 0;
   const fileBytes = Buffer.from(await input.file.arrayBuffer());
-  if (/\.xlsx$/i.test(input.file.name)) {
-    const modelSheets: BulletinSourceSheet[] = [];
-    const workbookSheets = await readXlsxFile(fileBytes);
-    for (const workbookSheet of workbookSheets) {
-      if (shouldCollectBulletinSourceSheet(input.file.name, workbookSheet.sheet)) {
-        modelSheets.push({ workbook: input.file.name, name: workbookSheet.sheet, rows: workbookSheet.data });
-      }
-      const populatedRows = workbookSheet.data.filter((row) => row.some(hasCellValue));
-      if (!populatedRows.length) continue;
-      sheetCount += 1;
-      rowCount += populatedRows.length;
-      cellCount += populatedRows.reduce((sum, row) => sum + row.length, 0);
-    }
-    parsedKey = `${prefix}/parsed/${index}.json`;
-    await putObject(parsedKey, Buffer.from(JSON.stringify(modelSheets), "utf8"), "application/json");
-  }
-
   await putObject(key, fileBytes, input.file.type || "application/octet-stream");
   manifest.sources.push({
     name: input.file.name,
     key,
-    parsedKey,
+    parsedKeys: [],
     contentType: input.file.type || "application/octet-stream",
     size: input.file.size,
-    sheetCount,
-    rowCount,
-    cellCount,
+    sheetCount: 0,
+    rowCount: 0,
+    cellCount: 0,
   });
   await putObject(manifestKey, Buffer.from(JSON.stringify(manifest), "utf8"), "application/json");
-  return { uploadId, sourceCount: manifest.sources.length };
+  return { uploadId, sourceIndex: index - 1, sourceCount: manifest.sources.length };
+}
+
+export async function stageBulletinReportSheet(input: {
+  uploadId: string;
+  sourceIndex: number;
+  sheet: BulletinSourceSheet;
+  createdBy: string;
+}) {
+  const manifestKey = stagedManifestKey(input.uploadId);
+  const manifest = await readJsonObject<StagedBulletinUpload>(manifestKey);
+  if (!manifest || manifest.createdBy !== input.createdBy) throw new Error("Nie znaleziono przesłanych plików raportu.");
+  const source = manifest.sources[input.sourceIndex];
+  if (!source || !/\.xlsx$/i.test(source.name) || input.sheet.workbook !== source.name) throw new Error("Nieprawidłowe dane arkusza.");
+  if (!shouldCollectBulletinSourceSheet(source.name, input.sheet.name)) throw new Error("Nieobsługiwany arkusz źródłowy.");
+  if (!Array.isArray(input.sheet.rows)) throw new Error("Nieprawidłowe dane arkusza.");
+  const cellCount = input.sheet.rows.reduce((sum, row) => sum + (Array.isArray(row) ? row.length : 0), 0);
+  if (cellCount > MAX_CELLS) throw new Error("Arkusz zawiera zbyt dużo danych.");
+  const parsedKey = `bulletin-report-uploads/${input.uploadId}/parsed/${input.sourceIndex}-${source.parsedKeys?.length ?? 0}.json`;
+  await putObject(parsedKey, Buffer.from(JSON.stringify(input.sheet), "utf8"), "application/json");
+  source.parsedKeys = [...(source.parsedKeys ?? []), parsedKey];
+  await putObject(manifestKey, Buffer.from(JSON.stringify(manifest), "utf8"), "application/json");
+}
+
+export async function completeStagedBulletinSource(input: {
+  uploadId: string;
+  sourceIndex: number;
+  sheetCount: number;
+  rowCount: number;
+  cellCount: number;
+  createdBy: string;
+}) {
+  const manifestKey = stagedManifestKey(input.uploadId);
+  const manifest = await readJsonObject<StagedBulletinUpload>(manifestKey);
+  if (!manifest || manifest.createdBy !== input.createdBy) throw new Error("Nie znaleziono przesłanych plików raportu.");
+  const source = manifest.sources[input.sourceIndex];
+  if (!source || !/\.xlsx$/i.test(source.name)) throw new Error("Nieprawidłowe dane pliku XLSX.");
+  if (![input.sheetCount, input.rowCount, input.cellCount].every((value) => Number.isInteger(value) && value >= 0)) throw new Error("Nieprawidłowe statystyki pliku XLSX.");
+  source.sheetCount = input.sheetCount;
+  source.rowCount = input.rowCount;
+  source.cellCount = input.cellCount;
+  await putObject(manifestKey, Buffer.from(JSON.stringify(manifest), "utf8"), "application/json");
 }
 
 export async function finalizeStagedBulletinReport(input: { uploadId: string; month: number; year: number; createdBy: string }) {
@@ -329,9 +349,10 @@ export async function finalizeStagedBulletinReport(input: { uploadId: string; mo
 
   const modelSheets: BulletinSourceSheet[] = [];
   for (const source of manifest.sources) {
-    if (!source.parsedKey) continue;
-    const parsedSheets = await readJsonObject<BulletinSourceSheet[]>(source.parsedKey);
-    if (parsedSheets) modelSheets.push(...parsedSheets);
+    for (const parsedKey of source.parsedKeys ?? []) {
+      const parsedSheet = await readJsonObject<BulletinSourceSheet>(parsedKey);
+      if (parsedSheet) modelSheets.push(parsedSheet);
+    }
   }
   const model = buildBulletinModel(modelSheets, input.year, input.month);
   const missingSections = getMissingBulletinSections(model);
@@ -349,14 +370,14 @@ export async function finalizeStagedBulletinReport(input: { uploadId: string; mo
     month: input.month,
     year: input.year,
     dataKey,
-    sources: manifest.sources.map(({ parsedKey: _parsedKey, sheetCount: _sheetCount, rowCount: _rowCount, cellCount: _cellCount, ...source }) => source),
+    sources: manifest.sources.map(({ parsedKeys: _parsedKeys, sheetCount: _sheetCount, rowCount: _rowCount, cellCount: _cellCount, ...source }) => source),
     sheetCount,
     rowCount,
     createdAt: new Date().toISOString(),
     createdBy: input.createdBy,
   };
   await saveReport(report);
-  await Promise.all([manifestKey, ...manifest.sources.flatMap((source) => source.parsedKey ? [source.parsedKey] : [])].map(deleteObject));
+  await Promise.all([manifestKey, ...manifest.sources.flatMap((source) => source.parsedKeys ?? [])].map(deleteObject));
   return report;
 }
 

@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import readXlsxFile from "read-excel-file/browser";
+
+import { shouldCollectBulletinSourceSheet } from "../../lib/bulletin-model";
 
 type ReportSummary = {
   id: string;
@@ -47,9 +50,37 @@ export default function ReportsManager() {
         stagedForm.set("uploadId", uploadId);
         stagedForm.set("source", file);
         const stagedResponse = await fetch("/api/admin/reports", { method: "POST", body: stagedForm });
-        const stagedData = await stagedResponse.json().catch(() => ({})) as { uploadId?: string; error?: string };
+        const stagedData = await stagedResponse.json().catch(() => ({})) as { uploadId?: string; sourceIndex?: number; error?: string };
         if (!stagedResponse.ok || !stagedData.uploadId) throw new Error(stagedData.error ?? `Nie udało się przetworzyć pliku „${file.name}”.`);
         uploadId = stagedData.uploadId;
+        if (/\.xlsx$/i.test(file.name) && stagedData.sourceIndex !== undefined) {
+          setStatus(`Analiza pliku ${index + 1} z ${files.length}: ${file.name}`);
+          const workbookSheets = await readXlsxFile(file);
+          let sheetCount = 0;
+          let rowCount = 0;
+          let cellCount = 0;
+          for (const workbookSheet of workbookSheets) {
+            const populatedRows = workbookSheet.data.filter((row) => row.some((value) => value !== null && value !== undefined && String(value).trim() !== ""));
+            if (populatedRows.length) {
+              sheetCount += 1;
+              rowCount += populatedRows.length;
+              cellCount += populatedRows.reduce((sum, row) => sum + row.length, 0);
+            }
+            if (!shouldCollectBulletinSourceSheet(file.name, workbookSheet.sheet)) continue;
+            const sheetResponse = await fetch("/api/admin/reports", {
+              method: "POST", headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ mode: "sheet", uploadId, sourceIndex: stagedData.sourceIndex, sheet: { workbook: file.name, name: workbookSheet.sheet, rows: workbookSheet.data } }),
+            });
+            const sheetData = await sheetResponse.json().catch(() => ({})) as { error?: string };
+            if (!sheetResponse.ok) throw new Error(sheetData.error ?? `Nie udało się zapisać arkusza „${workbookSheet.sheet}”.`);
+          }
+          const completeResponse = await fetch("/api/admin/reports", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ mode: "complete", uploadId, sourceIndex: stagedData.sourceIndex, sheetCount, rowCount, cellCount }),
+          });
+          const completeData = await completeResponse.json().catch(() => ({})) as { error?: string };
+          if (!completeResponse.ok) throw new Error(completeData.error ?? `Nie udało się zakończyć analizy pliku „${file.name}”.`);
+        }
       }
       setStatus("Łączenie danych i publikowanie biuletynu…");
       const response = await fetch("/api/admin/reports", {
