@@ -16,7 +16,7 @@ const MAX_FILE_BYTES = 25 * 1024 * 1024;
 const MAX_TOTAL_BYTES = 80 * 1024 * 1024;
 const MAX_CELLS = 5_000_000;
 const ALLOWED_SOURCE_EXTENSION = /\.(xlsx|pdf|docx)$/i;
-const BULLETIN_MODEL_VERSION = 2;
+const BULLETIN_MODEL_VERSION = 3;
 
 const POLISH_MONTHS = [
   "styczeń", "luty", "marzec", "kwiecień", "maj", "czerwiec",
@@ -56,7 +56,7 @@ export type BulletinSheet = {
 };
 
 export type BulletinReportData = {
-  sheets: BulletinSheet[];
+  sheets?: BulletinSheet[];
   model?: BulletinModel;
   modelVersion?: number;
 };
@@ -69,22 +69,8 @@ function localObjectPath(key: string) {
   return path.join(LOCAL_REPORTS_DIR, key.replace(/[^a-zA-Z0-9._-]/g, "_"));
 }
 
-function normalizeCell(value: unknown) {
-  if (value instanceof Date) return value.toLocaleDateString("pl-PL");
-  if (value === null || value === undefined) return "";
-  return String(value);
-}
-
 function hasCellValue(value: unknown) {
   return value !== null && value !== undefined && String(value).trim() !== "";
-}
-
-function trimRows(rows: unknown[][]) {
-  const normalized = rows.filter((row) => row.some(hasCellValue)).map((row) => row.map(normalizeCell));
-  const width = normalized.reduce((maximum, row) => Math.max(maximum, row.length), 0);
-  const populatedColumns = Array.from({ length: width }, (_, index) => index)
-    .filter((index) => normalized.some((row) => (row[index] ?? "").trim()));
-  return normalized.map((row) => populatedColumns.map((index) => row[index] ?? ""));
 }
 
 function mapRow(row: typeof bulletinReports.$inferSelect): BulletinReport {
@@ -189,6 +175,12 @@ export async function getBulletinReportData(report: BulletinReport): Promise<Bul
   try {
     const data = JSON.parse(text) as BulletinReportData;
     if (data.model && data.modelVersion === BULLETIN_MODEL_VERSION) return data;
+    if (data.model && data.modelVersion === 2) {
+      delete data.sheets;
+      data.modelVersion = BULLETIN_MODEL_VERSION;
+      await putObject(report.dataKey, Buffer.from(JSON.stringify(data), "utf8"), "application/json");
+      return data;
+    }
     const modelSheets: BulletinSourceSheet[] = [];
     for (const source of report.sources.filter((item) => /\.xlsx$/i.test(item.name))) {
       const sourceObject = await getObject(source.key);
@@ -234,8 +226,9 @@ export async function createBulletinReport(input: { month: number; year: number;
   const slug = `biuletyn-informacyjny-${input.year}-${String(input.month).padStart(2, "0")}`;
   if (await getBulletinReport(slug)) throw new Error("Biuletyn dla tego miesiąca i roku jest już opublikowany.");
 
-  const sheets: BulletinSheet[] = [];
   const modelSheets: BulletinSourceSheet[] = [];
+  let sheetCount = 0;
+  let rowCount = 0;
   let cellCount = 0;
   for (const file of input.files.filter((candidate) => /\.xlsx$/i.test(candidate.name))) {
     const workbookSheets = await readXlsxFile(Buffer.from(await file.arrayBuffer()));
@@ -243,16 +236,17 @@ export async function createBulletinReport(input: { month: number; year: number;
       if (shouldCollectBulletinSourceSheet(file.name, workbookSheet.sheet)) {
         modelSheets.push({ workbook: file.name, name: workbookSheet.sheet, rows: workbookSheet.data });
       }
-      const rows = trimRows(workbookSheet.data);
-      if (!rows.length) continue;
-      cellCount += rows.reduce((sum, row) => sum + row.length, 0);
+      const populatedRows = workbookSheet.data.filter((row) => row.some(hasCellValue));
+      if (!populatedRows.length) continue;
+      sheetCount += 1;
+      rowCount += populatedRows.length;
+      cellCount += populatedRows.reduce((sum, row) => sum + row.length, 0);
       if (cellCount > MAX_CELLS) {
         throw new Error(`Arkusze zawierają zbyt dużo danych. Limit publikacji wynosi 5 000 000 komórek. Przekroczenie nastąpiło w pliku „${file.name}”, arkuszu „${workbookSheet.sheet}”.`);
       }
-      sheets.push({ id: `${sheets.length + 1}`, workbook: file.name, name: workbookSheet.sheet, rows });
     }
   }
-  if (!sheets.length) throw new Error("Nie znaleziono niepustych arkuszy w plikach XLSX.");
+  if (!sheetCount) throw new Error("Nie znaleziono niepustych arkuszy w plikach XLSX.");
   const model = buildBulletinModel(modelSheets, input.year, input.month);
   const missingSections = getMissingBulletinSections(model);
   if (missingSections.length) {
@@ -268,7 +262,7 @@ export async function createBulletinReport(input: { month: number; year: number;
     await putObject(key, await file.arrayBuffer(), file.type || "application/octet-stream");
     sources.push({ name: file.name, key, contentType: file.type || "application/octet-stream", size: file.size });
   }
-  await putObject(dataKey, Buffer.from(JSON.stringify({ sheets, model, modelVersion: BULLETIN_MODEL_VERSION } satisfies BulletinReportData), "utf8"), "application/json");
+  await putObject(dataKey, Buffer.from(JSON.stringify({ model, modelVersion: BULLETIN_MODEL_VERSION } satisfies BulletinReportData), "utf8"), "application/json");
 
   const report: BulletinReport = {
     id,
@@ -278,8 +272,8 @@ export async function createBulletinReport(input: { month: number; year: number;
     year: input.year,
     dataKey,
     sources,
-    sheetCount: sheets.length,
-    rowCount: sheets.reduce((sum, sheet) => sum + sheet.rows.length, 0),
+    sheetCount,
+    rowCount,
     createdAt: new Date().toISOString(),
     createdBy: input.createdBy,
   };
