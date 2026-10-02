@@ -1,7 +1,14 @@
 import { getBulletinReport, getBulletinReportData, listBulletinReports } from "../lib/bulletin-reports";
 import { InteractiveBulletin } from "./InteractiveBulletin";
+import { getPreparedBulletin, preparedBulletinEditions } from "../lib/prepared-bulletins";
+import { PreparedBulletinViewer } from "./PreparedBulletinViewer";
 
 export async function BulletinReports({ selectedSlug }: { selectedSlug: string }) {
+  const prepared = getPreparedBulletin(selectedSlug);
+  if (prepared) {
+    return <PreparedBulletinViewer bulletin={prepared} editions={preparedBulletinEditions} />;
+  }
+
   const reports = await listBulletinReports();
   const selected = await getBulletinReport(selectedSlug);
   const data = selected ? await getBulletinReportData(selected) : null;

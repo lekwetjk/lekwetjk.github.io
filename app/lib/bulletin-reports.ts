@@ -223,26 +223,7 @@ export async function getBulletinReportData(report: BulletinReport): Promise<Bul
     : await new Response(object.body).text();
   try {
     const data = JSON.parse(text) as BulletinReportData;
-    if (data.model && data.modelVersion === BULLETIN_MODEL_VERSION) return data;
-    if (data.model && data.modelVersion === 2) return data;
-    const modelSheets: BulletinSourceSheet[] = [];
-    for (const source of report.sources.filter((item) => /\.xlsx$/i.test(item.name))) {
-      const sourceObject = await getObject(source.key);
-      if (!sourceObject) continue;
-      const sourceBytes = sourceObject.body instanceof Uint8Array
-        ? Buffer.from(sourceObject.body)
-        : Buffer.from(await new Response(sourceObject.body).arrayBuffer());
-      const workbookSheets = await readXlsxFile(sourceBytes);
-      for (const workbookSheet of workbookSheets) {
-        if (shouldCollectBulletinSourceSheet(source.name, workbookSheet.sheet)) {
-          modelSheets.push({ workbook: source.name, name: workbookSheet.sheet, rows: workbookSheet.data });
-        }
-      }
-    }
-    data.model = buildBulletinModel(modelSheets, report.year, report.month);
-    data.modelVersion = BULLETIN_MODEL_VERSION;
-    await putObject(report.dataKey, Buffer.from(JSON.stringify(data), "utf8"), "application/json");
-    return data;
+    return data.model ? data : null;
   } catch {
     return null;
   }
