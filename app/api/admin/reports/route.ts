@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { AUTH_COOKIE_NAME, verifySessionToken } from "../../../lib/auth";
-import { cancelStagedBulletinReport, completeStagedBulletinSource, finalizeStagedBulletinReport, listBulletinReports, stageBulletinDocumentText, stageBulletinReportSheet, stageBulletinReportSource } from "../../../lib/bulletin-reports";
+import { cancelStagedBulletinReport, completeStagedBulletinSource, createPreparedBulletinReport, finalizeStagedBulletinReport, listBulletinReports, stageBulletinDocumentText, stageBulletinReportSheet, stageBulletinReportSource } from "../../../lib/bulletin-reports";
 
 function publicReport(report: Awaited<ReturnType<typeof listBulletinReports>>[number]) {
   return {
@@ -68,6 +68,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true, report: publicReport(report) });
     }
     const form = await request.formData();
+    if (form.get("mode") === "prepared") {
+      const modelFile = form.get("model");
+      const pdfValue = form.get("pdf");
+      if (!(modelFile instanceof File) || !modelFile.size) return NextResponse.json({ error: "Brak pliku JSON modelu." }, { status: 400 });
+      const report = await createPreparedBulletinReport({
+        modelFile,
+        pdfFile: pdfValue instanceof File && pdfValue.size ? pdfValue : undefined,
+        createdBy: session.username,
+      });
+      return NextResponse.json({ ok: true, report: publicReport(report) });
+    }
     if (form.get("mode") === "stage") {
       const file = form.get("source");
       if (!(file instanceof File) || !file.size) return NextResponse.json({ error: "Brak pliku." }, { status: 400 });

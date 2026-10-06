@@ -10,6 +10,8 @@ import { getDb, getMemberDocumentsBucket } from "../../db/index.ts";
 import { bulletinReports } from "../../db/schema.ts";
 import { BULLETIN_CHAPTERS, documentContainsBulletinValue, getMissingDocumentChapters, matchingBulletinChapterIds } from "./bulletin-chapters";
 import { buildBulletinModel, getMissingBulletinSections, shouldCollectBulletinSourceSheet, type BulletinModel, type BulletinSourceSheet } from "./bulletin-model";
+import { validatePreparedBulletin, type PreparedBulletin } from "./prepared-bulletin-model";
+import { getPreparedBulletin } from "./prepared-bulletins";
 
 const LOCAL_REPORTS_DIR = path.join(os.tmpdir(), "krd-ig-bulletin-reports");
 const LOCAL_REPORTS_FILE = path.join(LOCAL_REPORTS_DIR, "reports.json");
@@ -17,6 +19,7 @@ const MAX_FILE_BYTES = 25 * 1024 * 1024;
 const MAX_TOTAL_BYTES = 80 * 1024 * 1024;
 const MAX_CELLS = 5_000_000;
 const MAX_STAGED_SHEET_CELLS = 500_000;
+const MAX_PREPARED_MODEL_BYTES = 5 * 1024 * 1024;
 const ALLOWED_SOURCE_EXTENSION = /\.(xlsx|pdf|docx)$/i;
 const BULLETIN_MODEL_VERSION = 3;
 
@@ -60,6 +63,7 @@ export type BulletinSheet = {
 export type BulletinReportData = {
   sheets?: BulletinSheet[];
   model?: BulletinModel;
+  prepared?: PreparedBulletin;
   modelVersion?: number;
   validation?: { document: string; chapters: string[] };
 };
@@ -223,7 +227,7 @@ export async function getBulletinReportData(report: BulletinReport): Promise<Bul
     : await new Response(object.body).text();
   try {
     const data = JSON.parse(text) as BulletinReportData;
-    return data.model ? data : null;
+    return data.model || data.prepared ? data : null;
   } catch {
     return null;
   }
@@ -515,4 +519,39 @@ export async function deleteBulletinReport(id: string) {
   } catch {
     await writeLocalReports((await readLocalReports()).filter((item) => item.id !== id));
   }
+}
+
+export async function createPreparedBulletinReport(input: { modelFile: File; pdfFile?: File; createdBy: string }) {
+  if (!/\.json$/i.test(input.modelFile.name) || input.modelFile.size > MAX_PREPARED_MODEL_BYTES) throw new Error("Wybierz plik JSON modelu o rozmiarze do 5 MB.");
+  if (input.pdfFile && (!/\.pdf$/i.test(input.pdfFile.name) || input.pdfFile.size > MAX_FILE_BYTES)) throw new Error("Opcjonalny PDF może mieć maksymalnie 25 MB.");
+  let parsed: unknown;
+  try { parsed = JSON.parse(await input.modelFile.text()); } catch { throw new Error("Plik modelu nie jest poprawnym JSON-em."); }
+  const prepared = validatePreparedBulletin(parsed);
+  const [yearValue, monthValue] = prepared.id.split("-");
+  const year = Number(yearValue);
+  const month = Number(monthValue);
+  const expectedTitle = bulletinTitle(month, year);
+  if (prepared.title !== expectedTitle) throw new Error(`Tytuł modelu musi brzmieć: ${expectedTitle}.`);
+  const slug = `biuletyn-informacyjny-${prepared.id}`;
+  if (getPreparedBulletin(slug) || await getBulletinReport(slug)) throw new Error("To wydanie jest już opublikowane.");
+
+  const id = crypto.randomUUID();
+  const prefix = `bulletin-reports/${id}`;
+  const dataKey = `${prefix}/report.json`;
+  const sources: BulletinReportSource[] = [];
+  if (input.pdfFile) {
+    const key = `${prefix}/sources/1-${safeFileName(input.pdfFile.name)}`;
+    await putObject(key, await input.pdfFile.arrayBuffer(), "application/pdf");
+    sources.push({ name: input.pdfFile.name, key, contentType: "application/pdf", size: input.pdfFile.size });
+  }
+  await putObject(dataKey, Buffer.from(JSON.stringify({ prepared } satisfies BulletinReportData), "utf8"), "application/json");
+  const report: BulletinReport = {
+    id, slug, title: expectedTitle, month, year, dataKey, sources,
+    sheetCount: prepared.charts.length,
+    rowCount: prepared.tables.reduce((sum, table) => sum + table.rows.length, 0),
+    createdAt: new Date().toISOString(),
+    createdBy: input.createdBy,
+  };
+  await saveReport(report);
+  return report;
 }

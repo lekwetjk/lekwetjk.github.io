@@ -12,6 +12,12 @@ export async function BulletinReports({ selectedSlug }: { selectedSlug: string }
   const reports = await listBulletinReports();
   const selected = await getBulletinReport(selectedSlug);
   const data = selected ? await getBulletinReportData(selected) : null;
+  if (data?.prepared) {
+    const dynamicEditions = reports.map((report) => ({ id: `${report.year}-${String(report.month).padStart(2, "0")}`, slug: report.slug, period: `${report.month}.${report.year}`, title: report.title }));
+    const editions = [...preparedBulletinEditions, ...dynamicEditions.filter((edition) => !preparedBulletinEditions.some((preparedEdition) => preparedEdition.slug === edition.slug))]
+      .sort((left, right) => left.id.localeCompare(right.id));
+    return <PreparedBulletinViewer bulletin={data.prepared} editions={editions} />;
+  }
   const model = data?.model ? {
     ...data.model,
     indicators: data.model.indicators.map(({ source: _source, sheet: _sheet, cell: _cell, ...indicator }) => indicator),

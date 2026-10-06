@@ -151,9 +151,12 @@ test("report archive is public while bulletins and PDF files remain member-only"
   assert.match(reportsApi, /form\.get\("mode"\) === "stage"/);
   assert.match(reportsApi, /request\.headers\.get\("content-type"\).*application\/json/);
   assert.match(reportsApi, /input\.mode === "cancel"/);
-  assert.match(reportsManager, /from "read-excel-file\/browser"/);
-  assert.match(reportsManager, /mode: "sheet"/);
-  assert.match(reportsManager, /mode: "cancel"/);
+  assert.match(reportsApi, /form\.get\("mode"\) === "prepared"/);
+  assert.match(reportStorage, /createPreparedBulletinReport/);
+  assert.match(reportStorage, /validatePreparedBulletin/);
+  assert.doesNotMatch(reportsManager, /read-excel-file\/browser/);
+  assert.match(reportsManager, /formData\.set\("mode", "prepared"\)/);
+  assert.match(reportsManager, /Gotowy model JSON/);
   assert.match(documentClient, /pdfjs-dist\/build\/pdf\.worker\.min\.mjs\?url/);
   assert.match(documentClient, /word\/document\.xml/);
   assert.match(documentClient, /getElementsByTagNameNS\(WORDPROCESSING_NAMESPACE, "t"\)/);

@@ -5,41 +5,9 @@ import aprilMay from "../data/bulletins/2026-04-05.json";
 import june from "../data/bulletins/2026-06.json";
 import july from "../data/bulletins/2026-07.json";
 import august from "../data/bulletins/2026-08.json";
+import type { PreparedBulletin } from "./prepared-bulletin-model";
 
-export type PreparedBulletinSeries = {
-  name: string;
-  values: Array<number | null>;
-};
-
-export type PreparedBulletinChart = {
-  id: string;
-  section: string;
-  title: string;
-  kind: string;
-  categories: string[];
-  series: PreparedBulletinSeries[];
-};
-
-export type PreparedBulletinTable = {
-  id: string;
-  section: string;
-  rows: string[][];
-};
-
-export type PreparedBulletin = {
-  id: string;
-  period: string;
-  title: string;
-  sections: string[];
-  charts: PreparedBulletinChart[];
-  tables: PreparedBulletinTable[];
-  stats: {
-    paragraphs: number;
-    charts: number;
-    tables: number;
-    numericCells: number;
-  };
-};
+export type { PreparedBulletin, PreparedBulletinChart } from "./prepared-bulletin-model";
 
 type SourceBulletin = PreparedBulletin & { sourceFile: string };
 
