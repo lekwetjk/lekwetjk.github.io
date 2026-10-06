@@ -5,7 +5,7 @@ import path from "node:path";
 
 import { eq, inArray, sql } from "drizzle-orm";
 
-import { getDb } from "../../db/index.ts";
+import { getDb, getMemberDocumentsBucket } from "../../db/index.ts";
 import { memberProfiles, memberUserLogos, memberUsers } from "../../db/schema.ts";
 import type { MemberProfileData } from "./member-profile";
 
@@ -19,6 +19,7 @@ const LEGACY_DEFAULT_PASSWORD = "Test123!";
 const LOCAL_MEMBER_USERS_FILE = path.join(os.tmpdir(), "krd-ig-member-users.json");
 const LOCAL_MEMBER_LOGOS_FILE = path.join(os.tmpdir(), "krd-ig-member-logos.json");
 const LOCAL_MEMBER_PROFILES_FILE = path.join(os.tmpdir(), "krd-ig-member-profiles.json");
+const MEMBER_LOGOS_PREFIX = "member-logos/";
 
 export type MemberRole = "member" | "admin";
 
@@ -96,6 +97,14 @@ async function readLocalMemberLogos(): Promise<Record<string, { content: string;
   } catch {
     return {};
   }
+}
+
+function memberLogoKey(userId: string) {
+  return `${MEMBER_LOGOS_PREFIX}${encodeURIComponent(userId)}`;
+}
+
+function isMissingR2Binding(error: unknown) {
+  return error instanceof Error && error.message.includes("binding `MEMBER_DOCUMENTS` is unavailable");
 }
 
 export function hashPassword(password: string): string {
@@ -216,10 +225,17 @@ export async function getCurrentMemberSession(token?: string) {
 
 export async function saveMemberLogo(userId: string, content: Buffer, contentType: string) {
   try {
+    await getMemberDocumentsBucket().put(memberLogoKey(userId), content, { httpMetadata: { contentType } });
+    return;
+  } catch (error) {
+    if (!isMissingR2Binding(error)) throw error;
+  }
+
+  try {
     const db = getDb();
     await db.run(sql`CREATE TABLE IF NOT EXISTS member_user_logos (user_id TEXT PRIMARY KEY NOT NULL, content TEXT NOT NULL, content_type TEXT NOT NULL, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)`);
     await db.insert(memberUserLogos).values({ userId, content: content.toString("base64"), contentType })
-      .onConflictDoUpdate({ target: memberUserLogos.userId, set: { content: content.toString("base64"), contentType } });
+      .onConflictDoUpdate({ target: memberUserLogos.userId, set: { content: content.toString("base64"), contentType, updatedAt: new Date().toISOString() } });
   } catch {
     const logos = await readLocalMemberLogos();
     logos[userId] = { content: content.toString("base64"), contentType };
@@ -228,6 +244,16 @@ export async function saveMemberLogo(userId: string, content: Buffer, contentTyp
 }
 
 export async function getMemberLogo(userId: string) {
+  try {
+    const object = await getMemberDocumentsBucket().get(memberLogoKey(userId));
+    if (object) {
+      const content = Buffer.from(await new Response(object.body).arrayBuffer()).toString("base64");
+      return { userId, content, contentType: object.httpMetadata?.contentType ?? "application/octet-stream", updatedAt: object.uploaded.toISOString() };
+    }
+  } catch (error) {
+    if (!isMissingR2Binding(error)) throw error;
+  }
+
   try {
     const db = getDb();
     await db.run(sql`CREATE TABLE IF NOT EXISTS member_user_logos (user_id TEXT PRIMARY KEY NOT NULL, content TEXT NOT NULL, content_type TEXT NOT NULL, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)`);
@@ -245,20 +271,38 @@ export async function getMemberLogoUserIds(userIds: string[]) {
     return new Set<string>();
   }
 
+  const logoUserIds = new Set<string>();
+  try {
+    const result = await getMemberDocumentsBucket().list({ prefix: MEMBER_LOGOS_PREFIX });
+    for (const object of result.objects) {
+      const encodedUserId = object.key.slice(MEMBER_LOGOS_PREFIX.length);
+      try { logoUserIds.add(decodeURIComponent(encodedUserId)); } catch { /* Ignore malformed legacy keys. */ }
+    }
+  } catch (error) {
+    if (!isMissingR2Binding(error)) throw error;
+  }
+
   try {
     const db = getDb();
     const rows = await db
       .select({ userId: memberUserLogos.userId })
       .from(memberUserLogos)
       .where(inArray(memberUserLogos.userId, userIds));
-    return new Set(rows.map((row) => row.userId));
+    rows.forEach((row) => logoUserIds.add(row.userId));
   } catch {
     const logos = await readLocalMemberLogos();
-    return new Set(userIds.filter((userId) => Boolean(logos[userId])));
+    userIds.filter((userId) => Boolean(logos[userId])).forEach((userId) => logoUserIds.add(userId));
   }
+  return new Set(userIds.filter((userId) => logoUserIds.has(userId)));
 }
 
 export async function deleteMemberLogo(userId: string) {
+  try {
+    await getMemberDocumentsBucket().delete(memberLogoKey(userId));
+  } catch (error) {
+    if (!isMissingR2Binding(error)) throw error;
+  }
+
   try {
     const db = getDb();
     await db.delete(memberUserLogos).where(eq(memberUserLogos.userId, userId));

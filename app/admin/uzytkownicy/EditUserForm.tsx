@@ -16,6 +16,10 @@ export default function EditUserForm({ user, onSaved }: { user: { id: string; us
       body: new FormData(event.currentTarget),
     });
     if (response.ok) {
+      if (selectedLogo) {
+        window.location.reload();
+        return;
+      }
       setMessage("Zmiany zapisane");
       onSaved?.();
     } else {
@@ -25,7 +29,11 @@ export default function EditUserForm({ user, onSaved }: { user: { id: string; us
 
   async function handleRemoveLogo() {
     const response = await fetch(`/api/admin/users/${user.id}/logo`, { method: "POST" });
-    setMessage(response.ok ? "Logo usunięte" : "Nie udało się usunąć logo");
+    if (response.ok) {
+      window.location.reload();
+      return;
+    }
+    setMessage("Nie udało się usunąć logo");
   }
 
   async function handlePasswordReset() {

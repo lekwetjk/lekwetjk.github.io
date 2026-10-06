@@ -111,6 +111,22 @@ test("foreign trade page links the latest local export reports", async () => {
   assert.match(source, /eksport-rolno-spozywczy-pierwsze-polrocze-2026\.pdf/);
 });
 
+test("member logos use private R2 storage with legacy D1 compatibility", async () => {
+  const auth = await readProjectFile("app/lib/auth.ts");
+  const logoRoute = await readProjectFile("app/api/admin/users/[id]/logo/route.ts");
+  const createRoute = await readProjectFile("app/api/admin/users/create/route.ts");
+  const updateRoute = await readProjectFile("app/api/admin/users/[id]/route.ts");
+
+  assert.match(auth, /MEMBER_LOGOS_PREFIX = "member-logos\/"/);
+  assert.match(auth, /getMemberDocumentsBucket\(\)\.put\(memberLogoKey\(userId\)/);
+  assert.match(auth, /getMemberDocumentsBucket\(\)\.get\(memberLogoKey\(userId\)\)/);
+  assert.match(auth, /getMemberDocumentsBucket\(\)\.delete\(memberLogoKey\(userId\)\)/);
+  assert.ok(auth.indexOf("getMemberDocumentsBucket().get(memberLogoKey(userId))") < auth.indexOf("db.select().from(memberUserLogos)"));
+  assert.match(createRoute, /await saveMemberLogo\(user\.id/);
+  assert.match(updateRoute, /await saveMemberLogo\(id/);
+  assert.match(logoRoute, /Buffer\.from\(logo\.content, "base64"\)/);
+});
+
 test("report archive is public while bulletins and PDF files remain member-only", async () => {
   const middleware = await readProjectFile("middleware.ts");
   const reportPage = await readProjectFile("app/tresc/[slug]/page.tsx");
