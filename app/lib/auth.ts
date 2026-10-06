@@ -20,6 +20,7 @@ const LOCAL_MEMBER_USERS_FILE = path.join(os.tmpdir(), "krd-ig-member-users.json
 const LOCAL_MEMBER_LOGOS_FILE = path.join(os.tmpdir(), "krd-ig-member-logos.json");
 const LOCAL_MEMBER_PROFILES_FILE = path.join(os.tmpdir(), "krd-ig-member-profiles.json");
 const MEMBER_LOGOS_PREFIX = "member-logos/";
+const MEMBER_LOGO_SETTINGS_KEY = "member-logo-settings.json";
 
 export type MemberRole = "member" | "admin";
 
@@ -91,9 +92,9 @@ async function writeLocalMemberUsers(users: MemberUser[]) {
   await writeFile(LOCAL_MEMBER_USERS_FILE, JSON.stringify(users, null, 2), "utf8");
 }
 
-async function readLocalMemberLogos(): Promise<Record<string, { content: string; contentType: string }>> {
+async function readLocalMemberLogos(): Promise<Record<string, { content: string; contentType: string; scale?: number }>> {
   try {
-    return JSON.parse(await readFile(LOCAL_MEMBER_LOGOS_FILE, "utf8")) as Record<string, { content: string; contentType: string }>;
+    return JSON.parse(await readFile(LOCAL_MEMBER_LOGOS_FILE, "utf8")) as Record<string, { content: string; contentType: string; scale?: number }>;
   } catch {
     return {};
   }
@@ -105,6 +106,49 @@ function memberLogoKey(userId: string) {
 
 function isMissingR2Binding(error: unknown) {
   return error instanceof Error && error.message.includes("binding `MEMBER_DOCUMENTS` is unavailable");
+}
+
+export async function getMemberLogoScales(userIds: string[]) {
+  let scales: Record<string, number> = {};
+  try {
+    const object = await getMemberDocumentsBucket().get(MEMBER_LOGO_SETTINGS_KEY);
+    if (object) {
+      const parsed = JSON.parse(await new Response(object.body).text()) as Record<string, unknown>;
+      scales = Object.fromEntries(
+        Object.entries(parsed).filter((entry): entry is [string, number] =>
+          typeof entry[1] === "number" && entry[1] >= 0.5 && entry[1] <= 1),
+      );
+    }
+  } catch (error) {
+    if (!isMissingR2Binding(error)) throw error;
+    const logos = await readLocalMemberLogos();
+    scales = Object.fromEntries(
+      Object.entries(logos).flatMap(([userId, logo]) => typeof logo.scale === "number" ? [[userId, logo.scale]] : []),
+    );
+  }
+  return Object.fromEntries(userIds.map((userId) => [userId, scales[userId] ?? 1]));
+}
+
+export async function saveMemberLogoScale(userId: string, scale: number) {
+  if (!Number.isFinite(scale) || scale < 0.5 || scale > 1) {
+    throw new Error("Skala logo musi mieścić się w zakresie od 50% do 100%.");
+  }
+  try {
+    const scales = await getMemberLogoScales((await getMemberUsers()).map((user) => user.id));
+    scales[userId] = scale;
+    await getMemberDocumentsBucket().put(
+      MEMBER_LOGO_SETTINGS_KEY,
+      Buffer.from(JSON.stringify(scales)),
+      { httpMetadata: { contentType: "application/json" } },
+    );
+  } catch (error) {
+    if (!isMissingR2Binding(error)) throw error;
+    const logos = await readLocalMemberLogos();
+    if (logos[userId]) {
+      logos[userId].scale = scale;
+      await writeFile(LOCAL_MEMBER_LOGOS_FILE, JSON.stringify(logos), "utf8");
+    }
+  }
 }
 
 export function hashPassword(password: string): string {
@@ -296,9 +340,50 @@ export async function getMemberLogoUserIds(userIds: string[]) {
   return new Set(userIds.filter((userId) => logoUserIds.has(userId)));
 }
 
+export async function getPublicMemberBannerItems() {
+  const users = (await getMemberUsers()).filter((user) => user.role === "member" && user.isActive);
+  const logoUserIds = await getMemberLogoUserIds(users.map((user) => user.id));
+  const visibleUsers = users.filter((user) => logoUserIds.has(user.id));
+  const userIds = visibleUsers.map((user) => user.id);
+  const [profiles, scales] = await Promise.all([
+    getMemberProfilesByUserId(userIds),
+    getMemberLogoScales(userIds),
+  ]);
+  const items = visibleUsers.map((user) => ({
+    id: user.id,
+    name: profiles[user.id]?.companyName?.trim() || user.name,
+    scale: scales[user.id],
+  }));
+  return items.sort((left, right) => left.name.localeCompare(right.name, "pl", { sensitivity: "base" }));
+}
+
+async function getMemberProfilesByUserId(userIds: string[]) {
+  if (userIds.length === 0) return {} as Record<string, MemberProfileData>;
+  try {
+    const db = getDb();
+    const rows = await db.select({ userId: memberProfiles.userId, data: memberProfiles.data })
+      .from(memberProfiles)
+      .where(inArray(memberProfiles.userId, userIds));
+    return Object.fromEntries(rows.map((row) => [row.userId, JSON.parse(row.data) as MemberProfileData]));
+  } catch {
+    try {
+      const profiles = JSON.parse(await readFile(LOCAL_MEMBER_PROFILES_FILE, "utf8")) as Record<string, MemberProfileData>;
+      return Object.fromEntries(userIds.flatMap((userId) => profiles[userId] ? [[userId, profiles[userId]]] : []));
+    } catch {
+      return {} as Record<string, MemberProfileData>;
+    }
+  }
+}
+
 export async function deleteMemberLogo(userId: string) {
   try {
-    await getMemberDocumentsBucket().delete(memberLogoKey(userId));
+    const bucket = getMemberDocumentsBucket();
+    const scales = await getMemberLogoScales((await getMemberUsers()).map((user) => user.id));
+    delete scales[userId];
+    await Promise.all([
+      bucket.delete(memberLogoKey(userId)),
+      bucket.put(MEMBER_LOGO_SETTINGS_KEY, Buffer.from(JSON.stringify(scales)), { httpMetadata: { contentType: "application/json" } }),
+    ]);
   } catch (error) {
     if (!isMissingR2Binding(error)) throw error;
   }

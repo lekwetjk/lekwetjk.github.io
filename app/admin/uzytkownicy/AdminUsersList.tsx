@@ -9,6 +9,7 @@ import EditUserForm from "./EditUserForm";
 type UserWithLogoState = {
   user: MemberUser;
   hasLogo: boolean;
+  logoScale: number;
 };
 
 export default function AdminUsersList({ users }: { users: UserWithLogoState[] }) {
@@ -41,14 +42,14 @@ export default function AdminUsersList({ users }: { users: UserWithLogoState[] }
         <span>Rola</span>
         <span>Akcje</span>
       </div>
-      {sortedUsers.map(({ user, hasLogo }) => (
-        <UserRow key={user.id} user={user} hasLogo={hasLogo} />
+      {sortedUsers.map(({ user, hasLogo, logoScale }) => (
+        <UserRow key={user.id} user={user} hasLogo={hasLogo} logoScale={logoScale} />
       ))}
     </div>
   );
 }
 
-function UserRow({ user, hasLogo }: UserWithLogoState) {
+function UserRow({ user, hasLogo, logoScale }: UserWithLogoState) {
   const detailsRef = useRef<HTMLDetailsElement>(null);
 
   async function toggleAccountState(nextStatus: boolean) {
@@ -77,7 +78,7 @@ function UserRow({ user, hasLogo }: UserWithLogoState) {
         <span style={{ color: "#1f3a5f", fontWeight: 700 }}>Edytuj</span>
       </summary>
       <div style={{ padding: "0 16px 18px", display: "grid", gap: 16 }}>
-        <EditUserForm user={{ id: user.id, username: user.username, name: user.name, role: user.role, hasLogo }} onSaved={() => { if (detailsRef.current) detailsRef.current.open = false; }} />
+        <EditUserForm user={{ id: user.id, username: user.username, name: user.name, role: user.role, hasLogo, logoScale }} onSaved={() => { if (detailsRef.current) detailsRef.current.open = false; }} />
         {user.id !== "member-admin" ? (
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             <button type="button" onClick={() => void toggleAccountState(!user.isActive)} style={{ padding: "8px 12px", border: "1px solid #d1d5db", borderRadius: 6, background: user.isActive ? "#fef3c7" : "#dcfce7", color: user.isActive ? "#92400e" : "#166534", fontWeight: 700 }}>

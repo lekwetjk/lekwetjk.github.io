@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-import { AUTH_COOKIE_NAME, saveMemberLogo, updateMemberAccount, verifySessionToken } from "../../../../lib/auth";
+import { AUTH_COOKIE_NAME, saveMemberLogo, saveMemberLogoScale, updateMemberAccount, verifySessionToken } from "../../../../lib/auth";
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = verifySessionToken((await cookies()).get(AUTH_COOKIE_NAME)?.value);
@@ -24,6 +24,8 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
     });
     if (!user) return NextResponse.json({ error: "User not found." }, { status: 404 });
     if (logo instanceof File && logo.size > 0) await saveMemberLogo(id, Buffer.from(await logo.arrayBuffer()), logo.type);
+    const logoScale = Number(formData.get("logoScale"));
+    if (formData.has("logoScale")) await saveMemberLogoScale(id, logoScale / 100);
     return NextResponse.redirect(new URL("/admin/uzytkownicy", request.url), 303);
   } catch (error) {
     return NextResponse.json({ error: error instanceof Error ? error.message : "Unknown error" }, { status: 400 });

@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { PageShell } from "../../components/SiteChrome";
-import { AUTH_COOKIE_NAME, getMemberLogoUserIds, getMemberUsers, verifySessionToken } from "../../lib/auth";
+import { AUTH_COOKIE_NAME, getMemberLogoScales, getMemberLogoUserIds, getMemberUsers, verifySessionToken } from "../../lib/auth";
 import CreateUserForm from "./CreateUserForm";
 import AdminUsersList from "./AdminUsersList";
 import MemberReport from "./MemberReport";
@@ -18,7 +18,8 @@ export default async function AdminUsersPage() {
 
   const users = await getMemberUsers();
   const logoUserIds = await getMemberLogoUserIds(users.map((user) => user.id));
-  const usersWithLogoState = users.map((user) => ({ user, hasLogo: logoUserIds.has(user.id) }));
+  const logoScales = await getMemberLogoScales(users.map((user) => user.id));
+  const usersWithLogoState = users.map((user) => ({ user, hasLogo: logoUserIds.has(user.id), logoScale: logoScales[user.id] }));
 
   return (
     <PageShell>

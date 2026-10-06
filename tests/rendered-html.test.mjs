@@ -120,11 +120,32 @@ test("member logos use private R2 storage with legacy D1 compatibility", async (
   assert.match(auth, /MEMBER_LOGOS_PREFIX = "member-logos\/"/);
   assert.match(auth, /getMemberDocumentsBucket\(\)\.put\(memberLogoKey\(userId\)/);
   assert.match(auth, /getMemberDocumentsBucket\(\)\.get\(memberLogoKey\(userId\)\)/);
-  assert.match(auth, /getMemberDocumentsBucket\(\)\.delete\(memberLogoKey\(userId\)\)/);
+  assert.match(auth, /bucket\.delete\(memberLogoKey\(userId\)\)/);
   assert.ok(auth.indexOf("getMemberDocumentsBucket().get(memberLogoKey(userId))") < auth.indexOf("db.select().from(memberUserLogos)"));
   assert.match(createRoute, /await saveMemberLogo\(user\.id/);
   assert.match(updateRoute, /await saveMemberLogo\(id/);
   assert.match(logoRoute, /Buffer\.from\(logo\.content, "base64"\)/);
+});
+
+test("member ticker uses active member logos with bounded administrator-controlled scaling", async () => {
+  const ticker = await readProjectFile("app/components/CommissionTicker.tsx");
+  const auth = await readProjectFile("app/lib/auth.ts");
+  const publicLogoRoute = await readProjectFile("app/api/member-logos/[id]/route.ts");
+  const editForm = await readProjectFile("app/admin/uzytkownicy/EditUserForm.tsx");
+  const styles = await readProjectFile("app/globals.css");
+
+  assert.match(ticker, /getPublicMemberBannerItems/);
+  assert.doesNotMatch(ticker, /commission-banner\.json/);
+  assert.match(ticker, /animationDuration: "112s"/);
+  assert.match(ticker, /--member-logo-scale/);
+  assert.match(auth, /user\.role === "member" && user\.isActive/);
+  assert.doesNotMatch(auth, /user\.role === "admin" && user\.isActive/);
+  assert.match(auth, /profiles\[user\.id\]\?\.companyName\?\.trim\(\) \|\| user\.name/);
+  assert.match(publicLogoRoute, /user\.id === id && user\.role === "member" && user\.isActive/);
+  assert.doesNotMatch(publicLogoRoute, /getMemberProfile/);
+  assert.match(editForm, /name="logoScale" type="range" min="50" max="100"/);
+  assert.match(styles, /\.commission-ticker-logo-wrap \{[\s\S]*width: 100%;[\s\S]*height: 76px;[\s\S]*overflow: hidden;/);
+  assert.match(styles, /\.commission-ticker-logo \{[\s\S]*object-fit: contain;[\s\S]*object-position: center;/);
 });
 
 test("report archive is public while bulletins and PDF files remain member-only", async () => {

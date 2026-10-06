@@ -1,55 +1,42 @@
-import bannerManifest from "../data/commission-banner.json";
+import type { CSSProperties } from "react";
+import { connection } from "next/server";
+
+import { getPublicMemberBannerItems } from "../lib/auth";
 import { withBasePath } from "../lib/basePath";
 
-type BannerItem = {
-  folder: string;
-  fileName: string;
-  href: string;
-};
+export async function CommissionTicker() {
+  await connection();
+  const items = await getPublicMemberBannerItems();
 
-function loadBannerItems(): BannerItem[] {
-  return bannerManifest.filter(
-    (item): item is BannerItem =>
-      !!item &&
-      typeof item === "object" &&
-      typeof item.folder === "string" &&
-      typeof item.fileName === "string" &&
-      typeof item.href === "string",
-  );
-}
-
-export function CommissionTicker() {
-  const typedItems = loadBannerItems();
-
-  if (!typedItems.length) {
+  if (!items.length) {
     return null;
   }
 
-  const doubled = [...typedItems, ...typedItems];
+  const repetitions = Math.max(1, Math.ceil(6 / items.length));
+  const loopItems = Array.from({ length: repetitions }, () => items).flat();
+  const doubled = [...loopItems, ...loopItems];
 
   return (
-    <section className="commission-ticker" aria-label="Materiały komisji KRD">
+    <section className="commission-ticker" aria-label="Logotypy członków KRD-IG">
       <div className="commission-ticker-track-wrap">
-        <div className="commission-ticker-track" style={{ animationDuration: "190s" }}>
+        <div className="commission-ticker-track" style={{ animationDuration: "112s" }}>
           {doubled.map((item, index) => (
-            <a
-              key={`${item.folder}-${item.fileName}-${index}`}
+            <article
+              key={`${item.id}-${index}`}
               className="commission-ticker-item"
-              href={withBasePath(item.href)}
-              target="_blank"
-              rel="noopener noreferrer"
-              title={`${item.folder}: ${item.fileName}`}
+              title={item.name}
+              style={{ "--member-logo-scale": `${item.scale * 100}%` } as CSSProperties}
             >
               <span className="commission-ticker-logo-wrap" aria-hidden="true">
                 <img
                   className="commission-ticker-logo"
-                  src={withBasePath(item.href)}
+                  src={withBasePath(`/api/member-logos/${encodeURIComponent(item.id)}`)}
                   alt=""
                   loading="lazy"
                 />
               </span>
-              <span className="commission-ticker-folder">{item.folder}</span>
-            </a>
+              <span className="commission-ticker-folder">{item.name}</span>
+            </article>
           ))}
         </div>
       </div>
