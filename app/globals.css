@@ -299,6 +299,7 @@ summary:focus-visible {
   line-height: 1.01;
   text-transform: uppercase;
   margin-left: -2px;
+  white-space: nowrap;
 }
 
 .site-header .brand-en-wordmark {
@@ -754,10 +755,14 @@ summary:focus-visible {
 
 .czlonkowie-map-frame {
   display: block;
-  width: 100%;
-  max-width: 100%;
-  min-height: 560px;
+  position: relative;
+  left: 50%;
+  width: min(1400px, calc(100vw - 48px));
+  max-width: none;
+  height: 900px;
+  min-height: 900px;
   margin-top: 14px;
+  transform: translateX(-50%);
   border: 1px solid var(--line);
   background: #fff;
 }

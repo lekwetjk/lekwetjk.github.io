@@ -4824,10 +4824,15 @@ export async function ArticleBody({
           <iframe
             className="czlonkowie-map-frame"
             title={language === "en" ? "KRD-IG members map" : "Mapa członków KRD-IG"}
-            src="https://test.mapcreator.pl/krdig/index.php?menu=hidden"
-            loading="eager"
+            src={
+              language === "en"
+                ? "https://www.procarto.net/krd-ig/map.html?map=krd-ig-en"
+                : "https://www.procarto.net/krd-ig/map.html"
+            }
+            loading="lazy"
             width="100%"
-            height="768"
+            height="900"
+            style={{ border: 0 }}
           />
         )}
         {slug === "czlonkowie" && (
@@ -4837,7 +4842,11 @@ export async function ArticleBody({
               : "Jeśli mapa nie wyświetla się poprawnie, otwórz ją w nowej karcie: "}{" "}
             <a
               className="inline-download-link"
-              href="https://test.mapcreator.pl/krdig/index.php?menu=hidden"
+              href={
+                language === "en"
+                  ? "https://www.procarto.net/krd-ig/map.html?map=krd-ig-en"
+                  : "https://www.procarto.net/krd-ig/map.html"
+              }
               target="_blank"
               rel="noopener noreferrer"
             >

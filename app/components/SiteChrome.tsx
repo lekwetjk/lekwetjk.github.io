@@ -53,7 +53,7 @@ export function Brand({
   language?: SiteLanguage;
 }) {
   const isEnglish = language === "en";
-  const logoSrc = isEnglish ? "/media/logo-krd-ig-en.svg" : "/media/logo-krd-ig.svg";
+  const logoSrc = "/media/logo-krd-ig.svg";
 
   if (isEnglish) {
     return (
