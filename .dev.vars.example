@@ -5,3 +5,7 @@ OPENAI_API_KEY=sk-your-real-openai-key
 OPENAI_MODEL=gpt-4.1-mini
 # Optional strict browser origin, e.g. https://krd-ig.com.pl
 CHAT_ALLOWED_ORIGIN=
+
+# Server-only secret for GET /api/members (X-API-Key header).
+# Generate a random key before enabling the endpoint; never use NEXT_PUBLIC_*.
+MEMBERS_API_KEY=

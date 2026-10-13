@@ -287,7 +287,7 @@ export async function saveMemberLogo(userId: string, content: Buffer, contentTyp
   }
 }
 
-export async function getMemberLogo(userId: string) {
+export async function getMemberLogo(userId: string, options: { strict?: boolean } = {}) {
   try {
     const object = await getMemberDocumentsBucket().get(memberLogoKey(userId));
     if (object) {
@@ -303,7 +303,8 @@ export async function getMemberLogo(userId: string) {
     await db.run(sql`CREATE TABLE IF NOT EXISTS member_user_logos (user_id TEXT PRIMARY KEY NOT NULL, content TEXT NOT NULL, content_type TEXT NOT NULL, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)`);
     const rows = await db.select().from(memberUserLogos).where(eq(memberUserLogos.userId, userId)).limit(1);
     if (rows[0]) return rows[0];
-  } catch {
+  } catch (error) {
+    if (options.strict) throw error;
     const logo = (await readLocalMemberLogos())[userId];
     if (logo) return logo;
   }

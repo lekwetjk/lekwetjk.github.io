@@ -10,11 +10,13 @@ test("publication SEO and image fit migrate legacy data and persist independentl
   const runtime = globalThis as typeof globalThis & { env?: { DB?: unknown; MEMBER_DOCUMENTS?: unknown } };
   const previousEnv = runtime.env;
   const database = new DatabaseSync(":memory:");
+  const preparedQueries: string[] = [];
   database.exec("CREATE TABLE managed_posts (id TEXT PRIMARY KEY NOT NULL, kind TEXT NOT NULL, slug TEXT NOT NULL UNIQUE, title TEXT NOT NULL, excerpt TEXT NOT NULL, content TEXT NOT NULL, category TEXT NOT NULL, image_key TEXT, image_content_type TEXT, source TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, created_by TEXT NOT NULL)");
   database.exec("INSERT INTO managed_posts (id, kind, slug, title, excerpt, content, category, created_by) VALUES ('legacy', 'news', 'legacy', 'Original title', 'Original excerpt', 'Original content', 'Aktualności', 'test')");
   runtime.env = {
     DB: {
       prepare(query: string) {
+        preparedQueries.push(query);
         const statement = database.prepare(query);
         return {
           bind(...params: SQLInputValue[]) {
@@ -123,6 +125,9 @@ test("publication SEO and image fit migrate legacy data and persist independentl
       assert.equal(await getManagedPostBySlug(normalPost.slug), null);
       assert.equal((await listManagedPosts(kind)).some((post) => post.slug === normalPost.slug), false);
     }
+    assert.equal(preparedQueries.filter((query) => query.startsWith("CREATE TABLE IF NOT EXISTS managed_posts")).length, 1);
+    assert.equal(preparedQueries.filter((query) => query.startsWith("PRAGMA table_info(managed_posts)")).length, 1);
+    assert.equal(preparedQueries.filter((query) => query.startsWith("ALTER TABLE managed_posts ADD COLUMN")).length, 5);
   } finally {
     runtime.env = previousEnv;
     database.close();

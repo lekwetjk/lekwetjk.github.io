@@ -70,6 +70,82 @@ curl -X POST http://localhost:3000/api/chat \
 	-d '{"message":"Czym zajmuje się KRD-IG?"}'
 ```
 
+## API listy członków
+
+`GET /api/members` udostępnia aktualną listę **wszystkich użytkowników z rolą
+„Członek”**, także nieaktywnych. Administratorzy nie są zwracani.
+Endpoint wymaga nagłówka `X-API-Key` i działa na serwerze Next.js/Vinext lub
+Cloudflare Worker, nie na statycznym GitHub Pages.
+
+### Konfiguracja i autoryzacja
+
+- Wygeneruj losowy klucz (co najmniej 32 bajty), np.:
+  `node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"`.
+- Ustaw go jako sekret `MEMBERS_API_KEY` w środowisku serwera. Lokalnie użyj
+  pliku `.env.local` dla Vinext/Next.js albo `.dev.vars` dla środowiska Wrangler.
+- Na Cloudflare po buildzie dodaj sekret poleceniem
+  `npx wrangler secret put MEMBERS_API_KEY --config dist/server/wrangler.json`
+  (lub w panelu właściwego Workera). Podaj wartość w interaktywnym monicie.
+- Przekaż ten sam klucz aplikacji integrującej się z API. Używaj HTTPS.
+  Nie umieszczaj klucza w repozytorium, adresie URL, zmiennych `NEXT_PUBLIC_*`
+  ani kodzie przeglądarki. Integracja jest przeznaczona do komunikacji serwer–serwer.
+- Aby zmienić klucz, zaktualizuj sekret serwera i konfigurację aplikacji zewnętrznej.
+  Nie jest potrzebny nowy build.
+
+Przykład wywołania (zastąp wartość nagłówka swoim kluczem):
+
+```bash
+curl https://krd-ig.com.pl/api/members \
+  -H "X-API-Key: TWOJ_KLUCZ"
+```
+
+### Format odpowiedzi
+
+```json
+{
+  "members": [
+    {
+      "id": "member-123",
+      "name": "Przykładowa firma",
+      "address": {
+        "street": "ul. Przykładowa 1",
+        "postalCode": "00-001",
+        "city": "Warszawa",
+        "voivodeship": "mazowieckie"
+      },
+      "description": "Opis firmy",
+      "logo": "data:image/png;base64,...",
+      "scopes": ["Produkcja"],
+      "species": ["Kurczak"],
+      "assortments": ["Mięso"],
+      "exportPermits": ["Japonia"],
+      "certifications": ["BRC"],
+      "website": "https://example.com"
+    }
+  ]
+}
+```
+
+`name` pochodzi z nazwy firmy w profilu; przy jej braku używana jest nazwa
+użytkownika (nie login). `description` odpowiada polu dodatkowych informacji
+profilu. `logo` to kompletny obraz w formacie data URL (MIME + Base64), albo
+`null`, jeśli nie został dodany. Brakujące teksty mają wartość `""`, listy `[]`.
+Wyniki są uporządkowane według identyfikatora. Pusta baza członków zwraca
+`{"members":[]}`.
+
+Odpowiedź zawiera wyłącznie powyższe pola, bez loginów, haseł, hashy haseł,
+danych sesji, danych osoby kontaktowej, telefonu, e-maila i NIP-u.
+Odpowiedzi mają `Cache-Control: no-store`. Statusy błędów:
+
+- `401` — brak lub nieprawidłowy nagłówek `X-API-Key`;
+- `503` — serwer nie ma skonfigurowanego sekretu;
+- `500` — błąd bazy/profilu lub odczytu logo; API nie zastępuje danych
+  produkcyjnych kontami testowymi ani nie zwraca częściowej listy.
+
+Wymagane są skonfigurowany binding D1 `DB` i tabele członków/profili.
+Logotypy są odczytywane z R2 `MEMBER_DOCUMENTS` lub starszego magazynu D1,
+tak jak w serwisie.
+
 ## Build produkcyjny
 
 ```bash

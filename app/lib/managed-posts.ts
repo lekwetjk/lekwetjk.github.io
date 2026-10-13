@@ -11,7 +11,15 @@ export const TENDER_CATEGORIES = ["Zapytania ofertowe", "Zaproszenie do składan
 const PRODUCTION_API_BASE = "https://krd-ig-website-concept.lek-wet-jk.workers.dev";
 const importablePosts = (generatedPosts as NewsPost[]).filter((post) => post.slug === "wybierz-twoje-wartosci");
 
-async function ensureManagedPostsTable() {
+let managedPostsInitialization:
+  | { binding: unknown; promise: ReturnType<typeof initializeManagedPostsTable> }
+  | undefined;
+
+function getDatabaseBinding() {
+  return (globalThis as typeof globalThis & { env?: { DB?: unknown } }).env?.DB;
+}
+
+async function initializeManagedPostsTable() {
   let db: ReturnType<typeof getDb>;
   try {
     db = getDb();
@@ -20,9 +28,9 @@ async function ensureManagedPostsTable() {
     db = await getLocalManagedPostsDb();
   }
   await db.run(sql`CREATE TABLE IF NOT EXISTS managed_posts (id TEXT PRIMARY KEY NOT NULL, kind TEXT NOT NULL, slug TEXT NOT NULL UNIQUE, title TEXT NOT NULL, excerpt TEXT NOT NULL, content TEXT NOT NULL, category TEXT NOT NULL, image_key TEXT, image_content_type TEXT, source TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, created_by TEXT NOT NULL)`);
-  try { await db.run(sql`ALTER TABLE managed_posts ADD COLUMN attachments_json TEXT NOT NULL DEFAULT '[]'`); } catch { /* column exists */ }
   const columns = await db.all<{ name: string }>(sql`PRAGMA table_info(managed_posts)`);
   for (const [name, statement] of [
+    ["attachments_json", sql`ALTER TABLE managed_posts ADD COLUMN attachments_json TEXT NOT NULL DEFAULT '[]'`],
     ["seo_title", sql`ALTER TABLE managed_posts ADD COLUMN seo_title TEXT NOT NULL DEFAULT ''`],
     ["seo_description", sql`ALTER TABLE managed_posts ADD COLUMN seo_description TEXT NOT NULL DEFAULT ''`],
     ["image_fit", sql`ALTER TABLE managed_posts ADD COLUMN image_fit TEXT NOT NULL DEFAULT 'contain'`],
@@ -37,6 +45,26 @@ async function ensureManagedPostsTable() {
     }
   }
   return db;
+}
+
+async function ensureManagedPostsTable() {
+  const binding = getDatabaseBinding();
+  const initialization = managedPostsInitialization;
+  if (initialization && initialization.binding === binding) {
+    return initialization.promise;
+  }
+
+  const promise = initializeManagedPostsTable();
+  managedPostsInitialization = { binding, promise };
+
+  try {
+    return await promise;
+  } catch (error) {
+    if (managedPostsInitialization?.promise === promise) {
+      managedPostsInitialization = undefined;
+    }
+    throw error;
+  }
 }
 
 function validateImageFit(value = "contain"): "contain" | "cover" {

@@ -31,6 +31,7 @@ interface Env {
   ASSETS: Fetcher;
   DB: D1Database;
   MEMBER_DOCUMENTS: R2Bucket;
+  MEMBERS_API_KEY?: string;
   OPENAI_API_KEY?: string;
   OPENAI_MODEL?: string;
   CHAT_ALLOWED_ORIGIN?: string;
