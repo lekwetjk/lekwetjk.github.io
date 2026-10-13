@@ -14,6 +14,8 @@ import {
 
 export type MemberProfileDictionaries = Record<MemberProfileDictionaryCategory, MemberProfileDictionaryOption[]>;
 
+const D1_SEED_BATCH_SIZE = 10;
+
 let initialization:
   | { binding: unknown; promise: ReturnType<typeof initializeDictionaries> }
   | undefined;
@@ -57,9 +59,11 @@ async function initializeDictionaries() {
       isActive: "true" as const,
     })),
   );
-  await db.insert(memberProfileDictionaryOptions).values(defaults).onConflictDoNothing({
-    target: memberProfileDictionaryOptions.id,
-  });
+  for (let index = 0; index < defaults.length; index += D1_SEED_BATCH_SIZE) {
+    await db.insert(memberProfileDictionaryOptions)
+      .values(defaults.slice(index, index + D1_SEED_BATCH_SIZE))
+      .onConflictDoNothing({ target: memberProfileDictionaryOptions.id });
+  }
 
   const legacyTable = await db.all<{ name: string }>(
     sql`SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'member_export_permit_options'`,

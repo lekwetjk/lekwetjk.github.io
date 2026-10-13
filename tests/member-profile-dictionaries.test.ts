@@ -13,6 +13,7 @@ test("member profile dictionaries are bilingual and administrator-managed", asyn
   const runtime = globalThis as typeof globalThis & { env?: { DB?: unknown } };
   const previousEnv = runtime.env;
   const database = new DatabaseSync(":memory:");
+  let maximumBoundParameters = 0;
   database.exec("CREATE TABLE member_export_permit_options (name TEXT PRIMARY KEY NOT NULL, created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)");
   database.exec("INSERT INTO member_export_permit_options (name) VALUES ('Nowy rynek')");
   runtime.env = {
@@ -21,6 +22,8 @@ test("member profile dictionaries are bilingual and administrator-managed", asyn
         const statement = database.prepare(query);
         return {
           bind(...params: SQLInputValue[]) {
+            maximumBoundParameters = Math.max(maximumBoundParameters, params.length);
+            if (params.length > 100) throw new Error("D1 parameter limit exceeded");
             return {
               async run() { return statement.run(...params); },
               async all() { return { results: statement.all(...params) }; },
@@ -40,6 +43,7 @@ test("member profile dictionaries are bilingual and administrator-managed", asyn
     }
     assert.equal(initial.exportPermits.find((item) => item.valuePl === "Arabia Saudyjska")?.valueEn, "Saudi Arabia");
     assert.equal(initial.exportPermits.find((item) => item.valuePl === "Nowy rynek")?.valueEn, "Nowy rynek");
+    assert.ok(maximumBoundParameters <= 100);
 
     const created = await createMemberProfileDictionaryOption({
       category: "poultrySpecies",
