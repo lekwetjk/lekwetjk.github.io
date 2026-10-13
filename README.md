@@ -146,6 +146,18 @@ Wymagane są skonfigurowany binding D1 `DB` i tabele członków/profili.
 Logotypy są odczytywane z R2 `MEMBER_DOCUMENTS` lub starszego magazynu D1,
 tak jak w serwisie.
 
+### Słowniki formularza członkowskiego
+
+Pola wyboru formularza „Dołącz do nas” i profili członków korzystają z tabeli
+D1 `member_profile_dictionary_options`. Każda wartość zawiera polską nazwę,
+angielskie tłumaczenie, kolejność i status aktywności. Domyślne wartości są
+tworzone automatycznie przy pierwszym użyciu.
+
+Administrator zarządza wszystkimi sześcioma słownikami w swoim profilu:
+województwami, zakresem działalności, gatunkami drobiu, asortymentem,
+certyfikatami i uprawnieniami eksportowymi. Dezaktywowane wartości nie są
+pokazywane w formularzach, ale pozostają w bazie.
+
 ## Build produkcyjny
 
 ```bash

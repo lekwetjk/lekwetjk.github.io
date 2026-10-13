@@ -2,15 +2,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { MemberProfileData } from "../lib/member-profile";
+import {
+  memberProfileDictionaryCategories,
+  type MemberProfileDictionaryCategory,
+  type MemberProfileDictionaryOption,
+} from "../lib/member-profile-options";
 
-type MembershipSignupFormProps = {
-  voivodeships: string[];
-  businessScopes: string[];
-  poultrySpecies: string[];
-  assortments: string[];
-  certifications: string[];
-  exportPermits: string[];
-};
+type MembershipSignupFormProps = Record<MemberProfileDictionaryCategory, MemberProfileDictionaryOption[]>;
 
 type FormState = {
   contactPerson: string;
@@ -60,7 +58,14 @@ export function MembershipSignupForm({
   const [selectedAssortments, setSelectedAssortments] = useState<string[]>(initialData?.selectedAssortments ?? []);
   const [selectedCertifications, setSelectedCertifications] = useState<string[]>(initialData?.selectedCertifications ?? []);
   const [selectedExportPermits, setSelectedExportPermits] = useState<string[]>(initialData?.selectedExportPermits ?? []);
-  const [availableExportPermits, setAvailableExportPermits] = useState(exportPermits);
+  const [availableOptions, setAvailableOptions] = useState<MembershipSignupFormProps>({
+    voivodeships,
+    businessScopes,
+    poultrySpecies,
+    assortments,
+    certifications,
+    exportPermits,
+  });
   const [errors, setErrors] = useState<string[]>([]);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const submissionEmail = "krd-ig@krd-ig.com.pl";
@@ -68,8 +73,13 @@ export function MembershipSignupForm({
   useEffect(() => {
     void fetch("/api/member-profile/options")
       .then((response) => response.ok ? response.json() : null)
-      .then((data: { exportPermits?: string[] } | null) => {
-        if (data?.exportPermits?.length) setAvailableExportPermits(data.exportPermits);
+      .then((data: { dictionaries?: MembershipSignupFormProps } | null) => {
+        if (
+          data?.dictionaries
+          && memberProfileDictionaryCategories.every((category) => Array.isArray(data.dictionaries?.[category]))
+        ) {
+          setAvailableOptions(data.dictionaries);
+        }
       })
       .catch(() => undefined);
   }, []);
@@ -280,9 +290,9 @@ export function MembershipSignupForm({
             required
           >
             <option value="">Wybierz...</option>
-            {voivodeships.map((item) => (
-              <option key={item} value={item}>
-                {item}
+            {availableOptions.voivodeships.map((item) => (
+              <option key={item.id} value={item.valuePl}>
+                {item.valuePl}
               </option>
             ))}
           </select>
@@ -292,14 +302,14 @@ export function MembershipSignupForm({
       <fieldset>
         <legend>Zakres działalności *</legend>
         <div className="membership-chip-grid">
-          {businessScopes.map((scope) => (
-            <label key={scope} className="membership-chip-checkbox">
+          {availableOptions.businessScopes.map((scope) => (
+            <label key={scope.id} className="membership-chip-checkbox">
               <input
                 type="checkbox"
-                checked={selectedScopes.includes(scope)}
-                onChange={() => toggleValue(scope, selectedScopes, setSelectedScopes)}
+                checked={selectedScopes.includes(scope.valuePl)}
+                onChange={() => toggleValue(scope.valuePl, selectedScopes, setSelectedScopes)}
               />
-              <span>{scope}</span>
+              <span>{scope.valuePl}</span>
             </label>
           ))}
         </div>
@@ -308,14 +318,14 @@ export function MembershipSignupForm({
       <fieldset>
         <legend>Gatunek drobiu</legend>
         <div className="membership-chip-grid">
-          {poultrySpecies.map((species) => (
-            <label key={species} className="membership-chip-checkbox">
+          {availableOptions.poultrySpecies.map((species) => (
+            <label key={species.id} className="membership-chip-checkbox">
               <input
                 type="checkbox"
-                checked={selectedSpecies.includes(species)}
-                onChange={() => toggleValue(species, selectedSpecies, setSelectedSpecies)}
+                checked={selectedSpecies.includes(species.valuePl)}
+                onChange={() => toggleValue(species.valuePl, selectedSpecies, setSelectedSpecies)}
               />
-              <span>{species}</span>
+              <span>{species.valuePl}</span>
             </label>
           ))}
         </div>
@@ -324,14 +334,14 @@ export function MembershipSignupForm({
       <fieldset>
         <legend>Asortyment</legend>
         <div className="membership-chip-grid">
-          {assortments.map((item) => (
-            <label key={item} className="membership-chip-checkbox">
+          {availableOptions.assortments.map((item) => (
+            <label key={item.id} className="membership-chip-checkbox">
               <input
                 type="checkbox"
-                checked={selectedAssortments.includes(item)}
-                onChange={() => toggleValue(item, selectedAssortments, setSelectedAssortments)}
+                checked={selectedAssortments.includes(item.valuePl)}
+                onChange={() => toggleValue(item.valuePl, selectedAssortments, setSelectedAssortments)}
               />
-              <span>{item}</span>
+              <span>{item.valuePl}</span>
             </label>
           ))}
         </div>
@@ -340,14 +350,14 @@ export function MembershipSignupForm({
       <fieldset>
         <legend>Certyfikaty</legend>
         <div className="membership-chip-grid">
-          {certifications.map((item) => (
-            <label key={item} className="membership-chip-checkbox">
+          {availableOptions.certifications.map((item) => (
+            <label key={item.id} className="membership-chip-checkbox">
               <input
                 type="checkbox"
-                checked={selectedCertifications.includes(item)}
-                onChange={() => toggleValue(item, selectedCertifications, setSelectedCertifications)}
+                checked={selectedCertifications.includes(item.valuePl)}
+                onChange={() => toggleValue(item.valuePl, selectedCertifications, setSelectedCertifications)}
               />
-              <span>{item}</span>
+              <span>{item.valuePl}</span>
             </label>
           ))}
         </div>
@@ -358,10 +368,10 @@ export function MembershipSignupForm({
           Zaznacz uprawnienia eksportowe {selectedExportPermits.length ? `(${selectedExportPermits.length} wybr.)` : ""}
         </summary>
         <div className="membership-chip-grid">
-          {availableExportPermits.map((item) => (
-            <label key={item} className="membership-chip-checkbox">
-              <input type="checkbox" checked={selectedExportPermits.includes(item)} onChange={() => toggleValue(item, selectedExportPermits, setSelectedExportPermits)} />
-              <span>{item}</span>
+          {availableOptions.exportPermits.map((item) => (
+            <label key={item.id} className="membership-chip-checkbox">
+              <input type="checkbox" checked={selectedExportPermits.includes(item.valuePl)} onChange={() => toggleValue(item.valuePl, selectedExportPermits, setSelectedExportPermits)} />
+              <span>{item.valuePl}</span>
             </label>
           ))}
         </div>

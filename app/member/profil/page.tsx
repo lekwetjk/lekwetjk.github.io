@@ -5,7 +5,7 @@ import { PageShell } from "../../components/SiteChrome";
 import { AUTH_COOKIE_NAME, getMemberLogo, getMemberProfile, isMemberPasswordResetRequired, verifySessionToken } from "../../lib/auth";
 import { withBasePath } from "../../lib/basePath";
 import MemberProfileSection from "./MemberProfileSection";
-import ExportPermitOptions from "../../admin/uzytkownicy/ExportPermitOptions";
+import ProfileDictionaryManager from "../../admin/uzytkownicy/ProfileDictionaryManager";
 
 export default async function MemberProfilePage() {
   const cookieStore = await cookies();
@@ -72,7 +72,7 @@ export default async function MemberProfilePage() {
                 <span style={{ display: "block", marginTop: 6, color: "#475569" }}>Publikuj treść i grafikę oraz wybieraj kategorię zapytania ofertowego.</span>
               </a>
             ) : null}
-            {session.role === "admin" ? <ExportPermitOptions /> : null}
+            {session.role === "admin" ? <ProfileDictionaryManager /> : null}
           </div>
           <p style={{ marginTop: 32, overflowWrap: "anywhere" }}>
             Administrator: <a href="mailto:krd-ig@krd-ig.com.pl">krd-ig@krd-ig.com.pl</a>

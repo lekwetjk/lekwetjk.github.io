@@ -13,6 +13,7 @@ import { getLocalProposals } from "../lib/local-proposals-server";
 import { cleanProposedParagraph, localContentHref } from "../lib/local-proposal-content";
 import { knowledgePages, newsPosts } from "../lib/content";
 import { applyManagedPostOverrides } from "../lib/managed-posts";
+import { memberProfileOptions } from "../lib/member-profile-options";
 import { connection } from "next/server";
 
 function looksLikeHeading(value: string) {
@@ -1830,60 +1831,6 @@ export async function ArticleBody({
       links.find((link) => link.label.trim().toLocaleUpperCase("pl") === "POBIERZ")?.href ??
       "https://krd-ig.com.pl/wp-content/uploads/2025/02/Deklaracja-przystapienia-do-Izby-2023.doc";
 
-    const voivodeships = [
-      "kujawsko-pomorskie",
-      "lubelskie",
-      "lubuskie",
-      "łódzkie",
-      "małopolskie",
-      "mazowieckie",
-      "opolskie",
-      "podkarpackie",
-      "podlaskie",
-      "pomorskie",
-      "śląskie",
-      "świętokrzyskie",
-      "warmińsko-mazurskie",
-      "wielkopolskie",
-      "zachodniopomorskie",
-    ];
-
-    const businessScopes = [
-      "Ferma hodowlana",
-      "Ferma reprodukcyjna",
-      "Ferma zarodowa",
-      "Jednostka naukowo-badawcza",
-      "Produkcja jaj spożywczych",
-      "Produkcja puchu i pierza",
-      "Produkcja towarzysząca",
-      "Produkcja/mieszalnia pasz",
-      "Przetwórstwo",
-      "Ubojnia",
-      "Zakład wylęgowy",
-      "Inne",
-    ];
-
-    const poultrySpecies = ["Kurczak", "Kaczka", "Gęś", "Indyk", "Perliczka", "Inne"];
-    const assortments = ["Świeże", "Mrożone", "Przetwory", "Inne"];
-    const certifications = ["BRC", "Halal", "IFS", "Kosher", "QAFP", "Red Tractor", "Inne"];
-    const exportPermits = [
-      "Arabia Saudyjska",
-      "Białoruś",
-      "Chiny",
-      "Egipt",
-      "Japonia",
-      "Kanada",
-      "Korea Pd.",
-      "Kuba",
-      "RPA",
-      "Singapur",
-      "Tajwan",
-      "Ukraina",
-      "USA",
-      "Wietnam",
-      "Inne",
-    ];
-
     return (
       <div className="article-layout article-layout-full shell">
         <article className="prose prose-dolacz">
@@ -1905,14 +1852,7 @@ export async function ArticleBody({
             </p>
           </section>
 
-          <MembershipSignupForm
-            voivodeships={voivodeships}
-            businessScopes={businessScopes}
-            poultrySpecies={poultrySpecies}
-            assortments={assortments}
-            certifications={certifications}
-            exportPermits={exportPermits}
-          />
+          <MembershipSignupForm {...memberProfileOptions} />
 
         </article>
       </div>

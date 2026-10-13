@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
-import { getExportPermits } from "../../../lib/export-permits";
+import { getMemberProfileDictionaries } from "../../../lib/member-profile-dictionaries";
 
 export async function GET() {
-  return NextResponse.json({ exportPermits: await getExportPermits() });
+  return NextResponse.json({ dictionaries: await getMemberProfileDictionaries() });
 }

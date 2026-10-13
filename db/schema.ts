@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 export const memberUsers = sqliteTable("member_users", {
   id: text("id").primaryKey(),
@@ -28,6 +28,17 @@ export const memberProfiles = sqliteTable("member_profiles", {
 export const memberExportPermitOptions = sqliteTable("member_export_permit_options", {
   name: text("name").primaryKey(),
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+});
+
+export const memberProfileDictionaryOptions = sqliteTable("member_profile_dictionary_options", {
+  id: text("id").primaryKey(),
+  category: text("category").notNull(),
+  valuePl: text("value_pl").notNull(),
+  valueEn: text("value_en").notNull(),
+  sortOrder: integer("sort_order").notNull().default(0),
+  isActive: text("is_active", { enum: ["true", "false"] }).notNull().default("true"),
+  createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
 export const memberDocuments = sqliteTable("member_documents", {
