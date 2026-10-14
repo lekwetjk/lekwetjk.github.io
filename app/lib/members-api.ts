@@ -4,6 +4,12 @@ import { asc, eq } from "drizzle-orm";
 import { getDb } from "../../db/index.ts";
 import { memberProfiles, memberUsers } from "../../db/schema.ts";
 import { getMemberLogo } from "./auth.ts";
+import {
+  getMemberProfileDictionaries,
+  type MemberProfileDictionaries,
+} from "./member-profile-dictionaries.ts";
+
+export type MembersApiLanguage = "pl" | "en";
 
 export function getMembersApiKey(): string | undefined {
   const bindings = (globalThis as typeof globalThis & {
@@ -43,7 +49,25 @@ function profileList(profile: Record<string, unknown>, key: string): string[] {
   return value;
 }
 
-export async function getApiMembers() {
+function translateValue(
+  value: string,
+  options: MemberProfileDictionaries[keyof MemberProfileDictionaries],
+  language: MembersApiLanguage,
+) {
+  if (language === "pl") return value;
+  return options.find((option) => option.valuePl === value)?.valueEn ?? value;
+}
+
+function translateList(
+  values: string[],
+  options: MemberProfileDictionaries[keyof MemberProfileDictionaries],
+  language: MembersApiLanguage,
+) {
+  return values.map((value) => translateValue(value, options, language));
+}
+
+export async function getApiMembers(language: MembersApiLanguage = "pl") {
+  const dictionaries = await getMemberProfileDictionaries(true);
   const rows = await getDb()
     .select({ id: memberUsers.id, name: memberUsers.name, profileData: memberProfiles.data })
     .from(memberUsers)
@@ -61,15 +85,19 @@ export async function getApiMembers() {
         street: profileText(profile, "streetAddress"),
         postalCode: profileText(profile, "postalCode"),
         city: profileText(profile, "city"),
-        voivodeship: profileText(profile, "voivodeship"),
+        voivodeship: translateValue(
+          profileText(profile, "voivodeship"),
+          dictionaries.voivodeships,
+          language,
+        ),
       },
       description: profileText(profile, "notes"),
       logo: logo ? `data:${logo.contentType};base64,${logo.content}` : null,
-      scopes: profileList(profile, "selectedScopes"),
-      species: profileList(profile, "selectedSpecies"),
-      assortments: profileList(profile, "selectedAssortments"),
-      exportPermits: profileList(profile, "selectedExportPermits"),
-      certifications: profileList(profile, "selectedCertifications"),
+      scopes: translateList(profileList(profile, "selectedScopes"), dictionaries.businessScopes, language),
+      species: translateList(profileList(profile, "selectedSpecies"), dictionaries.poultrySpecies, language),
+      assortments: translateList(profileList(profile, "selectedAssortments"), dictionaries.assortments, language),
+      exportPermits: translateList(profileList(profile, "selectedExportPermits"), dictionaries.exportPermits, language),
+      certifications: translateList(profileList(profile, "selectedCertifications"), dictionaries.certifications, language),
       website: profileText(profile, "website"),
     };
   }));

@@ -25,7 +25,8 @@ export async function GET(request: Request) {
   }
 
   try {
-    return json({ members: await getApiMembers() });
+    const language = new URL(request.url).searchParams.get("lang") === "en" ? "en" : "pl";
+    return json({ members: await getApiMembers(language) });
   } catch (error) {
     console.error("[members-api] Failed to load members.", error);
     return json({ error: "Unable to load members" }, 500);

@@ -15,8 +15,10 @@ const runtime = globalThis as typeof globalThis & {
   };
 };
 
-function request(key: string | null = KEY) {
-  return new Request("https://example.com/api/members", {
+function request(key: string | null = KEY, lang?: string) {
+  const url = new URL("https://example.com/api/members");
+  if (lang !== undefined) url.searchParams.set("lang", lang);
+  return new Request(url, {
     headers: key === null ? {} : { "X-API-Key": key },
   });
 }
@@ -44,6 +46,7 @@ async function withDatabase(run: (database: DatabaseSync) => Promise<void>) {
           bind(...params: SQLInputValue[]) {
             return {
               async run() { return statement.run(...params); },
+              async all() { return { results: statement.all(...params) }; },
               async raw() { return statement.all(...params).map((row) => Object.values(row)); },
             };
           },
@@ -119,13 +122,13 @@ test("API exports exactly the requested fields, includes inactive members and ex
       streetAddress: "Street 1",
       postalCode: "00-001",
       city: "City",
-      voivodeship: "Region",
+      voivodeship: "mazowieckie",
       notes: "Description",
-      selectedScopes: ["Scope"],
-      selectedSpecies: ["Species"],
-      selectedAssortments: ["Assortment"],
-      selectedExportPermits: ["Permit"],
-      selectedCertifications: ["Certificate"],
+      selectedScopes: ["Ferma hodowlana", "Wartość spoza słownika"],
+      selectedSpecies: ["Kurczak"],
+      selectedAssortments: ["Świeże"],
+      selectedExportPermits: ["Arabia Saudyjska"],
+      selectedCertifications: ["Inne"],
       website: "https://company.example",
       email: "private-email",
       phone: "private-phone",
@@ -154,14 +157,45 @@ test("API exports exactly the requested fields, includes inactive members and ex
         },
         {
           id: "z-active", name: "Firma",
-          address: { street: "Street 1", postalCode: "00-001", city: "City", voivodeship: "Region" },
+          address: { street: "Street 1", postalCode: "00-001", city: "City", voivodeship: "mazowieckie" },
           description: "Description", logo: null,
-          scopes: ["Scope"], species: ["Species"], assortments: ["Assortment"],
-          exportPermits: ["Permit"], certifications: ["Certificate"], website: "https://company.example",
+          scopes: ["Ferma hodowlana", "Wartość spoza słownika"], species: ["Kurczak"], assortments: ["Świeże"],
+          exportPermits: ["Arabia Saudyjska"], certifications: ["Inne"], website: "https://company.example",
         },
       ],
     });
     assert.doesNotMatch(JSON.stringify(body), /private-|username|password|email|phone|contactPerson|nip|consent/);
+  });
+});
+
+test("API translates dictionary-backed member fields according to lang", async () => {
+  await withDatabase(async (database) => {
+    addMember(database, "member");
+    database.prepare("INSERT INTO member_profiles VALUES (?, ?)").run("member", JSON.stringify({
+      voivodeship: "mazowieckie",
+      selectedScopes: ["Ferma hodowlana", "Wartość spoza słownika"],
+      selectedSpecies: ["Kurczak"],
+      selectedAssortments: ["Świeże"],
+      selectedExportPermits: ["Arabia Saudyjska"],
+      selectedCertifications: ["Inne"],
+    }));
+
+    const englishResponse = await GET(request(KEY, "en"));
+    assert.equal(englishResponse.status, 200);
+    const englishMember = (await englishResponse.json()).members[0];
+    assert.equal(englishMember.address.voivodeship, "Masovian");
+    assert.deepEqual(englishMember.scopes, ["Commercial poultry farm", "Wartość spoza słownika"]);
+    assert.deepEqual(englishMember.species, ["Chicken"]);
+    assert.deepEqual(englishMember.assortments, ["Fresh"]);
+    assert.deepEqual(englishMember.exportPermits, ["Saudi Arabia"]);
+    assert.deepEqual(englishMember.certifications, ["Other"]);
+
+    for (const lang of [undefined, "pl", "de"]) {
+      const response = await GET(request(KEY, lang));
+      const member = (await response.json()).members[0];
+      assert.equal(member.address.voivodeship, "mazowieckie");
+      assert.deepEqual(member.scopes, ["Ferma hodowlana", "Wartość spoza słownika"]);
+    }
   });
 });
 
