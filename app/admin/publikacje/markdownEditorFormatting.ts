@@ -83,3 +83,9 @@ export function toggleMarkdownHeading(value: string, selectionStart: number, sel
   const replacement = mapSelectedLines(selectedLines, (line) => removeHeading ? line.slice(3) : `## ${line}`);
   return edit(value, lineStart, lineEnd, replacement, lineStart, lineStart + replacement.length);
 }
+
+export function insertMarkdownLink(value: string, start: number, end: number, href: string): MarkdownEdit {
+  const label = value.slice(start, end);
+  const replacement = `[${label}](${href})`;
+  return edit(value, start, end, replacement, start + 1, start + 1 + label.length);
+}

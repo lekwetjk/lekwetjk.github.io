@@ -1,7 +1,8 @@
 "use client";
 
 import { useLayoutEffect, useRef } from "react";
-import { setMarkdownFontSize, toggleInlineMarkdown, toggleMarkdownHeading, type MarkdownEdit } from "./markdownEditorFormatting";
+import { normalizeWebLinkHref } from "../../lib/markdownLinks";
+import { insertMarkdownLink, setMarkdownFontSize, toggleInlineMarkdown, toggleMarkdownHeading, type MarkdownEdit } from "./markdownEditorFormatting";
 
 type MarkdownEditorProps = {
   name: string;
@@ -53,6 +54,24 @@ export default function MarkdownEditor({ name, value, onChange, rows = 10, requi
     applyEdit(toggleMarkdownHeading(value, start, end));
   }
 
+  function addLink() {
+    const { start, end } = currentSelection();
+    const label = value.slice(start, end);
+    if (!label.trim() || label.includes("\n") || label.includes("]")) {
+      window.alert("Najpierw zaznacz tekst linku w jednym wierszu.");
+      return;
+    }
+
+    const enteredHref = window.prompt("Podaj adres strony:", "https://");
+    if (enteredHref === null) return;
+    const href = normalizeWebLinkHref(enteredHref);
+    if (!href || href.includes(")")) {
+      window.alert("Podaj poprawny adres rozpoczynający się od http:// lub https://.");
+      return;
+    }
+    applyEdit(insertMarkdownLink(value, start, end, href));
+  }
+
   return (
     <>
       <div aria-label="Formatowanie treści" role="toolbar" style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 6, margin: "6px 0" }}>
@@ -66,6 +85,7 @@ export default function MarkdownEditor({ name, value, onChange, rows = 10, requi
           </select>
         </label>
         <button type="button" onMouseDown={(event) => event.preventDefault()} onClick={toggleHeading}>Nagłówek</button>
+        <button type="button" aria-label="Wstaw link" title="Zaznacz tekst, a następnie podaj adres strony" onMouseDown={(event) => event.preventDefault()} onClick={addLink}>Link</button>
       </div>
       <textarea
         ref={editorRef}

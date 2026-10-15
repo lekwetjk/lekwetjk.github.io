@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { getInlineMarkdownMatches } from "./inlineMarkdownTokens";
+import { isSafeMarkdownLinkHref } from "./markdownLinks";
 
 /** Renders a plain-text paragraph with basic inline Markdown formatting. */
 export function renderInlineMarkdown(text: string, keyPrefix: string): ReactNode {
@@ -27,7 +28,7 @@ export function renderInlineMarkdown(text: string, keyPrefix: string): ReactNode
     } else if (asteriskItalicText !== undefined || underscoreItalicText !== undefined) {
       const italicText = asteriskItalicText ?? underscoreItalicText;
       nodes.push(<em key={`${keyPrefix}-i-${matchIndex}`}>{renderInlineMarkdown(italicText, `${keyPrefix}-i-${matchIndex}`)}</em>);
-    } else {
+    } else if (isSafeMarkdownLinkHref(linkHref)) {
       nodes.push(
         <a
           className="inline-download-link"
@@ -39,6 +40,8 @@ export function renderInlineMarkdown(text: string, keyPrefix: string): ReactNode
           {linkLabel}
         </a>,
       );
+    } else {
+      nodes.push(linkLabel);
     }
 
     lastIndex = index + match[0].length;
