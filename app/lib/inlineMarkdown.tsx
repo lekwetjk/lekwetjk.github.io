@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
-
-const inlineTokenPattern = /\[(small|large)\]([\s\S]+?)\[\/\1\]|\*\*\*(.+?)\*\*\*|\*\*(.+?)\*\*|\*([^*\n]+?)\*|_([^_\n]+?)_|\[([^\]]+)\]\(([^)]+)\)/g;
+import { getInlineMarkdownMatches } from "./inlineMarkdownTokens";
 
 /** Renders a plain-text paragraph with basic inline Markdown formatting. */
 export function renderInlineMarkdown(text: string, keyPrefix: string): ReactNode {
@@ -11,12 +10,11 @@ export function renderInlineMarkdown(text: string, keyPrefix: string): ReactNode
   const nodes: ReactNode[] = [];
   let lastIndex = 0;
   let matchIndex = 0;
-  let match: RegExpExecArray | null;
 
-  inlineTokenPattern.lastIndex = 0;
-  while ((match = inlineTokenPattern.exec(text)) !== null) {
-    if (match.index > lastIndex) {
-      nodes.push(text.slice(lastIndex, match.index));
+  for (const match of getInlineMarkdownMatches(text)) {
+    const index = match.index ?? 0;
+    if (index > lastIndex) {
+      nodes.push(text.slice(lastIndex, index));
     }
 
     const [, fontSize, sizedText, boldItalicText, boldText, asteriskItalicText, underscoreItalicText, linkLabel, linkHref] = match;
@@ -43,7 +41,7 @@ export function renderInlineMarkdown(text: string, keyPrefix: string): ReactNode
       );
     }
 
-    lastIndex = match.index + match[0].length;
+    lastIndex = index + match[0].length;
     matchIndex += 1;
   }
 
