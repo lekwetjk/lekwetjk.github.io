@@ -158,6 +158,31 @@ województwami, zakresem działalności, gatunkami drobiu, asortymentem,
 certyfikatami i uprawnieniami eksportowymi. Dezaktywowane wartości nie są
 pokazywane w formularzach, ale pozostają w bazie.
 
+## Metodyka i biuletyny
+
+Administrator otwiera kafelek „Metodyka i biuletyny” w swoim profilu.
+Dedykowany panel `/admin/metodyka-i-biuletyny` pozwala dodawać pliki,
+nadawać i edytować tytuły publikacji, zastępować pliki oraz usuwać materiały.
+Tytuł jest wymagany, ma do 200 znaków i jest niezależny od nazwy pliku.
+Zastąpienie pliku zachowuje tytuł oraz dotychczasowy adres pobierania.
+Nowe publikacje otrzymują unikalne nazwy w magazynie, więc dwa pliki
+o tej samej nazwie nie nadpisują się przypadkowo.
+Obsługiwane formaty: PDF, DOCX, XLSX, JPEG/JPG i PNG, do 100 MB.
+
+Strona `/tresc/metodyka-i-biuletyny` i pobieranie materiałów są publiczne.
+Tylko administrator może zmieniać materiały. Pliki używają oddzielnego
+zakresu `methodology` w istniejącym magazynie dokumentów. W R2 tytuł jest
+zapisany w metadanych obiektu, w D1 w kolumnie `title`, a lokalnie w
+osobnym podkatalogu `titles`. Starsze pliki bez tytułu nadal korzystają
+z tytułu wygenerowanego z nazwy pliku.
+
+Katalog roboczy `materials/metodyka-i-biuletyny` nie jest publikowany
+automatycznie. Polecenie `npm run materials:metodyka` przygotowuje pliki
+źródłowe oraz manifest z ich sumami SHA-256, w tym trzy akty prawne
+pobierane z oficjalnego API Sejmu. Skrypt sprawdza integralność przed
+zapisem i nie nadpisuje plików zmodyfikowanych przez administratora.
+Katalog jest wyłączony z Git; commit zawiera skrypt, nie kopie plików PDF.
+
 ## Build produkcyjny
 
 ```bash

@@ -7,6 +7,7 @@
   },
   "scripts": {
     "generate:posts": "node scripts/generate-content-posts.mjs",
+    "materials:metodyka": "node scripts/prepare-methodology-materials.mjs",
     "predev": "npm run generate:posts",
     "prebuild": "npm run generate:posts",
     "dev": "vinext dev",

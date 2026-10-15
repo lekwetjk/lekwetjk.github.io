@@ -24,6 +24,10 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  if (/^\/member\/dokumenty\/[^/]+$/.test(pathname) && request.nextUrl.searchParams.get("scope") === "methodology") {
+    return NextResponse.next();
+  }
+
   const isProtectedMemberArea = protectedMemberPrefixes.some((prefix) => {
     if (prefix === "/tresc/dla-czlonkow") {
       return pathname === prefix || pathname.startsWith(`${prefix}/`);

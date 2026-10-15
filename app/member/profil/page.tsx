@@ -55,6 +55,12 @@ export default async function MemberProfilePage() {
               </ul>
             </div>
             {session.role === "admin" ? (
+              <a href="/admin/metodyka-i-biuletyny" style={{ display: "block", border: "1px solid #d5d9df", borderRadius: 12, padding: 18, color: "#0f172a", textDecoration: "none" }}>
+                <strong>Metodyka i biuletyny</strong>
+                <span style={{ display: "block", marginTop: 6, color: "#475569" }}>Materiały i publikacje Działu Hodowli i Oceny Drobiu</span>
+              </a>
+            ) : null}
+            {session.role === "admin" ? (
               <a href="/admin/raporty" style={{ display: "block", border: "1px solid #d5d9df", borderRadius: 12, padding: 18, color: "#0f172a", textDecoration: "none" }}>
                 <strong>Raporty</strong>
                 <span style={{ display: "block", marginTop: 6, color: "#475569" }}>Twórz interaktywne biuletyny z plików XLSX, PDF i DOCX.</span>

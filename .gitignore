@@ -47,3 +47,4 @@ package-lock.json
 *.zip
 ~$*
 /public/media/imported-documents/
+/materials/metodyka-i-biuletyny/

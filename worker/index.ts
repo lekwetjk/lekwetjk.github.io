@@ -17,14 +17,15 @@ interface D1Database {
 interface R2Object {
   body: ReadableStream;
   httpMetadata?: { contentType?: string };
+  customMetadata?: Record<string, string>;
   uploaded: Date;
 }
 
 interface R2Bucket {
-  put(key: string, value: ArrayBuffer | Uint8Array | ReadableStream, options?: { httpMetadata?: { contentType?: string } }): Promise<unknown>;
+  put(key: string, value: ArrayBuffer | Uint8Array | ReadableStream, options?: { httpMetadata?: { contentType?: string }; customMetadata?: Record<string, string> }): Promise<unknown>;
   get(key: string): Promise<R2Object | null>;
   delete(key: string): Promise<void>;
-  list(options?: { prefix?: string }): Promise<{ objects: Array<{ key: string; uploaded: Date }> }>;
+  list(options?: { prefix?: string; include?: Array<"customMetadata">; cursor?: string }): Promise<{ objects: Array<{ key: string; uploaded: Date; customMetadata?: Record<string, string> }>; truncated?: boolean; cursor?: string }>;
 }
 
 interface Env {

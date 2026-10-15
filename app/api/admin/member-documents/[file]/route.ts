@@ -2,7 +2,38 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { AUTH_COOKIE_NAME, verifySessionToken } from "../../../../lib/auth";
-import { deleteMemberDocument, memberDocumentScope } from "../../../../lib/member-documents";
+import { deleteMemberDocument, memberDocumentScope, normalizeMethodologyTitle, updateMethodologyDocumentTitle, validFileName } from "../../../../lib/member-documents";
+
+export async function PATCH(
+  request: Request,
+  { params }: { params: Promise<{ file: string }> },
+) {
+  const session = verifySessionToken((await cookies()).get(AUTH_COOKIE_NAME)?.value);
+  if (!session || session.role !== "admin") {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
+  }
+  if (memberDocumentScope(request) !== "methodology") {
+    return NextResponse.json({ error: "Nieprawidłowa sekcja dokumentów." }, { status: 400 });
+  }
+  const data: unknown = await request.json().catch(() => null);
+  const title = normalizeMethodologyTitle(data && typeof data === "object" && "title" in data ? data.title : null);
+  if (!title) {
+    return NextResponse.json({ error: "Tytuł publikacji jest wymagany i może mieć maksymalnie 200 znaków." }, { status: 400 });
+  }
+  const { file } = await params;
+  if (!validFileName(file)) {
+    return NextResponse.json({ error: "Nieprawidłowa nazwa pliku." }, { status: 400 });
+  }
+  try {
+    const updated = await updateMethodologyDocumentTitle(file, title);
+    return updated
+      ? NextResponse.json({ ok: true, title })
+      : NextResponse.json({ error: "Dokument nie został znaleziony." }, { status: 404 });
+  } catch (error) {
+    console.error("Failed to update methodology document title", error);
+    return NextResponse.json({ error: "Nie udało się zapisać tytułu publikacji." }, { status: 500 });
+  }
+}
 
 export async function DELETE(
   request: Request,
@@ -20,9 +51,17 @@ export async function DELETE(
   }
 
   const { file } = await params;
-  const deleted = await deleteMemberDocument(file, scope);
+  if (!validFileName(file)) {
+    return NextResponse.json({ error: "Nieprawidłowa nazwa pliku." }, { status: 400 });
+  }
+  try {
+    const deleted = await deleteMemberDocument(file, scope);
 
-  return deleted
-    ? NextResponse.json({ ok: true })
-    : NextResponse.json({ error: "Dokument nie został znaleziony." }, { status: 404 });
+    return deleted
+      ? NextResponse.json({ ok: true })
+      : NextResponse.json({ error: "Dokument nie został znaleziony." }, { status: 404 });
+  } catch (error) {
+    console.error("Failed to delete document", error);
+    return NextResponse.json({ error: "Nie udało się usunąć dokumentu." }, { status: 500 });
+  }
 }

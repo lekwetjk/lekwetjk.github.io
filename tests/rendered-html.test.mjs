@@ -416,3 +416,48 @@ test("CSV import accepts Polish header names with diacritics", async () => {
   assert.match(source, /\[żź\]/g);
   assert.match(source, /\["haslo", "password"\]/);
 });
+
+test("methodology materials are public and administrator-managed", async () => {
+  const storage = await readProjectFile("app/lib/member-documents.ts");
+  const publicApi = await readProjectFile("app/api/member/documents/route.ts");
+  const download = await readProjectFile("app/member/dokumenty/[file]/route.ts");
+  const upload = await readProjectFile("app/api/admin/member-documents/upload/route.ts");
+  const component = await readProjectFile("app/components/MethodologyDocuments.tsx");
+  const article = await readProjectFile("app/components/ArticleBody.tsx");
+
+  assert.match(storage, /"methodology"/);
+  assert.match(storage, /`\$\{scope\}-documents\/`/);
+  assert.match(publicApi, /!session && scope !== "methodology"/);
+  assert.match(download, /!verifySessionToken\(sessionToken\) && scope !== "methodology"/);
+  assert.match(upload, /\.pdf.*\.docx.*\.xlsx.*\.jpg.*\.jpeg.*\.png/);
+  assert.match(component, /Dodaj materiał/);
+  assert.match(component, /Zastąp/);
+  assert.match(component, /Usuń/);
+  assert.match(article, /<MethodologyDocuments \/>/);
+  assert.doesNotMatch(article, /https:\/\/krd-ig\.com\.pl\/rozdzial-1_2020\//);
+});
+
+test("methodology administration has its own profile tile and editable publication titles", async () => {
+  const profile = await readProjectFile("app/member/profil/page.tsx");
+  const admin = await readProjectFile("app/admin/metodyka-i-biuletyny/page.tsx");
+  const component = await readProjectFile("app/components/MethodologyDocuments.tsx");
+  const upload = await readProjectFile("app/api/admin/member-documents/upload/route.ts");
+  const update = await readProjectFile("app/api/admin/member-documents/[file]/route.ts");
+  const middleware = await readProjectFile("middleware.ts");
+
+  assert.match(profile, /href="\/admin\/metodyka-i-biuletyny"/);
+  assert.match(admin, /session\.role !== "admin"/);
+  assert.match(admin, /<MethodologyDocuments manage \/>/);
+  assert.match(component, /Tytuł publikacji/);
+  assert.match(component, /Edytuj tytuł/);
+  assert.match(component, /formData\.append\("title", publicationTitle\)/);
+  assert.match(component, /uploadFile\(file, document\.title, document\.fileName\)/);
+  assert.match(component, /method: "PATCH"/);
+  assert.match(upload, /normalizeMethodologyTitle\(formData\?\.get\("title"\)\)/);
+  assert.match(update, /session\.role !== "admin"/);
+  assert.match(update, /updateMethodologyDocumentTitle\(file, title\)/);
+  assert.match(middleware, /searchParams\.get\("scope"\) === "methodology"/);
+  assert.match(profile, /Materiały i publikacje Działu Hodowli i Oceny Drobiu/);
+  assert.match(upload, /randomUUID\(\)/);
+  assert.match(upload, /Materiał do zastąpienia nie został znaleziony/);
+});
