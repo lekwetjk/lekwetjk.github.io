@@ -257,6 +257,7 @@ export async function ArticleBody({
   justify = false,
   categories = [],
   reportBulletinHref,
+  inferHeadings = true,
 }: {
   paragraphs: string[];
   links: ContentLink[];
@@ -266,6 +267,7 @@ export async function ArticleBody({
   justify?: boolean;
   categories?: string[];
   reportBulletinHref?: string;
+  inferHeadings?: boolean;
 }) {
   const proposals = await getLocalProposals();
   const contentTargets = proposals.links ? [
@@ -4620,7 +4622,7 @@ export async function ArticleBody({
             );
           }
 
-          return explicitHeading || index > 0 && looksLikeHeading(paragraph) ? (
+          return explicitHeading || inferHeadings && index > 0 && looksLikeHeading(paragraph) ? (
             <h2 key={`${index}-${paragraph.slice(0, 20)}`}>{formattedParagraph}</h2>
           ) : (
             <p key={`${index}-${paragraph.slice(0, 20)}`}>{formattedParagraph}</p>

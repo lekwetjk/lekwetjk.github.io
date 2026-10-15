@@ -177,6 +177,7 @@ export default async function NewsDetailPage({
         slug={slug}
         justify={post.justify}
         categories={post.categories}
+        inferHeadings={!post.managed}
       />
     </PageShell>
   );

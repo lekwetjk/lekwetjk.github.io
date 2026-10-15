@@ -35,6 +35,7 @@ export type NewsPost = {
   imageFit?: "contain" | "cover";
   source: string;
   justify?: boolean;
+  managed?: boolean;
 };
 
 type ContentDatabase = {
