@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { AUTH_COOKIE_NAME, getMemberProfile, getMemberUsers, verifySessionToken } from "../../../../lib/auth";
+import { recordAuditEventSafely } from "../../../../lib/audit-log";
 
 function csvCell(value: unknown) {
   const text = Array.isArray(value) ? value.join(", ") : String(value ?? "");
@@ -41,6 +42,7 @@ export async function GET() {
   });
 
   const csv = `\uFEFF${headers.map(csvCell).join(";")}\r\n${rows.join("\r\n")}\r\n`;
+  await recordAuditEventSafely({ actor: session, eventType: "user_export", result: "success", targetType: "user", details: { rowCount: rows.length } });
   return new NextResponse(csv, {
     headers: {
       "Content-Type": "text/csv; charset=utf-8",

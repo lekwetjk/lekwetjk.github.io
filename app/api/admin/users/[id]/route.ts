@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { AUTH_COOKIE_NAME, saveMemberLogo, saveMemberLogoScale, updateMemberAccount, verifySessionToken } from "../../../../lib/auth";
+import { recordAuditEventSafely } from "../../../../lib/audit-log";
 
 export async function POST(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const session = verifySessionToken((await cookies()).get(AUTH_COOKIE_NAME)?.value);
@@ -23,11 +24,24 @@ export async function POST(request: Request, { params }: { params: Promise<{ id:
       password: String(formData.get("password") ?? "") || undefined,
     });
     if (!user) return NextResponse.json({ error: "User not found." }, { status: 404 });
+    if (formData.get("password")) {
+      await recordAuditEventSafely({ actor: session, eventType: "password_change", result: "success", targetType: "user", targetId: id });
+    }
     if (logo instanceof File && logo.size > 0) await saveMemberLogo(id, Buffer.from(await logo.arrayBuffer()), logo.type);
     const logoScale = Number(formData.get("logoScale"));
     if (formData.has("logoScale")) await saveMemberLogoScale(id, logoScale / 100);
+    await recordAuditEventSafely({
+      actor: session,
+      eventType: "user_update",
+      result: "success",
+      targetType: "user",
+      targetId: id,
+      details: { username: user.username, role: user.role, passwordChanged: Boolean(formData.get("password")), logoChanged: logo instanceof File && logo.size > 0 },
+    });
     return NextResponse.redirect(new URL("/admin/uzytkownicy", request.url), 303);
   } catch (error) {
+    const { id } = await params;
+    await recordAuditEventSafely({ actor: session, eventType: "user_update", result: "failure", targetType: "user", targetId: id, details: { error: error instanceof Error ? error.message : "unknown_error" } });
     return NextResponse.json({ error: error instanceof Error ? error.message : "Unknown error" }, { status: 400 });
   }
 }

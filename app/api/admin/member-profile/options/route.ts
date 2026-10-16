@@ -7,6 +7,7 @@ import {
   getMemberProfileDictionaries,
   updateMemberProfileDictionaryOption,
 } from "../../../../lib/member-profile-dictionaries";
+import { recordAuditEventSafely } from "../../../../lib/audit-log";
 
 export async function GET() {
   const session = verifySessionToken((await cookies()).get(AUTH_COOKIE_NAME)?.value);
@@ -24,8 +25,11 @@ export async function POST(request: Request) {
       valueEn?: string;
       sortOrder?: number;
     };
-    return NextResponse.json({ option: await createMemberProfileDictionaryOption(body) });
+    const option = await createMemberProfileDictionaryOption(body);
+    await recordAuditEventSafely({ actor: session, eventType: "dictionary_create", result: "success", targetType: "profile_dictionary", targetId: option.id, details: { category: option.category } });
+    return NextResponse.json({ option });
   } catch (error) {
+    await recordAuditEventSafely({ actor: session, eventType: "dictionary_create", result: "failure", targetType: "profile_dictionary", details: { error: error instanceof Error ? error.message : "unknown_error" } });
     return NextResponse.json({ error: error instanceof Error ? error.message : "Nie udało się dodać wartości." }, { status: 400 });
   }
 }
@@ -43,8 +47,11 @@ export async function PATCH(request: Request) {
       isActive?: boolean;
     };
     if (!body.id) throw new Error("Brak identyfikatora wartości.");
-    return NextResponse.json({ option: await updateMemberProfileDictionaryOption(body.id, body) });
+    const option = await updateMemberProfileDictionaryOption(body.id, body);
+    await recordAuditEventSafely({ actor: session, eventType: "dictionary_update", result: "success", targetType: "profile_dictionary", targetId: body.id, details: { category: option.category } });
+    return NextResponse.json({ option });
   } catch (error) {
+    await recordAuditEventSafely({ actor: session, eventType: "dictionary_update", result: "failure", targetType: "profile_dictionary", details: { error: error instanceof Error ? error.message : "unknown_error" } });
     return NextResponse.json({ error: error instanceof Error ? error.message : "Nie udało się zapisać wartości." }, { status: 400 });
   }
 }

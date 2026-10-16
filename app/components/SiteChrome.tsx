@@ -3,6 +3,7 @@ import { cookies } from "next/headers";
 import { AUTH_COOKIE_NAME, verifySessionToken } from "../lib/auth";
 import { primaryNavigation } from "../lib/content";
 import { withBasePath } from "../lib/basePath";
+import MemberActivityTracker from "./MemberActivityTracker";
 
 type SiteLanguage = "pl" | "en";
 
@@ -321,15 +322,17 @@ export function SiteFooter({ language = "pl" as SiteLanguage }) {
   );
 }
 
-export function PageShell({
+export async function PageShell({
   children,
   language = "pl" as SiteLanguage,
 }: {
   children: React.ReactNode;
   language?: SiteLanguage;
 }) {
+  const session = verifySessionToken((await cookies()).get(AUTH_COOKIE_NAME)?.value);
   return (
     <>
+      {session ? <MemberActivityTracker /> : null}
       <SiteHeader language={language} />
       <main>{children}</main>
       <SiteFooter language={language} />

@@ -4,6 +4,7 @@ import { randomUUID } from "node:crypto";
 
 import { AUTH_COOKIE_NAME, verifySessionToken } from "../../../../lib/auth";
 import { documentContentType, listMemberDocuments, memberDocumentScope, normalizeMethodologyTitle, saveMemberDocument, validFileName } from "../../../../lib/member-documents";
+import { recordAuditEventSafely } from "../../../../lib/audit-log";
 
 const MAX_MEMBER_DOCUMENT_BYTES = 100 * 1024 * 1024;
 const METHODOLOGY_EXTENSIONS = new Set([".pdf", ".docx", ".xlsx", ".jpg", ".jpeg", ".png"]);
@@ -100,8 +101,24 @@ export async function POST(request: Request) {
       contentType: scope === "methodology" ? documentContentType(fileName) : file.type || "application/octet-stream",
       title: title ?? undefined,
     }, scope);
+    await recordAuditEventSafely({
+      actor: session,
+      eventType: replaceFileName ? "document_update" : "document_upload",
+      result: "success",
+      targetType: "document",
+      targetId: fileName,
+      details: { scope, title: title ?? null, size: file.size },
+    });
   } catch (error) {
     console.error("Failed to save document", error);
+    await recordAuditEventSafely({
+      actor: session,
+      eventType: replaceFileName ? "document_update" : "document_upload",
+      result: "failure",
+      targetType: "document",
+      targetId: fileName,
+      details: { scope, error: error instanceof Error ? error.message : "unknown_error" },
+    });
     return NextResponse.json(
       { ok: false, error: "Nie udało się zapisać dokumentu. Spróbuj ponownie lub skontaktuj się z administratorem." },
       { status: 500 },

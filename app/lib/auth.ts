@@ -601,6 +601,7 @@ export function createSessionToken(
 ) {
   const now = Math.floor(Date.now() / 1000);
   const payload = {
+    sid: crypto.randomUUID(),
     sub: user.id,
     username: user.username,
     name: user.name,
@@ -616,6 +617,7 @@ export function createSessionToken(
 }
 
 export function verifySessionToken(token?: string): null | {
+  sessionId?: string;
   sub: string;
   username: string;
   name: string;
@@ -638,6 +640,7 @@ export function verifySessionToken(token?: string): null | {
 
   try {
     const payload = JSON.parse(base64UrlDecode(encodedPayload)) as {
+      sid?: string;
       sub: string;
       username: string;
       name: string;
@@ -645,7 +648,10 @@ export function verifySessionToken(token?: string): null | {
       exp: number;
     };
 
-    if (typeof payload?.exp !== "number") {
+    if (
+      typeof payload?.exp !== "number"
+      || (payload.sid !== undefined && (typeof payload.sid !== "string" || !/^[0-9a-f-]{36}$/i.test(payload.sid)))
+    ) {
       return null;
     }
 
@@ -654,6 +660,7 @@ export function verifySessionToken(token?: string): null | {
     }
 
     return {
+      sessionId: payload.sid,
       sub: payload.sub,
       username: payload.username,
       name: payload.name,

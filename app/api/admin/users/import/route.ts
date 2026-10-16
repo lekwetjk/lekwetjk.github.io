@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { AUTH_COOKIE_NAME, createMemberAccount, normalizeImportedText, verifySessionToken } from "../../../../lib/auth";
+import { recordAuditEventSafely } from "../../../../lib/audit-log";
 
 export function normalizeCsvHeader(value: string) {
   return value
@@ -110,5 +111,12 @@ export async function POST(request: Request) {
     }
   }
 
+  await recordAuditEventSafely({
+    actor: session,
+    eventType: "user_import",
+    result: errors.length === 0 ? "success" : "failure",
+    targetType: "user",
+    details: { created, skipped: errors.length, fileName: file.name },
+  });
   return NextResponse.json({ ok: errors.length === 0, created, skipped: errors.length, errors });
 }

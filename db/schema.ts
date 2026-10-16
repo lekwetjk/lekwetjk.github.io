@@ -95,3 +95,20 @@ export const managedPosts = sqliteTable("managed_posts", {
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
   createdBy: text("created_by").notNull(),
 });
+
+export const auditLogs = sqliteTable("audit_logs", {
+  id: text("id").primaryKey(),
+  actorId: text("actor_id"),
+  actorUsername: text("actor_username").notNull(),
+  actorRole: text("actor_role", { enum: ["member", "admin", "unknown"] }).notNull(),
+  eventType: text("event_type").notNull(),
+  result: text("result", { enum: ["success", "failure"] }).notNull(),
+  targetType: text("target_type"),
+  targetId: text("target_id"),
+  detailsJson: text("details_json").notNull().default("{}"),
+  sessionId: text("session_id"),
+  occurredAt: text("occurred_at").notNull().default(sql`CURRENT_TIMESTAMP`),
+  lastActivityAt: text("last_activity_at"),
+  activeSeconds: integer("active_seconds").notNull().default(0),
+  endedAt: text("ended_at"),
+});

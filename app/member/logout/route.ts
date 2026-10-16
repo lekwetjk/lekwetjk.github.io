@@ -1,8 +1,15 @@
 import { NextResponse } from "next/server";
+import { cookies } from "next/headers";
 
-import { AUTH_COOKIE_NAME } from "../../lib/auth";
+import { recordAuditEventSafely, updateSessionActivitySafely } from "../../lib/audit-log";
+import { AUTH_COOKIE_NAME, verifySessionToken } from "../../lib/auth";
 
-function logout(request: Request) {
+async function logout(request: Request) {
+  const session = verifySessionToken((await cookies()).get(AUTH_COOKIE_NAME)?.value);
+  await updateSessionActivitySafely(session?.sessionId, true);
+  if (session) {
+    await recordAuditEventSafely({ actor: session, eventType: "logout", result: "success" });
+  }
   const response = NextResponse.redirect(new URL("/login/czlonkowie", request.url), 303);
 
   response.cookies.set(AUTH_COOKIE_NAME, "", {

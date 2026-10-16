@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { AUTH_COOKIE_NAME, getMemberProfile, getMemberUsers, verifySessionToken } from "../../../../lib/auth";
+import { recordAuditEventSafely } from "../../../../lib/audit-log";
 
 export async function GET() {
   const session = verifySessionToken((await cookies()).get(AUTH_COOKIE_NAME)?.value);
@@ -15,5 +16,6 @@ export async function GET() {
     profile: await getMemberProfile(user.id),
   })));
 
+  await recordAuditEventSafely({ actor: session, eventType: "user_report", result: "success", targetType: "user", details: { rowCount: rows.length } });
   return NextResponse.json({ rows });
 }

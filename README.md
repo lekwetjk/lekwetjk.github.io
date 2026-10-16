@@ -30,6 +30,29 @@ pnpm dev
 
 Aplikacja będzie dostępna lokalnie na porcie 3000 lub kolejnych wolnych portach, w zależności od aktywności innych procesów.
 
+### Rejestr logów
+
+Administrator otwiera rejestr z kafelka „Rejestr logów” na swoim koncie
+lub pod adresem `/admin/rejestr-logow`. Dostępne są filtry i paginacja.
+Filtry dat korzystają z polskiego kalendarza (tydzień od poniedziałku)
+i formatu `dd.mm.rrrr`, niezależnie od języka przeglądarki.
+Rejestr obejmuje logowania, wylogowania, zmiany/reset haseł i aktywność sesji
+oraz operacje administracyjne, w tym eksporty i przesyłanie raportów.
+Filtry dat i godziny wpisów korzystają ze strefy `Europe/Warsaw`, również
+podczas zmiany czasu. Nieznane loginy nie są przypisywane do roli członka.
+Czas aktywności jest przybliżoną sumą krótkich odcinków sesji: aktualizuje się
+co 5 minut przy widocznej karcie oraz przy jej ukryciu i wylogowaniu.
+Przerwy dłuższe niż 6 minut nie powiększają czasu, a wylogowanej sesji nie
+można ponownie zaktualizować. Hasła, tokeny i surowe błędy SQL nie trafiają
+do wpisów. Błędy zapisu zdarzeń są zgłaszane w logach serwera; awaria
+odczytu rejestru lub zapisu aktywności nie udaje poprawnej odpowiedzi.
+
+Na produkcji wpisy trafiają do tabeli D1 `audit_logs`, tworzonej automatycznie.
+W trybie development, bez bindingu D1, rejestr korzysta z istniejącego
+lokalnego adaptera SQLite i pliku `.wrangler/state/local-managed-posts.sqlite`.
+Wpisy lokalne pozostają po odświeżeniu i ponownym uruchomieniu serwera;
+nie są wysyłane do produkcyjnej bazy. Produkcja nie korzysta z tego fallbacku.
+
 ## MVP ChatGPT na stronie
 
 W projekcie jest gotowy endpoint worker `POST /api/chat` i widget czatu w interfejsie.

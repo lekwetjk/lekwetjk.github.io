@@ -55,6 +55,12 @@ export default async function MemberProfilePage() {
               </ul>
             </div>
             {session.role === "admin" ? (
+              <a href="/admin/rejestr-logow" style={{ display: "block", border: "1px solid #d5d9df", borderRadius: 12, padding: 18, color: "#0f172a", textDecoration: "none" }}>
+                <strong>Rejestr logów</strong>
+                <span style={{ display: "block", marginTop: 6, color: "#475569" }}>Logowania członków, czas aktywności i działania administratorów.</span>
+              </a>
+            ) : null}
+            {session.role === "admin" ? (
               <a href="/admin/metodyka-i-biuletyny" style={{ display: "block", border: "1px solid #d5d9df", borderRadius: 12, padding: 18, color: "#0f172a", textDecoration: "none" }}>
                 <strong>Metodyka i biuletyny</strong>
                 <span style={{ display: "block", marginTop: 6, color: "#475569" }}>Materiały i publikacje Działu Hodowli i Oceny Drobiu</span>

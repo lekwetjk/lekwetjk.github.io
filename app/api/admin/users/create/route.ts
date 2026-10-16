@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
 import { AUTH_COOKIE_NAME, createMemberAccount, saveMemberLogo, verifySessionToken } from "../../../../lib/auth";
+import { recordAuditEventSafely } from "../../../../lib/audit-log";
 
 export async function POST(request: Request) {
   const cookieStore = await cookies();
@@ -35,8 +36,23 @@ export async function POST(request: Request) {
       await saveMemberLogo(user.id, Buffer.from(await logo.arrayBuffer()), logo.type);
     }
 
+    await recordAuditEventSafely({
+      actor: session,
+      eventType: "user_create",
+      result: "success",
+      targetType: "user",
+      targetId: user.id,
+      details: { username: user.username, role: user.role, logoAdded: logo instanceof File && logo.size > 0 },
+    });
     return NextResponse.json({ ok: true, user });
   } catch (error) {
+    await recordAuditEventSafely({
+      actor: session,
+      eventType: "user_create",
+      result: "failure",
+      targetType: "user",
+      details: { username: String(formData.get("username") ?? ""), error: error instanceof Error ? error.message : "unknown_error" },
+    });
     return NextResponse.json(
       { error: error instanceof Error ? error.message : "Unknown error" },
       { status: 400 },

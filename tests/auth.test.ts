@@ -57,6 +57,16 @@ test("session token is verifiable", () => {
 
   const payload = verifySessionToken(token);
   assert.ok(payload);
+  assert.match(payload.sessionId ?? "", /^[0-9a-f-]{36}$/);
   assert.equal(payload.username, "czlonek");
   assert.equal(payload.role, "member");
+});
+
+test("each login has its own audit session identifier", () => {
+  const user = { id: "member-1", username: "member", role: "member" as const, name: "Member" };
+  const first = verifySessionToken(createSessionToken(user));
+  const second = verifySessionToken(createSessionToken(user));
+  assert.ok(first?.sessionId);
+  assert.ok(second?.sessionId);
+  assert.notEqual(first.sessionId, second.sessionId);
 });

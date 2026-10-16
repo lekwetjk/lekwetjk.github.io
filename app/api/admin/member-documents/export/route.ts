@@ -6,6 +6,7 @@ import path from "node:path";
 import { deflateRawSync } from "node:zlib";
 
 import { AUTH_COOKIE_NAME, verifySessionToken } from "../../../../lib/auth";
+import { recordAuditEventSafely } from "../../../../lib/audit-log";
 
 const MEMBER_DOCUMENTS_DIR = path.join(os.tmpdir(), "krd-ig-member-docs");
 
@@ -126,11 +127,13 @@ export async function GET() {
       const data = await readFile(fullPath);
       fileEntries.push({ name: fileName, data });
     } catch {
+      await recordAuditEventSafely({ actor: session, eventType: "document_export", result: "failure", targetType: "document", targetId: fileName, details: { reason: "not_found" } });
       return NextResponse.json({ error: `Dokument nie został znaleziony: ${fileName}` }, { status: 404 });
     }
   }
 
   const zipBuffer = makeZip(fileEntries);
+  await recordAuditEventSafely({ actor: session, eventType: "document_export", result: "success", targetType: "document", details: { fileCount: fileEntries.length } });
 
   return new NextResponse(zipBuffer as any, {
     headers: {

@@ -2,6 +2,7 @@ import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { AUTH_COOKIE_NAME, verifySessionToken } from "../../../lib/auth";
 import { TENDER_CATEGORIES, createManagedPost, importExistingPost, listImportablePosts, listManagedPostsForAdmin } from "../../../lib/managed-posts";
+import { recordAuditEventSafely } from "../../../lib/audit-log";
 
 const PRODUCTION_API_BASE = "https://krd-ig-website-concept.lek-wet-jk.workers.dev";
 
@@ -31,9 +32,14 @@ export async function POST(request: Request) {
   try {
     if (form.get("action") === "import") {
       const slug = await importExistingPost(String(form.get("slug") ?? ""), session.username);
+      await recordAuditEventSafely({ actor: session, eventType: "post_import", result: "success", targetType: "post", targetId: slug });
       return NextResponse.json({ ok: true, slug });
     }
     const slug = await createManagedPost({ kind, title: String(form.get("title") ?? ""), excerpt: String(form.get("excerpt") ?? ""), seoTitle: String(form.get("seoTitle") ?? ""), seoDescription: String(form.get("seoDescription") ?? ""), imageFit: String(form.get("imageFit") ?? "contain"), content: String(form.get("content") ?? ""), category: String(form.get("category") ?? ""), source: String(form.get("source") ?? ""), image: form.get("image") instanceof File ? form.get("image") as File : null, attachments: form.getAll("attachments").filter((item): item is File => item instanceof File && item.size > 0), createdBy: session.username });
+    await recordAuditEventSafely({ actor: session, eventType: "post_create", result: "success", targetType: "post", targetId: slug, details: { kind } });
     return NextResponse.json({ ok: true, slug, categories: TENDER_CATEGORIES });
-  } catch (error) { return NextResponse.json({ error: error instanceof Error ? error.message : "Nie udało się dodać wpisu." }, { status: 400 }); }
+  } catch (error) {
+    await recordAuditEventSafely({ actor: session, eventType: form.get("action") === "import" ? "post_import" : "post_create", result: "failure", targetType: "post", targetId: String(form.get("slug") ?? "") || undefined, details: { error: error instanceof Error ? error.message : "unknown_error" } });
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Nie udało się dodać wpisu." }, { status: 400 });
+  }
 }
