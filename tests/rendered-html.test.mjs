@@ -393,6 +393,16 @@ test("board and council content remains present with mailto links", async () => 
   assert.match(source, /mailto:/);
 });
 
+test("header keeps member controls and membership CTA inside their responsive grid area", async () => {
+  const source = await readProjectFile("app/components/SiteChrome.tsx");
+  const css = await readProjectFile("app/proposals.css");
+  assert.match(source, /<div className="header-actions">\s*<nav className="header-account"/);
+  assert.match(source, /\/en\/membership" : "\/czlonkostwo"/);
+  assert.match(css, /\.header-actions \{ grid-column: 2; grid-row: 1;/);
+  assert.match(css, /\.header-actions \{ grid-column: 1 \/ -1; grid-row: 2;/);
+  assert.match(css, /\.header-inner > \.mobile-menu \{ grid-column: 2; grid-row: 1;/);
+});
+
 test("about page renders locally bundled partner organisation logos", async () => {
   const source = await readProjectFile("app/components/ArticleBody.tsx");
 

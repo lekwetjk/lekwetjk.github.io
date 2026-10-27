@@ -108,15 +108,20 @@ export async function SiteHeader({ language = "pl" }: { language?: SiteLanguage 
               </a>
             ))}
           </nav>
-          <nav aria-label={isEnglish ? "Member account" : "Konto członka"} style={{ display: "flex", gap: 10, alignItems: "center", fontSize: 13 }}>
+          <div className="header-actions">
+          <nav className="header-account" aria-label={isEnglish ? "Member account" : "Konto członka"}>
             {session ? <>
               <a href={withBasePath("/member/profil")}>{session.name || session.username}</a>
               {session.role === "admin" && <a href={withBasePath("/admin/uzytkownicy")}>Admin</a>}
-              <form action="/member/logout" method="post" style={{ margin: 0 }}>
+              <form action={withBasePath("/member/logout")} method="post">
                 <button type="submit">{isEnglish ? "Log out" : "Wyloguj"}</button>
               </form>
-            </> : <a className="button button-primary header-cta" href={withBasePath("/login/czlonkowie")}>{isEnglish ? "LOG IN" : "ZALOGUJ"}</a>}
+            </> : <a href={withBasePath("/login/czlonkowie")}>{isEnglish ? "LOG IN" : "ZALOGUJ"}</a>}
           </nav>
+          <a className="button button-primary header-cta" href={withBasePath(isEnglish ? "/en/membership" : "/czlonkostwo")}>
+            {isEnglish ? "Membership" : "Członkostwo"} <Arrow />
+          </a>
+          </div>
           <details className="mobile-menu">
             <summary aria-label={isEnglish ? "Open menu" : "Otwórz menu"}>
               <span />
