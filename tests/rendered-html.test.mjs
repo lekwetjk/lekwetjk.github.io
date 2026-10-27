@@ -183,6 +183,7 @@ test("report archive is public while interactive bulletins and their PDF files r
   assert.match(reportPage, /reportEditions\[reportEditions\.length - 1\]\.slug/);
   assert.match(reportPage, /reportBulletinHref=\{reportBulletinHref\}/);
   assert.match(articleBody, /Biuletyn informacyjny KRD-IG/);
+  assert.match(articleBody, /Biuletyn informacyjny KRD-IG — dostępny po zalogowaniu/);
   assert.match(articleBody, /report-material-link-featured/);
   assert.match(reports, /<span>Otwórz biuletyn<\/span>/);
   assert.doesNotMatch(bulletin, /Arkusze źródłowe|Źródła i kontrola danych|\/sources\//);

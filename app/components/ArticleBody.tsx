@@ -1339,7 +1339,7 @@ export async function ArticleBody({
           <ul className="report-material-list">
             {reportBulletinHref && (
               <li><a className="report-material-link report-material-link-featured" href={withBasePath(reportBulletinHref)}>
-                <span>Biuletyn informacyjny KRD-IG</span><Arrow />
+                <span>Biuletyn informacyjny KRD-IG — dostępny po zalogowaniu</span><Arrow />
               </a></li>
             )}
             {reportItems.map((item) => (
