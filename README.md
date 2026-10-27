@@ -53,6 +53,42 @@ lokalnego adaptera SQLite i pliku `.wrangler/state/local-managed-posts.sqlite`.
 Wpisy lokalne pozostają po odświeżeniu i ponownym uruchomieniu serwera;
 nie są wysyłane do produkcyjnej bazy. Produkcja nie korzysta z tego fallbacku.
 
+## Biuletyny PDF w strefie członkowskiej
+
+W sekcji „Raporty”, obok wyboru wydania, przycisk „Pobierz PDF” pobiera
+oryginalny biuletyn wybranego miesiąca. Lista wydań jest publiczna;
+przeglądanie biuletynu i pobieranie PDF wymagają aktywnej sesji.
+Pliki przechowujemy w `private/bulletins`, nigdy w katalogu `public`.
+Nazwy: `biuletyn-2026-01.pdf`, a dla wydania łączonego
+`biuletyn-2026-04_05.pdf` (identyfikator wydania: `2026-04-05`).
+
+Lokalnie, bez bindingu R2, aplikacja czyta pliki z tego folderu.
+Na hostingu korzysta wyłącznie z prywatnego bucketa `MEMBER_DOCUMENTS`,
+z prefiksem `bulletin-pdfs/`. PDF-y są ignorowane przez Git i nie trafiają do publicznego repozytorium.
+Przed wdrożeniem nowych wydań należy przesłać je lokalnie poleceniem
+`node scripts/upload-bulletin-pdfs.mjs` z uprawnieniami zapisu R2.
+Skrypt korzysta z `CLOUDFLARE_MEMBER_DOCUMENTS_BUCKET` lub domyślnie
+`krd-ig-member-documents`. Bucket nie powinien mieć publicznego dostępu.
+Nowe wydania dodawane w panelu administratora korzystają z dołączonego PDF.
+Sam PDF, np. wrześniowy, nie tworzy nowego wydania interaktywnego.
+
+Kafelki podsumowania pokazują nazwę wskaźnika, jednostkę, zakres danych
+i okres. Udział eksportu jest prezentowany w procentach (np. 53,3%, nie 0,533),
+a import i eksport w kilogramach masy netto, narastająco od początku roku.
+Gwiazdka przy roku oznacza dane wstępne, zgodnie z przypisem w PDF.
+Wbudowane wydania mają przypisane opisy wskaźników w `app/lib/prepared-bulletins.ts`.
+Modele JSON nowych wydań mogą zawierać opcjonalne `metric` przy wykresie:
+`label`, `description`, `unit` i `format` (`number` lub `percent`).
+Dla `percent` wartości źródłowe są udziałami od 0 do 1.
+
+Widoki „Wykresy” i „Tabele” pokazują szczegółowy tytuł oraz krótki opis
+przed każdą wizualizacją. Wyszukiwarka obejmuje również te opisy i tytuły.
+Opisy wbudowanych wykresów są przypisane w `app/lib/bulletin-chart-descriptions.ts`,
+a tabel w `app/data/bulletins/table-descriptions.json`, według wydania i ID.
+Metadane nie zmieniają wartości liczbowych, kolejności ani zakresu danych.
+Modele JSON nowych wydań mogą zawierać `description` przy wykresie
+oraz `title` i `description` przy każdej tabeli.
+
 ## MVP ChatGPT na stronie
 
 W projekcie jest gotowy endpoint worker `POST /api/chat` i widget czatu w interfejsie.

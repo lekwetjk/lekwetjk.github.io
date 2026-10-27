@@ -53,14 +53,6 @@ export default async function NewsDetailPage({
   const shouldContainWoahLogoImage =
     slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026" ||
     slug === "komisja-europejska-gospodarstwa-rolne-to-nie-zaklady-przemyslowe";
-  const shouldContainZsrirLogoImage =
-    slug === "nowy-link-zsrir-w-zakladce-dokumenty";
-  const shouldUseZsrirTitleSize =
-    slug === "nowy-link-zsrir-w-zakladce-dokumenty";
-  const shouldUseWebinarHeroImage =
-    slug === "szczepienia-przeciwko-nd-w-polsce-doswiadczenia-po-roku-od-obowiazywania-przepisu";
-  const shouldUseSeptemberTurkeyImage =
-    slug === "indyk-ma-wiele-do-dania-podsumowanie-wrzesnia-2024";
   const isTenderLikeSlug =
     /(zapytanie-ofertowe|wybor-wykonawcy|zaproszenie-do-skladania-ofert|wyniki-postepowania|uniewaznienie)/.test(
       slug,
@@ -117,17 +109,7 @@ export default async function NewsDetailPage({
               </h1>
             ) : (
               <h1
-                className={
-                  shouldUseAlimentariaTitleSize
-                    ? "article-title-alimentaria-compact"
-                    : shouldUseZsrirTitleSize
-                      ? "article-title-zsrir"
-                      : shouldUseWebinarHeroImage
-                        ? "article-title-webinar"
-                        : shouldUseSeptemberTurkeyImage
-                          ? "article-title-turkey-campaign"
-                        : tenderHeadingClassName
-                }
+                className={shouldUseAlimentariaTitleSize ? "article-title-alimentaria-compact" : tenderHeadingClassName}
                 style={!shouldUseAlimentariaTitleSize ? tenderHeadingStyle : undefined}
               >
                 {post.title}
@@ -142,30 +124,15 @@ export default async function NewsDetailPage({
               post.excerpt && <p>{post.excerpt}</p>
             )}
           </div>
-          {(shouldUseSeptemberTurkeyImage || Boolean(post.image)) && (
+          {post.image && (
             <img
-              src={withBasePath(
-                shouldUseSeptemberTurkeyImage
-                  ? "/media/poultry-promotion.jpg"
-                  : post.image ?? "/media/poultry-promotion.jpg",
-              )}
-              alt={slug === "wybierz-twoje-wartosci" ? "No Random Choice – Wybierz Twoje Wartości!" : shouldUseSeptemberTurkeyImage ? "Poultry promotion campaign" : ""}
+              src={withBasePath(post.image)}
+              alt=""
               style={post.imageFit ? { objectFit: post.imageFit, objectPosition: "center", padding: post.imageFit === "contain" ? 16 : 0 } : undefined}
-              className={
-                slug === "wybierz-twoje-wartosci"
-                  ? "article-hero-image-campaign-logo"
-                  : shouldContainWoahLogoImage
-                  ? "article-hero-image-contain"
-                  : shouldContainZsrirLogoImage
-                    ? "article-hero-image-zsrir"
-                    : post.slug === "polska-zglosila-sprzeciw-wobec-niemieckich-przepisow-dotyczacych-oznakowania-zywnosci"
-                        ? "article-hero-image-contain"
-                        : shouldUseWebinarHeroImage
-                          ? "article-hero-image-webinar"
-                          : isTenderLikeSlug
-                            ? "article-hero-image-contain"
-                            : undefined
-              }
+              className={shouldContainWoahLogoImage || isTenderLikeSlug || post.image.endsWith(".svg") ||
+                slug === "wybierz-twoje-wartosci" ||
+                slug === "polska-zglosila-sprzeciw-wobec-niemieckich-przepisow-dotyczacych-oznakowania-zywnosci"
+                ? "article-hero-image-contain" : undefined}
             />
           )}
         </div>

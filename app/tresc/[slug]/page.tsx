@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { notFound, redirect } from "next/navigation";
-
-import { ArticleBody } from "../../components/ArticleBody";
-import { BulletinReports } from "../../components/BulletinReports";
-import { PageShell } from "../../components/SiteChrome";
 import { AUTH_COOKIE_NAME, verifySessionToken } from "../../lib/auth";
-import { withBasePath } from "../../lib/basePath";
+import { BulletinReports } from "../../components/BulletinReports";
+import { preparedBulletinEditions } from "../../lib/prepared-bulletins";
 import { listBulletinReports } from "../../lib/bulletin-reports";
+import { ArticleBody } from "../../components/ArticleBody";
+import { PageShell } from "../../components/SiteChrome";
+import { withBasePath } from "../../lib/basePath";
 import { knowledgePages, pageBySlug } from "../../lib/content";
 import { getLocalProposals, getLocalSeoDraft } from "../../lib/local-proposals-server";
 import { cleanProposedParagraph, proposedSummaries } from "../../lib/local-proposal-content";
@@ -86,27 +86,23 @@ export default async function ContentDetailPage({
   searchParams: Promise<{ raport?: string }>;
 }) {
   const { slug } = await params;
-
-  if (slug === "raporty") {
-    const selectedSlug = (await searchParams).raport;
-    if (selectedSlug) {
-      const session = verifySessionToken((await cookies()).get(AUTH_COOKIE_NAME)?.value);
-      if (!session) {
-        redirect(`/login/czlonkowie?redirect=${encodeURIComponent(`/tresc/raporty?raport=${selectedSlug}`)}`);
-      }
-      return <PageShell><BulletinReports selectedSlug={selectedSlug} /></PageShell>;
-    }
+  const selectedSlug = slug === "raporty" ? (await searchParams).raport : undefined;
+  if (selectedSlug) {
+    const session = verifySessionToken((await cookies()).get(AUTH_COOKIE_NAME)?.value);
+    if (!session) redirect(`/login/czlonkowie?redirect=${encodeURIComponent(`/tresc/raporty?raport=${selectedSlug}`)}`);
+    return <PageShell><BulletinReports selectedSlug={selectedSlug} /></PageShell>;
   }
-
+  const reportEditions = slug === "raporty"
+    ? [...preparedBulletinEditions, ...(await listBulletinReports())
+      .filter((report) => !preparedBulletinEditions.some((edition) => edition.slug === report.slug))
+      .map((report) => ({ id: `${report.year}-${String(report.month).padStart(2, "0")}`, slug: report.slug, title: report.title }))]
+      .sort((left, right) => left.id.localeCompare(right.id))
+    : [];
+  const reportBulletinHref = reportEditions.length ? `/tresc/raporty?raport=${reportEditions[reportEditions.length - 1].slug}` : undefined;
   const proposals = await getLocalProposals();
-
   if (proposals.contacts && slug === "kontakt") redirect("/kontakt");
   if (proposals.links && ["aktualnosci", "zapytania-ofertowe"].includes(slug)) redirect(`/${slug}`);
-
-  if (slug === "dla-czlonkow") {
-    redirect("/member/epi-geo");
-  }
-
+  if (slug === "dla-czlonkow") redirect("/member/epi-geo");
   const page = pageBySlug(slug);
   const originalLeadText =
     slug === "o-nas"
@@ -139,7 +135,7 @@ export default async function ContentDetailPage({
       ? "/media/stop_dez_clear.png"
     : proposals.images && slug === "e-book-o-dezinformacji-zywnosciowej"
       ? page.images.find((url) => /\/grafika-ebook\.webp(?:\?|$)/.test(url))
-      : slug === "akty-prawne"
+    : slug === "akty-prawne"
       ? "/media/prawo.png"
       : slug === "czlonkowie"
       ? "/media/memb.jpg"
@@ -158,40 +154,19 @@ export default async function ContentDetailPage({
     "to szybki dostęp do najważniejszych linków stron i portali internetowych w obszarze rolnictwa i sektora drobiarskiego";
   const shouldUseWideLead = slug === "zarzad-i-rada-izby";
   const shouldJustifyArticleContent = [
-    "akcja-stopdezinformacjizywnosciowej",
-    "rynek-drobiu-w-polsce-w-liczbach",
-    "raporty",
-    "handel-zagraniczny",
-    "unia-europejska",
-    "kraje-trzecie",
-    "eksport-import-z-unii-europejskiej",
-    "przedstawicielstwo-w-chinach",
-    "globalizacja-rynku",
-    "bezpieczenstwo-bialkowe",
-    "promocja-drobiu",
-    "dzial-hodowli-i-oceny-drobiu",
-    "rejestry-i-ksiegi",
-    "metodyka-i-biuletyny",
-    "wstawienia",
-    "cennik",
-    "pierze-i-puch-certyfikacja",
-    "jakosc-i-bezpieczenstwo",
-    "system-qafp",
-    "bezpieczna-produkcja",
-    "zdrowy-drob",
-    "segmentacja",
-    "dobrostan-zwierzat",
-    "poszanowanie-srodowiska",
+    "akcja-stopdezinformacjizywnosciowej", "rynek-drobiu-w-polsce-w-liczbach", "raporty",
+    "handel-zagraniczny", "unia-europejska", "kraje-trzecie", "eksport-import-z-unii-europejskiej",
+    "przedstawicielstwo-w-chinach", "globalizacja-rynku", "bezpieczenstwo-bialkowe", "promocja-drobiu",
+    "dzial-hodowli-i-oceny-drobiu", "rejestry-i-ksiegi", "metodyka-i-biuletyny", "wstawienia", "cennik",
+    "pierze-i-puch-certyfikacja", "jakosc-i-bezpieczenstwo", "system-qafp", "bezpieczna-produkcja",
+    "zdrowy-drob", "segmentacja", "dobrostan-zwierzat", "poszanowanie-srodowiska",
   ].includes(slug);
   const shouldShowLeadText = Boolean(leadText) && slug !== "wazne-linki" && slug !== "czlonkowie" && !(proposals.summaries && ["statut", "kontakt", "dane-kontaktowe", "polityka-prywatnosci", "polityka-cookies"].includes(slug));
-  const heroImageClassName =
-    slug === "akty-prawne"
-      ? "article-hero-image-legal"
-      : slug === "akcja-stopdezinformacjizywnosciowej"
-        ? "article-hero-image-logo"
-        : ["dezinformacja-zywnosciowa", "kampanie"].includes(slug)
-        ? "article-hero-image-contain"
-        : undefined;
+  const heroImageClassName = slug === "akty-prawne"
+    ? "article-hero-image-legal"
+    : slug === "akcja-stopdezinformacjizywnosciowej"
+      ? "article-hero-image-logo"
+      : ["dezinformacja-zywnosciowa", "kampanie"].includes(slug) ? "article-hero-image-contain" : undefined;
   const articleLeadClassName = `${
     shouldUseWideLead ? "article-lead article-lead-full" : "article-lead"
   }${slug === "akty-prawne" ? " article-lead-full" : ""}`;
@@ -206,30 +181,12 @@ export default async function ContentDetailPage({
             "radial-gradient(160% 132% at 50% 42%, #000 42%, rgba(0,0,0,0.45) 62%, rgba(0,0,0,0.15) 80%, transparent 100%)",
         }
       : undefined;
-  const latestBulletin = slug === "raporty" ? (await listBulletinReports())[0] : null;
-  const reportBulletinHref = latestBulletin ? `/tresc/raporty?raport=${latestBulletin.slug}` : undefined;
 
   return (
     <PageShell>
       <section className="article-hero">
         <div className="shell article-hero-grid">
           <div>
-            {slug === "dla-czlonkow" && (
-              <a
-                href="/member/profil"
-                style={{
-                  display: "inline-flex",
-                  alignItems: "center",
-                  gap: 8,
-                  marginBottom: 24,
-                  color: "#1f3a5f",
-                  fontWeight: 700,
-                  textDecoration: "none",
-                }}
-              >
-                <span aria-hidden="true">←</span> Powrót
-              </a>
-            )}
             <p className="article-kicker">{page.section}</p>
             <h1 className={slug === "wazne-linki" ? "article-title-wazne-linki" : undefined}>
               {slug === "wazne-linki" ? (
@@ -264,6 +221,7 @@ export default async function ContentDetailPage({
           )}
         </div>
       </section>
+      {slug === "raporty" ? <section className="shell prose"><h2>Biuletyn informacyjny KRD-IG</h2><p>Wybierz wydanie, aby przeglądać dane i pobrać biuletyn w wersji PDF.</p><ul className="report-material-list">{reportEditions.map((edition) => <li key={edition.slug}><a className="report-material-link" href={withBasePath(`/tresc/raporty?raport=${edition.slug}`)}>{edition.title}</a></li>)}</ul></section> : null}
       <div className={shouldJustifyArticleContent ? "justified-article-content" : undefined}>
         <ArticleBody
           paragraphs={proposals["text-cleanup"] ? page.paragraphs.map(cleanProposedParagraph) : page.paragraphs}

@@ -88,7 +88,7 @@ const pathways = [
     href: "/zrownowazony-rozwoj",
     index: "03",
     title: "Jakość i rozwój",
-    text: "Bezpieczeństwo produkcji, dobrostan, środowisko.",
+    text: "QAFP, bezpieczeństwo produkcji, dobrostan i środowisko.",
   },
   {
     href: "/dezinformacja",
@@ -254,8 +254,7 @@ export default async function Home() {
                     loading="lazy"
                     style={post.imageFit ? { objectFit: post.imageFit, objectPosition: "center", padding: post.imageFit === "contain" ? 16 : 0 } : undefined}
                     className={
-                      post.slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026" ||
-                      post.slug === "polska-zglosila-sprzeciw-wobec-niemieckich-przepisow-dotyczacych-oznakowania-zywnosci"
+                      post.slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026"
                         ? "latest-card-image-contain"
                         : undefined
                     }

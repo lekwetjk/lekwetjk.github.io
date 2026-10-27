@@ -37,7 +37,12 @@
 .heroStat strong { display: block; font-family: Georgia, serif; font-size: 58px; line-height: 1; }
 .heroStat span { display: block; max-width: 120px; margin-top: 5px; font-size: 13px; }
 
-.editionBar { display: flex; justify-content: flex-end; padding: 12px clamp(20px, 8vw, 130px); border-bottom: 1px solid var(--line); background: var(--surface); }
+.editionBar { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; justify-content: flex-end; padding: 12px clamp(20px, 8vw, 130px); border-bottom: 1px solid var(--line); background: var(--surface); }
+.pdfDownload { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 8px 14px; border-radius: 4px; background: var(--forest); color: white; text-decoration: none; font-size: 13px; font-weight: 600; }
+.pdfDownload:hover { background: var(--forest-deep); }
+.pdfDownload:focus-visible { outline: 2px solid var(--forest); outline-offset: 3px; }
+.pdfDownload svg { width: 18px; height: 18px; }
+.pdfPeriod { font-weight: 400; }
 .editionBar label { display: flex; align-items: center; gap: 12px; color: var(--muted); font-size: 12px; text-transform: uppercase; font-weight: 700; }
 .editionBar select,
 .sectionSelect select { min-height: 40px; padding: 0 36px 0 12px; border: 1px solid var(--line); border-radius: 4px; color: var(--ink); background: var(--surface); }
@@ -65,6 +70,10 @@
 .metrics article > span { color: var(--brick); font-size: 11px; font-weight: 700; }
 .metrics p { min-height: 40px; margin: 18px 0 10px; color: var(--muted); font-size: 12px; text-transform: uppercase; font-weight: 700; }
 .metrics strong { display: block; color: var(--forest); font-family: Georgia, serif; font-size: 38px; }
+.metrics strong { overflow-wrap: anywhere; }
+.metricUnit { display: inline-block; font-family: inherit; font-size: 20px; white-space: nowrap; }
+.metricDescription { margin-top: 12px; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.metricNote { margin: 14px 0 0; color: var(--muted); font-size: 13px; }
 .metrics small { color: var(--muted); }
 .overviewChart { display: grid; grid-template-columns: 280px minmax(0, 1fr); gap: 34px; margin-top: 54px; }
 
@@ -81,7 +90,7 @@
 .chartCard,
 .tableBlock { min-width: 0; overflow: hidden; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
 .chartCard { padding: 22px; }
-.chartTitle { min-height: 73px; }
+.chartTitle { min-height: 73px; margin-bottom: 18px; }
 .chartTitle span { color: var(--brick); font-size: 10px; text-transform: uppercase; font-weight: 700; }
 .chartTitle h3,
 .tableTitle h3 { margin: 7px 0 0; font-family: Georgia, serif; font-size: 21px; line-height: 1.1; }
@@ -91,6 +100,9 @@
 .tableList { display: grid; gap: 20px; padding: 24px 0 34px; }
 .tableTitle { display: flex; align-items: center; gap: 13px; padding: 20px 22px; border-bottom: 1px solid var(--line); }
 .tableTitle svg { width: 22px; color: var(--forest); }
+.tableTitle svg { flex-shrink: 0; }
+.itemDescription { margin: 10px 0 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.tableCaption { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
 .tableTitle h3 { margin: 0; }
 .tableScroll { max-height: 520px; overflow: auto; }
 .tableScroll table { width: 100%; border-collapse: collapse; font-size: 12px; }

@@ -30,51 +30,29 @@ export function NewsArchive({
   const [limit, setLimit] = useState(36);
 
   useEffect(() => {
+    let active = true;
     setAllPosts(posts);
     if (!managedKind) return;
-
     void fetch(`/api/managed-posts?kind=${managedKind}`)
       .then((response) => response.ok ? response.json() : null)
       .then((data: { posts?: ArchivePost[]; deletedSlugs?: string[] } | null) => {
-        if (!data?.posts) return;
+        if (!active || !data?.posts) return;
         setAllPosts([...data.posts, ...posts]
           .filter((post) => !data.deletedSlugs?.includes(post.slug))
           .filter((post, index, list) => list.findIndex((item) => item.slug === post.slug) === index)
           .sort((left, right) => new Date(right.date).getTime() - new Date(left.date).getTime()));
       })
       .catch(() => undefined);
+    return () => { active = false; };
   }, [managedKind, posts]);
 
-  const categoryOrder = [
-    "Wszystkie",
-    "Zapytania ofertowe",
-    "Zaproszenie do składania ofert",
-    "Wybór wykonawcy",
-    "Wyniki postępowania",
-    "Informacja o unieważnieniu",
-  ];
-
   const categories = useMemo(
-    () => {
-      const filteredCategories = Array.from(
-        new Set(
-            allPosts
-            .flatMap((post) => post.categories)
-            .filter(
-              (category) =>
-                category &&
-                !/^Aktualności$/i.test(category.trim()) &&
-                !/^Wydarzenia$/i.test(category.trim()),
-            ),
-        ),
-      );
-
-      const ordered = categoryOrder.concat(
-        filteredCategories.filter((category) => !categoryOrder.includes(category)),
-      );
-
-      return ordered.filter((value, index, list) => list.indexOf(value) === index);
-    },
+    () => [
+      "Wszystkie",
+      ...Array.from(new Set(allPosts.flatMap((post) => post.categories))).sort(
+        (a, b) => a.localeCompare(b, "pl"),
+      ),
+    ],
     [allPosts],
   );
   const years = useMemo(
@@ -152,26 +130,19 @@ export function NewsArchive({
       </p>
 
       <div className="archive-grid">
-        {filtered.slice(0, limit).map((post, index) => (
-          <article
-            className={`archive-card${post.slug === "nowy-link-zsrir-w-zakladce-dokumenty" ? " archive-card-zsrir" : ""}`}
-            key={post.slug}
-          >
+        {filtered.slice(0, limit).map((post) => (
+          <article className="archive-card" key={post.slug}>
             {post.image ? (
               <img
                 src={withBasePath(post.image)}
                 alt=""
-                loading={index === 0 ? "eager" : "lazy"}
+                loading="lazy"
                 style={post.imageFit ? { objectFit: post.imageFit, objectPosition: "center", padding: post.imageFit === "contain" ? 16 : 0 } : undefined}
                 className={
                   post.imageFit === "contain" || forceContainImages ||
-                  post.slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026" ||
-                  post.slug === "polska-zglosila-sprzeciw-wobec-niemieckich-przepisow-dotyczacych-oznakowania-zywnosci" ||
-                  post.slug === "komisja-europejska-gospodarstwa-rolne-to-nie-zaklady-przemyslowe"
+                  post.slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026"
                     ? "archive-image-contain"
-                    : post.slug === "nowy-link-zsrir-w-zakladce-dokumenty"
-                      ? "archive-image-contain archive-image-zsrir"
-                      : undefined
+                    : undefined
                 }
               />
             ) : (

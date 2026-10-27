@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { NewsArchive } from "../components/NewsArchive";
 import { PageShell } from "../components/SiteChrome";
 import { tenderPosts } from "../lib/content";
+import { mergeManagedPosts } from "../lib/managed-posts";
 
 function normalizeTenderArchiveTitle(title: string) {
   const normalized = title.trim();
@@ -53,8 +54,8 @@ export const metadata: Metadata = {
   },
 };
 
-export default function TenderRequestsPage() {
-  const archive = tenderPosts().map(
+export default async function TenderRequestsPage() {
+  const archive = (await mergeManagedPosts(tenderPosts(), "tender")).map(
     ({ slug, title, date, year, excerpt, categories, image, imageFit }) => ({
       slug,
       title: normalizeTenderArchiveTitle(title),
@@ -72,7 +73,7 @@ export default function TenderRequestsPage() {
       <section className="archive-hero">
         <div className="shell archive-hero-grid">
           <div>
-            <p className="eyebrow eyebrow-light">Wybór wykonawcy</p>
+            <p className="eyebrow eyebrow-light">Zapytania ofertowe</p>
             <h1>Zapytania ofertowe i wybór wykonawcy</h1>
           </div>
           <p>

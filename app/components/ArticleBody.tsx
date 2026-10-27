@@ -1,10 +1,10 @@
 import type { ContentLink } from "../lib/content";
 import type { ReactNode } from "react";
 import { withBasePath } from "../lib/basePath";
-import { renderInlineMarkdown } from "../lib/inlineMarkdown";
 import { Arrow } from "./SiteChrome";
 import { MembershipSignupForm } from "./MembershipSignupForm";
 import { ExternalFavicon } from "./ExternalFavicon";
+import { renderInlineMarkdown } from "../lib/inlineMarkdown";
 import { CommissionTicker } from "./CommissionTicker";
 import { CampaignWebsiteTicker } from "./CampaignWebsiteTicker";
 import { TerritorialCoverageMap } from "./TerritorialCoverageMap";
@@ -176,76 +176,55 @@ const boardMembers: BoardPerson[] = [
   },
 ];
 
-const englishBoardMembers = boardMembers.map((member) => ({
-  ...member,
-  role: member.role
-    .replace("Prezes Zarządu", "President of the Management Board")
-    .replace("Wiceprezes Zarządu", "Vice-President of the Management Board")
-    .replace("Przewodniczący Rady Izby", "Chair of the Chamber Council")
-    .replace("Wiceprzewodniczący Rady Izby", "Vice-Chair of the Chamber Council")
-    .replace("Członek Rady Izby", "Member of the Chamber Council")
-    .replace("Dyrektor ds. Public i Government Relations", "Director of Public and Government Relations"),
-  company: member.company
-    .replace("Prezes Zarządu", "President of the Management Board")
-    .replace("Członek Zarządu", "Member of the Management Board")
-    .replace("Dyrektor Zakładu", "Director of the Facility")
-    .replace("Rady Izby", "Chamber Council"),
-}));
-
 const partnerOrganisations = [
   {
     name: "AVEC",
     url: "https://avec-poultry.eu/",
-    logo: "https://krd-ig.com.pl/wp-content/uploads/2024/08/AVEC_logo-1.webp",
+    logo: "/media/partners/avec.svg",
     description:
       "Od 2005 roku KRD-IG reprezentuje polską branżę drobiarską w AVEC. Stowarzyszenie reprezentuje interesy europejskiej branży drobiowej i wypracowuje wspólne rozwiązania dla rynku drobiu w UE.",
-    enDescription:
-      "Since 2005, KRD-IG has represented the Polish poultry sector in AVEC, which represents the interests of the European poultry industry and develops common solutions for the EU poultry market.",
+  },
+  {
+    name: "UECBV",
+    url: "https://uecbv.eu/",
+    logo: "https://uecbv.eu/UECBV2/OWS/Images/galerie/Logo_UECBV2.png",
+    description:
+      "Europejska organizacja reprezentująca sektor hodowli i handlu żywcem oraz mięsem. UECBV zrzesza federacje z wielu krajów i reprezentuje tysiące firm oraz miejsc pracy.",
   },
   {
     name: "CLITRAVI",
     url: "https://www.clitravi.com/",
-    logo: "https://krd-ig.com.pl/wp-content/uploads/2025/07/CLITRAVI-LOGO-1.png",
+    logo: "/media/partners/clitravi.svg",
     description:
       "Organizacja branżowa działająca od 1958 roku, reprezentująca interesy europejskiego przemysłu przetwórstwa mięsa w dialogu z instytucjami UE.",
-    enDescription:
-      "An industry organisation operating since 1958 and representing the interests of the European meat-processing industry in dialogue with EU institutions.",
   },
   {
     name: "IPC",
     url: "https://internationalpoultrycouncil.org/",
-    logo: "https://krd-ig.com.pl/wp-content/uploads/2025/07/LOGO-IPC-2025.jpg",
+    logo: "/media/partners/ipc.svg",
     description:
       "Międzynarodowa organizacja reprezentująca globalny sektor drobiu. IPC skupia ponad 75% światowej produkcji mięsa drobiowego i 90% globalnego handlu.",
-    enDescription:
-      "An international organisation representing the global poultry sector. IPC covers more than 75% of global poultry meat production and 90% of global trade.",
   },
   {
     name: "WPSA",
     url: "https://www.wpsa.com/",
-    logo: "https://krd-ig.com.pl/wp-content/uploads/2025/07/Logo-WPSA.png",
+    logo: "/media/partners/wpsa.svg",
     description:
       "Światowa organizacja naukowa rozwijająca wiedzę o drobiarstwie i łącząca badaczy, edukatorów oraz praktyków branży od 1912 roku.",
-    enDescription:
-      "A global scientific organisation developing poultry knowledge and connecting researchers, educators and industry practitioners since 1912.",
   },
   {
     name: "ELPHA",
     url: "https://www.elpha.eu/",
-    logo: "https://krd-ig.com.pl/wp-content/uploads/2025/07/ELPHA-LOGO-2025.jpg",
+    logo: "/media/partners/elpha.svg",
     description:
       "Europejskie stowarzyszenie reprezentujące cały łańcuch produkcji żywca i jaj wylęgowych w UE oraz wspierające konkurencyjną i zrównoważoną produkcję.",
-    enDescription:
-      "A European association representing the entire live poultry and hatching egg production chain in the EU and supporting competitive, sustainable production.",
   },
   {
     name: "FGŻ",
     url: "https://www.fgzrp.pl/",
-    logo: "https://fgzrp.pl/files/images/logo/logo30.png",
+    logo: "/media/partners/fgz.svg",
     description:
       "Federacja Gospodarki Żywnościowej RP z siedzibą w Warszawie, współpracująca z KRD-IG od 2008 roku.",
-    enDescription:
-      "The Federation of Food Economy of the Republic of Poland, based in Warsaw and cooperating with KRD-IG since 2008.",
   },
 ];
 
@@ -284,14 +263,10 @@ export async function ArticleBody({
     slug === "czlonkowie"
       ? "https://krd-ig.com.pl/czlonkowie/"
       : source;
-  const sourceLinkLabel =
-    language === "en"
-      ? null
-      : slug === "polska-zglosila-sprzeciw-wobec-niemieckich-przepisow-dotyczacych-oznakowania-zywnosci"
+  const sourceLinkLabel = language === "en" ? null
+    : slug === "polska-zglosila-sprzeciw-wobec-niemieckich-przepisow-dotyczacych-oznakowania-zywnosci"
       ? "Zobacz materiały techniczne Komisji Europejskiej"
-      : slug === "nowy-link-zsrir-w-zakladce-dokumenty"
-      ? "PRZEJDŹ DO STRONY ZSRIR"
-      : null;
+      : slug === "nowy-link-zsrir-w-zakladce-dokumenty" ? "PRZEJDŹ DO STRONY ZSRIR" : null;
   const chinaGuideDownloadHref =
     slug === "przedstawicielstwo-w-chinach"
       ? links.find((link) => link.document)?.href ??
@@ -343,17 +318,6 @@ export async function ArticleBody({
       className: "news-logo-fundusze",
     },
   ];
-  const wofexCampaignMedia = [
-    "https://krd-ig.com.pl/wp-content/uploads/2025/08/2.jpg",
-    "https://krd-ig.com.pl/wp-content/uploads/2025/08/1.jpg",
-    "https://krd-ig.com.pl/wp-content/uploads/2025/08/3-scaled.jpg",
-    "https://krd-ig.com.pl/wp-content/uploads/2025/08/4.jpg",
-    "https://krd-ig.com.pl/wp-content/uploads/2025/08/5.jpg",
-    "https://krd-ig.com.pl/wp-content/uploads/2025/08/6.jpg",
-    "https://krd-ig.com.pl/wp-content/uploads/2025/08/7.jpg",
-    "https://krd-ig.com.pl/wp-content/uploads/2025/06/enjoy-1.png",
-    "https://krd-ig.com.pl/wp-content/uploads/2025/07/logo_Fundusze-Promocji_kolor.png",
-  ];
 
   const originalParagraphs =
     slug === "o-nas" && language === "pl"
@@ -368,12 +332,8 @@ export async function ArticleBody({
       : paragraphs;
   const cleanedParagraphs = proposals["text-cleanup"] ? originalParagraphs.map(cleanProposedParagraph) : originalParagraphs;
   const visibleParagraphs = slug === "akcja-stopdezinformacjizywnosciowej"
-    ? cleanedParagraphs
-        .filter((paragraph) => paragraph !== "Dowiedz się więcej na stronie")
-        .map((paragraph) => paragraph.replace(
-          /(?:&#x1f449;|👉) stopdezinformacjizywnosciowej\.pl/,
-          "[👉 stopdezinformacjizywnosciowej.pl](https://stopdezinformacjizywnosciowej.pl/)",
-        ))
+    ? cleanedParagraphs.filter((paragraph) => paragraph !== "Dowiedz się więcej na stronie")
+        .map((paragraph) => paragraph.replace(/(?:&#x1f449;|👉) stopdezinformacjizywnosciowej\.pl/, "[👉 stopdezinformacjizywnosciowej.pl](https://stopdezinformacjizywnosciowej.pl/)"))
     : cleanedParagraphs;
 
   if (proposals["text-cleanup"] && ["polityka-cookies", "polityka-prywatnosci", "system-qafp", "e-book-o-dezinformacji-zywnosciowej"].includes(slug ?? "")) {
@@ -389,7 +349,7 @@ export async function ArticleBody({
         return <p key={index}>{renderInlineMarkdown(paragraph, `proposal-${index}`)}</p>;
       })}
       {qafpListStart >= 0 ? <><p className="proposal-resource-note">Pierwszy punkt listy w materiale źródłowym jest niepełny. Wymaga weryfikacji redakcyjnej.</p><ul>{visibleParagraphs.slice(qafpListStart + 1).map((item, index) => <li key={index}>{item.replace(/\s*•\s*/g, " ")}{/[.!?]$/.test(item) ? "" : ";"}</li>)}</ul></> : null}
-      {resources.length ? <section><h2>Materiały do pobrania</h2><ul>{resources.map((link) => <li key={link.href}><a href={link.href}>{link.label}</a></li>)}</ul></section> : null}
+      {resources.length ? <section><h2>Materiały do pobrania</h2><ul>{resources.map((link) => <li key={link.href}><a href={withBasePath(link.href)}>{link.label}</a></li>)}</ul></section> : null}
     </article></div>;
   }
 
@@ -462,79 +422,27 @@ export async function ArticleBody({
     };
   };
 
-  const renderYoutubeLinks = (paragraph: string) => {
-    const youtubeUrlPattern = /https?:\/\/(?:www\.)?youtube\.com\/watch\?v=[A-Za-z0-9_-]+/g;
-    const matches = paragraph.match(youtubeUrlPattern);
-    if (!matches) {
-      return null;
-    }
-
-    const parts = paragraph.split(youtubeUrlPattern);
-    return parts.flatMap((part, index) => {
-      const nodes: ReactNode[] = [];
-      if (part) {
-        nodes.push(part);
-      }
-      const youtubeUrl = matches[index];
-      if (youtubeUrl) {
-        nodes.push(
-          <a
-            className="inline-download-link"
-            href={youtubeUrl}
-            key={`${youtubeUrl}-${index}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {youtubeUrl}
-          </a>,
-        );
-      }
-      return nodes;
-    });
-  };
-
-  const renderExternalLinks = (paragraph: string) => {
-    const urlPattern = /https?:\/\/[^\s]+/g;
-    const matches = paragraph.match(urlPattern);
-    if (!matches) {
-      return null;
-    }
-
-    const parts = paragraph.split(urlPattern);
-    return parts.flatMap((part, index) => {
-      const nodes: ReactNode[] = [];
-      if (part) {
-        nodes.push(part);
-      }
-      const url = matches[index];
-      if (url) {
-        nodes.push(
-          <a
-            className="inline-download-link"
-            href={url}
-            key={`${url}-${index}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            {url}
-          </a>,
-        );
-      }
-      return nodes;
-    });
-  };
-
   if (slug === "zarzad-i-rada-izby") {
-    const displayedBoardMembers = language === "en" ? englishBoardMembers : boardMembers;
+    const displayedBoardMembers = language === "en" ? boardMembers.map((member) => ({
+      ...member,
+      role: member.role
+        .replace("Wiceprezes Zarządu", "Vice-President of the Management Board")
+        .replace("Prezes Zarządu", "President of the Management Board")
+        .replace("Wiceprzewodniczący Rady Izby", "Vice-Chair of the Chamber Council")
+        .replace("Przewodniczący Rady Izby", "Chair of the Chamber Council")
+        .replace("Członek Rady Izby", "Member of the Chamber Council"),
+      company: member.company
+        .replace("Prezes Zarządu", "President of the Management Board")
+        .replace("Członek Zarządu", "Member of the Management Board")
+        .replace("Dyrektor Zakładu", "Director of the Facility")
+        .replace("Rady Izby", "Chamber Council"),
+    })) : boardMembers;
     const boardLabel = language === "en" ? "Member" : "Członek";
-
     return (
       <div className="article-layout board-only-layout shell">
         <article className="prose board-profile-layout">
           <div className="board-section">
-            <h2 className="article-board-heading">
-              {language === "en" ? "Management Board" : "Zarząd"}
-            </h2>
+            <h2 className="article-board-heading">{language === "en" ? "Management Board" : "Zarząd"}</h2>
             <div className="board-people-grid board-people-grid-single">
               {displayedBoardMembers.slice(0, 1).map((member) => (
                 <article className="board-person-card" key={member.name}>
@@ -579,9 +487,7 @@ export async function ArticleBody({
 
           <div className="board-section">
             <h2 className="article-board-heading">
-              {language === "en"
-                ? "Council of the National Poultry Council - Chamber of Commerce"
-                : "Rada Krajowej Rady Drobiarstwa – Izby Gospodarczej"}
+              {language === "en" ? "Council of the National Poultry Council – Chamber of Commerce" : "Rada Krajowej Rady Drobiarstwa – Izby Gospodarczej"}
             </h2>
             <div className="board-people-grid">
               {displayedBoardMembers.slice(3).map((member) => (
@@ -610,6 +516,15 @@ export async function ArticleBody({
   }
 
   if (slug === "o-nas") {
+    const englishPartnerDescriptions: Record<string, string> = {
+      AVEC: "Since 2005, KRD-IG has represented the Polish poultry sector in AVEC, which represents the interests of the European poultry industry and develops common solutions for the EU poultry market.",
+      UECBV: "A European organisation representing the livestock and meat trade sector.",
+      CLITRAVI: "An industry organisation operating since 1958 and representing the interests of the European meat-processing industry in dialogue with EU institutions.",
+      IPC: "An international organisation representing the global poultry sector. IPC covers more than 75% of global poultry meat production and 90% of global trade.",
+      WPSA: "A global scientific organisation developing poultry knowledge and connecting researchers, educators and industry practitioners since 1912.",
+      ELPHA: "A European association representing the entire live poultry and hatching egg production chain in the EU and supporting competitive, sustainable production.",
+      "FGŻ": "The Federation of Food Economy of the Republic of Poland, based in Warsaw and cooperating with KRD-IG since 2008.",
+    };
     return (
       <div className="article-layout article-layout-full shell">
         <article className="prose">
@@ -622,12 +537,8 @@ export async function ArticleBody({
           )}
           <section className="partner-organisations" aria-labelledby="partner-organisations-title">
             <div className="section-intro partner-organisations-header">
-              <p className="eyebrow">
-                {language === "en" ? "Partners and organisations" : "Partnerzy i organizacje"}
-              </p>
-              <h2 id="partner-organisations-title">
-                {language === "en" ? "Organisations we work with" : "Organizacje, z którymi współpracujemy"}
-              </h2>
+              <p className="eyebrow">{language === "en" ? "Partners and organisations" : "Partnerzy i organizacje"}</p>
+              <h2 id="partner-organisations-title">{language === "en" ? "Organisations we work with" : "Organizacje, z którymi współpracujemy"}</h2>
             </div>
             <div className="partner-organisations-grid">
               {partnerOrganisations.map((partner) => (
@@ -640,11 +551,9 @@ export async function ArticleBody({
                     <img src={withBasePath(partner.logo)} alt={`${partner.name} logo`} />
                   </div>
                   <div className="partner-card-content">
-                    <span className="partner-card-badge">
-                      {language === "en" ? "Industry partner" : "Partner branżowy"}
-                    </span>
+                    <span className="partner-card-badge">{language === "en" ? "Industry partner" : "Partner branżowy"}</span>
                     <h3>{partner.name}</h3>
-                    <p>{language === "en" ? partner.enDescription : partner.description}</p>
+                    <p>{language === "en" ? englishPartnerDescriptions[partner.name] : partner.description}</p>
                   </div>
                 </a>
               ))}
@@ -661,15 +570,10 @@ export async function ArticleBody({
     return (
       <div className="article-layout article-layout-full shell">
         <article className="prose">
-          <div
-            className="commission-grid"
-            aria-label={language === "en" ? "KRD-IG commissions" : "Komisje KRD-IG"}
-          >
+          <div className="commission-grid" aria-label={language === "en" ? "KRD-IG commissions" : "Komisje KRD-IG"}>
             {commissionNames.map((commissionName, index) => (
               <article className="commission-card" key={`${index}-${commissionName}`}>
-                <span className="commission-card-badge">
-                  {language === "en" ? "KRD-IG Commission" : "Komisja KRD-IG"}
-                </span>
+                <span className="commission-card-badge">{language === "en" ? "KRD-IG Commission" : "Komisja KRD-IG"}</span>
                 <h2>{commissionName}</h2>
               </article>
             ))}
@@ -1433,14 +1337,11 @@ export async function ArticleBody({
           <h2>Materiały i raporty</h2>
           {introParagraph && <p>{introParagraph}</p>}
           <ul className="report-material-list">
-            {reportBulletinHref ? (
-              <li>
-                <a className="report-material-link report-material-link-featured" href={reportBulletinHref}>
-                  <span><strong>Biuletyn informacyjny KRD-IG</strong><small>Strefa chroniona</small></span>
-                  <Arrow />
-                </a>
-              </li>
-            ) : null}
+            {reportBulletinHref && (
+              <li><a className="report-material-link report-material-link-featured" href={withBasePath(reportBulletinHref)}>
+                <span>Biuletyn informacyjny KRD-IG</span><Arrow />
+              </a></li>
+            )}
             {reportItems.map((item) => (
               <li key={item.href}>
                 <a className="report-material-link" href={item.href}>
@@ -1456,46 +1357,34 @@ export async function ArticleBody({
   }
 
   if (slug === "kraje-trzecie") {
-    const marketParagraphs = [
-      'Według szacunków FAO opublikowanych w czerwcu 2026 r. światowa produkcja mięsa drobiowego wyniosła w 2025 r. około **156,3 mln ton**. Największym producentem były Chiny — 29,2 mln ton, przed Stanami Zjednoczonymi — 24,3 mln ton i Brazylią — 15,6 mln ton. Unia Europejska, traktowana jako jeden obszar gospodarczy, zajmowała czwarte miejsce z produkcją około 14,5 mln ton. Wielkości te obejmują mięso różnych gatunków drobiu i są wyrażone w ekwiwalencie masy tuszy. Na 2026 r. FAO prognozuje wzrost światowej produkcji do około 160,3 mln ton. [FAO, „Food Outlook”, czerwiec 2026, tabela A18](https://openknowledge.fao.org/server/api/core/bitstreams/11877910-a587-4202-b22d-d66e498d76b0/content).',
-      'Polska pozostaje największym producentem mięsa drobiowego w Unii Europejskiej. [Eurostat, lipiec 2026](https://ec.europa.eu/eurostat/fr/web/products-eurostat-news/w/wdn-20260709-1).',
-      'Dywersyfikacja eksportu poza UE pozostaje istotnym kierunkiem rozwoju polskiego sektora drobiarskiego. Potencjał poszczególnych rynków należy jednak oceniać z uwzględnieniem konkurencji, preferencji odbiorców, kosztów dostaw oraz rzeczywistego dostępu weterynaryjnego. Poniżej przedstawiamy charakterystykę czterech wybranych rynków.',
-      'Chiny',
-      'Chiny są dużym rynkiem konsumenckim, ale również znaczącym producentem i coraz ważniejszym eksporterem mięsa kurcząt. Według bilansu USDA z kwietnia 2026 r. chiński import tej kategorii wyniósł w 2025 r. około 297 tys. ton — o około 38% mniej niż rok wcześniej. Od 2024 r. Chiny są eksporterem netto mięsa kurcząt. Rozwoju chińskiego rynku nie należy zatem utożsamiać z automatycznym wzrostem zapotrzebowania na import. Przywołany bilans USDA nie obejmuje kurzych łapek. [USDA, kwiecień 2026](https://apps.fas.usda.gov/psdonline/circulars/livestock_poultry.pdf).',
-      'Potencjał handlowy może dotyczyć określonych asortymentów odpowiadających lokalnym preferencjom, w tym kurzych łapek, stanowiących odrębny segment rynku. [USDA, raport dotyczący Chin, marzec 2026](https://apps.fas.usda.gov/newgainapi/api/Report/DownloadReportByFileName?fileName=Poultry+and+Products+Semi-Annual_Beijing_China+-+People%27s+Republic+of_CH2026-0031.pdf).',
-      'Istotnym krokiem w kierunku przywrócenia dostępu dla polskiego drobiu było podpisanie 3 czerwca 2026 r. protokołu dotyczącego wymagań dla mięsa drobiowego i produktów przetworzonych. Przewiduje on stosowanie regionalizacji na poziomie jednostek NUTS-3. Podpisanie porozumienia nie oznacza jednak automatycznego dopuszczenia dostaw z każdego zakładu. [MRiRW, 3 czerwca 2026](https://www.gov.pl/web/rolnictwo/kolejny-krok-w-kierunku-otwarcia-chinskiego-rynku-dla-polskiego-drobiu), [GIW — Chiny](https://www.wetgiw.gov.pl/handel-eksport-import/chiny).',
-      'Japonia',
-      'Japonia jest dużym, dojrzałym rynkiem mięsa kurcząt i znaczącym importerem. Według bilansu USDA z kwietnia 2026 r. konsumpcja bilansowa tej kategorii wyniosła w 2025 r. około 2,965 mln ton, a import — 1,122 mln ton. Są to dane dotyczące całego rynku, a nie wyłącznie zakupów detalicznych gospodarstw domowych. [USDA, kwiecień 2026](https://apps.fas.usda.gov/psdonline/circulars/livestock_poultry.pdf).',
-      'Możliwości sprzedaży z Polski należy rozpatrywać odrębnie dla mięsa surowego oraz produktów przetworzonych termicznie. Wykaz japońskiego Ministerstwa Rolnictwa, Leśnictwa i Rybołówstwa, zaktualizowany 18 września 2026 r., wskazuje ograniczenia związane z wysoce zjadliwą grypą ptaków obejmujące wszystkie polskie województwa. Przewidziano przy tym określone wyjątki dla produktów wytworzonych przed wskazanymi datami i odpowiednio zabezpieczonych. [MAFF — aktualne ograniczenia importowe](https://www.maff.go.jp/aqs/topix/im/hpai.html).',
-      'Odrębną możliwość rozwoju eksportu stanowią produkty przetworzone. W kwietniu 2026 r. ogłoszono zatwierdzenie pierwszego polskiego zakładu do eksportu przetworzonych produktów drobiowych do Japonii. Dostęp ten wymaga spełnienia szczegółowych warunków i nie oznacza zniesienia ograniczeń dla mięsa surowego. [KOWR, 15 kwietnia 2026](https://www.gov.pl/web/kowr/eksport-polskiego-miesa-do-japonii).',
-      'Republika Południowej Afryki',
-      'Republika Południowej Afryki pozostaje dużym rynkiem mięsa kurcząt, na którym produkcja krajowa jest uzupełniana importem. Według raportu USDA FAS z września 2026 r. produkcja mięsa kurcząt w 2025 r. wyniosła około 1,61 mln ton, a import około 0,3 mln ton. Warunki konkurencji kształtują m.in. koszty produkcji, sytuacja epizootyczna oraz instrumenty ochrony handlu, w tym cła antydumpingowe. [USDA, raport dotyczący RPA, wrzesień 2026](https://apps.fas.usda.gov/newgainapi/api/Report/DownloadReportByFileName?fileName=Poultry+and+Products+Annual_Pretoria_South+Africa+-+Republic+of_SF2026-0031.pdf).',
-      'Rząd RPA wspiera rozwój i modernizację sektora w ramach programu Poultry Master Plan. Dostępne źródła nie uzasadniają jednak generalizujących ocen, że wsparcie publiczne prowadzi do niekonkurencyjności, niedoinwestowania czy nadmiernego zatrudnienia w całej branży. [Rząd RPA — Poultry Master Plan](https://www.gov.za/news/media-statements/trade-industry-and-competition-poultry-master-plan-21-feb-2025).',
-      'Dla polskich przedsiębiorstw kluczową kwestią pozostaje dostęp weterynaryjny. We wrześniu 2026 r. MRiRW nadal informowało o potrzebie finalizacji uzgodnień dotyczących dostępu polskiego drobiu do rynku RPA. Historycznych uprawnień zakładów nie należy więc utożsamiać z możliwością bieżącej realizacji dostaw. Konieczna jest każdorazowa weryfikacja wymagań produktowych, ograniczeń związanych z chorobami drobiu oraz aktualnych zezwoleń. [MRiRW, 3 września 2026](https://www.gov.pl/web/rolnictwo/polska-i-republika-poludniowej-afryki-zaciesniaja-wspolprace-w-sektorze-rolno-spozywczym), [GIW — RPA](https://www.wetgiw.gov.pl/handel-eksport-import/republika-poludniowej-afryki).',
-      'Singapur',
-      'Singapur jest rynkiem silnie uzależnionym od dostaw zagranicznych. Według Singapore Food Agency ponad 90% jego zaopatrzenia w żywność pochodzi z importu, a dywersyfikacja dostawców stanowi ważny element krajowej strategii bezpieczeństwa żywnościowego. Wskaźnik ten dotyczy całej żywności, nie wyłącznie drobiu. [SFA, maj 2026](https://www.sfa.gov.sg/news-publications/newsroom/singapore-food-statistics-2025).',
-      'W 2025 r. całkowita podaż kurcząt wyniosła 215,8 tys. ton, wobec 224,0 tys. ton w 2024 r., co oznacza spadek o około 3,7%. Głównymi źródłami dostaw były Brazylia, Malezja i Stany Zjednoczone. Dane te potwierdzają znaczną skalę rynku, ale nie uzasadniają twierdzenia o nieprzerwanym wzroście konsumpcji. [SFA, „Singapore Food Statistics 2025”](https://www.sfa.gov.sg/docs/default-source/publication/sg-food-statistics/sgfs-2025-publication_060526-fa.pdf).',
-      'Eksport z Polski wymaga odpowiedniego zatwierdzenia zakładu oraz spełnienia wymagań dla konkretnego produktu. W wykazie ograniczeń HPAI według stanu na 23 września 2026 r. Polska nie figurowała. Nie oznacza to jednak automatycznego dopuszczenia wszystkich produktów ani braku innych ograniczeń weterynaryjnych. [SFA — wykaz ograniczeń HPAI](https://www.sfa.gov.sg/docs/default-source/tools-and-resources/resources-for-businesses/list-of-countries-and-regions-suspended-for-hpai.pdf), [GIW — Singapur](https://www.wetgiw.gov.pl/handel-eksport-import/singapur).',
-    ];
+    const downloadHref =
+      "https://krd-ig.com.pl/wp-content/uploads/2024/09/KLUCZOWE-KIERUNKI-EKSPORTOWE-DLA-POLSKIEGO-DROBIARSTWA-1.pdf";
     const countryFlags = new Map<string, { src: string; alt: string }>([
       ["CHINY", { src: "/media/flags/cn.svg", alt: "Flaga Chin" }],
       ["JAPONIA", { src: "/media/flags/jp.svg", alt: "Flaga Japonii" }],
-      ["REPUBLIKA POŁUDNIOWEJ AFRYKI", { src: "/media/flags/za.svg", alt: "Flaga Republiki Południowej Afryki" }],
+      ["RPA", { src: "/media/flags/za.svg", alt: "Flaga Republiki Południowej Afryki" }],
       ["SINGAPUR", { src: "/media/flags/sg.svg", alt: "Flaga Singapuru" }],
     ]);
 
     return (
       <div className="article-layout article-layout-full shell">
         <article className="prose prose-justified prose-third-countries">
-          {marketParagraphs.map((paragraph, index) => {
+          {visibleParagraphs.map((paragraph, index) => {
             const normalized = paragraph.trim();
             const normalizedUpper = normalized.toLocaleUpperCase("pl");
             const countryFlag = countryFlags.get(normalizedUpper);
 
+            if (normalizedUpper === "POBIERZ") {
+              return (
+                <h2 className="third-countries-download" key={`${index}-${normalized}`}>
+                  <a href={downloadHref}>POBIERZ</a>
+                </h2>
+              );
+            }
+
             if (countryFlag) {
               return (
                 <h2 className="third-countries-country-heading" key={`${index}-${normalized}`}>
-                  <span>{normalized}</span>
                   <img
                     className="third-countries-flag"
                     src={withBasePath(countryFlag.src)}
@@ -1503,11 +1392,16 @@ export async function ArticleBody({
                     width={36}
                     height={24}
                   />
+                  {normalized}
                 </h2>
               );
             }
 
-            return <p key={`${index}-${paragraph.slice(0, 20)}`}>{renderInlineMarkdown(paragraph, `third-countries-${index}`)}</p>;
+            if (index > 0 && looksLikeHeading(paragraph)) {
+              return <h2 key={`${index}-${paragraph.slice(0, 20)}`}>{paragraph}</h2>;
+            }
+
+            return <p key={`${index}-${paragraph.slice(0, 20)}`}>{paragraph}</p>;
           })}
 
         </article>
@@ -1517,29 +1411,17 @@ export async function ArticleBody({
 
   if (slug === "handel-zagraniczny") {
     const latestExportReports = [
-      {
-        label: "POBIERZ RAPORT ZA ROK 2025",
-        href: "/media/reports/eksport-rolno-spozywczy-2025.pdf",
-        document: true,
-      },
-      {
-        label: "POBIERZ RAPORT ZA PIERWSZE PÓŁROCZE 2026",
-        href: "/media/reports/eksport-rolno-spozywczy-pierwsze-polrocze-2026.pdf",
-        document: true,
-      },
+      { label: "POBIERZ RAPORT ZA ROK 2025", href: "/media/reports/eksport-rolno-spozywczy-2025.pdf", document: true },
+      { label: "POBIERZ RAPORT ZA PIERWSZE PÓŁROCZE 2026", href: "/media/reports/eksport-rolno-spozywczy-pierwsze-polrocze-2026.pdf", document: true },
     ];
     const linkByLabel = new Map(
       [...links, ...latestExportReports].map((link) => [link.label.trim().toUpperCase(), link]),
     );
-    const reportParagraphs = [
-      ...visibleParagraphs.map((paragraph) => paragraph.replace("w latach 2022-2024:", "od 2022 roku:")),
-      ...latestExportReports.map((report) => report.label),
-    ];
 
     return (
       <div className="article-layout article-layout-full shell">
         <article className="prose">
-          {reportParagraphs.map((paragraph, index) => {
+          {visibleParagraphs.map((paragraph, index) => {
             const normalized = paragraph.trim();
             const normalizedUpper = normalized.toUpperCase();
             const linkedReport = linkByLabel.get(normalizedUpper);
@@ -1549,7 +1431,7 @@ export async function ArticleBody({
 
               return (
                 <h2 key={`${index}-${paragraph.slice(0, 20)}`}>
-                  <a href={linkedReport.href}>{readableLabel}</a>
+                  <a href={resolveArticleHref(linkedReport.href)}>{readableLabel}</a>
                 </h2>
               );
             }
@@ -1699,6 +1581,7 @@ export async function ArticleBody({
   if (slug === "kampanie") {
     await connection();
     const publishedCampaigns = await applyManagedPostOverrides(newsPosts.filter((post) => post.categories.includes("Kampanie")));
+    const campaignDateFormatter = new Intl.DateTimeFormat("pl-PL", { day: "numeric", month: "short", year: "numeric" });
     const normalizeText = (value: string) =>
       value
         .trim()
@@ -1716,7 +1599,6 @@ export async function ArticleBody({
     };
 
     const datePattern = /^\d{1,2}\s+\p{L}{3}\s+\d{4}$/iu;
-    const campaignDateFormatter = new Intl.DateTimeFormat("pl-PL", { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" });
     const normalizedParagraphs = visibleParagraphs.map((paragraph) => paragraph.trim()).filter(Boolean);
     const dateByTitle = new Map<string, string>();
     const summaryByTitle = new Map<string, string>();
@@ -1766,35 +1648,33 @@ export async function ArticleBody({
           .map((link) => [link.href, link]),
       ).values(),
     ).map((link) => {
-      const sourcePath = /^https?:\/\//i.test(link.href)
-        ? new URL(link.href).pathname
-        : link.href;
+      const sourcePath = /^https?:\/\//i.test(link.href) ? new URL(link.href).pathname : link.href;
       const campaignSlug = sourcePath.split("/").filter(Boolean).pop();
       const campaignPost = newsPosts.find((post) => post.slug === campaignSlug);
-      const href = campaignSlug
-        ? withBasePath(`/aktualnosci/${campaignSlug}`)
-        : withBasePath(link.href);
+      const publishedPost = publishedCampaigns.find((post) => post.slug === campaignSlug);
+      const href = campaignSlug ? withBasePath(`/aktualnosci/${campaignSlug}`) : withBasePath(link.href);
       return {
-        title: link.label.trim(),
+        title: publishedPost?.title ?? link.label.trim(),
         href,
-        image: null as string | null,
+        image: publishedPost?.image ?? null,
         date: dateByTitle.get(normalizeText(link.label.trim())) ??
-          (campaignPost?.date && Number.isFinite(Date.parse(campaignPost.date)) ? campaignDateFormatter.format(new Date(campaignPost.date)) : undefined),
+          (publishedPost?.date && Number.isFinite(Date.parse(publishedPost.date)) ? campaignDateFormatter.format(new Date(publishedPost.date))
+            : campaignPost?.date && Number.isFinite(Date.parse(campaignPost.date)) ? campaignDateFormatter.format(new Date(campaignPost.date)) : undefined),
         summary:
+          publishedPost?.excerpt ??
           summaryByTitle.get(normalizeText(link.label.trim())) ??
           "Zobacz szczegoly kampanii w materiale zrodlowym.",
       };
+    }).filter((item) => {
+      const slug = item.href.split("/").filter(Boolean).pop();
+      return !newsPosts.some((post) => post.slug === slug && post.categories.includes("Kampanie"))
+        || publishedCampaigns.some((post) => post.slug === slug);
     });
-
     const newCampaigns = publishedCampaigns
-      .filter((post) => post.categories.includes("Kampanie") &&
-        !campaignLinks.some((link) => link.href === withBasePath(`/aktualnosci/${post.slug}`)))
+      .filter((post) => post.categories.includes("Kampanie") && !campaignLinks.some((link) => link.href === withBasePath(`/aktualnosci/${post.slug}`)))
       .map((post) => ({
-        title: post.title,
-        href: withBasePath(`/aktualnosci/${post.slug}`),
-        image: post.image,
-        date: campaignDateFormatter.format(new Date(post.date.slice(0, 10))),
-        summary: post.excerpt,
+        title: post.title, href: withBasePath(`/aktualnosci/${post.slug}`), image: post.image,
+        date: campaignDateFormatter.format(new Date(post.date.slice(0, 10))), summary: post.excerpt,
       }));
 
     return (
@@ -1811,9 +1691,6 @@ export async function ArticleBody({
             {[...newCampaigns, ...campaignLinks].map((item) => (
               <li key={`${item.href}-${item.title}`} className="kampanie-list-item">
                 <a href={item.href}>
-                  {item.image && (
-                    <img className="kampanie-logo" src={withBasePath(item.image)} alt={`Logo kampanii ${item.title}`} width={120} height={60} />
-                  )}
                   <span className="kampanie-main">
                     <span className="kampanie-title">{item.title.toLocaleUpperCase("pl")}</span>
                     <span className="kampanie-summary">{item.summary}</span>
@@ -1855,7 +1732,9 @@ export async function ArticleBody({
             </p>
           </section>
 
-          <MembershipSignupForm {...memberProfileOptions} />
+          <MembershipSignupForm
+            {...memberProfileOptions}
+          />
 
         </article>
       </div>
@@ -2155,8 +2034,6 @@ export async function ArticleBody({
           <h2>Segmentacja rynku drobiu</h2>
           {normalizedParagraphs.map((paragraph, index) => {
             const displayParagraph = normalizeSegmentDisplayText(paragraph);
-
-            if (proposals["text-cleanup"] && isSectionHeading(displayParagraph) && normalizedParagraphs.slice(0, index).some((previous) => normalizeSegmentDisplayText(previous) === displayParagraph)) return null;
 
             if (
               /^Podział certyfikowanego mięsa drobiowego we Francji prezentuje się następująco:/i.test(
@@ -2931,9 +2808,7 @@ export async function ArticleBody({
   }
 
   const shouldJustifyArticleText =
-    justify ||
-    categories.some((category) => /^(Aktualności|Zapytania ofertowe|Zaproszenie do składania ofert|Wybór wykonawcy|Wyniki postępowania|Informacja o unieważnieniu)$/i.test(category.trim())) ||
-    slug === "bezpieczenstwo-bialkowe" ||
+    justify || isTenderLikeSlug || categories.includes("Prawo") || slug === "bezpieczenstwo-bialkowe" ||
     slug === "globalizacja-rynku" ||
     slug === "przedstawicielstwo-w-chinach";
   const shouldUseFullWidthArticleLayout =
@@ -3500,12 +3375,6 @@ export async function ArticleBody({
   }
 
   if (slug === "wazne-linki") {
-    const primaryWaznyLink = {
-      title: "Zintegrowany System Rolniczej Informacji Rynkowej",
-      href: "https://zsrir.minrol.gov.pl/about",
-      logoOverride: withBasePath("/media/partners/zsrir.svg"),
-    };
-
     const headingTitles = visibleParagraphs
       .map((paragraph) => paragraph.trim())
       .filter(
@@ -3575,7 +3444,7 @@ export async function ArticleBody({
       })
       .filter((item): item is { title: string; href: string } => item !== null);
 
-    const generatedCards = (byLinks.length > 0 ? byLinks : fallbackEntries).map((item) => {
+    const linkCards = (byLinks.length > 0 ? byLinks : fallbackEntries).map((item) => {
       const normalizedTitle = item.title.toLocaleLowerCase("pl");
       const logoOverride =
         normalizedTitle === "ministerstwo rolnictwa i rozwoju wsi"
@@ -3607,15 +3476,6 @@ export async function ArticleBody({
         logoOverride,
       };
     });
-
-    const linkCards = [
-      primaryWaznyLink,
-      ...generatedCards.filter(
-        (item) =>
-          item.href.toLocaleLowerCase("pl") !== primaryWaznyLink.href.toLocaleLowerCase("pl") &&
-          item.title.toLocaleLowerCase("pl") !== primaryWaznyLink.title.toLocaleLowerCase("pl"),
-      ),
-    ];
 
     return (
       <div className="article-layout article-layout-full shell">
@@ -3650,337 +3510,10 @@ export async function ArticleBody({
     );
   }
 
-  if (slug === "ppwr-a-marki-wlasne-odpowiedz-ministerstwa-w-sprawie-statusu-wytworcy") {
-    const ppwrLinks = new Map(links.map((link) => [link.label, link]));
-    const ministerHennigKloskaLink = ppwrLinks.get(
-      "Pismo KRD-IG do Minister Klimatu i Środowiska z 7 sierpnia 2026 r. – pobierz.pdf",
-    );
-    const ministerKrajewskiLink = ppwrLinks.get(
-      "Pismo do Ministra Rolnictwa i Rozwoju Wsi z 6 sierpnia 2026 r. – pobierz.pdf",
-    );
-    const dgoResponseLink = ppwrLinks.get(
-      "Odpowiedź Departamentu Gospodarki Odpadami MKiŚ z 28 sierpnia 2026 r. – pobierz.pdf",
-    );
-
-    return (
-      <div className="article-layout article-layout-full shell">
-        <article className="prose prose-justified">
-          <p>
-            <strong>
-              PPWR a marki własne: odpowiedź Ministerstwa w sprawie statusu „wytwórcy”.
-            </strong>
-          </p>
-          <p>
-            Od 12 sierpnia 2026 r. stosowane są przepisy rozporządzenia Parlamentu Europejskiego
-            i Rady (UE) 2025/40 w sprawie opakowań i odpadów opakowaniowych (PPWR). Jednym
-            z zagadnień budzących istotne wątpliwości przedsiębiorców jest ustalenie, kto posiada
-            status „<strong>wytwórcy</strong>” w przypadku produktów wytwarzanych na zlecenie
-            i sprzedawanych pod markami własnymi sieci handlowych.
-          </p>
-          <p>
-            W praktyce pojawiają się oczekiwania, aby odpowiedzialność za realizację obowiązków
-            wynikających z PPWR przejmowali producenci wykonujący produkcję kontraktową. Problem
-            ten dotyczy różnych sektorów przemysłu spożywczego, w tym branży drobiarskiej, i może
-            wpływać na treść umów oraz relacje przedsiębiorców z sieciami handlowymi.
-          </p>
-          <p>
-            W związku z tym <strong>Krajowa Rada Drobiarstwa – Izba Gospodarcza</strong> wystąpiła
-            do Minister Klimatu i Środowiska Pauliny Hennig-Kloski o pilne przedstawienie
-            oficjalnego stanowiska interpretacyjnego. KRD-IG zwróciła się również do Ministra
-            Rolnictwa i Rozwoju Wsi Stefana Krajewskiego z prośbą o interwencję w tej sprawie.
-          </p>
-          <p>
-            W ocenie KRD-IG, przedstawionej w pismach, art. 3 ust. 1 pkt 13 lit. a PPWR wskazuje,
-            że jeżeli przedsiębiorca zleca zaprojektowanie lub wytworzenie opakowania albo produktu
-            w opakowaniu pod własną nazwą lub własnym znakiem towarowym, to właśnie podmiot
-            zlecający – a nie wykonawca produkcji – posiada status „wytwórcy”. KRD-IG podkreśliła
-            również, że status wynikający z rozporządzenia nie powinien być zmieniany poprzez
-            postanowienia umowne lub praktykę handlową.
-          </p>
-          <p>
-            W odpowiedzi z 28 sierpnia 2026 r. Departament Gospodarki Odpadami Ministerstwa
-            Klimatu i Środowiska zasadniczo potwierdził ten kierunek interpretacji. Ministerstwo
-            wskazało, że podmiot zlecający zaprojektowanie lub wytworzenie opakowania albo produktu
-            w opakowaniu pod własną nazwą lub znakiem towarowym jest „wytwórcą” w rozumieniu PPWR.
-            Wyjaśniono także, że chociaż „marka własna” nie ma odrębnej definicji prawnej,
-            produkcja pod takim oznaczeniem mieści się w definicji określonej w art. 3 ust. 1 pkt
-            13 PPWR.
-          </p>
-          <p>
-            Zgodnie z odpowiedzią Ministerstwa wytwórca może zlecić wykonanie w jego imieniu oceny
-            zgodności oraz wyznaczyć upoważnionego przedstawiciela do wykonywania określonych
-            zadań. Nie może jednak, jeżeli dany model współpracy odpowiada warunkom opisanym
-            w rozporządzeniu, przenieść na inny podmiot samego statusu wytwórcy oraz związanej
-            z nim odpowiedzialności za wykonanie obowiązków wynikających z PPWR.
-          </p>
-          <p>
-            Należy jednocześnie pamiętać o przewidzianym w rozporządzeniu wyjątku dotyczącym
-            mikroprzedsiębiorstw. Ocena konkretnego przypadku powinna zatem uwzględniać jego pełny
-            stan faktyczny oraz treść zawartych umów.
-          </p>
-          <p>
-            Pod linkiem{" "}
-            <a
-              className="inline-download-link"
-              href="https://op.europa.eu/pl/publication-detail/-/publication/ad14cb8f-8d4f-11f1-9262-01aa75ed71a1"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              https://op.europa.eu/pl/publication-detail/-/publication/ad14cb8f-8d4f-11f1-9262-01aa75ed71a1
-            </a>{" "}
-            znajduje się publikacja Komisji Europejskiej z najczęściej zadawanymi pytaniami
-            w obszarze PPWR.
-          </p>
-          <p>
-            Zachęcamy przedsiębiorców do zapoznania się z całością korespondencji oraz
-            przeanalizowania jej możliwego wpływu na obowiązki wynikające z PPWR, dokumentację
-            zgodności i relacje kontraktowe z sieciami handlowymi.
-          </p>
-
-          <div className="resource-box">
-            {ministerHennigKloskaLink && (
-              <a
-                className="inline-download-link"
-                href={resolveArticleHref(ministerHennigKloskaLink.href)}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Pismo KRD-IG do Minister Klimatu i Środowiska z 7 sierpnia 2026 r. – pobierz.pdf
-              </a>
-            )}
-            {ministerKrajewskiLink && (
-              <a
-                className="inline-download-link"
-                href={resolveArticleHref(ministerKrajewskiLink.href)}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Pismo do Ministra Rolnictwa i Rozwoju Wsi z 6 sierpnia 2026 r. – pobierz.pdf
-              </a>
-            )}
-            {dgoResponseLink && (
-              <a
-                className="inline-download-link"
-                href={resolveArticleHref(dgoResponseLink.href)}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Odpowiedź Departamentu Gospodarki Odpadami MKiŚ z 28 sierpnia 2026 r. –
-                pobierz.pdf
-              </a>
-            )}
-          </div>
-        </article>
-      </div>
-    );
-  }
-
-  if (slug === "korzysci-z-czlonkostwa") {
-    const benefitHeadings = new Set([
-      "Miej wpływ na wykorzystanie środków finansowych Funduszu Promocji Mięsa Drobiowego",
-      "Korzystaj ze zbiorów unikalnej wiedzy i wieloletniego doświadczenia ekspertów KRD-IG",
-      "Uzyskaj dostęp do najświeższych i najrzetelniejszych informacji oraz badań rynkowych",
-      "Eksponuj swoje produkty na krajowych i zagranicznych targach branżowych",
-      "Weź udział w zagranicznych misjach handlowych dedykowanych branży drobiarskiej",
-      "Zaangażuj się w bieżące inicjatywy KRD-IG i rekomenduj przyszłe projekty",
-    ]);
-    const memberHeadings = new Set([
-      "Członkowie zwyczajni:",
-      "Członkowie wspierający:",
-      "Członkowie honorowi",
-      "Członkowie stowarzyszeni",
-    ]);
-    const numberedItems = visibleParagraphs.filter((paragraph) => /^\d+\.\s+/.test(paragraph.trim()));
-    const numberedItemSet = new Set(numberedItems);
-    const rendered: ReactNode[] = [];
-
-    visibleParagraphs.forEach((paragraph, index) => {
-      const trimmed = paragraph.trim();
-      if (index === 0) {
-        return;
-      }
-      if (numberedItemSet.has(trimmed)) {
-        return;
-      }
-
-      if (benefitHeadings.has(trimmed)) {
-        rendered.push(
-          <h2 key={`membership-benefit-heading-${index}`}>
-            <strong>{trimmed}</strong>
-          </h2>,
-        );
-        return;
-      }
-
-      if (memberHeadings.has(trimmed)) {
-        const items = numberedItems.filter((item) => {
-          const itemIndex = visibleParagraphs.indexOf(item);
-          const headingIndex = visibleParagraphs.indexOf(trimmed);
-          const nextHeadingIndex = visibleParagraphs.findIndex(
-            (candidate, candidateIndex) => candidateIndex > headingIndex && memberHeadings.has(candidate.trim()),
-          );
-          return itemIndex > headingIndex && (nextHeadingIndex === -1 || itemIndex < nextHeadingIndex);
-        });
-        rendered.push(
-          <section className="membership-category" key={`membership-category-${index}`}>
-            <h3><strong>{trimmed.replace(/:$/, "")}</strong></h3>
-            <ul>
-              {items.map((item) => (
-                <li key={item}>{renderInlineMarkdown(item.replace(/^\d+\.\s+/, ""), `membership-${item.slice(0, 12)}`)}</li>
-              ))}
-            </ul>
-          </section>,
-        );
-        return;
-      }
-
-      if (trimmed === "Członkowie Krajowej Rady Drobiarstwa-Izby Gospodarczej to:") {
-        rendered.push(<p key={`membership-intro-${index}`}><strong>{trimmed}</strong></p>);
-        return;
-      }
-
-      if (trimmed === "Kto może zostać członkiem KRD-IG?") {
-        rendered.push(<h2 key={`membership-heading-${index}`}><strong>{trimmed}</strong></h2>);
-        return;
-      }
-
-      rendered.push(<p key={`membership-paragraph-${index}`}>{renderInlineMarkdown(paragraph, `membership-${index}`)}</p>);
-    });
-
-    return (
-      <div className="article-layout article-layout-full shell">
-        <article className="prose prose-justified prose-membership-benefits">
-          {rendered}
-        </article>
-      </div>
-    );
-  }
-
-  if (slug === "dezinformacja-zywnosciowa") {
-    const featureHeadings = visibleParagraphs.slice(7, 15).filter((paragraph) => /^\d+\.\s+/.test(paragraph.trim()));
-    const featureSet = new Set(featureHeadings);
-    const consequenceItems = visibleParagraphs.slice(18).map((paragraph) => {
-      const text = paragraph.replace(/^&#x1f538;\s*/, "").trim();
-      return proposals["text-cleanup"] ? text.replace(/^[🔸◆♦•]+\s*/u, "") : text;
-    });
-    const featureDescriptions = new Map(
-      featureHeadings.map((heading) => {
-        const index = visibleParagraphs.indexOf(heading);
-        return [heading, visibleParagraphs[index + 1]];
-      }),
-    );
-
-    return (
-      <div className="article-layout article-layout-full shell">
-        <article className="prose prose-justified prose-disinformation">
-          <div className="disinformation-statement">
-            <p className="disinformation-label">Dezinformacja</p>
-            <p><strong>TO NIE OPINIA.</strong></p>
-            <p>To fałsz i celowa manipulacja mająca realne konsekwencje.</p>
-          </div>
-          <p>
-            W przestrzeni publicznej coraz częściej pojawiają się nieprawdziwe lub zmanipulowane informacje dotyczące
-            żywności, w tym również mięsa drobiowego. Wzbudzają niepokój, podważają zaufanie do krajowych produktów
-            i mogą prowadzić do realnych strat w całym sektorze rolno-spożywczym. W dobie mediów społecznościowych
-            dezinformacja rozprzestrzenia się błyskawicznie, często bez możliwości szybkiego i skutecznego sprostowania.
-          </p>
-          <h2>Czym jest dezinformacja żywnościowa?</h2>
-          <p>{visibleParagraphs[6]}</p>
-          <h2>Cechy dezinformacji żywnościowej</h2>
-          <div className="disinformation-features">
-            {featureHeadings.map((heading) => (
-              <section className="disinformation-feature" key={heading}>
-                <h3><strong>{heading.replace(/^\d+\.\s+/, "")}</strong></h3>
-                <p>{featureDescriptions.get(heading)}</p>
-              </section>
-            ))}
-          </div>
-          <h2>Dlaczego dezinformacja jest niebezpieczna?</h2>
-          <p>{visibleParagraphs[17]}</p>
-          <ul className="disinformation-consequences">
-            {consequenceItems.map((item) => (
-              <li key={item}>{renderInlineMarkdown(item, `disinformation-${item.slice(0, 12)}`)}</li>
-            ))}
-          </ul>
-        </article>
-      </div>
-    );
-  }
-
-  if (slug === "dzial-hodowli-i-oceny-drobiu") {
-    const sectionHeadings = new Set([
-      "Misja i historia",
-      "Główne zadania Działu Hodowli i Oceny Drobiu",
-      "Metodyka",
-      "Aktualności z Działu Hodowli i Oceny Drobiu",
-    ]);
-    const listItems = new Set([
-      "prowadzenie oceny wartości użytkowej i hodowlanej drobiu oraz publikowanie wyników tej oceny,",
-      "prowadzenie systemu informatycznego dla potrzeb oceny wartości użytkowej i hodowlanej drobiu,",
-      "bilansowanie potrzeb i możliwości produkcyjnych w hodowli drobiu,",
-      "prowadzenie specjalistycznych szkoleń zawodowych dla osób prowadzących ocenę wartości użytkowej oraz wydawanie odpowiednich zaświadczeń w tym zakresie,",
-      "ustalanie założeń krajowych programów hodowlanych,",
-      "wydawanie świadectw potwierdzających spełnienie warunków dla drobiu hodowlanego i jaj wylęgowych przywożonych z zagranicy,",
-      "merytoryczne potwierdzanie wniosków o wypłatę dotacji budżetowych dla podmiotów utrzymujących stada zarodowe objęte programem ochrony zasobów genetycznych i stanowiące rezerwę materiału hodowlanego drobiu.",
-      "Prowadzenie oceny wartości użytkowej i hodowlanej drobiu oraz publikowanie wyników tej oceny",
-      "Prowadzenie systemu informatycznego dla potrzeb oceny wartości użytkowej i hodowlanej drobiu",
-      "Bilansowanie potrzeb i możliwości produkcyjnych w hodowli drobiu",
-      "Ustalanie założeń krajowych programów hodowlanych",
-      "Merytoryczne, formalne i rachunkowe potwierdzanie wniosków o wypłatę dotacji budżetowych dla podmiotów utrzymujących stada zarodowe, objęte programem ochrony zasobów genetycznych i stanowiące rezerwę materiału hodowlanego drobiu",
-      "ocena wartości użytkowej drobiu",
-      "ocena wartości hodowlanej drobiu",
-      "znakowanie drobiu",
-      "identyfikacja ptaków",
-      "rozporządzenie z dnia 17 marca 2004 r. zmieniające rozporządzenie w sprawie upoważnienia do prowadzenia oceny wartości użytkowej lub hodowlanej zwierząt oraz do publikowania wyników tej oceny (Dz. U. Nr 49, poz. 474)",
-      "rozporządzenie z dnia 17 marca 2004 r. zmieniające rozporządzenie w sprawie materiału biologicznego wykorzystywanego w rozrodzie zwierząt gospodarskich (Dz. U. Nr 49, poz. 475),",
-      "rozporządzenie z dnia 17 marca 2004 r. zmieniające rozporządzenie w sprawie powierzenia określonym podmiotom prowadzenie niektórych zadań w zakresie oceny wartości użytkowej zwierząt (Dz. U. Nr 50, poz. 488).",
-    ]);
-    const cleanedParagraphs = visibleParagraphs.slice(2);
-    const rendered: ReactNode[] = [];
-    let list: string[] = [];
-
-    const flushList = () => {
-      if (list.length === 0) return;
-      rendered.push(
-        <ul className="department-task-list" key={`department-list-${rendered.length}`}>
-          {list.map((item) => (
-            <li key={item}>{renderInlineMarkdown(item, `department-${item.slice(0, 12)}`)}</li>
-          ))}
-        </ul>,
-      );
-      list = [];
-    };
-
-    cleanedParagraphs.forEach((paragraph, index) => {
-      const trimmed = paragraph.trim();
-      if (listItems.has(trimmed)) {
-        list.push(trimmed);
-        return;
-      }
-      flushList();
-      if (sectionHeadings.has(trimmed)) {
-        rendered.push(<h2 key={`department-heading-${index}`}>{trimmed}</h2>);
-      } else {
-        rendered.push(<p key={`department-paragraph-${index}`}>{renderInlineMarkdown(paragraph, `department-${index}`)}</p>);
-      }
-    });
-    flushList();
-
-    return (
-      <div className="article-layout article-layout-full shell">
-        <article className="prose prose-justified prose-department">
-          {rendered}
-        </article>
-      </div>
-    );
-  }
-
   const uploadedAttachments = links.filter((link, index) =>
-    link.document
-    && link.href.startsWith("/api/media/")
+    link.document && link.href.startsWith("/api/media/")
     && links.findIndex((candidate) => candidate.href === link.href) === index,
   );
-
   return (
     <div
       className={`article-layout${shouldUseFullWidthArticleLayout ? " article-layout-full" : ""} shell`}
@@ -3990,16 +3523,22 @@ export async function ArticleBody({
       >
         {visibleParagraphs.map((paragraph, index) => {
           const trimmedParagraph = paragraph.trim();
-
-          if (proposals["text-cleanup"] && slug === "rejestry-i-ksiegi" && /przepiór/i.test(visibleParagraphs[index - 1] ?? "")) {
-            return <p key={`quail-${index}`}>{renderInlineMarkdown(trimmedParagraph, `quail-${index}`)}</p>;
+          const heading = trimmedParagraph.match(/^(#{1,6})\s+(.+)$/);
+          if (heading) {
+            const text = renderInlineMarkdown(heading[2], `heading-${index}`);
+            return heading[1].length > 2 ? <h3 key={index}>{text}</h3> : <h2 key={index}>{text}</h2>;
           }
-
-          if (
-            slug === "polski-i-europejski-drob-na-filipinach-targi-wofex-2025-filipiny" &&
-            /^(?:[1-7]|enjoy)$/i.test(trimmedParagraph)
-          ) {
-            return null;
+          const blockLines = trimmedParagraph.split("\n");
+          if (blockLines.every((line) => /^\s*[-*]\s+/.test(line))) {
+            return <ul key={index}>{blockLines.map((line, itemIndex) => <li key={itemIndex}>{renderInlineMarkdown(line.replace(/^\s*[-*]\s+/, ""), `list-${index}-${itemIndex}`)}</li>)}</ul>;
+          }
+          if (blockLines.every((line) => /^\s*\d+\.\s+/.test(line))) {
+            return <ol key={index}>{blockLines.map((line, itemIndex) => <li key={itemIndex}>{renderInlineMarkdown(line.replace(/^\s*\d+\.\s+/, ""), `list-${index}-${itemIndex}`)}</li>)}</ol>;
+          }
+          const formattedParagraph = renderInlineMarkdown(paragraph, `paragraph-${index}`);
+          const displayParagraph = trimmedParagraph;
+          if (slug === "akcja-stopdezinformacjizywnosciowej" && displayParagraph === "www.stopdezinformacjizywnosciowej.pl") {
+            return <h2 key={index}><a href="https://stopdezinformacjizywnosciowej.pl/">{displayParagraph}</a></h2>;
           }
 
           const tenderLinked = renderTenderLinkedText(
@@ -4008,14 +3547,7 @@ export async function ArticleBody({
           );
 
           if (slug === "czlonkowie" && index < 2) {
-            const label =
-              language === "en"
-                ? index === 0
-                  ? "MEMBERS"
-                  : "KRD-IG"
-                : index === 0
-                  ? "CZŁONKOWIE"
-                  : "KRD-IG";
+            const label = index === 0 ? "CZŁONKOWIE" : "KRD-IG";
             return (
               <p className="member-title-lockup" key={`${index}-${label}`}>
                 {label}
@@ -4029,84 +3561,12 @@ export async function ArticleBody({
           ) {
             return (
               <h2 key={`${index}-${paragraph.slice(0, 20)}`}>
-                {language === "en"
-                  ? "Exporter guide for poultry meat to the Chinese market - "
-                  : "Przewodnik eksportera mięsa drobiowego na rynek Chin - "}{" "}
+                {language === "en" ? "Exporter guide for poultry meat to the Chinese market - " : "Przewodnik eksportera mięsa drobiowego na rynek Chin - "}
                 <a className="inline-download-link" href={chinaGuideDownloadHref}>
                   {language === "en" ? "click here" : "kliknij tutaj"}
                 </a>
               </h2>
             );
-          }
-
-          if (
-            (slug === "indyk-ma-wiele-do-dania-podsumowanie-pazdziernika-2024" ||
-              slug === "indyk-ma-wiele-do-dania-podsumowanie-wrzesnia-2024") &&
-            /pobierz\.pdf/i.test(trimmedParagraph)
-          ) {
-            const reportHref =
-              slug === "indyk-ma-wiele-do-dania-podsumowanie-wrzesnia-2024"
-                ? "https://krd-ig.com.pl/wp-content/uploads/2025/01/KRD_Indyk_wrzesien.pdf"
-                : withBasePath("/media/reports/KRD-indyk_pazdziernik.pdf");
-            return (
-              <h2 key={`${index}-${paragraph.slice(0, 20)}`}>
-                {trimmedParagraph.split("–")[0].trim()} –{" "}
-                <a
-                  className="inline-download-link"
-                  href={reportHref}
-                  target={reportHref.startsWith("http") ? "_blank" : undefined}
-                  rel={reportHref.startsWith("http") ? "noopener noreferrer" : undefined}
-                  download={reportHref.startsWith("http") ? undefined : true}
-                >
-                  pobierz.pdf
-                </a>
-              </h2>
-            );
-          }
-
-          if (
-            slug === "indyk-ma-wiele-do-dania-podsumowanie-pazdziernika-2024" ||
-            slug === "indyk-ma-wiele-do-dania-podsumowanie-wrzesnia-2024"
-          ) {
-            if (trimmedParagraph.startsWith("Podjęto współpracę influencerską")) {
-              const influencers = [
-                ["Olga Smile", "https://www.olgasmile.com/"],
-                ["Beata i Igor Gratkowscy", "https://www.instagram.com/praktykulinarni/"],
-                ["Svetlana Tuchak", "https://www.instagram.com/fit_przepisy_od_baletnicy/"],
-                ["Strzelczyk Tomasz", "https://www.instagram.com/oddaszfartucha/"],
-                ["Martyna Sobczak", "https://www.instagram.com/maste_official/"],
-                ["Monika Molecka", "https://www.instagram.com/pysznieczyprzepysznie/"],
-                ["Natalia Maszkowska Food & Travel", "https://www.instagram.com/nathallae/"],
-              ];
-
-              return (
-                <div className="influencer-links" key={`${index}-${paragraph.slice(0, 20)}`}>
-                  <p>Podjęto współpracę influencerską ze znanymi blogerami kulinarnymi i kucharzami w świecie instagramowym, m.in.:</p>
-                  {influencers.map(([name, url]) => (
-                    <p key={url}>
-                      {name}{" "}
-                      <a className="inline-download-link" href={url} target="_blank" rel="noopener noreferrer">
-                        {url}
-                      </a>
-                    </p>
-                  ))}
-                </div>
-              );
-            }
-
-            const linkedExternalText = renderExternalLinks(trimmedParagraph);
-            if (linkedExternalText) {
-              return <p key={`${index}-${paragraph.slice(0, 20)}`}>{linkedExternalText}</p>;
-            }
-
-            const linkedYoutubeText = renderYoutubeLinks(trimmedParagraph);
-            if (linkedYoutubeText) {
-              return index > 0 && looksLikeHeading(trimmedParagraph) ? (
-                <h2 key={`${index}-${paragraph.slice(0, 20)}`}>{linkedYoutubeText}</h2>
-              ) : (
-                <p key={`${index}-${paragraph.slice(0, 20)}`}>{linkedYoutubeText}</p>
-              );
-            }
           }
 
           if (
@@ -4188,193 +3648,8 @@ export async function ArticleBody({
             );
           }
 
-          if (
-            slug === "szczepienia-przeciwko-nd-w-polsce-doswiadczenia-po-roku-od-obowiazywania-przepisu" &&
-            /^Link do rejestracji:\s*https?:\/\//i.test(trimmedParagraph)
-          ) {
-            const href = trimmedParagraph.replace(/^Link do rejestracji:\s*/i, "").trim();
-
-            return (
-              <p key={`${index}-${paragraph.slice(0, 20)}`}>
-                <strong>Link do rejestracji: </strong>
-                <a
-                  className="inline-download-link"
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  {href}
-                </a>
-              </p>
-            );
-          }
-
-          if (
-            slug ===
-              "ied-2-0-unia-europejska-chce-zmian-w-przepisach-o-ochronie-srodowiska-czy-branza-drobiarska-ma-sie-czego-obawiac" &&
-            (/^Rodzaj drobiu\s*\|\s*Próg\s*\|\s*Orientacyjna maks\. obsada \(szt\.\)$/i.test(trimmedParagraph) ||
-              /^Rodzaj drobiu\s+Próg\s+Orientacyjna maks\. obsada \(szt\.\)$/i.test(trimmedParagraph))
-          ) {
-            const rows = [
-              {
-                species: "Obecny próg (dla porównania)",
-                threshold: "-",
-                stock: "> 40 000 (niezależnie od gatunku)",
-              },
-              { species: "Brojlery", threshold: "280 WPO", stock: "40 000" },
-              { species: "Kury nioski", threshold: "300 WPO", stock: "21 429" },
-              { species: "Indyki", threshold: "280 WPO", stock: "9 334" },
-              { species: "Kaczki", threshold: "280 WPO", stock: "28 000" },
-              { species: "Gęsi", threshold: "280 WPO", stock: "14 000" },
-              { species: "Strusie", threshold: "280 WPO", stock: "800" },
-            ];
-
-            return (
-              <div
-                className="ied-threshold-table-wrap"
-                key={`${index}-${paragraph.slice(0, 20)}`}
-                style={{
-                  margin: "20px 0 34px",
-                  overflowX: "auto",
-                  padding: "12px",
-                  border: "1px solid #d5dde6",
-                  borderRadius: "10px",
-                  background: "transparent",
-                }}
-              >
-                <table
-                  className="ied-threshold-table"
-                  style={{
-                    width: "100%",
-                    minWidth: "620px",
-                    borderCollapse: "collapse",
-                    border: "1px solid #b9c2cc",
-                    fontSize: "15px",
-                    lineHeight: "1.45",
-                    background: "transparent",
-                  }}
-                >
-                  <caption
-                    style={{
-                      textAlign: "left",
-                      padding: "2px 4px 12px",
-                      fontWeight: 700,
-                      fontSize: "14px",
-                    }}
-                  >
-                    Progi WPO dla instalacji drobiarskich (projekt UC99)
-                  </caption>
-                  <thead>
-                    <tr>
-                      <th
-                        style={{
-                          padding: "12px 14px",
-                          border: "1px solid #d9e0e8",
-                          textAlign: "left",
-                          fontWeight: 700,
-                          background: "transparent",
-                        }}
-                      >
-                        Rodzaj drobiu
-                      </th>
-                      <th
-                        style={{
-                          padding: "12px 14px",
-                          border: "1px solid #d9e0e8",
-                          textAlign: "center",
-                          fontWeight: 700,
-                          background: "transparent",
-                        }}
-                      >
-                        Próg
-                      </th>
-                      <th
-                        style={{
-                          padding: "12px 14px",
-                          border: "1px solid #d9e0e8",
-                          textAlign: "right",
-                          fontWeight: 700,
-                          background: "transparent",
-                        }}
-                      >
-                        Orientacyjna maks. obsada (szt.)
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {rows.map((row) => (
-                      <tr key={row.species} style={{ background: "transparent" }}>
-                        <th
-                          scope="row"
-                          style={{
-                            padding: "12px 14px",
-                            border: "1px solid #d9e0e8",
-                            textAlign: "left",
-                            fontWeight: 600,
-                            background: "transparent",
-                          }}
-                        >
-                          {row.species}
-                        </th>
-                        <td
-                          className="ied-col-threshold"
-                          style={{
-                            padding: "12px 14px",
-                            border: "1px solid #d9e0e8",
-                            textAlign: "center",
-                            whiteSpace: "nowrap",
-                            fontWeight: 600,
-                            background: "transparent",
-                          }}
-                        >
-                          {row.threshold}
-                        </td>
-                        <td
-                          className="ied-col-stock"
-                          style={{
-                            padding: "12px 14px",
-                            border: "1px solid #d9e0e8",
-                            textAlign: "right",
-                            whiteSpace: "nowrap",
-                            fontVariantNumeric: "tabular-nums",
-                            background: "transparent",
-                          }}
-                        >
-                          {row.stock}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            );
-          }
-
-          if (
-            slug ===
-              "ied-2-0-unia-europejska-chce-zmian-w-przepisach-o-ochronie-srodowiska-czy-branza-drobiarska-ma-sie-czego-obawiac" &&
-            [
-              "Obecny próg (dla porównania) | - | > 40 000 (niezależnie od gatunku)",
-              "Brojlery | 280 WPO | 40 000",
-              "Kury nioski | 300 WPO | 21 429",
-              "Indyki | 280 WPO | 9 334",
-              "Kaczki | 280 WPO | 28 000",
-              "Gęsi | 280 WPO | 14 000",
-              "Strusie | 280 WPO | 800",
-              "Obecny próg (dla porównania)\t-\t> 40 000 (niezależnie od gatunku)",
-              "Brojlery\t280 WPO\t40 000",
-              "Kury nioski\t300 WPO\t21 429",
-              "Indyki\t280 WPO\t9 334",
-              "Kaczki\t280 WPO\t28 000",
-              "Gęsi\t280 WPO\t14 000",
-              "Strusie\t280 WPO\t800",
-            ].includes(trimmedParagraph)
-          ) {
-            return null;
-          }
-
           if (tenderLinked?.hasLink) {
-            const shouldRenderAsHeading = index > 0 && looksLikeHeading(trimmedParagraph);
+            const shouldRenderAsHeading = inferHeadings && index > 0 && looksLikeHeading(trimmedParagraph);
             return shouldRenderAsHeading ? (
               <h2 key={tenderLinked.key}>{tenderLinked.node}</h2>
             ) : (
@@ -4382,36 +3657,7 @@ export async function ArticleBody({
             );
           }
 
-          if (slug === "wybierz-twoje-wartosci" && paragraph.startsWith("- ")) {
-            if (visibleParagraphs[index - 1]?.startsWith("- ")) return null;
-            const remainingParagraphs = visibleParagraphs.slice(index);
-            const listEnd = remainingParagraphs.findIndex((item) => !item.startsWith("- "));
-            const items = listEnd < 0 ? remainingParagraphs : remainingParagraphs.slice(0, listEnd);
-            return (
-              <ul key={`campaign-list-${index}`}>
-                {items.map((item, itemIndex) => (
-                  <li key={itemIndex}>{renderInlineMarkdown(item.slice(2), `campaign-${index}-${itemIndex}`)}</li>
-                ))}
-              </ul>
-            );
-          }
-
-          const explicitHeading = paragraph.startsWith("## ");
-          const displayParagraph = explicitHeading ? paragraph.slice(3) : paragraph;
-          const formattedParagraph = renderInlineMarkdown(displayParagraph, `${index}-${displayParagraph.slice(0, 20)}`);
-
-          if (
-            slug === "akcja-stopdezinformacjizywnosciowej" &&
-            displayParagraph === "www.stopdezinformacjizywnosciowej.pl"
-          ) {
-            return (
-              <h2 key={`${index}-${paragraph.slice(0, 20)}`}>
-                <a href="https://stopdezinformacjizywnosciowej.pl/">{displayParagraph}</a>
-              </h2>
-            );
-          }
-
-          return explicitHeading || inferHeadings && index > 0 && looksLikeHeading(paragraph) ? (
+          return inferHeadings && index > 0 && looksLikeHeading(paragraph) ? (
             <h2 key={`${index}-${paragraph.slice(0, 20)}`}>{formattedParagraph}</h2>
           ) : (
             <p key={`${index}-${paragraph.slice(0, 20)}`}>{formattedParagraph}</p>
@@ -4420,12 +3666,7 @@ export async function ArticleBody({
         {uploadedAttachments.length ? (
           <section className="resource-box" aria-label="Pliki do pobrania">
             <h2>Pliki do pobrania</h2>
-            {uploadedAttachments.map((attachment) => (
-              <a href={resolveArticleHref(attachment.href)} key={attachment.href} download>
-                <span>{attachment.label}</span>
-                <Arrow />
-              </a>
-            ))}
+            {uploadedAttachments.map((attachment) => <a key={attachment.href} href={resolveArticleHref(attachment.href)} download><span>{attachment.label}</span><Arrow /></a>)}
           </section>
         ) : null}
         {slug === "kampania-stopdezinformacjizywnosciowej-i-kluczowe-wyzwania-rynkowe" && (
@@ -4452,155 +3693,35 @@ export async function ArticleBody({
             </div>
           </section>
         )}
-        {slug === "szczepienia-przeciwko-nd-w-polsce-doswiadczenia-po-roku-od-obowiazywania-przepisu" && (
-          <section className="news-media-section" aria-label="Prelegenci webinaru">
-            <h2>Prelegenci</h2>
-            <div className="news-media-gallery">
-              <figure>
-                <img
-                  src="/media/pawel-gawlik.png"
-                  alt="lek. wet. Paweł Gawlik"
-                  className="speaker-photo speaker-photo-pawel"
-                  style={{ objectPosition: "50% 40%" }}
-                  loading="lazy"
-                />
-                <figcaption>
-                  <strong>lek. wet. Paweł Gawlik</strong>
-                  <br />
-                  Absolwent Wydziału Medycyny Weterynaryjnej UWM w Olsztynie (2007). Specjalista chorób drobiu i
-                  ptaków ozdobnych. Od początku swojej kariery zawodowej związany jest z branżą drobiarską.
-                  Z Animal Pharma (Grupa AviOne) współpracuje od 2007 roku. Obecnie pełni funkcję kierownika gabinetu
-                  weterynaryjnego, konsultanta stad rodzicielskich, koordynatora ds. integracji oraz Project Managera.
-                  Aktywnie uczestniczy w profilaktyce i leczeniu stad drobiu. Specjalizuje się w opiece nad stadami brojlera
-                  kurzego, nioski reprodukcyjnej i wylęgarniami. Współtworzy programy profilaktyki i zapobiegania chorobom
-                  urzędowo zwalczanym. Jego doświadczenie, praktyczne podejście i zaangażowanie w rozwój sektora drobiarskiego
-                  sprawiają, że jest ekspertem cenionym zarówno przez producentów, jak i środowisko weterynaryjne.
-                </figcaption>
-              </figure>
-              <figure>
-                <img
-                  src="/media/jakub-wojciechowski.png"
-                  alt="lek. wet. Jakub Wojciechowski"
-                  className="speaker-photo speaker-photo-jakub"
-                  style={{ objectPosition: "50% 40%" }}
-                  loading="lazy"
-                />
-                <figcaption>
-                  <strong>lek. wet. Jakub Wojciechowski</strong>
-                  <br />
-                  Absolwent Wydziału Medycyny Weterynaryjnej UWM w Olsztynie (2012). Specjalista chorób drobiu.
-                  Na co dzień zarządza oddziałem Vet-Lab Brudzew, gdzie zajmuje się szeroko pojętym sektorem drobiarskim.
-                  W pracy zawodowej opiera się na diagnostyce laboratoryjnej i profilaktyce. Do jego zadań należy m.in.
-                  praktyczne opracowywanie programów szczepień (w tym przeciwko ND), a także monitorowanie ich skuteczności
-                  na fermach. Jest aktywnym uczestnikiem europejskiego projektu EU-JAMRAI 2 (WP 6.2, WG Poultry).
-                  W ramach grupy roboczej angażuje się w wypracowanie i wdrażanie praktycznych rozwiązań mających na celu
-                  ograniczenie lekooporności (AMR) oraz optymalizację zużycia antybiotyków w produkcji drobiu.
-                </figcaption>
-              </figure>
-              <figure>
-                <img
-                  src="/media/sara-losiak.png"
-                  alt="lek. wet. Sara Losiak"
-                  className="speaker-photo speaker-photo-sara"
-                  style={{ objectPosition: "50% 40%" }}
-                  loading="lazy"
-                />
-                <figcaption>
-                  <strong>lek. wet. Sara Losiak</strong>
-                  <br />
-                  Ukończyła studia weterynaryjne na UWM w Olsztynie w 2014 roku. Staż odbywała w klinice drobiu
-                  Staphorst w Holandii. Pracowała jako lekarz drobiu w Dierenkliniek Den Ham, gdzie zajmowała się opieką
-                  nad fermami drobiu rzeźnego, profilaktyką zdrowotną stad oraz programami szczepień.
-                  Od 2022 roku jest związana z Gezondheidscentrum voor Pluimvee (GVP) w Emmen w Holandii.
-                  Centrum Zdrowia Drobiu jest wyspecjalizowaną praktyką weterynaryjną świadczącą usługi dla firm działających
-                  w hodowli drobiu w Holandii i Niemczech. Na co dzień wspiera producentów drobiu w zakresie zdrowia stad,
-                  bioasekuracji oraz optymalizacji wyników produkcyjnych.
-                </figcaption>
-              </figure>
-            </div>
-            <div className="news-callout-box">
-              <p>
-                <strong>Rejestracja:</strong>
-              </p>
-              <p style={{ marginTop: "8px" }}>
-                <a
-                  className="inline-download-link"
-                  href="https://us06web.zoom.us/meeting/register/oYqzTRTDQpCxF9CA6JwJpA"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ display: "inline-block", fontWeight: 700 }}
-                >
-                  Zarejestruj się na webinar
-                </a>
-              </p>
-            </div>
-          </section>
-        )}
-        {slug === "polski-i-europejski-drob-na-filipinach-targi-wofex-2025-filipiny" && (
-          <section className="news-media-section" aria-label="Zdjęcia kampanii WOFEX 2025">
-            <h2>Zdjęcia kampanii</h2>
-            <div className="news-media-gallery">
-              {wofexCampaignMedia.map((src, index) => (
-                <figure key={src}>
-                  <img src={src} alt={`WOFEX 2025 campaign photo ${index + 1}`} loading="lazy" />
-                </figure>
-              ))}
-            </div>
-          </section>
-        )}
-        {slug === "czlonkowie" && (
-          <CommissionTicker />
-        )}
+        {slug === "czlonkowie" && <CommissionTicker />}
         {slug === "czlonkowie" && (
           <iframe
             className="czlonkowie-map-frame"
             title={language === "en" ? "KRD-IG members map" : "Mapa członków KRD-IG"}
-            src={
-              language === "en"
-                ? "https://www.procarto.net/krd-ig/map.html?map=krd-ig-en"
-                : "https://www.procarto.net/krd-ig/map.html"
-            }
+            src={language === "en" ? "https://www.procarto.net/krd-ig/map.html?map=krd-ig-en" : "https://www.procarto.net/krd-ig/map.html"}
             loading="lazy"
             width="100%"
             height="900"
             style={{ border: 0 }}
           />
         )}
-        {slug === "czlonkowie" && (
-          <p style={{ marginTop: "10px" }}>
-            {language === "en"
-              ? "If the map does not display correctly, open it in a new tab: "
-              : "Jeśli mapa nie wyświetla się poprawnie, otwórz ją w nowej karcie: "}{" "}
-            <a
-              className="inline-download-link"
-              href={
-                language === "en"
-                  ? "https://www.procarto.net/krd-ig/map.html?map=krd-ig-en"
-                  : "https://www.procarto.net/krd-ig/map.html"
-              }
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+        {slug === "czlonkowie" && <>
+          <p>
+            <a className="inline-download-link"
+              href={language === "en" ? "https://www.procarto.net/krd-ig/map.html?map=krd-ig-en" : "https://www.procarto.net/krd-ig/map.html"}
+              target="_blank" rel="noopener noreferrer">
               {language === "en" ? "Open the KRD-IG members map" : "Otwórz mapę członków KRD-IG"}
             </a>
           </p>
-        )}
-        {slug === "czlonkowie" && (
-          <p>
-            {language === "en"
-              ? "Additional map layers and features are available after signing in."
-              : "Dodatkowe warstwy mapy i funkcjonalności dostępne są po zalogowaniu"}
-          </p>
-        )}
+          <p>{language === "en" ? "Additional map layers and features are available after signing in." : "Dodatkowe warstwy mapy i funkcjonalności dostępne są po zalogowaniu"}</p>
+        </>}
         {slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026" && (
           <p>
             Opublikowana deklaracja jest dostępna na stronie WOAH pod linkiem: <a className="inline-download-link" href="https://www.woah.org/app/uploads/2026/08/2026-08-poland-hpai-selfd.pdf" target="_blank" rel="noopener noreferrer">https://www.woah.org/en/what-we-offer/self-declared-disease-status</a>
           </p>
         )}
         {sourceLinkLabel ? (
-          <a className="source-link source-link-inline" href={resolvedSource}>
-            {sourceLinkLabel} <Arrow />
-          </a>
+          <a className="source-link source-link-inline" href={resolvedSource}>{sourceLinkLabel} <Arrow /></a>
         ) : null}
       </article>
     </div>

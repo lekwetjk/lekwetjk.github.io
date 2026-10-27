@@ -164,6 +164,7 @@ test("report archive is public while bulletins and PDF files remain member-only"
   const passwordForm = await readProjectFile("app/member/zmien-haslo/ChangePasswordForm.tsx");
   const profile = await readProjectFile("app/member/profil/page.tsx");
   const worker = await readProjectFile("worker/index.ts");
+  assert.ok(middleware.includes('request.nextUrl.pathname.replace(/\\/+$/, "")'));
   assert.match(middleware, /pathname === "\/tresc\/raporty" && !request\.nextUrl\.searchParams\.get\("raport"\)/);
   assert.match(middleware, /`\$\{pathname\}\$\{request\.nextUrl\.search\}`/);
   assert.match(middleware, /pathname === "\/login\/czlonkowie"/);
@@ -392,17 +393,17 @@ test("board and council content remains present with mailto links", async () => 
   assert.match(source, /mailto:/);
 });
 
-test("about page renders partner organisations without the resource box", async () => {
+test("about page renders locally bundled partner organisation logos", async () => {
   const source = await readProjectFile("app/components/ArticleBody.tsx");
 
   assert.match(source, /slug === "o-nas"/);
   assert.match(source, /partner-organisations/);
-  assert.match(source, /AVEC_logo-1\.webp/);
-  assert.match(source, /CLITRAVI-LOGO-1\.png/);
-  assert.match(source, /LOGO-IPC-2025\.jpg/);
-  assert.match(source, /Logo-WPSA\.png/);
-  assert.match(source, /ELPHA-LOGO-2025\.jpg/);
-  assert.doesNotMatch(source, /UECBV/);
+  for (const logo of ["avec", "clitravi", "ipc", "wpsa", "elpha", "fgz"]) {
+    assert.ok(source.includes(`/media/partners/${logo}.svg`), logo);
+    await access(new URL(`../public/media/partners/${logo}.svg`, import.meta.url));
+  }
+  assert.match(source, /name: "UECBV"/);
+  assert.ok(source.includes("https://uecbv.eu/UECBV2/OWS/Images/galerie/Logo_UECBV2.png"));
 });
 
 test("CSV import accepts Polish header names with diacritics", async () => {

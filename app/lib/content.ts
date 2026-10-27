@@ -206,7 +206,7 @@ function normalizeLinks(links: ContentLink[]) {
   }));
 }
 
-export const knowledgePages = content.pages.filter((page) => !["akty-prawne", "nadzwyczajne-srodki-zwalczania-chorob"].includes(page.slug)).map((page) => ({
+export const knowledgePages = content.pages.map((page) => ({
   ...page,
   paragraphs: page.paragraphs
     .map(cleanContentText)
@@ -251,23 +251,9 @@ const supplementalNewsPosts: NewsPost[] = [
       "Zachęcamy przedsiębiorców do zapoznania się z całością korespondencji oraz przeanalizowania jej możliwego wpływu na obowiązki wynikające z PPWR, dokumentację zgodności i relacje kontraktowe z sieciami handlowymi.",
     ],
     links: [
-      {
-        href: "/media/reports/ppwr-pismo-mkis-hennig-kloska.pdf",
-        label:
-          "Pismo KRD-IG do Minister Klimatu i Środowiska z 7 sierpnia 2026 r. – pobierz.pdf",
-        document: true,
-      },
-      {
-        href: "/media/reports/ppwr-pismo-mrirw-krajewski.pdf",
-        label: "Pismo do Ministra Rolnictwa i Rozwoju Wsi z 6 sierpnia 2026 r. – pobierz.pdf",
-        document: true,
-      },
-      {
-        href: "/media/reports/ppwr-odpowiedz-dgo-mkis.pdf",
-        label:
-          "Odpowiedź Departamentu Gospodarki Odpadami MKiŚ z 28 sierpnia 2026 r. – pobierz.pdf",
-        document: true,
-      },
+      { href: "/media/reports/ppwr-pismo-mkis-hennig-kloska.pdf", label: "Pismo KRD-IG do Minister Klimatu i Środowiska z 7 sierpnia 2026 r. – pobierz.pdf", document: true },
+      { href: "/media/reports/ppwr-pismo-mrirw-krajewski.pdf", label: "Pismo do Ministra Rolnictwa i Rozwoju Wsi z 6 sierpnia 2026 r. – pobierz.pdf", document: true },
+      { href: "/media/reports/ppwr-odpowiedz-dgo-mkis.pdf", label: "Odpowiedź Departamentu Gospodarki Odpadami MKiŚ z 28 sierpnia 2026 r. – pobierz.pdf", document: true },
     ],
     categories: ["Aktualności", "Prawo", "Środowisko"],
     image: "/media/environment.webp",
@@ -275,14 +261,11 @@ const supplementalNewsPosts: NewsPost[] = [
   },
   {
     id: 900000,
-    slug:
-      "wybor-wykonawcy-projektu-zadania-pt-ochrona-wizerunku-polskiego-sektora-drobiarskiego-na-rynku-krajowym-wraz-z-przeprowadzeniem-przez-niezalezny-podmiot-badania-efektywnosci-proje-2",
-    title:
-      "WYBÓR WYKONAWCY projektu (zadania) pt. „Ochrona wizerunku polskiego sektora drobiarskiego na rynku krajowym” wraz z przeprowadzeniem przez niezależny podmiot badania efektywności projektu (zadania)",
+    slug: "wybor-wykonawcy-projektu-zadania-pt-ochrona-wizerunku-polskiego-sektora-drobiarskiego-na-rynku-krajowym-wraz-z-przeprowadzeniem-przez-niezalezny-podmiot-badania-efektywnosci-proje-2",
+    title: "WYBÓR WYKONAWCY projektu (zadania) pt. „Ochrona wizerunku polskiego sektora drobiarskiego na rynku krajowym” wraz z przeprowadzeniem przez niezależny podmiot badania efektywności projektu (zadania)",
     date: "2026-08-31T00:00:00",
     year: 2026,
-    excerpt:
-      "Krajowa Rada Drobiarstwa – Izba Gospodarcza wyłoniła wykonawcę projektu pt. „Ochrona wizerunku polskiego sektora drobiarskiego na rynku krajowym”. Realizację zadania przejmie Instytut Badań Internetu i Mediów Społecznościowych sp. z o.o.",
+    excerpt: "Krajowa Rada Drobiarstwa – Izba Gospodarcza wyłoniła wykonawcę projektu pt. „Ochrona wizerunku polskiego sektora drobiarskiego na rynku krajowym”. Realizację zadania przejmie Instytut Badań Internetu i Mediów Społecznościowych sp. z o.o.",
     paragraphs: [
       "Krajowa Rada Drobiarstwa – Izba Gospodarcza informuje, że w ramach ogłoszonego w dniu 6 sierpnia 2026 r. Zapytania ofertowego dotyczącego projektu (zadania) pt.: „Ochrona wizerunku polskiego sektora drobiarskiego na rynku krajowym” wraz z przeprowadzeniem przez niezależny podmiot badania efektywności projektu (zadania) wyłoniła Wykonawcę, który zrealizuje ten projekt (zadanie).",
       "Do biura KRD-IG wpłynęła 1 oferta. W ramach I etapu oceny – ocena spełnienia warunków formalnych – oferta spełniła wymogi formalno-prawne.",
@@ -290,17 +273,10 @@ const supplementalNewsPosts: NewsPost[] = [
       "W II etapie postępowania oferta uzyskała 16 pkt. na 18 możliwych. Wobec powyższego, realizację projektu (zadania) będzie prowadził Oferent – Instytut Badań Internetu i Mediów Społecznościowych sp. z o.o.",
       "Dziękujemy wszystkim osobom i firmom, które przygotowały oferty i serdecznie gratulujemy wyłonionemu wykonawcy. Zespół KRD-IG zapowiada dalszy rozwój działań promocyjnych i badawczych w obszarze wizerunku polskiego sektora drobiarskiego na rynku krajowym.",
     ],
-    links: [
-      {
-        href: "https://krd-ig.com.pl/wybor-wykonawcy-projektu-zadania-pt-ochrona-wizerunku-polskiego-sektora-drobiarskiego-na-rynku-krajowym-wraz-z-przeprowadzeniem-przez-niezalezny-podmiot-badania-efektywnosci-proje-2/",
-        label: "Oryginał ogłoszenia na stronie KRD-IG",
-        document: false,
-      },
-    ],
+    links: [{ href: "https://krd-ig.com.pl/wybor-wykonawcy-projektu-zadania-pt-ochrona-wizerunku-polskiego-sektora-drobiarskiego-na-rynku-krajowym-wraz-z-przeprowadzeniem-przez-niezalezny-podmiot-badania-efektywnosci-proje-2/", label: "Oryginał ogłoszenia na stronie KRD-IG", document: false }],
     categories: ["Wybór wykonawcy"],
     image: "/media/post-14353.png",
-    source:
-      "https://krd-ig.com.pl/wybor-wykonawcy-projektu-zadania-pt-ochrona-wizerunku-polskiego-sektora-drobiarskiego-na-rynku-krajowym-wraz-z-przeprowadzeniem-przez-niezalezny-podmiot-badania-efektywnosci-proje-2/",
+    source: "https://krd-ig.com.pl/wybor-wykonawcy-projektu-zadania-pt-ochrona-wizerunku-polskiego-sektora-drobiarskiego-na-rynku-krajowym-wraz-z-przeprowadzeniem-przez-niezalezny-podmiot-badania-efektywnosci-proje-2/",
   },
   {
     id: 900001,
@@ -342,7 +318,7 @@ const supplementalNewsPosts: NewsPost[] = [
         document: true,
       },
     ],
-    categories: ["Zapytania ofertowe"],
+    categories: ["Aktualności", "Zapytania ofertowe"],
     image: "/media/zo.png",
     source:
       "https://krd-ig.com.pl/zapytanie-ofertowe-dot-projektu-ochrona-wizerunku-polskiego-sektora-drobiarskiego-na-rynku-krajowym-wraz-z-przeprowadzeniem-przez-niezalezny-podmiot-badania-efektywnosci-projektu-6/",
@@ -350,12 +326,9 @@ const supplementalNewsPosts: NewsPost[] = [
   {
     id: 900002,
     slug: "rozpoczyl-sie-audyt-komisji-europejskiej-w-brazylii-czy-po-3-wrzesnia-eksport-drobiu-do-ue-bedzie-wznowiony",
-    title:
-      "Rozpoczął się audyt Komisji Europejskiej w Brazylii. Czy po 3 września eksport drobiu do UE będzie wznowiony?",
-    date: "2026-08-26T00:00:00",
-    year: 2026,
-    excerpt:
-      "Brazylia ma szansę wrócić na unijny rynek drobiu, ale ostateczna decyzja zależy od wyniku audytu i dalszych działań Komisji Europejskiej.",
+    title: "Rozpoczął się audyt Komisji Europejskiej w Brazylii. Czy po 3 września eksport drobiu do UE będzie wznowiony?",
+    date: "2026-08-26T00:00:00", year: 2026,
+    excerpt: "Brazylia ma szansę wrócić na unijny rynek drobiu, ale ostateczna decyzja zależy od wyniku audytu i dalszych działań Komisji Europejskiej.",
     paragraphs: [
       "Brazylia ma szansę wrócić na unijny rynek drobiu, ale ostateczna decyzja zależy od wyniku audytu i dalszych działań Komisji Europejskiej.",
       "Od 24 sierpnia do 4 września w Brazylii trwa kontrola mająca potwierdzić zgodność z unijnymi zasadami dotyczącymi antybiotyków.",
@@ -365,26 +338,17 @@ const supplementalNewsPosts: NewsPost[] = [
       "W praktyce kluczowe będzie to, czy audyt potwierdzi zgodność z normami UE, a następnie — kiedy PAFF podejmie ostateczną decyzję.",
       "W skrócie: audyt w sierpniu ma kluczowe znaczenie, a finalna decyzja może zapadać dopiero po kolejnych posiedzeniach PAFF we wrześniu i później.",
     ],
-    links: [
-      {
-        href: "https://www.euractiv.com/news/brazilian-chicken-exports-face-eu-halt-despite-last-minute-audit/",
-        label: "Euractiv",
-        document: false,
-      },
-    ],
+    links: [{ href: "https://www.euractiv.com/news/brazilian-chicken-exports-face-eu-halt-despite-last-minute-audit/", label: "Euractiv", document: false }],
     categories: ["Aktualności", "Rynek", "Polityka"],
     image: "/media/news/logo-komisji-europejskiej.svg",
-    source:
-      "https://www.euractiv.com/news/brazilian-chicken-exports-face-eu-halt-despite-last-minute-audit/",
+    source: "https://www.euractiv.com/news/brazilian-chicken-exports-face-eu-halt-despite-last-minute-audit/",
   },
   {
     id: 900003,
     slug: "nowa-strategia-ue-dla-hodowli-wazny-sygnal-dla-sektora-drobiarskiego",
     title: "Nowa strategia UE dla hodowli – ważny sygnał dla sektora drobiarskiego",
-    date: "2026-08-07T00:00:00",
-    year: 2026,
-    excerpt:
-      "Komisja Europejska przedstawiła nową strategię UE dla sektora hodowlanego, która stawia na konkurencyjność, bezpieczeństwo żywnościowe, dobrostan zwierząt i odporność produkcji. Dla branży drobiarskiej oznacza to zarówno nowe wymagania, jak i szanse na dalszy rozwój.",
+    date: "2026-08-07T00:00:00", year: 2026,
+    excerpt: "Komisja Europejska przedstawiła nową strategię UE dla sektora hodowlanego, która stawia na konkurencyjność, bezpieczeństwo żywnościowe, dobrostan zwierząt i odporność produkcji. Dla branży drobiarskiej oznacza to zarówno nowe wymagania, jak i szanse na dalszy rozwój.",
     paragraphs: [
       "7 lipca 2026 r. Komisja Europejska przedstawiła EU Livestock Strategy, dokument określający długoterminowe podejście UE do produkcji zwierzęcej. Strategia podkreśla strategiczne znaczenie hodowli dla bezpieczeństwa żywnościowego, gospodarki oraz funkcjonowania obszarów wiejskich.",
       "Jednym z najważniejszych elementów strategii jest zapowiedź dalszych zmian w zakresie dobrostanu kur niosek i brojlerów. Komisja planuje do końca 2026 r. przedstawić propozycje zmian przepisów, obejmujące m.in. stopniowe wycofywanie systemów klatkowych, rozwój praktycznych wskaźników dobrostanu oraz rozwiązania dotyczące uśmiercania jednodniowych kogucików.",
@@ -398,13 +362,7 @@ const supplementalNewsPosts: NewsPost[] = [
       "Najbliższe lata mogą oznaczać konieczność inwestycji w systemy utrzymania zwierząt, dalsze zwiększanie wymagań dotyczących bioasekuracji, rozwój technologii monitorowania zdrowia i dobrostanu, rosnące znaczenie efektywności wykorzystania paszy i energii oraz nowe wymagania środowiskowe.",
       "Strategia UE dla sektora hodowlanego nie jest więc zapowiedzią ograniczania produkcji drobiarskiej. To przede wszystkim sygnał, że europejskie drobiarstwo ma pozostać ważnym elementem bezpieczeństwa żywnościowego, ale będzie musiało dalej inwestować w dobrostan, bioasekurację, efektywność i nowoczesne technologie.",
     ],
-    links: [
-      {
-        href: "https://ec.europa.eu/commission/presscorner/detail/en/ip_26_1834",
-        label: "Komisja Europejska",
-        document: false,
-      },
-    ],
+    links: [{ href: "https://ec.europa.eu/commission/presscorner/detail/en/ip_26_1834", label: "Komisja Europejska", document: false }],
     categories: ["Aktualności", "Polityka", "Hodowla"],
     image: "/media/news/logo-komisji-europejskiej.svg",
     source: "https://ec.europa.eu/commission/presscorner/detail/en/ip_26_1834",
@@ -413,10 +371,8 @@ const supplementalNewsPosts: NewsPost[] = [
     id: 900003,
     slug: "szczepienia-przeciwko-nd-w-polsce-doswiadczenia-po-roku-od-obowiazywania-przepisu",
     title: "Szczepienia przeciwko ND w Polsce – doświadczenia po roku od obowiązywania przepisu",
-    date: "2026-08-11T10:00:00",
-    year: 2026,
-    excerpt:
-      "Webinar poświęcony praktycznym doświadczeniom z wdrażania obowiązkowych szczepień przeciwko chorobie Newcastle w stadach komercyjnych oraz ich znaczeniu dla immunoprofilaktyki drobiu.",
+    date: "2026-08-11T10:00:00", year: 2026,
+    excerpt: "Webinar poświęcony praktycznym doświadczeniom z wdrażania obowiązkowych szczepień przeciwko chorobie Newcastle w stadach komercyjnych oraz ich znaczeniu dla immunoprofilaktyki drobiu.",
     paragraphs: [
       "Webinar odbędzie się 11 sierpnia 2026 r. w godzinach 10:00–11:15.",
       "Krajowe przepisy dotyczące obowiązkowego szczepienia kur i indyków w stadach komercyjnych zostały opublikowane 28 kwietnia 2025 r., więc ponad rok temu, a jednocześnie niemal dwa lata od pierwszego ogniska ND w Polsce w 2023 r.",
@@ -427,13 +383,7 @@ const supplementalNewsPosts: NewsPost[] = [
       "Liczba uczestników jest ograniczona, dlatego zarezerwuj swój czas i zarejestruj się już dziś!",
       "Link do rejestracji: https://us06web.zoom.us/meeting/register/oYqzTRTDQpCxF9CA6JwJpA",
     ],
-    links: [
-      {
-        href: "https://us06web.zoom.us/meeting/register/oYqzTRTDQpCxF9CA6JwJpA",
-        label: "Zarejestruj się na webinar",
-        document: false,
-      },
-    ],
+    links: [{ href: "https://us06web.zoom.us/meeting/register/oYqzTRTDQpCxF9CA6JwJpA", label: "Zarejestruj się na webinar", document: false }],
     categories: ["Aktualności", "Webinarium", "Hodowla"],
     image: "/media/kura.png",
     source: "https://us06web.zoom.us/meeting/register/oYqzTRTDQpCxF9CA6JwJpA",
@@ -441,12 +391,9 @@ const supplementalNewsPosts: NewsPost[] = [
   {
     id: 900004,
     slug: "ied-2-0-unia-europejska-chce-zmian-w-przepisach-o-ochronie-srodowiska-czy-branza-drobiarska-ma-sie-czego-obawiac",
-    title:
-      "IED 2.0 - Unia Europejska chce zmian w przepisach o ochronie środowiska. Czy branża drobiarska ma się czego obawiać?",
-    date: "2026-08-11T12:00:00",
-    year: 2026,
-    excerpt:
-      "Analiza skutków wpływu projektu ustawy UC99 na instalacje do chowu lub hodowli drobiu, w tym nowe progi WPO, zasady sumowania obsady i terminy dostosowania.",
+    title: "IED 2.0 - Unia Europejska chce zmian w przepisach o ochronie środowiska. Czy branża drobiarska ma się czego obawiać?",
+    date: "2026-08-11T12:00:00", year: 2026,
+    excerpt: "Analiza skutków wpływu projektu ustawy UC99 na instalacje do chowu lub hodowli drobiu, w tym nowe progi WPO, zasady sumowania obsady i terminy dostosowania.",
     paragraphs: [
       "Analiza skutków wpływu projektu ustawy o zmianie ustawy – Prawo ochrony środowiska oraz niektórych innych ustaw, oznaczonego w wykazie prac Rady Ministrów numerem UC99, na instalacje do chowu lub hodowli drobiu.",
       "W dniu 4 sierpnia 2024 r. weszła w życie dyrektywa 2024/1785 z dnia 24 kwietnia 2024 r. dotycząca zmiany dyrektywy 2010/75/UE w sprawie emisji przemysłowych i dyrektywy Rady 1999/31/WE w sprawie składowania odpadów.",
@@ -493,39 +440,22 @@ const supplementalNewsPosts: NewsPost[] = [
       "Największe konsekwencje poniosą fermy niosek i indyków, które dziś nie przekraczają progu 40 tys. szt., ale przekroczą nowe progi WPO.",
       "Takie fermy powinny już teraz sprawdzić maksymalną możliwą obsadę, powiązania z sąsiednimi obiektami, stan gospodarki pomiotem oraz zgodność systemów utrzymania i monitoringu z wymaganiami BAT.",
     ],
-    links: [
-      {
-        href: "https://www.gov.pl/web/premier",
-        label: "Źródło: strona KPRM",
-        document: false,
-      },
-    ],
+    links: [{ href: "https://www.gov.pl/web/premier", label: "Źródło: strona KPRM", document: false }],
     categories: ["Aktualności", "Prawo", "Hodowla", "Środowisko"],
-    image: "/media/prawo.png",
-    source: "https://www.gov.pl/web/premier",
+    image: "/media/prawo.png", source: "https://www.gov.pl/web/premier",
   },
   {
     id: 900005,
     slug: "nowy-link-zsrir-w-zakladce-dokumenty",
     title: "W zakładce DOKUMENTY dodaliśmy nowy funkcjonalny link do Zintegrowanego Systemu Rolniczej Informacji Rynkowej",
-    date: "2026-08-11T14:30:00",
-    year: 2026,
-    excerpt:
-      "W sekcji DOKUMENTY udostępniliśmy nowy odnośnik do Zintegrowanego Systemu Rolniczej Informacji Rynkowej (ZSRIR).",
+    date: "2026-08-11T14:30:00", year: 2026,
+    excerpt: "W sekcji DOKUMENTY udostępniliśmy nowy odnośnik do Zintegrowanego Systemu Rolniczej Informacji Rynkowej (ZSRIR).",
     paragraphs: [
       "W zakładce DOKUMENTY dodaliśmy nowy funkcjonalny link do Zintegrowanego Systemu Rolniczej Informacji Rynkowej.",
       "Dzięki temu użytkownicy serwisu mogą szybciej przejść bezpośrednio do ZSRIR i korzystać z aktualnych informacji rynkowych.",
     ],
-    links: [
-      {
-        href: "https://zsrir.minrol.gov.pl/about",
-        label: "Zintegrowany System Rolniczej Informacji Rynkowej",
-        document: false,
-      },
-    ],
-    categories: ["Aktualności", "Dokumenty"],
-    image: "/media/partners/zsrir.svg",
-    source: "https://zsrir.minrol.gov.pl/about",
+    links: [{ href: "https://zsrir.minrol.gov.pl/about", label: "Zintegrowany System Rolniczej Informacji Rynkowej", document: false }],
+    categories: ["Aktualności", "Dokumenty"], image: "/media/partners/zsrir.svg", source: "https://zsrir.minrol.gov.pl/about",
   },
 ];
 
@@ -555,52 +485,38 @@ export const newsPosts = [
 function normalizeTenderCategories(title: string, categories: string[]) {
   const normalizedCategories = new Set<string>(categories.filter(Boolean));
   const lowerTitle = title.toLocaleLowerCase("pl");
-
   const isWinnerTitle = /^wybór wykonawcy\b|^wybor wykonawcy\b|\bwybór wykonawcy\b|\bwybor wykonawcy\b/i.test(lowerTitle);
   const hasWinnerCategory = categories.some((category) => /^wybór wykonawcy$|^wybor wykonawcy$|\bwybór wykonawcy\b|\bwybor wykonawcy\b/i.test(category));
-
   if (isWinnerTitle || hasWinnerCategory) {
     normalizedCategories.delete("Zapytania ofertowe");
     normalizedCategories.add("Wybór wykonawcy");
     return Array.from(normalizedCategories);
   }
-
   if (/zapytanie ofertowe/i.test(lowerTitle) || categories.some((category) => /zapytania ofertowe/i.test(category))) {
     normalizedCategories.delete("Wybór wykonawcy");
     normalizedCategories.add("Zapytania ofertowe");
   }
-
-  if (/^wybór wykonawcy\b|^wybor wykonawcy\b|\bwybór wykonawcy\b|\bwybor wykonawcy\b/i.test(lowerTitle) || categories.some((category) => /^wybór wykonawcy$|^wybor wykonawcy$|\bwybór wykonawcy\b|\bwybor wykonawcy\b/i.test(category))) {
-    normalizedCategories.add("Wybór wykonawcy");
-  }
-
   if (/zaproszenie do składania ofert|zaproszenie-do-skladania-ofert/i.test(lowerTitle) || categories.some((category) => /zaproszenie do składania ofert|zaproszenie-do-skladania-ofert/i.test(category))) {
     normalizedCategories.add("Zaproszenie do składania ofert");
   }
-
   if (/wyniki postępowania|wyniki postepowania/i.test(lowerTitle) || categories.some((category) => /wyniki postępowania|wyniki postepowania/i.test(category))) {
     normalizedCategories.add("Wyniki postępowania");
   }
-
   if (/uniewa|unieważn/i.test(lowerTitle) || categories.some((category) => /uniewa|unieważn/i.test(category))) {
     normalizedCategories.add("Informacja o unieważnieniu");
   }
-
   return Array.from(normalizedCategories);
 }
 
 export function isTenderPost(post: NewsPost) {
   const normalizedCategories = post.categories.map((category) => category.toLocaleLowerCase("pl"));
   const title = post.title.toLocaleLowerCase("pl");
-
   const hasTenderCategory = normalizedCategories.some((category) =>
     /zapytania ofertowe|zaproszenie do składania ofert|wyniki postępowania|uniewa|unieważn/i.test(category),
   );
-
   const hasWinnerCategory =
     /^wybór wykonawcy\b|^wybor wykonawcy\b|\bwybór wykonawcy\b|\bwybor wykonawcy\b/i.test(title) ||
     normalizedCategories.some((category) => /^wybór wykonawcy$|^wybor wykonawcy$|\bwybór wykonawcy\b|\bwybor wykonawcy\b/i.test(category));
-
   return hasTenderCategory || hasWinnerCategory || /zapytanie ofertowe\b/i.test(title);
 }
 
