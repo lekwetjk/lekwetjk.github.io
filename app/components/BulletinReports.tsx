@@ -4,9 +4,16 @@ import { getPreparedBulletin, preparedBulletinEditions } from "../lib/prepared-b
 import { PreparedBulletinViewer } from "./PreparedBulletinViewer";
 import { notFound } from "next/navigation";
 
+const periodFormatter = new Intl.DateTimeFormat("pl-PL", { month: "long", year: "numeric", timeZone: "UTC" });
+
 export async function BulletinReports({ selectedSlug }: { selectedSlug: string }) {
   const reports = await listBulletinReports();
-  const dynamicEditions = reports.map((report) => ({ id: `${report.year}-${String(report.month).padStart(2, "0")}`, slug: report.slug, period: `${report.month}.${report.year}`, title: report.title }));
+  const dynamicEditions = reports.map((report) => ({
+    id: `${report.year}-${String(report.month).padStart(2, "0")}`,
+    slug: report.slug,
+    period: periodFormatter.format(new Date(Date.UTC(report.year, report.month - 1, 1))),
+    title: report.title,
+  }));
   const editions = [...preparedBulletinEditions, ...dynamicEditions.filter((edition) => !preparedBulletinEditions.some((preparedEdition) => preparedEdition.slug === edition.slug))]
     .sort((left, right) => left.id.localeCompare(right.id));
   const prepared = getPreparedBulletin(selectedSlug);

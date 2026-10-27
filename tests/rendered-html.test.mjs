@@ -187,6 +187,9 @@ test("report archive is public while interactive bulletins and their PDF files r
   assert.match(await readProjectFile("app/globals.css"), /\.report-material-access-note \{\s*color: var\(--red\);/);
   assert.match(articleBody, /report-material-link-featured/);
   assert.match(reports, /<span>Otwórz biuletyn<\/span>/);
+  assert.match(reports, /new Intl\.DateTimeFormat\("pl-PL", \{ month: "long", year: "numeric", timeZone: "UTC" \}\)/);
+  assert.match(reports, /periodFormatter\.format\(new Date\(Date\.UTC\(report\.year, report\.month - 1, 1\)\)\)/);
+  assert.doesNotMatch(reports, /period: `\$\{report\.month\}\.\$\{report\.year\}`/);
   assert.doesNotMatch(bulletin, /Arkusze źródłowe|Źródła i kontrola danych|\/sources\//);
   assert.match(bulletin, /\/api\/member\/reports\/\$\{report\.id\}\/pdf/);
   assert.match(pdfRoute, /verifySessionToken/);
