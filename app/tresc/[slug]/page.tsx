@@ -222,7 +222,6 @@ export default async function ContentDetailPage({
           )}
         </div>
       </section>
-      {slug === "raporty" ? <section className="shell prose" aria-labelledby="interactive-bulletins-title"><h2 id="interactive-bulletins-title">Biuletyn informacyjny KRD-IG — wydania interaktywne</h2><p>Wybierz miesiąc, aby otworzyć interaktywny biuletyn z wykresami, tabelami i przyciskiem „Pobierz PDF”.</p><ul className="report-material-list">{reportEditions.map((edition) => <li key={edition.slug}><a className="report-material-link" href={withBasePath(`/tresc/raporty?raport=${edition.slug}`)}><span>{edition.title}</span><span>Otwórz biuletyn interaktywny</span></a></li>)}</ul></section> : null}
       <div className={shouldJustifyArticleContent ? "justified-article-content" : undefined}>
         <ArticleBody
           paragraphs={proposals["text-cleanup"] ? page.paragraphs.map(cleanProposedParagraph) : page.paragraphs}

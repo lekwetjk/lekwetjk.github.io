@@ -56,8 +56,11 @@ nie są wysyłane do produkcyjnej bazy. Produkcja nie korzysta z tego fallbacku.
 ## Biuletyny PDF w strefie członkowskiej
 
 W sekcji „Raporty”, obok wyboru wydania, przycisk „Pobierz PDF” pobiera
-oryginalny biuletyn wybranego miesiąca. Sekcja „Raporty”, lista wydań
-i pozostałe raporty są publiczne. Tylko otwieranie biuletynów interaktywnych
+oryginalny biuletyn wybranego miesiąca. Sekcja „Raporty”
+i pozostałe raporty są publiczne. Publiczna strona pokazuje tylko jeden
+kafelek „Biuletyn informacyjny KRD-IG”, prowadzący do najnowszego wydania;
+wybór miesiąca jest dostępny wewnątrz biuletynu po zalogowaniu.
+Tylko otwieranie biuletynów interaktywnych
 i pobieranie ich PDF-ów wymaga aktywnej sesji.
 Otwarcie wybranego biuletynu przekierowuje niezalogowanych do logowania,
 a po zalogowaniu z powrotem do wybranego wydania.

@@ -179,8 +179,8 @@ test("report archive is public while interactive bulletins and their PDF files r
   assert.match(authentication, /if \(!session\) redirect/);
   assert.match(authentication, /encodeURIComponent\(selectedSlug\)/);
   assert.doesNotMatch(reportPage, /if \(slug === "raporty"\) \{\s*const session = verifySessionToken/);
-  assert.match(reportPage, /wydania interaktywne/);
-  assert.match(reportPage, /Otwórz biuletyn interaktywny/);
+  assert.doesNotMatch(reportPage, /interactive-bulletins-title|reportEditions\.map/);
+  assert.match(reportPage, /reportEditions\[reportEditions\.length - 1\]\.slug/);
   assert.match(reportPage, /reportBulletinHref=\{reportBulletinHref\}/);
   assert.match(articleBody, /Biuletyn informacyjny KRD-IG/);
   assert.match(articleBody, /report-material-link-featured/);
