@@ -221,6 +221,7 @@ test("report archive is public while interactive bulletins and their PDF files r
   await assert.rejects(readProjectFile("app/api/member/reports/[id]/sources/[sourceIndex]/route.ts"));
   assert.match(worker, /"\/tresc\/raporty"/);
   assert.ok(profile.indexOf('href="/admin/raporty"') < profile.indexOf('href="/admin/wstawienia"'));
+  assert.match(profile, /href="\/admin\/raporty"[^>]*>\s*<strong>Biuletyny<\/strong>/);
   assert.match(profile, /href="\/tresc\/raporty">Raporty/);
 });
 
