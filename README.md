@@ -55,6 +55,34 @@ nie są wysyłane do produkcyjnej bazy. Produkcja nie korzysta z tego fallbacku.
 
 ## Biuletyny PDF w strefie członkowskiej
 
+### Tworzenie biuletynu z DOCX
+
+W panelu administratora wybierz kafelek „Biuletyny”, wskaż miesiąc i rok,
+wgraj źródłowy DOCX (do 25 MB) i wybierz „Utwórz podgląd z DOCX”.
+Generator odczytuje oryginalne dane edytowalnych wykresów Word oraz tabele.
+Plik jest przetwarzany lokalnie w przeglądarce, bez wysyłania do usług zewnętrznych.
+
+Sekcja „Obrazy i OCR” pozwala wybrać osadzony obraz, odczytać widoczne napisy
+po polsku i angielsku oraz poprawić wynik. Napisy wektorowe EMF są odczytywane
+bezpośrednio. Dla nieobsługiwanych obrazów należy przygotować PNG.
+OCR nie odtwarza wartości na podstawie wysokości słupków ani nie gwarantuje
+bezbłędnego odczytu. Do utworzenia wykresu wprowadź zatwierdzoną tabelę
+z nagłówkami i kolumnami oddzielonymi średnikami lub tabulatorami, wskaż
+jednostkę i typ wykresu. Logo lub dekoracje można pominąć.
+Wyniki OCR trafiają do biuletynu dopiero po użyciu „Zatwierdź i dodaj dane OCR”.
+
+Sprawdź podgląd, potwierdź zgodność ze źródłem i opublikuj biuletyn.
+Model JSON powstaje automatycznie; jego import pozostaje dodatkową opcją.
+Publikacja korzysta z istniejącego prywatnego magazynu i uprawnień członkowskich.
+Opcjonalny oryginalny PDF należy dołączyć osobno — narzędzie nie konwertuje DOCX do PDF.
+
+Silnik OCR i modele językowe są serwowane z własnej domeny, z katalogu
+`public/ocr` przygotowywanego automatycznie przed `dev` i `build`
+(`npm run prepare:ocr`). Katalog jest generowany z zależności npm i ignorowany
+przez Git; żadne dokumenty źródłowe nie są tam zapisywane.
+
+### Pobieranie oryginalnych PDF-ów
+
 W sekcji „Raporty”, obok wyboru wydania, przycisk „Pobierz PDF” pobiera
 oryginalny biuletyn wybranego miesiąca. Sekcja „Raporty”
 i pozostałe raporty są publiczne. Publiczna strona pokazuje tylko jeden

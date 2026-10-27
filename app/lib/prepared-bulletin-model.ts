@@ -53,7 +53,7 @@ export function validatePreparedBulletin(value: unknown): PreparedBulletin {
   if (typeof bulletin.id !== "string" || !/^\d{4}-(?:0[1-9]|1[0-2])$/.test(bulletin.id)) throw new Error("Identyfikator wydania musi mieć format RRRR-MM.");
   if (typeof bulletin.period !== "string" || !bulletin.period.trim()) throw new Error("Brak okresu wydania.");
   if (typeof bulletin.title !== "string" || !/^Biuletyn informacyjny "[^\"]+, \d{4}"$/.test(bulletin.title)) throw new Error('Tytuł musi mieć format Biuletyn informacyjny "miesiąc, rok".');
-  if (!Array.isArray(bulletin.sections) || bulletin.sections.length < 4 || bulletin.sections.some((section) => typeof section !== "string" || !section.trim())) throw new Error("Model musi zawierać co najmniej cztery obszary danych.");
+  if (!Array.isArray(bulletin.sections) || bulletin.sections.length < 1 || bulletin.sections.some((section) => typeof section !== "string" || !section.trim())) throw new Error("Model musi zawierać co najmniej jeden obszar danych.");
   if (!Array.isArray(bulletin.charts) || bulletin.charts.length < 1) throw new Error("Model nie zawiera wykresów.");
   if (!Array.isArray(bulletin.tables) || bulletin.tables.length < 1) throw new Error("Model nie zawiera tabel.");
   for (const chart of bulletin.charts) {
