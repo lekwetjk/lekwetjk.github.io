@@ -148,7 +148,7 @@ test("member ticker uses active member logos with bounded administrator-controll
   assert.match(styles, /\.commission-ticker-logo \{[\s\S]*object-fit: contain;[\s\S]*object-position: center;/);
 });
 
-test("report archive, interactive bulletins and PDF files are all member-only", async () => {
+test("report archive is public while interactive bulletins and their PDF files remain member-only", async () => {
   const middleware = await readProjectFile("middleware.ts");
   const reportPage = await readProjectFile("app/tresc/[slug]/page.tsx");
   const articleBody = await readProjectFile("app/components/ArticleBody.tsx");
@@ -165,19 +165,20 @@ test("report archive, interactive bulletins and PDF files are all member-only", 
   const profile = await readProjectFile("app/member/profil/page.tsx");
   const worker = await readProjectFile("worker/index.ts");
   assert.ok(middleware.includes('request.nextUrl.pathname.replace(/\\/+$/, "")'));
-  assert.doesNotMatch(middleware, /pathname === "\/tresc\/raporty" && !request\.nextUrl\.searchParams\.get\("raport"\)/);
+  assert.match(middleware, /if \(pathname === "\/tresc\/raporty" && !request\.nextUrl\.searchParams\.get\("raport"\)\) \{\s*return NextResponse\.next\(\);/);
   assert.match(middleware, /protectedMemberPrefixes = \[[^\]]*"\/tresc\/raporty"/);
   assert.match(middleware, /`\$\{pathname\}\$\{request\.nextUrl\.search\}`/);
   assert.match(middleware, /pathname === "\/login\/czlonkowie"/);
   assert.match(middleware, /safeMemberRedirect\(request\.nextUrl\.searchParams\.get\("redirect"\)\)/);
   assert.match(reportPage, /if \(selectedSlug\)/);
-  const reportGate = reportPage.indexOf('if (slug === "raporty")');
+  const reportGate = reportPage.indexOf("if (selectedSlug)");
   const reportList = reportPage.indexOf("const reportEditions");
   assert.ok(reportGate >= 0 && reportGate < reportList);
   const authentication = reportPage.slice(reportGate, reportList);
   assert.match(authentication, /verifySessionToken/);
   assert.match(authentication, /if \(!session\) redirect/);
-  assert.match(authentication, /: "\/tresc\/raporty"/);
+  assert.match(authentication, /encodeURIComponent\(selectedSlug\)/);
+  assert.doesNotMatch(reportPage, /if \(slug === "raporty"\) \{\s*const session = verifySessionToken/);
   assert.match(reportPage, /wydania interaktywne/);
   assert.match(reportPage, /Otwórz biuletyn interaktywny/);
   assert.match(reportPage, /reportBulletinHref=\{reportBulletinHref\}/);

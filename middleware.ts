@@ -24,6 +24,10 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  if (pathname === "/tresc/raporty" && !request.nextUrl.searchParams.get("raport")) {
+    return NextResponse.next();
+  }
+
   const isProtectedMemberArea = protectedMemberPrefixes.some((prefix) => {
     if (prefix === "/tresc/dla-czlonkow") {
       return pathname === prefix || pathname.startsWith(`${prefix}/`);

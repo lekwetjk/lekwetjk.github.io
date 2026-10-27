@@ -87,11 +87,11 @@ export default async function ContentDetailPage({
 }) {
   const { slug } = await params;
   const selectedSlug = slug === "raporty" ? (await searchParams).raport : undefined;
-  if (slug === "raporty") {
+  if (selectedSlug) {
     const session = verifySessionToken((await cookies()).get(AUTH_COOKIE_NAME)?.value);
-    const reportPath = selectedSlug ? `/tresc/raporty?raport=${encodeURIComponent(selectedSlug)}` : "/tresc/raporty";
+    const reportPath = `/tresc/raporty?raport=${encodeURIComponent(selectedSlug)}`;
     if (!session) redirect(`/login/czlonkowie?redirect=${encodeURIComponent(reportPath)}`);
-    if (selectedSlug) return <PageShell><BulletinReports selectedSlug={selectedSlug} /></PageShell>;
+    return <PageShell><BulletinReports selectedSlug={selectedSlug} /></PageShell>;
   }
   const reportEditions = slug === "raporty"
     ? [...preparedBulletinEditions, ...(await listBulletinReports())
