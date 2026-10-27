@@ -1997,6 +1997,15 @@ blockquote {
   flex: 0 0 auto;
 }
 
+.report-material-access-note {
+  color: var(--red);
+}
+
+.report-material-access-note svg {
+  display: inline-block;
+  vertical-align: -0.15em;
+}
+
 .report-material-link:hover {
   color: var(--red);
 }

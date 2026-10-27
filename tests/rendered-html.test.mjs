@@ -183,7 +183,8 @@ test("report archive is public while interactive bulletins and their PDF files r
   assert.match(reportPage, /reportEditions\[reportEditions\.length - 1\]\.slug/);
   assert.match(reportPage, /reportBulletinHref=\{reportBulletinHref\}/);
   assert.match(articleBody, /Biuletyn informacyjny KRD-IG/);
-  assert.match(articleBody, /Biuletyn informacyjny KRD-IG — dostępny po zalogowaniu/);
+  assert.match(articleBody, /className="report-material-access-note"><LockKeyhole size=\{16\} aria-hidden="true" \/> dostępny po zalogowaniu<\/span>/);
+  assert.match(await readProjectFile("app/globals.css"), /\.report-material-access-note \{\s*color: var\(--red\);/);
   assert.match(articleBody, /report-material-link-featured/);
   assert.match(reports, /<span>Otwórz biuletyn<\/span>/);
   assert.doesNotMatch(bulletin, /Arkusze źródłowe|Źródła i kontrola danych|\/sources\//);

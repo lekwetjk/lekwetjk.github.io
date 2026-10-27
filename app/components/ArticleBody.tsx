@@ -1,5 +1,6 @@
 import type { ContentLink } from "../lib/content";
 import type { ReactNode } from "react";
+import { LockKeyhole } from "lucide-react";
 import { withBasePath } from "../lib/basePath";
 import { Arrow } from "./SiteChrome";
 import { MembershipSignupForm } from "./MembershipSignupForm";
@@ -1339,7 +1340,7 @@ export async function ArticleBody({
           <ul className="report-material-list">
             {reportBulletinHref && (
               <li><a className="report-material-link report-material-link-featured" href={withBasePath(reportBulletinHref)}>
-                <span>Biuletyn informacyjny KRD-IG — dostępny po zalogowaniu</span><Arrow />
+                <span>Biuletyn informacyjny KRD-IG — <span className="report-material-access-note"><LockKeyhole size={16} aria-hidden="true" /> dostępny po zalogowaniu</span></span><Arrow />
               </a></li>
             )}
             {reportItems.map((item) => (
