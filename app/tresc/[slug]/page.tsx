@@ -87,10 +87,11 @@ export default async function ContentDetailPage({
 }) {
   const { slug } = await params;
   const selectedSlug = slug === "raporty" ? (await searchParams).raport : undefined;
-  if (selectedSlug) {
+  if (slug === "raporty") {
     const session = verifySessionToken((await cookies()).get(AUTH_COOKIE_NAME)?.value);
-    if (!session) redirect(`/login/czlonkowie?redirect=${encodeURIComponent(`/tresc/raporty?raport=${selectedSlug}`)}`);
-    return <PageShell><BulletinReports selectedSlug={selectedSlug} /></PageShell>;
+    const reportPath = selectedSlug ? `/tresc/raporty?raport=${encodeURIComponent(selectedSlug)}` : "/tresc/raporty";
+    if (!session) redirect(`/login/czlonkowie?redirect=${encodeURIComponent(reportPath)}`);
+    if (selectedSlug) return <PageShell><BulletinReports selectedSlug={selectedSlug} /></PageShell>;
   }
   const reportEditions = slug === "raporty"
     ? [...preparedBulletinEditions, ...(await listBulletinReports())
@@ -221,7 +222,7 @@ export default async function ContentDetailPage({
           )}
         </div>
       </section>
-      {slug === "raporty" ? <section className="shell prose"><h2>Biuletyn informacyjny KRD-IG</h2><p>Wybierz wydanie, aby przeglądać dane i pobrać biuletyn w wersji PDF.</p><ul className="report-material-list">{reportEditions.map((edition) => <li key={edition.slug}><a className="report-material-link" href={withBasePath(`/tresc/raporty?raport=${edition.slug}`)}>{edition.title}</a></li>)}</ul></section> : null}
+      {slug === "raporty" ? <section className="shell prose" aria-labelledby="interactive-bulletins-title"><h2 id="interactive-bulletins-title">Biuletyn informacyjny KRD-IG — wydania interaktywne</h2><p>Wybierz miesiąc, aby otworzyć interaktywny biuletyn z wykresami, tabelami i przyciskiem „Pobierz PDF”.</p><ul className="report-material-list">{reportEditions.map((edition) => <li key={edition.slug}><a className="report-material-link" href={withBasePath(`/tresc/raporty?raport=${edition.slug}`)}><span>{edition.title}</span><span>Otwórz biuletyn interaktywny</span></a></li>)}</ul></section> : null}
       <div className={shouldJustifyArticleContent ? "justified-article-content" : undefined}>
         <ArticleBody
           paragraphs={proposals["text-cleanup"] ? page.paragraphs.map(cleanProposedParagraph) : page.paragraphs}

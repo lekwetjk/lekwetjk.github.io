@@ -56,8 +56,10 @@ nie są wysyłane do produkcyjnej bazy. Produkcja nie korzysta z tego fallbacku.
 ## Biuletyny PDF w strefie członkowskiej
 
 W sekcji „Raporty”, obok wyboru wydania, przycisk „Pobierz PDF” pobiera
-oryginalny biuletyn wybranego miesiąca. Lista wydań jest publiczna;
-przeglądanie biuletynu i pobieranie PDF wymagają aktywnej sesji.
+oryginalny biuletyn wybranego miesiąca. Cała sekcja „Raporty”, w tym lista
+wydań, biuletyny interaktywne i pobieranie PDF, wymaga aktywnej sesji.
+Wejście z „Rynek i handel” przekierowuje niezalogowanych do logowania,
+a po zalogowaniu z powrotem do raportów lub wybranego wydania.
 Pliki przechowujemy w `private/bulletins`, nigdy w katalogu `public`.
 Nazwy: `biuletyn-2026-01.pdf`, a dla wydania łączonego
 `biuletyn-2026-04_05.pdf` (identyfikator wydania: `2026-04-05`).

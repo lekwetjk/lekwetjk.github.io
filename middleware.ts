@@ -20,10 +20,6 @@ export function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (pathname === "/tresc/raporty" && !request.nextUrl.searchParams.get("raport")) {
-    return NextResponse.next();
-  }
-
   if (/^\/member\/dokumenty\/[^/]+$/.test(pathname) && request.nextUrl.searchParams.get("scope") === "methodology") {
     return NextResponse.next();
   }
