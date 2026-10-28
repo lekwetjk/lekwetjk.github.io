@@ -34,6 +34,7 @@ export type PreparedBulletin = {
   sections: string[];
   charts: PreparedBulletinChart[];
   tables: PreparedBulletinTable[];
+  exportMap?: ExportMapTableSelection;
   stats: {
     paragraphs: number;
     charts: number;
@@ -43,7 +44,15 @@ export type PreparedBulletin = {
 };
 
 export function getDisplayedBulletinSeries(chart: PreparedBulletinChart) {
-  const recent = chart.series.filter((series) => /202[3-6]/.test(series.name));
+  const years = chart.series.flatMap((series) => {
+    const year = series.name.match(/\b20\d{2}\b/);
+    return year ? [Number(year[0])] : [];
+  });
+  const earliest = Math.max(2023, Math.max(...years) - 3);
+  const recent = chart.series.filter((series) => {
+    const year = series.name.match(/\b20\d{2}\b/);
+    return year && Number(year[0]) >= earliest;
+  });
   return recent.length ? recent : chart.series.slice(-5);
 }
 
@@ -70,6 +79,15 @@ export function validatePreparedBulletin(value: unknown): PreparedBulletin {
     if (!table || typeof table.id !== "string" || typeof table.section !== "string" || !Array.isArray(table.rows) || table.rows.some((row) => !Array.isArray(row) || row.some((cell) => typeof cell !== "string"))) throw new Error("Model zawiera nieprawidłową tabelę.");
     if ([table.title, table.description].some((item) => item !== undefined && (typeof item !== "string" || !item.trim()))) throw new Error(`Tabela ${table.id} nie zawiera poprawnego tytułu lub opisu.`);
   }
+  if (bulletin.exportMap !== undefined) {
+    const selection = bulletin.exportMap;
+    if (!selection || typeof selection !== "object"
+      || [selection.eu0207, selection.eu1602, selection.nonEu0207, selection.nonEu1602].some((id) => typeof id !== "string" || !id.trim())
+      || typeof selection.confirmedTitleMismatch !== "boolean"
+      || (selection.confirmedPeriodMismatch !== undefined && typeof selection.confirmedPeriodMismatch !== "boolean")) throw new Error("Model zawiera nieprawidłowy wybór tabel mapy eksportu.");
+    buildExportMapData(bulletin.tables, selection, bulletin.id);
+  }
   if (!bulletin.stats || [bulletin.stats.paragraphs, bulletin.stats.charts, bulletin.stats.tables, bulletin.stats.numericCells].some((item) => !Number.isInteger(item) || item < 0)) throw new Error("Model zawiera nieprawidłowe statystyki.");
   return bulletin as PreparedBulletin;
 }
+import { buildExportMapData, type ExportMapTableSelection } from "./bulletin-export-map.ts";

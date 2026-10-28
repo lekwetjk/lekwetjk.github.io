@@ -4,7 +4,7 @@ import path from "node:path";
 import test from "node:test";
 
 import { describePreparedCharts } from "../app/lib/bulletin-chart-descriptions.ts";
-import { validatePreparedBulletin, type PreparedBulletin } from "../app/lib/prepared-bulletin-model.ts";
+import { getDisplayedBulletinSeries, validatePreparedBulletin, type PreparedBulletin } from "../app/lib/prepared-bulletin-model.ts";
 
 const directory = path.join(process.cwd(), "app", "data", "bulletins");
 const editions = await Promise.all((await readdir(directory))
@@ -41,6 +41,12 @@ test("chart numbering shifts do not change the subject of descriptions", () => {
     if (early) assert.match(charts[23].title, /Tygodniowe ceny skupu/);
     else assert.match(charts[charts.length - 1].title, /według gatunków/);
   }
+});
+
+test("future editions retain their newest four years of chart series", () => {
+  const chart = editions.find((item) => item.id === "2026-08")!.charts[0];
+  const future = { ...chart, series: [...chart.series, { name: "2027*", values: chart.series.at(-1)!.values }] };
+  assert.deepEqual(getDisplayedBulletinSeries(future).map((series) => series.name), ["2024", "2025", "2026*", "2027*"]);
 });
 
 test("pie charts preserve their actual reporting period, including the previous quarter", () => {

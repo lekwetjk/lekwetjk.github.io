@@ -1,13 +1,15 @@
-import january from "../data/bulletins/2026-01.json";
-import february from "../data/bulletins/2026-02.json";
-import march from "../data/bulletins/2026-03.json";
-import aprilMay from "../data/bulletins/2026-04-05.json";
-import june from "../data/bulletins/2026-06.json";
-import july from "../data/bulletins/2026-07.json";
-import august from "../data/bulletins/2026-08.json";
-import tableDescriptions from "../data/bulletins/table-descriptions.json";
+import january from "../data/bulletins/2026-01.json" with { type: "json" };
+import february from "../data/bulletins/2026-02.json" with { type: "json" };
+import march from "../data/bulletins/2026-03.json" with { type: "json" };
+import aprilMay from "../data/bulletins/2026-04-05.json" with { type: "json" };
+import june from "../data/bulletins/2026-06.json" with { type: "json" };
+import july from "../data/bulletins/2026-07.json" with { type: "json" };
+import august from "../data/bulletins/2026-08.json" with { type: "json" };
+import tableDescriptions from "../data/bulletins/table-descriptions.json" with { type: "json" };
+import exportMapSelections from "../data/bulletins/export-map-selections.json" with { type: "json" };
+import type { ExportMapTableSelection } from "./bulletin-export-map";
 import type { PreparedBulletin, PreparedBulletinChart } from "./prepared-bulletin-model";
-import { describePreparedCharts } from "./bulletin-chart-descriptions";
+import { describePreparedCharts } from "./bulletin-chart-descriptions.ts";
 
 export type { PreparedBulletin, PreparedBulletinChart } from "./prepared-bulletin-model";
 
@@ -15,6 +17,7 @@ type SourceBulletin = PreparedBulletin & { sourceFile: string };
 
 const sources = [january, february, march, aprilMay, june, july, august] as SourceBulletin[];
 const tableDescriptionsByEdition: Record<string, Record<string, { title: string; description: string }>> = tableDescriptions;
+const exportMapSelectionsByEdition: Record<string, ExportMapTableSelection> = exportMapSelections;
 
 const productionMetric: PreparedBulletinChart["metric"] = {
   label: "Przemysłowa produkcja mięsa drobiowego",
@@ -52,6 +55,7 @@ const publications = sources.map(({ sourceFile: _sourceFile, ...bulletin }) => {
     slug: `biuletyn-informacyjny-${bulletin.id}`,
     bulletin: {
       ...bulletin,
+      exportMap: bulletin.exportMap ?? exportMapSelectionsByEdition[bulletin.id],
       charts: describePreparedCharts(bulletin.id, bulletin.charts).map((chart) => ({ ...chart, metric: metrics[chart.id] })),
       tables: bulletin.tables.map((table) => {
         const description = tableDescriptionsByEdition[bulletin.id]?.[table.id];

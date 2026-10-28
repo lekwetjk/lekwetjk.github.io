@@ -1,0 +1,6 @@
+Granice państw: Natural Earth, Admin 0 Countries 1:110m oraz brakujące geometrie 1:10m.
+Natural Earth: https://www.naturalearthdata.com/
+Źródło danych 1:110m: https://github.com/nvkelso/natural-earth-vector
+Źródło danych 1:10m: https://github.com/datasets/geo-countries
+Dane Natural Earth są udostępnione w domenie publicznej:
+https://www.naturalearthdata.com/about/terms-of-use/

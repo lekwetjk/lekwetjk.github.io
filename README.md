@@ -71,6 +71,21 @@ z nagłówkami i kolumnami oddzielonymi średnikami lub tabulatorami, wskaż
 jednostkę i typ wykresu. Logo lub dekoracje można pominąć.
 Wyniki OCR trafiają do biuletynu dopiero po użyciu „Zatwierdź i dodaj dane OCR”.
 
+Mapa eksportu korzysta wyłącznie z czterech tabel bieżącego okresu: UE i poza UE
+dla kodów CN 0207 oraz CN 1602. Generator proponuje tabele o jednoznacznych
+tytułach. Jeśli nie może ich ustalić, wskaż brakujące tabele w sekcji „Mapa
+eksportu”; nie wybieraj tabel porównujących lata. Rozbieżny nagłówek wymaga
+osobnego potwierdzenia po sprawdzeniu DOCX. Użyj „Przygotuj mapę z wybranych
+tabel” i sprawdź mapę przed publikacją. Dane krajów oraz udziały są pobierane
+z tabel bez sumowania kodów i bez przeliczania udziałów. Nieznane nazwy państw,
+brakujące wartości i różne okresy są zgłaszane jako błędy.
+Jeśli okres danych kończy się przed miesiącem poprzedzającym wydanie, wykracza
+poza wydanie lub nie można rozpoznać jego miesiąca, administrator musi
+potwierdzić go po sprawdzeniu dokumentu źródłowego.
+W przygotowanym wcześniej wydaniu sierpniowym 2026 mapa korzysta z osobno
+zweryfikowanego przypisania tych czterech tabel. Pozostałe starsze wydania bez
+takiego przypisania zachowują wykres produkcji.
+
 Sprawdź podgląd, potwierdź zgodność ze źródłem i opublikuj biuletyn.
 Model JSON powstaje automatycznie; jego import pozostaje dodatkową opcją.
 Publikacja korzysta z istniejącego prywatnego magazynu i uprawnień członkowskich.

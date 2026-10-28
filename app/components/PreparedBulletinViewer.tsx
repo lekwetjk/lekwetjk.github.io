@@ -18,6 +18,7 @@ import { useState } from "react";
 import type { PreparedBulletin, PreparedBulletinChart } from "../lib/prepared-bulletins";
 import { getBulletinHighlights } from "../lib/bulletin-highlights";
 import { getDisplayedBulletinSeries } from "../lib/prepared-bulletin-model";
+import BulletinExportMap from "./BulletinExportMap";
 import styles from "./PreparedBulletinViewer.module.css";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, PointElement, ArcElement, Tooltip, Legend);
@@ -48,6 +49,10 @@ function chartKind(kind: string) {
 function BulletinChart({ chart, large = false }: { chart: PreparedBulletinChart; large?: boolean }) {
   const kind = chartKind(chart.kind);
   const shown = getDisplayedBulletinSeries(chart);
+  const latestYear = Math.max(...shown.flatMap((series) => {
+    const year = series.name.match(/\b20\d{2}\b/);
+    return year ? [Number(year[0])] : [];
+  }));
   const data = {
     labels: chart.categories,
     datasets: shown.map((series, index) => ({
@@ -55,7 +60,7 @@ function BulletinChart({ chart, large = false }: { chart: PreparedBulletinChart;
       data: series.values,
       borderColor: palette[index % palette.length],
       backgroundColor: `${palette[index % palette.length]}cc`,
-      borderWidth: /2026/.test(series.name) ? 3 : 2,
+      borderWidth: series.name.match(/\b20\d{2}\b/)?.[0] === String(latestYear) ? 3 : 2,
       pointRadius: kind === "line" ? 3 : 0,
       tension: 0.24,
     })),
@@ -110,5 +115,5 @@ export function PreparedBulletinViewer({ bulletin, editions, pdfUrl }: { bulleti
 
 function Overview({ bulletin }: { bulletin: PreparedBulletin }) {
   const highlights = getBulletinHighlights(bulletin);
-  return <section className={styles.overview}><header><p>Najważniejsze dane</p><h2>Obraz rynku w tym wydaniu</h2></header><div className={styles.metrics}>{highlights.map((metric, index) => <article key={metric.id}><span>0{index + 1}</span><p>{metric.label}</p><strong>{metric.displayValue} <span className={styles.metricUnit}>{metric.unit}</span></strong><small>{metric.period}</small><div className={styles.metricDescription}>{metric.description}</div></article>)}</div>{highlights.some((metric) => metric.preliminary) ? <p className={styles.metricNote}>* Dane wstępne — zgodnie z oznaczeniem w biuletynie źródłowym.</p> : null}{bulletin.charts[0] ? <div className={styles.overviewChart}><div><p>Produkcja miesięczna</p><h2>{cleanTitle(bulletin.charts[0])}</h2></div><BulletinChart chart={bulletin.charts[0]} large /></div> : null}</section>;
+  return <section className={styles.overview}><header><p>Najważniejsze dane</p><h2>Obraz rynku w tym wydaniu</h2></header><div className={styles.metrics}>{highlights.map((metric, index) => <article key={metric.id}><span>0{index + 1}</span><p>{metric.label}</p><strong>{metric.displayValue} <span className={styles.metricUnit}>{metric.unit}</span></strong><small>{metric.period}</small><div className={styles.metricDescription}>{metric.description}</div></article>)}</div>{highlights.some((metric) => metric.preliminary) ? <p className={styles.metricNote}>* Dane wstępne — zgodnie z oznaczeniem w biuletynie źródłowym.</p> : null}{bulletin.exportMap ? <BulletinExportMap bulletin={bulletin} /> : bulletin.charts[0] ? <div className={styles.overviewChart}><div><p>Produkcja miesięczna</p><h2>{cleanTitle(bulletin.charts[0])}</h2></div><BulletinChart chart={bulletin.charts[0]} large /></div> : null}</section>;
 }

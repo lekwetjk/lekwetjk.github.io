@@ -8,10 +8,10 @@ import readXlsxFile from "read-excel-file/node";
 
 import { getDb, getMemberDocumentsBucket } from "../../db/index.ts";
 import { bulletinReports } from "../../db/schema.ts";
-import { BULLETIN_CHAPTERS, documentContainsBulletinValue, getMissingDocumentChapters, matchingBulletinChapterIds } from "./bulletin-chapters";
-import { buildBulletinModel, getMissingBulletinSections, shouldCollectBulletinSourceSheet, type BulletinModel, type BulletinSourceSheet } from "./bulletin-model";
-import { validatePreparedBulletin, type PreparedBulletin } from "./prepared-bulletin-model";
-import { getPreparedBulletin } from "./prepared-bulletins";
+import { BULLETIN_CHAPTERS, documentContainsBulletinValue, getMissingDocumentChapters, matchingBulletinChapterIds } from "./bulletin-chapters.ts";
+import { buildBulletinModel, getMissingBulletinSections, shouldCollectBulletinSourceSheet, type BulletinModel, type BulletinSourceSheet } from "./bulletin-model.ts";
+import { validatePreparedBulletin, type PreparedBulletin } from "./prepared-bulletin-model.ts";
+import { getPreparedBulletin } from "./prepared-bulletins.ts";
 
 const LOCAL_REPORTS_DIR = path.join(os.tmpdir(), "krd-ig-bulletin-reports");
 const LOCAL_REPORTS_FILE = path.join(LOCAL_REPORTS_DIR, "reports.json");
@@ -91,6 +91,14 @@ function localObjectPath(key: string) {
   return path.join(LOCAL_REPORTS_DIR, key.replace(/[^a-zA-Z0-9._-]/g, "_"));
 }
 
+function useLocalFallback(error: unknown, binding: "DB" | "MEMBER_DOCUMENTS") {
+  return process.env.NODE_ENV === "development" && error instanceof Error && error.message.includes(`binding \`${binding}\` is unavailable`);
+}
+
+function isMissingFile(error: unknown) {
+  return error instanceof Error && "code" in error && error.code === "ENOENT";
+}
+
 function hasCellValue(value: unknown) {
   return value !== null && value !== undefined && String(value).trim() !== "";
 }
@@ -133,10 +141,13 @@ async function ensureReportsTable() {
 
 async function readLocalReports(): Promise<BulletinReport[]> {
   try {
-    return (JSON.parse(await readFile(LOCAL_REPORTS_FILE, "utf8")) as BulletinReport[])
+    const reports: unknown = JSON.parse(await readFile(LOCAL_REPORTS_FILE, "utf8"));
+    if (!Array.isArray(reports)) throw new Error("Lokalny rejestr biuletynów ma nieprawidłowy format.");
+    return (reports as BulletinReport[])
       .map((report) => ({ ...report, title: bulletinTitle(report.month, report.year) }));
-  } catch {
-    return [];
+  } catch (error) {
+    if (isMissingFile(error)) return [];
+    throw error;
   }
 }
 
@@ -149,7 +160,7 @@ async function putObject(key: string, value: ArrayBuffer | Uint8Array, contentTy
   try {
     await getMemberDocumentsBucket().put(key, value, { httpMetadata: { contentType } });
   } catch (error) {
-    if (!(error instanceof Error) || !error.message.includes("binding `MEMBER_DOCUMENTS` is unavailable")) throw error;
+    if (!useLocalFallback(error, "MEMBER_DOCUMENTS")) throw error;
     await mkdir(LOCAL_REPORTS_DIR, { recursive: true });
     await writeFile(localObjectPath(key), Buffer.from(value instanceof ArrayBuffer ? new Uint8Array(value) : value));
   }
@@ -157,26 +168,27 @@ async function putObject(key: string, value: ArrayBuffer | Uint8Array, contentTy
 
 async function getObject(key: string) {
   try {
-    const object = await getMemberDocumentsBucket().get(key);
-    if (object) return object;
+    return await getMemberDocumentsBucket().get(key);
   } catch (error) {
-    if (!(error instanceof Error) || !error.message.includes("binding `MEMBER_DOCUMENTS` is unavailable")) throw error;
+    if (!useLocalFallback(error, "MEMBER_DOCUMENTS")) throw error;
   }
   try {
     const content = await readFile(localObjectPath(key));
     return { body: content, httpMetadata: { contentType: "application/octet-stream" } };
-  } catch {
-    return null;
+  } catch (error) {
+    if (isMissingFile(error)) return null;
+    throw error;
   }
 }
 
 async function deleteObject(key: string) {
   try {
     await getMemberDocumentsBucket().delete(key);
+    return;
   } catch (error) {
-    if (!(error instanceof Error) || !error.message.includes("binding `MEMBER_DOCUMENTS` is unavailable")) throw error;
+    if (!useLocalFallback(error, "MEMBER_DOCUMENTS")) throw error;
   }
-  try { await unlink(localObjectPath(key)); } catch { /* The local object may not exist. */ }
+  try { await unlink(localObjectPath(key)); } catch (error) { if (!isMissingFile(error)) throw error; }
 }
 
 async function readJsonObject<T>(key: string): Promise<T | null> {
@@ -185,7 +197,7 @@ async function readJsonObject<T>(key: string): Promise<T | null> {
   const content = object.body instanceof Uint8Array
     ? Buffer.from(object.body).toString("utf8")
     : await new Response(object.body).text();
-  try { return JSON.parse(content) as T; } catch { return null; }
+  try { return JSON.parse(content) as T; } catch { throw new Error("Zapisane dane biuletynu nie są poprawnym JSON-em."); }
 }
 
 function stagedManifestKey(uploadId: string) {
@@ -200,7 +212,8 @@ async function saveReport(report: BulletinReport) {
       dataKey: report.dataKey, sourcesJson: JSON.stringify(report.sources), sheetCount: String(report.sheetCount),
       rowCount: String(report.rowCount), createdAt: report.createdAt, createdBy: report.createdBy,
     });
-  } catch {
+  } catch (error) {
+    if (!useLocalFallback(error, "DB")) throw error;
     await writeLocalReports([report, ...(await readLocalReports())]);
   }
 }
@@ -210,7 +223,8 @@ export async function listBulletinReports() {
     const db = await ensureReportsTable();
     const rows = await db.select().from(bulletinReports);
     return rows.map(mapRow).sort((left, right) => right.year - left.year || right.month - left.month);
-  } catch {
+  } catch (error) {
+    if (!useLocalFallback(error, "DB")) throw error;
     return (await readLocalReports()).sort((left, right) => right.year - left.year || right.month - left.month);
   }
 }
@@ -229,7 +243,7 @@ export async function getBulletinReportData(report: BulletinReport): Promise<Bul
     const data = JSON.parse(text) as BulletinReportData;
     return data.model || data.prepared ? data : null;
   } catch {
-    return null;
+    throw new Error("Zapisane dane biuletynu nie są poprawnym JSON-em.");
   }
 }
 
@@ -516,7 +530,8 @@ export async function deleteBulletinReport(id: string) {
   try {
     const db = await ensureReportsTable();
     await db.delete(bulletinReports).where(eq(bulletinReports.id, id));
-  } catch {
+  } catch (error) {
+    if (!useLocalFallback(error, "DB")) throw error;
     await writeLocalReports((await readLocalReports()).filter((item) => item.id !== id));
   }
 }
@@ -539,19 +554,29 @@ export async function createPreparedBulletinReport(input: { modelFile: File; pdf
   const prefix = `bulletin-reports/${id}`;
   const dataKey = `${prefix}/report.json`;
   const sources: BulletinReportSource[] = [];
-  if (input.pdfFile) {
-    const key = `${prefix}/sources/1-${safeFileName(input.pdfFile.name)}`;
-    await putObject(key, await input.pdfFile.arrayBuffer(), "application/pdf");
-    sources.push({ name: input.pdfFile.name, key, contentType: "application/pdf", size: input.pdfFile.size });
+  const uploadedKeys: string[] = [];
+  try {
+    if (input.pdfFile) {
+      const key = `${prefix}/sources/1-${safeFileName(input.pdfFile.name)}`;
+      await putObject(key, await input.pdfFile.arrayBuffer(), "application/pdf");
+      uploadedKeys.push(key);
+      sources.push({ name: input.pdfFile.name, key, contentType: "application/pdf", size: input.pdfFile.size });
+    }
+    await putObject(dataKey, Buffer.from(JSON.stringify({ prepared } satisfies BulletinReportData), "utf8"), "application/json");
+    uploadedKeys.push(dataKey);
+    const report: BulletinReport = {
+      id, slug, title: expectedTitle, month, year, dataKey, sources,
+      sheetCount: prepared.charts.length,
+      rowCount: prepared.tables.reduce((sum, table) => sum + table.rows.length, 0),
+      createdAt: new Date().toISOString(),
+      createdBy: input.createdBy,
+    };
+    await saveReport(report);
+    return report;
+  } catch (error) {
+    const cleanup = await Promise.allSettled(uploadedKeys.map(deleteObject));
+    const failures = cleanup.flatMap((result) => result.status === "rejected" ? [result.reason] : []);
+    if (failures.length) throw new AggregateError([error, ...failures], "Nie udało się opublikować biuletynu ani usunąć wszystkich zapisanych plików.");
+    throw error;
   }
-  await putObject(dataKey, Buffer.from(JSON.stringify({ prepared } satisfies BulletinReportData), "utf8"), "application/json");
-  const report: BulletinReport = {
-    id, slug, title: expectedTitle, month, year, dataKey, sources,
-    sheetCount: prepared.charts.length,
-    rowCount: prepared.tables.reduce((sum, table) => sum + table.rows.length, 0),
-    createdAt: new Date().toISOString(),
-    createdBy: input.createdBy,
-  };
-  await saveReport(report);
-  return report;
 }

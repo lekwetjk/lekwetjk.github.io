@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import { PreparedBulletinViewer } from "../../components/PreparedBulletinViewer";
 import type { DocxBulletinResult } from "../../lib/bulletin-docx";
 import { validatePreparedBulletin } from "../../lib/prepared-bulletin-model";
+import { buildExportMapData, suggestExportMapTables } from "../../lib/bulletin-export-map";
 import DocxOcrReview, { addOcrToBulletin } from "./DocxOcrReview";
 import DocxMetadataEditor from "./DocxMetadataEditor";
+import DocxExportMapEditor from "./DocxExportMapEditor";
 
 type ReportSummary = {
   id: string;
@@ -56,7 +58,15 @@ export default function ReportsManager() {
     setStatus("Odczytywanie tabel i wykresów z DOCX…");
     try {
       const { buildBulletinFromDocx } = await import("../../lib/bulletin-docx");
-      setGenerated(await buildBulletinFromDocx(file, period));
+      const result = await buildBulletinFromDocx(file, period);
+      const selection = suggestExportMapTables(result.bulletin.tables);
+      try {
+        buildExportMapData(result.bulletin.tables, selection, result.bulletin.id);
+        result.bulletin.exportMap = selection;
+      } catch (error) {
+        result.warnings.push(`Mapa eksportu wymaga sprawdzenia: ${error instanceof Error ? error.message : "Nie udało się rozpoznać tabel."}`);
+      }
+      setGenerated(result);
       setStatus("Podgląd został utworzony. Sprawdź dane przed publikacją.");
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Nie udało się przetworzyć pliku DOCX.");
@@ -70,6 +80,7 @@ export default function ReportsManager() {
     setSaving(true);
     setStatus("Publikowanie biuletynu z DOCX…");
     try {
+      if (!generated.bulletin.exportMap) throw new Error("Przed publikacją przygotuj mapę z czterech tabel eksportowych.");
       validatePreparedBulletin(generated.bulletin);
       const formData = new FormData();
       formData.set("mode", "prepared");
@@ -155,6 +166,10 @@ export default function ReportsManager() {
           setApproved(false);
         }} /> : null}
         <DocxMetadataEditor bulletin={generated.bulletin} disabled={busy} onChange={(bulletin) => {
+          setGenerated((current) => current ? { ...current, bulletin: { ...bulletin, exportMap: undefined } } : null);
+          setApproved(false);
+        }} />
+        <DocxExportMapEditor key={generated.bulletin.id + docxName} bulletin={generated.bulletin} disabled={busy} onChange={(bulletin) => {
           setGenerated((current) => current ? { ...current, bulletin } : null);
           setApproved(false);
         }} />
