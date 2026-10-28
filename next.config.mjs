@@ -10,6 +10,9 @@ function resolveBasePath() {
 const basePath = resolveBasePath();
 
 const nextConfig = {
+  turbopack: {
+    root: fileURLToPath(new URL(".", import.meta.url)),
+  },
   trailingSlash: false,
   basePath,
   assetPrefix: basePath || undefined,
@@ -27,3 +30,4 @@ const nextConfig = {
 };
 
 export default nextConfig;
+import { fileURLToPath } from "node:url";

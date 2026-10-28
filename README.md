@@ -22,6 +22,20 @@ To jest projekt front-endowej witryny Krajowej Rady Drobiarstwa — Izby Gospoda
 pnpm install
 ```
 
+Plik `pnpm-lock.yaml` jest utrzymywany razem z `package-lock.json`; po zmianie
+zależności należy zaktualizować oba pliki. Vite korzysta z jawnie wskazanej,
+zgodnej wersji `esbuild`, niezależnie od starszej wersji używanej przez
+`drizzle-kit`.
+
+Build Vinext może oznaczać niektóre trasy symbolem `?`, gdy jego analiza nie
+rozpoznaje sposobu renderowania na podstawie pliku trasy. Nie jest to samo
+w sobie błąd buildu ani dowód, że strona jest statyczna. Przykładowo sesja
+jest odczytywana również w komponentach potomnych. Nie należy zmieniać
+ustawień renderowania tylko po to, aby usunąć ten komunikat.
+`npm run build:static` uruchamia alternatywny build Next.js; nie tworzy
+samodzielnego statycznego eksportu. Trasy korzystające z danych na produkcji
+wymagają odpowiednich bindingów Cloudflare, również podczas obsługi żądań.
+
 ## Uruchomienie lokalne
 
 ```bash

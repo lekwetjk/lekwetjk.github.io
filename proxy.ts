@@ -6,7 +6,7 @@ import { safeMemberRedirect } from "./app/lib/member-redirect";
 
 const protectedMemberPrefixes = ["/member", "/admin", "/tresc/dla-czlonkow", "/tresc/raporty"];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname.replace(/\/+$/, "") || "/";
   const sessionToken = request.cookies.get(AUTH_COOKIE_NAME)?.value ?? "";
   const session = verifySessionToken(sessionToken);

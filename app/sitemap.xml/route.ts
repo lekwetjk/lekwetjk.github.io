@@ -1,4 +1,4 @@
-import sitemap from "../sitemap";
+import sitemap from "../lib/sitemap";
 
 function escapeXml(value: string) {
   return value

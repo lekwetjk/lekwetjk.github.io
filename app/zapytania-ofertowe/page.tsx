@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { connection } from "next/server";
 import { NewsArchive } from "../components/NewsArchive";
 import { PageShell } from "../components/SiteChrome";
 import { tenderPosts } from "../lib/content";
@@ -55,6 +56,7 @@ export const metadata: Metadata = {
 };
 
 export default async function TenderRequestsPage() {
+  await connection();
   const archive = (await mergeManagedPosts(tenderPosts(), "tender")).map(
     ({ slug, title, date, year, excerpt, categories, image, imageFit }) => ({
       slug,

@@ -82,6 +82,10 @@ test("imported campaign edits take precedence in public views and require an adm
     assert.match(await readProjectFile(file), /await mergeManagedPosts\(/);
     assert.match(await readProjectFile(file), /await connection\(\)/);
   }
+  const tenders = await readProjectFile("app/zapytania-ofertowe/page.tsx");
+  assert.match(tenders, /await connection\(\)/);
+  assert.match(tenders, /await mergeManagedPosts\(/);
+  assert.ok(tenders.indexOf("await connection()") < tenders.indexOf("await mergeManagedPosts("));
   const articleBody = await readProjectFile("app/components/ArticleBody.tsx");
   assert.match(articleBody, /await applyManagedPostOverrides\(/);
   assert.match(articleBody, /await connection\(\)/);
@@ -149,7 +153,7 @@ test("member ticker uses active member logos with bounded administrator-controll
 });
 
 test("report archive is public while interactive bulletins and their PDF files remain member-only", async () => {
-  const middleware = await readProjectFile("middleware.ts");
+  const middleware = await readProjectFile("proxy.ts");
   const reportPage = await readProjectFile("app/tresc/[slug]/page.tsx");
   const articleBody = await readProjectFile("app/components/ArticleBody.tsx");
   const reports = await readProjectFile("app/components/BulletinReports.tsx");
@@ -250,7 +254,7 @@ test("deleted imported posts stay hidden in archives and sitemap with an enabled
   assert.doesNotMatch(archive, /if \(!data\?\.posts\?\.length\) return/);
   assert.match(await readProjectFile("app/api/managed-posts/route.ts"), /deletedSlugs: await listDeletedPostSlugs\(\)/);
   assert.match(await readProjectFile("app/aktualnosci/[slug]/page.tsx"), /if \(!post\) \{\s*notFound\(\)/);
-  assert.match(await readProjectFile("app/sitemap.ts"), /!deletedRoutes.has\(route\)/);
+  assert.match(await readProjectFile("app/lib/sitemap.ts"), /!deletedRoutes.has\(route\)/);
   assert.match(await readProjectFile("app/sitemap.xml/route.ts"), /await sitemap\(\)/);
 });
 
@@ -291,7 +295,7 @@ test("layout exposes the site metadata expected for production", async () => {
 });
 
 test("sitemap includes static and dynamic site routes", async () => {
-  const sitemap = await readProjectFile("app/sitemap.ts");
+  const sitemap = await readProjectFile("app/lib/sitemap.ts");
   const sitemapRoute = await readProjectFile("app/sitemap.xml/route.ts");
 
   assert.match(sitemap, /https:\/\/krd-ig-website-concept\.lek-wet-jk\.workers\.dev/);
@@ -484,7 +488,7 @@ test("methodology administration has its own profile tile and editable publicati
   const component = await readProjectFile("app/components/MethodologyDocuments.tsx");
   const upload = await readProjectFile("app/api/admin/member-documents/upload/route.ts");
   const update = await readProjectFile("app/api/admin/member-documents/[file]/route.ts");
-  const middleware = await readProjectFile("middleware.ts");
+  const middleware = await readProjectFile("proxy.ts");
 
   assert.match(profile, /href="\/admin\/metodyka-i-biuletyny"/);
   assert.match(admin, /session\.role !== "admin"/);

@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
-import { knowledgePages, newsPosts } from "./lib/content";
-import { listDeletedPostSlugs } from "./lib/managed-posts";
+import { knowledgePages, newsPosts } from "./content";
+import { listDeletedPostSlugs } from "./managed-posts";
 import { connection } from "next/server";
 
 const defaultSiteUrl = "https://krd-ig-website-concept.lek-wet-jk.workers.dev";
