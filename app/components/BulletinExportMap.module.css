@@ -1,10 +1,10 @@
 .section { margin-top: 54px; }
 .section > header { margin-bottom: 24px; }
 .section > header > p { margin: 0 0 10px; color: var(--brick); text-transform: uppercase; font-size: 11px; font-weight: 700; }
-.layout { display: grid; grid-template-columns: 235px minmax(0, 1fr); overflow: hidden; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
+.layout { display: grid; grid-template-columns: 310px minmax(0, 1fr); overflow: hidden; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); }
 .filters { display: grid; align-content: start; gap: 18px; padding: 22px; border-right: 1px solid var(--line); }
-.filters label { display: grid; gap: 8px; color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; }
-.filters select { width: 100%; min-height: 42px; padding: 8px; border: 1px solid var(--line); border-radius: 4px; color: var(--ink); background: white; text-transform: none; }
+.filters label { display: grid; min-width: 0; gap: 8px; color: var(--muted); font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.filters select { width: 100%; min-width: 0; min-height: 42px; padding: 8px; border: 1px solid var(--line); border-radius: 4px; color: var(--ink); background: white; font-size: 12px; text-transform: none; }
 .filters p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
 .mapArea { min-width: 0; }
 .mapFrame { position: relative; }
@@ -35,7 +35,7 @@
 .dataTable th, .dataTable td { padding: 8px; border-bottom: 1px solid var(--line); text-align: left; white-space: nowrap; }
 @media (max-width: 800px) {
   .layout { grid-template-columns: 1fr; }
-  .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); border-right: 0; border-bottom: 1px solid var(--line); }
+  .filters { grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); border-right: 0; border-bottom: 1px solid var(--line); }
 }
 @media (max-width: 470px) {
   .filters { grid-template-columns: 1fr; }

@@ -197,11 +197,11 @@ export default function BulletinExportMap({ bulletin }: { bulletin: PreparedBull
 
   if (!mapData) return null;
   return <section className={styles.section} aria-labelledby="export-map-heading">
-    <header><p>Handel zagraniczny</p><h2 id="export-map-heading">Eksport według państw</h2></header>
+    <header><p>Handel zagraniczny</p><h2 id="export-map-heading">Eksport wg wybranych największych rynków zbytu</h2></header>
     <div className={styles.layout}>
       <div className={styles.filters}>
         <label>Obszar eksportu<select value={region} onChange={(event) => { setActiveCountry(null); setRegion(event.target.value as Region); }}>
-          <option value="all">Wszystkie państwa</option><option value="UE">Państwa UE</option><option value="poza UE">Państwa poza UE</option>
+          <option value="all">Wszystkie główne rynki zbytu globalnie</option><option value="UE">Główne rynki zbytu w UE</option><option value="poza UE">Główne rynki zbytu poza UE</option>
         </select></label>
         <label>Grupa kodów<select value={code} onChange={(event) => { setActiveCountry(null); setCode(event.target.value as Code); }}>
           <option value="cn0207">CN 0207 — mięso i podroby</option><option value="cn1602">CN 1602 — przetwory</option>
