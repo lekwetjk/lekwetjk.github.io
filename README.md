@@ -105,6 +105,27 @@ Model JSON powstaje automatycznie; jego import pozostaje dodatkową opcją.
 Publikacja korzysta z istniejącego prywatnego magazynu i uprawnień członkowskich.
 Opcjonalny oryginalny PDF należy dołączyć osobno — narzędzie nie konwertuje DOCX do PDF.
 
+### Aktualizacja opublikowanego wydania z DOCX
+
+W polu „Publikacja” wybierz istniejące wydanie zamiast „Nowe wydanie”.
+Wgraj poprawiony DOCX, utwórz podgląd, sprawdź cztery tabele mapy i zatwierdź
+zgodność danych. Następnie wybierz „Zaktualizuj wydanie”. Miesiąc wydania
+pozostaje zablokowany; aktualizacja zachowuje identyfikator i dotychczasowy adres.
+Bez nowego PDF-u zachowany zostaje dotychczasowy plik. Dołączenie PDF-u zastępuje
+go wyłącznie w nowej wersji, bez usuwania poprzedniego pliku.
+
+Każda aktualizacja zapisuje nowy model pod osobnym kluczem
+`bulletin-reports/<id>/revisions/<revision>/report.json`. Sąsiedni plik
+`previous.json` zawiera poprzedni rekord publikacji, klucze modelu i źródeł,
+czas archiwizacji oraz administratora wykonującego zmianę. Poprzednie pliki
+pozostają w prywatnym magazynie. Dopiero po zapisie nowej wersji aktualizowany
+jest rekord w bazie. Błąd zapisu pozostawia bieżącą publikację bez zmian,
+a równoczesna aktualizacja przez inną osobę powoduje odrzucenie starszego podglądu.
+Panel nie udostępnia jeszcze przywracania wersji z archiwum.
+
+Wyborowi podlegają wydania publikowane przez panel. Starsze wydania wbudowane
+w kod strony wymagają zmiany danych w repozytorium i nie są oferowane do edycji.
+
 Silnik OCR i modele językowe są serwowane z własnej domeny, z katalogu
 `public/ocr` przygotowywanego automatycznie przed `dev` i `build`
 (`npm run prepare:ocr`). Katalog jest generowany z zależności npm i ignorowany

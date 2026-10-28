@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { AUTH_COOKIE_NAME, verifySessionToken } from "../../../lib/auth";
 import { cancelStagedBulletinReport, completeStagedBulletinSource, createPreparedBulletinReport, finalizeStagedBulletinReport, listBulletinReports, stageBulletinDocumentText, stageBulletinReportSheet, stageBulletinReportSource } from "../../../lib/bulletin-reports";
 import { recordAuditEventSafely } from "../../../lib/audit-log";
+import { getPreparedBulletin } from "../../../lib/prepared-bulletins";
 
 function publicReport(report: Awaited<ReturnType<typeof listBulletinReports>>[number]) {
   return {
@@ -16,6 +17,8 @@ function publicReport(report: Awaited<ReturnType<typeof listBulletinReports>>[nu
     rowCount: report.rowCount,
     sourceCount: report.sources.length,
     createdAt: report.createdAt,
+    revision: report.dataKey,
+    editable: !getPreparedBulletin(report.slug),
   };
 }
 

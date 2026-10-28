@@ -17,6 +17,8 @@ type ReportSummary = {
   rowCount: number;
   sourceCount: number;
   createdAt: string;
+  revision: string;
+  editable: boolean;
 };
 
 export default function ReportsManager() {
@@ -32,6 +34,7 @@ export default function ReportsManager() {
   const [period, setPeriod] = useState("");
   const [ocrBusy, setOcrBusy] = useState(false);
   const [approved, setApproved] = useState(false);
+  const [updateTarget, setUpdateTarget] = useState<ReportSummary | null>(null);
   const busy = saving || generating || ocrBusy;
 
   async function loadReports() {
@@ -78,19 +81,24 @@ export default function ReportsManager() {
   async function publishGenerated() {
     if (!generated || !approved) return;
     setSaving(true);
-    setStatus("Publikowanie biuletynu z DOCX…");
+    setStatus(updateTarget ? "Aktualizowanie biuletynu z DOCX…" : "Publikowanie biuletynu z DOCX…");
     try {
       if (!generated.bulletin.exportMap) throw new Error("Przed publikacją przygotuj mapę z czterech tabel eksportowych.");
+      if (updateTarget && updateTarget.slug !== `biuletyn-informacyjny-${generated.bulletin.id}`) throw new Error("Podgląd musi dotyczyć aktualizowanego wydania.");
       validatePreparedBulletin(generated.bulletin);
       const formData = new FormData();
       formData.set("mode", "prepared");
       formData.set("model", new File([JSON.stringify(generated.bulletin)], `biuletyn-${generated.bulletin.id}.json`, { type: "application/json" }));
       if (generatedPdf) formData.set("pdf", generatedPdf);
-      const response = await fetch("/api/admin/reports", { method: "POST", body: formData });
+      if (updateTarget) formData.set("revision", updateTarget.revision);
+      const response = await fetch(updateTarget ? `/api/admin/reports/${updateTarget.id}` : "/api/admin/reports", { method: updateTarget ? "PUT" : "POST", body: formData });
       const data = await response.json() as { error?: string };
       if (!response.ok) throw new Error(data.error ?? "Nie udało się opublikować biuletynu.");
       setGenerated(null);
-      setStatus("Biuletyn został opublikowany.");
+      setApproved(false);
+      setUpdateTarget(null);
+      setGeneratedPdf(null);
+      setStatus(updateTarget ? "Biuletyn został zaktualizowany. Zachowano adres i kopię poprzedniej wersji." : "Biuletyn został opublikowany.");
       await loadReports();
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Nie udało się opublikować biuletynu.");
@@ -138,11 +146,27 @@ export default function ReportsManager() {
     <div className="report-admin-layout">
       <section>
       <form className="report-create-form" onSubmit={generate}>
-        <h2>Utwórz biuletyn z DOCX</h2>
+        <h2>{updateTarget ? "Aktualizuj biuletyn z DOCX" : "Utwórz biuletyn z DOCX"}</h2>
         <p>Wgraj źródłowy dokument Word. Generator odczyta tabele i dane edytowalnych wykresów bez przygotowywania pliku JSON.</p>
         <label className="report-file-picker">
+          <span>Publikacja</span>
+          <select aria-label="Publikacja" value={updateTarget?.id ?? ""} disabled={busy} onChange={(event) => {
+            const target = reports.find((report) => report.id === event.target.value) ?? null;
+            setUpdateTarget(target);
+            setPeriod(target ? target.slug.replace("biuletyn-informacyjny-", "") : "");
+            setGenerated(null);
+            setGeneratedPdf(null);
+            setApproved(false);
+            setStatus("");
+          }}>
+            <option value="">Nowe wydanie</option>
+            {reports.filter((report) => report.editable).map((report) => <option key={report.id} value={report.id}>{report.title}</option>)}
+          </select>
+        </label>
+        {updateTarget ? <a href={`/tresc/raporty?raport=${updateTarget.slug}`}>{updateTarget.title}</a> : null}
+        <label className="report-file-picker">
           <span>Miesiąc i rok wydania</span>
-          <input name="period" type="month" min="2000-01" max="2100-12" required value={period} disabled={busy} onChange={(event) => { setPeriod(event.target.value); setGenerated(null); }} />
+          <input name="period" type="month" min="2000-01" max="2100-12" required value={period} disabled={busy || !!updateTarget} onChange={(event) => { setPeriod(event.target.value); setGenerated(null); setApproved(false); }} />
         </label>
         <label className="report-file-picker">
           <span>Źródłowy plik DOCX</span>
@@ -152,7 +176,7 @@ export default function ReportsManager() {
         {docxName ? <ul className="report-selected-files"><li>{docxName}</li></ul> : null}
         <label className="report-file-picker">
           <span>PDF do pobrania (opcjonalnie)</span>
-          <input type="file" accept="application/pdf,.pdf" disabled={busy} onChange={(event) => setGeneratedPdf(event.target.files?.[0] ?? null)} />
+          <input key={updateTarget?.id ?? "new"} type="file" accept="application/pdf,.pdf" disabled={busy} onChange={(event) => { setGeneratedPdf(event.target.files?.[0] ?? null); setApproved(false); }} />
         </label>
         <small>Generator nie tworzy PDF-u. Dodaj oryginalny PDF tego samego wydania, jeśli ma być dostępny do pobrania.</small>
         <button className="button button-primary" type="submit" disabled={busy}>{generating ? "Przetwarzanie DOCX…" : "Utwórz podgląd z DOCX"}</button>
@@ -177,7 +201,7 @@ export default function ReportsManager() {
           <PreparedBulletinViewer key={generated.bulletin.id + docxName} bulletin={generated.bulletin} editions={[{ id: generated.bulletin.id, slug: `biuletyn-informacyjny-${generated.bulletin.id}`, period: generated.bulletin.period, title: generated.bulletin.title }]} />
         </details>
         <label className="report-approval"><input type="checkbox" checked={approved} disabled={busy} onChange={(event) => setApproved(event.target.checked)} /> Sprawdziłem zgodność okresu, tytułów, jednostek i wartości z DOCX, poprawiłem dane OCR, a pominięte obrazy nie wymagają publikacji.</label>
-        <button className="button button-primary" type="button" disabled={busy || !approved} onClick={() => void publishGenerated()}>{saving ? "Publikowanie…" : "Opublikuj biuletyn"}</button>
+        <button className="button button-primary" type="button" disabled={busy || !approved || !generated.bulletin.exportMap} onClick={() => void publishGenerated()}>{saving ? "Zapisywanie…" : updateTarget ? "Zaktualizuj wydanie" : "Opublikuj biuletyn"}</button>
       </section> : null}
       <details>
       <summary>Import gotowego modelu JSON (opcjonalnie)</summary>

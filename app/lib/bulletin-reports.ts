@@ -3,7 +3,7 @@ import { mkdir, readFile, unlink, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import readXlsxFile from "read-excel-file/node";
 
 import { getDb, getMemberDocumentsBucket } from "../../db/index.ts";
@@ -536,7 +536,17 @@ export async function deleteBulletinReport(id: string) {
   }
 }
 
-export async function createPreparedBulletinReport(input: { modelFile: File; pdfFile?: File; createdBy: string }) {
+type PreparedReportInput = { modelFile: File; pdfFile?: File; createdBy: string };
+
+export function createPreparedBulletinReport(input: PreparedReportInput) {
+  return savePreparedBulletinReport(input);
+}
+
+export function updatePreparedBulletinReport(input: PreparedReportInput & { id: string; expectedRevision: string }) {
+  return savePreparedBulletinReport(input, { id: input.id, expectedRevision: input.expectedRevision });
+}
+
+async function savePreparedBulletinReport(input: PreparedReportInput, update?: { id: string; expectedRevision: string }) {
   if (!/\.json$/i.test(input.modelFile.name) || input.modelFile.size > MAX_PREPARED_MODEL_BYTES) throw new Error("Wybierz plik JSON modelu o rozmiarze do 5 MB.");
   if (input.pdfFile && (!/\.pdf$/i.test(input.pdfFile.name) || input.pdfFile.size > MAX_FILE_BYTES)) throw new Error("Opcjonalny PDF może mieć maksymalnie 25 MB.");
   let parsed: unknown;
@@ -548,14 +558,28 @@ export async function createPreparedBulletinReport(input: { modelFile: File; pdf
   const expectedTitle = bulletinTitle(month, year);
   if (prepared.title !== expectedTitle) throw new Error(`Tytuł modelu musi brzmieć: ${expectedTitle}.`);
   const slug = `biuletyn-informacyjny-${prepared.id}`;
-  if (getPreparedBulletin(slug) || await getBulletinReport(slug)) throw new Error("To wydanie jest już opublikowane.");
+  const previous = update ? (await listBulletinReports()).find((report) => report.id === update.id) : undefined;
+  if (update) {
+    if (!previous) throw new Error("Nie znaleziono raportu.");
+    if (previous.slug !== slug || getPreparedBulletin(slug)) throw new Error("Aktualizacja musi dotyczyć tego samego edytowalnego wydania.");
+    if (previous.dataKey !== update.expectedRevision) throw new Error("Wydanie zostało zmienione. Odśwież listę i przygotuj ponownie podgląd.");
+    if (!prepared.exportMap) throw new Error("Przed aktualizacją przygotuj mapę z czterech tabel eksportowych.");
+    if (!(await getBulletinReportData(previous))) throw new Error("Nie można zachować poprzedniego modelu: brak danych publikacji.");
+  } else if (getPreparedBulletin(slug) || await getBulletinReport(slug)) {
+    throw new Error("To wydanie jest już opublikowane.");
+  }
 
-  const id = crypto.randomUUID();
-  const prefix = `bulletin-reports/${id}`;
+  const id = previous?.id ?? crypto.randomUUID();
+  const prefix = previous ? `bulletin-reports/${id}/revisions/${crypto.randomUUID()}` : `bulletin-reports/${id}`;
   const dataKey = `${prefix}/report.json`;
-  const sources: BulletinReportSource[] = [];
+  const sources: BulletinReportSource[] = previous ? previous.sources.filter((source) => !input.pdfFile || !/\.pdf$/i.test(source.name)) : [];
   const uploadedKeys: string[] = [];
   try {
+    if (previous) {
+      const backupKey = `${prefix}/previous.json`;
+      await putObject(backupKey, Buffer.from(JSON.stringify({ report: previous, archivedAt: new Date().toISOString(), archivedBy: input.createdBy }), "utf8"), "application/json");
+      uploadedKeys.push(backupKey);
+    }
     if (input.pdfFile) {
       const key = `${prefix}/sources/1-${safeFileName(input.pdfFile.name)}`;
       await putObject(key, await input.pdfFile.arrayBuffer(), "application/pdf");
@@ -568,10 +592,26 @@ export async function createPreparedBulletinReport(input: { modelFile: File; pdf
       id, slug, title: expectedTitle, month, year, dataKey, sources,
       sheetCount: prepared.charts.length,
       rowCount: prepared.tables.reduce((sum, table) => sum + table.rows.length, 0),
-      createdAt: new Date().toISOString(),
-      createdBy: input.createdBy,
+      createdAt: previous?.createdAt ?? new Date().toISOString(),
+      createdBy: previous?.createdBy ?? input.createdBy,
     };
-    await saveReport(report);
+    if (previous) {
+      try {
+        const db = await ensureReportsTable();
+        const changed = await db.update(bulletinReports).set({
+          dataKey: report.dataKey, sourcesJson: JSON.stringify(report.sources),
+          sheetCount: String(report.sheetCount), rowCount: String(report.rowCount),
+        }).where(and(eq(bulletinReports.id, id), eq(bulletinReports.dataKey, previous.dataKey))).returning({ id: bulletinReports.id });
+        if (!changed.length) throw new Error("Wydanie zostało zmienione. Odśwież listę i przygotuj ponownie podgląd.");
+      } catch (error) {
+        if (!useLocalFallback(error, "DB")) throw error;
+        const reports = await readLocalReports();
+        if (!reports.some((item) => item.id === id && item.dataKey === previous.dataKey)) throw new Error("Wydanie zostało zmienione. Odśwież listę i przygotuj ponownie podgląd.");
+        await writeLocalReports(reports.map((item) => item.id === id ? report : item));
+      }
+    } else {
+      await saveReport(report);
+    }
     return report;
   } catch (error) {
     const cleanup = await Promise.allSettled(uploadedKeys.map(deleteObject));
