@@ -65,3 +65,20 @@ test("missing units are explicit and a missing value is not replaced with zero",
   assert.equal(metric.unit, "Jednostka niepodana w modelu");
   assert.equal(metric.displayValue, "-");
 });
+
+test("historical range is removed only from the second through fourth highlight", () => {
+  const charts = Array.from({ length: 4 }, (_, index) => chart({
+    id: `chart-${index + 1}`,
+    title: `Wskaźnik ${index + 1} w latach 2021 - 2026`,
+    metric: undefined,
+  }));
+
+  const highlights = getBulletinHighlights(bulletin(charts));
+
+  assert.equal(highlights[0].label, "Wskaźnik 1 w latach 2021 - 2026");
+  assert.deepEqual(highlights.slice(1).map((metric) => metric.label), [
+    "Wskaźnik 2",
+    "Wskaźnik 3",
+    "Wskaźnik 4",
+  ]);
+});

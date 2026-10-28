@@ -69,9 +69,15 @@
 .metrics article:last-child { border-right: 0; }
 .metrics article > span { color: var(--brick); font-size: 11px; font-weight: 700; }
 .metrics p { min-height: 40px; margin: 18px 0 10px; color: var(--muted); font-size: 12px; text-transform: uppercase; font-weight: 700; }
-.metrics strong { display: block; color: var(--forest); font-family: Georgia, serif; font-size: 38px; }
-.metrics strong { overflow-wrap: anywhere; }
-.metricUnit { display: inline-block; font-family: inherit; font-size: 20px; white-space: nowrap; }
+.metrics strong {
+  display: block;
+  color: var(--forest);
+  font-family: Aptos, Arial, sans-serif;
+  font-size: clamp(24px, 2.2vw, 30px);
+  line-height: 1.1;
+  white-space: nowrap;
+}
+.metricUnit { display: inline-block; font-family: inherit; font-size: 16px; white-space: nowrap; }
 .metricDescription { margin-top: 12px; color: var(--muted); font-size: 12px; line-height: 1.5; }
 .metricNote { margin: 14px 0 0; color: var(--muted); font-size: 13px; }
 .metrics small { color: var(--muted); }
@@ -119,6 +125,12 @@
 .pagination svg { width: 18px; }
 .pagination span { color: var(--muted); font-size: 13px; }
 
+@media (max-width: 1050px) {
+  .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .metrics article:nth-child(2) { border-right: 0; }
+  .metrics article:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+}
+
 @media (max-width: 800px) {
   .hero { grid-template-columns: 1fr; padding-block: 46px 34px; background: linear-gradient(145deg, var(--forest-deep) 0 78%, #cc9c3d 78% 81%, #e8dfca 81%); }
   .heroStat { width: auto; display: flex; align-items: baseline; gap: 10px; color: white; }
@@ -135,7 +147,7 @@
   .chartGrid { grid-template-columns: 1fr; }
 }
 
-@media (max-width: 470px) {
+@media (max-width: 520px) {
   .editionBar { justify-content: stretch; }
   .editionBar label,
   .editionBar select { width: 100%; }

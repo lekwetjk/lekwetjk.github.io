@@ -1,5 +1,11 @@
 import type { PreparedBulletin } from "./prepared-bulletin-model";
 
+const HISTORICAL_RANGE = /\s*w latach 2021\s*[-–—]\s*2026/giu;
+
+function removeHistoricalRange(value: string) {
+  return value.replace(HISTORICAL_RANGE, "").replace(/\s+([.,;:])/g, "$1").trim();
+}
+
 export function getBulletinHighlights(bulletin: PreparedBulletin) {
   const year = bulletin.id.slice(0, 4);
   return bulletin.charts.flatMap((chart) => {
@@ -24,5 +30,9 @@ export function getBulletinHighlights(bulletin: PreparedBulletin) {
       period,
       preliminary: series.name.includes("*"),
     }];
-  }).slice(0, 4);
+  }).slice(0, 4).map((metric, index) => index === 0 ? metric : {
+    ...metric,
+    label: removeHistoricalRange(metric.label),
+    description: removeHistoricalRange(metric.description),
+  });
 }
