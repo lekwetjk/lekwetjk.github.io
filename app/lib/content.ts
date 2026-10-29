@@ -460,12 +460,13 @@ const supplementalNewsPosts: NewsPost[] = [
 ];
 
 const supplementalSlugs = new Set(supplementalNewsPosts.map((post) => post.slug));
+const generatedSlugs = new Set(generatedContentPosts.map((post) => post.slug));
 
 export const newsPosts = [
   ...(generatedContentPosts as NewsPost[]),
   ...supplementalNewsPosts,
   ...content.posts
-    .filter((post) => !supplementalSlugs.has(post.slug))
+    .filter((post) => !supplementalSlugs.has(post.slug) && !generatedSlugs.has(post.slug))
     .map((post) => ({
       ...sanitizeNewsPost({
         ...post,

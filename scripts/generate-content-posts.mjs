@@ -128,7 +128,10 @@ async function collectPosts(contentDir, defaultCategory) {
     }
 
     const slug = data.slug ? slugify(data.slug) : slugify(data.title);
-    const date = `${data.date}T00:00:00`;
+    const date = `${data.date}T${data.time || "00:00:00"}`;
+    if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/.test(date) || Number.isNaN(Date.parse(date))) {
+      throw new Error(`Plik ${file}: nieprawidłowa data lub godzina publikacji.`);
+    }
     const year = Number(String(data.date).slice(0, 4));
     const categories = data.categories
       ? String(data.categories)

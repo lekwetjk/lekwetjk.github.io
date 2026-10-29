@@ -27,7 +27,15 @@ test("publication image fit defaults, overrides and validation work for Markdown
     assert.equal(posts.length, 6);
     for (const post of posts) {
       assert.equal(post.imageFit, post.title.endsWith("-cover") ? "cover" : "contain");
+      assert.equal(post.date, "2026-09-24T00:00:00");
     }
+    await writeFile(path.join(root, "content/zapytania-ofertowe/with-time.md"), "---\ntitle: With time\ndate: 2026-09-24\ntime: 15:54:26\n---\n\nTimed tender.");
+    execFileSync(process.execPath, [script], { cwd: root, stdio: "pipe" });
+    const timedPosts = JSON.parse(await readFile(path.join(root, "app/data/generated-posts.json"), "utf8"));
+    assert.equal(timedPosts[0].date, "2026-09-24T15:54:26");
+    await writeFile(path.join(root, "content/zapytania-ofertowe/with-time.md"), "---\ntitle: Invalid time\ndate: 2026-09-24\ntime: 25:00:00\n---\n\nInvalid time.");
+    assert.throws(() => execFileSync(process.execPath, [script], { cwd: root, stdio: "pipe" }), /godzina/);
+    await rm(path.join(root, "content/zapytania-ofertowe/with-time.md"));
     await writeFile(path.join(root, "content/aktualnosci/invalid.md"), "---\ntitle: Invalid\ndate: 2026-09-24\nimageFit: stretch\n---\n\nInvalid fit.");
     assert.throws(() => execFileSync(process.execPath, [script], { cwd: root, stdio: "pipe" }), /imageFit/);
   } finally {
@@ -71,6 +79,8 @@ test("publication editor uses consistent Markdown formatting without raw HTML ta
   const article = await readProjectFile("app/components/ArticleBody.tsx");
   assert.match(article, /uploadedAttachments/);
   assert.match(article, /aria-label="Pliki do pobrania"/);
+  assert.ok(article.includes('trimmedParagraph.includes("](") ? null : renderTenderLinkedText('));
+  assert.match(article, /<ol key=\{index\} start=\{start\}/);
   assert.match(await readProjectFile("app/admin/publikacje/PublicationForm.tsx"), /attachmentNames\.length.*Pliki do pobrania/);
   assert.match(await readProjectFile("app/admin/publikacje/ManagedPostsManager.tsx"), /aria-label="Obecne pliki"/);
 });

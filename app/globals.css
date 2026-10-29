@@ -1563,6 +1563,26 @@ blockquote {
   text-align: justify;
 }
 
+.article-layout .prose.prose-imported-tender p,
+.article-layout .prose.prose-imported-tender li {
+  color: var(--ink-soft);
+  font: 400 16px/1.7 "Aptos", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  text-align: justify;
+  text-align-last: left;
+  text-justify: inter-word;
+}
+
+.article-layout .prose.prose-imported-tender p {
+  margin: 0 0 22px;
+  text-indent: 0;
+}
+
+.article-layout .prose.prose-imported-tender ul,
+.article-layout .prose.prose-imported-tender ol {
+  margin: 0 0 22px;
+  padding-inline-start: 24px;
+}
+
 .prose h2 {
   margin: 52px 0 18px;
   font: 700 26px/1.15 "Aptos", "Segoe UI", "Helvetica Neue", Arial, sans-serif;

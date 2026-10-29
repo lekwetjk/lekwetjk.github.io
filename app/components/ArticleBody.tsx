@@ -2808,8 +2808,10 @@ export async function ArticleBody({
     );
   }
 
+  const isImportedTender = source.startsWith("https://old.krd-ig.com.pl/");
+  const inferParagraphHeadings = inferHeadings && !isImportedTender;
   const shouldJustifyArticleText =
-    justify || isTenderLikeSlug || categories.includes("Prawo") || slug === "bezpieczenstwo-bialkowe" ||
+    justify || isImportedTender || isTenderLikeSlug || categories.includes("Prawo") || slug === "bezpieczenstwo-bialkowe" ||
     slug === "globalizacja-rynku" ||
     slug === "przedstawicielstwo-w-chinach";
   const shouldUseFullWidthArticleLayout =
@@ -3520,7 +3522,7 @@ export async function ArticleBody({
       className={`article-layout${shouldUseFullWidthArticleLayout ? " article-layout-full" : ""} shell`}
     >
       <article
-        className={`prose${shouldJustifyArticleText ? " prose-justified" : ""}${slug === "pierze-i-puch-certyfikacja" ? " prose-pierze" : ""}`}
+        className={`prose${shouldJustifyArticleText ? " prose-justified" : ""}${isImportedTender ? " prose-imported-tender" : ""}${slug === "pierze-i-puch-certyfikacja" ? " prose-pierze" : ""}`}
       >
         {visibleParagraphs.map((paragraph, index) => {
           const trimmedParagraph = paragraph.trim();
@@ -3534,7 +3536,8 @@ export async function ArticleBody({
             return <ul key={index}>{blockLines.map((line, itemIndex) => <li key={itemIndex}>{renderInlineMarkdown(line.replace(/^\s*[-*]\s+/, ""), `list-${index}-${itemIndex}`)}</li>)}</ul>;
           }
           if (blockLines.every((line) => /^\s*\d+\.\s+/.test(line))) {
-            return <ol key={index}>{blockLines.map((line, itemIndex) => <li key={itemIndex}>{renderInlineMarkdown(line.replace(/^\s*\d+\.\s+/, ""), `list-${index}-${itemIndex}`)}</li>)}</ol>;
+            const start = Number(blockLines[0].match(/^\s*(\d+)\./)?.[1] ?? 1);
+            return <ol key={index} start={start}>{blockLines.map((line, itemIndex) => <li key={itemIndex}>{renderInlineMarkdown(line.replace(/^\s*\d+\.\s+/, ""), `list-${index}-${itemIndex}`)}</li>)}</ol>;
           }
           const formattedParagraph = renderInlineMarkdown(paragraph, `paragraph-${index}`);
           const displayParagraph = trimmedParagraph;
@@ -3542,7 +3545,7 @@ export async function ArticleBody({
             return <h2 key={index}><a href="https://stopdezinformacjizywnosciowej.pl/">{displayParagraph}</a></h2>;
           }
 
-          const tenderLinked = renderTenderLinkedText(
+          const tenderLinked = trimmedParagraph.includes("](") ? null : renderTenderLinkedText(
             trimmedParagraph,
             `${index}-${paragraph.slice(0, 20)}`,
           );
@@ -3650,7 +3653,7 @@ export async function ArticleBody({
           }
 
           if (tenderLinked?.hasLink) {
-            const shouldRenderAsHeading = inferHeadings && index > 0 && looksLikeHeading(trimmedParagraph);
+            const shouldRenderAsHeading = inferParagraphHeadings && index > 0 && looksLikeHeading(trimmedParagraph);
             return shouldRenderAsHeading ? (
               <h2 key={tenderLinked.key}>{tenderLinked.node}</h2>
             ) : (
@@ -3658,7 +3661,7 @@ export async function ArticleBody({
             );
           }
 
-          return inferHeadings && index > 0 && looksLikeHeading(paragraph) ? (
+          return inferParagraphHeadings && index > 0 && looksLikeHeading(paragraph) ? (
             <h2 key={`${index}-${paragraph.slice(0, 20)}`}>{formattedParagraph}</h2>
           ) : (
             <p key={`${index}-${paragraph.slice(0, 20)}`}>{formattedParagraph}</p>
