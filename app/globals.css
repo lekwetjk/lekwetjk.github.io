@@ -1,5 +1,18 @@
 @import "tailwindcss";
 
+.admin-users-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 180px 120px;
+  gap: 16px;
+}
+
+@media (max-width: 600px) {
+  .admin-users-grid {
+    grid-template-columns: minmax(0, 1fr) 80px 55px;
+    gap: 8px;
+  }
+}
+
 :root {
   --ink: #191918;
   --ink-soft: #343431;

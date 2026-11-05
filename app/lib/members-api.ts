@@ -1,8 +1,8 @@
 import { createHash, timingSafeEqual } from "node:crypto";
-import { asc, eq } from "drizzle-orm";
+import { asc, eq, sql } from "drizzle-orm";
 
 import { getDb } from "../../db/index.ts";
-import { memberProfiles, memberUsers } from "../../db/schema.ts";
+import { memberCompanyUsers, memberProfiles, memberUsers } from "../../db/schema.ts";
 import { getMemberLogo } from "./auth.ts";
 import {
   getMemberProfileDictionaries,
@@ -71,7 +71,8 @@ export async function getApiMembers(language: MembersApiLanguage = "pl") {
   const rows = await getDb()
     .select({ id: memberUsers.id, name: memberUsers.name, profileData: memberProfiles.data })
     .from(memberUsers)
-    .leftJoin(memberProfiles, eq(memberUsers.id, memberProfiles.userId))
+    .leftJoin(memberCompanyUsers, eq(memberUsers.id, memberCompanyUsers.userId))
+    .leftJoin(memberProfiles, eq(sql`COALESCE(${memberCompanyUsers.companyId}, ${memberUsers.id})`, memberProfiles.userId))
     .where(eq(memberUsers.role, "member"))
     .orderBy(asc(memberUsers.id));
 

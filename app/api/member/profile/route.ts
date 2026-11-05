@@ -1,17 +1,17 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-import { AUTH_COOKIE_NAME, getMemberProfile, saveMemberProfile, verifySessionToken } from "../../../lib/auth";
+import { AUTH_COOKIE_NAME, getCurrentMemberSession, getMemberProfile, saveMemberProfile } from "../../../lib/auth";
 import { recordAuditEventSafely } from "../../../lib/audit-log";
 
 export async function GET() {
-  const session = verifySessionToken((await cookies()).get(AUTH_COOKIE_NAME)?.value);
+  const session = await getCurrentMemberSession((await cookies()).get(AUTH_COOKIE_NAME)?.value);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   return NextResponse.json({ profile: await getMemberProfile(session.sub) });
 }
 
 export async function POST(request: Request) {
-  const session = verifySessionToken((await cookies()).get(AUTH_COOKIE_NAME)?.value);
+  const session = await getCurrentMemberSession((await cookies()).get(AUTH_COOKIE_NAME)?.value);
   if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   try {
     await saveMemberProfile(session.sub, await request.json());

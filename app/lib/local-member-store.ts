@@ -4,7 +4,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import type { DatabaseSync } from "node:sqlite";
 
-type RecordKind = "users" | "logos" | "profiles";
+type RecordKind = "users" | "logos" | "profiles" | "companies" | "company-links";
 const stores = new Map<string, ReturnType<typeof openLocalMemberStore>>();
 
 export async function openLocalMemberStore(directory: string, legacyDirectory = os.tmpdir()) {

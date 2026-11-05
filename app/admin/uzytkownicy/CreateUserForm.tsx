@@ -1,21 +1,26 @@
 "use client";
 
 import { useState } from "react";
+import type { MemberCompany } from "../../lib/member-companies";
 
-export default function CreateUserForm() {
+export default function CreateUserForm({ companies = [] }: { companies?: MemberCompany[] }) {
   const [username, setUsername] = useState("nowy-czlonek");
   const [name, setName] = useState("Nowy członek");
   const [role, setRole] = useState<"member" | "admin">("member");
   const [password, setPassword] = useState("Test123!");
   const [message, setMessage] = useState("");
   const [logo, setLogo] = useState<File | null>(null);
+  const [companyId, setCompanyId] = useState("");
+  const [busy, setBusy] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-
-    const response = await fetch("/api/admin/users/create", {
+    setBusy(true);
+    setMessage("");
+    try {
+      const response = await fetch("/api/admin/users/create", {
       method: "POST",
-      body: (() => { const formData = new FormData(); formData.append("username", username); formData.append("name", name); formData.append("role", role); formData.append("password", password); if (logo) formData.append("logo", logo); return formData; })(),
+      body: (() => { const formData = new FormData(); formData.append("username", username); formData.append("name", name); formData.append("role", role); formData.append("password", password); if (companyId && role === "member") formData.append("companyId", companyId); if (logo && !companyId) formData.append("logo", logo); return formData; })(),
     });
 
     const data = await response.json();
@@ -31,7 +36,13 @@ export default function CreateUserForm() {
     setPassword("Test123!");
     setRole("member");
     setLogo(null);
+    setCompanyId("");
     window.location.reload();
+    } catch {
+      setMessage("Nie udało się połączyć z serwerem.");
+    } finally {
+      setBusy(false);
+    }
   }
 
   return (
@@ -40,7 +51,7 @@ export default function CreateUserForm() {
 
       <label>
         <div style={{ marginBottom: 6, fontWeight: 600 }}>Logo użytkownika (.jpg, .bmp, .png)</div>
-        <input type="file" accept=".jpg,.jpeg,.bmp,.png" onChange={(event) => setLogo(event.target.files?.[0] ?? null)} />
+        <input type="file" disabled={!!companyId || busy} accept=".jpg,.jpeg,.bmp,.png" onChange={(event) => setLogo(event.target.files?.[0] ?? null)} />
       </label>
 
       <label>
@@ -55,19 +66,29 @@ export default function CreateUserForm() {
 
       <label>
         <div style={{ marginBottom: 6, fontWeight: 600 }}>Rola</div>
-        <select value={role} onChange={(event) => setRole(event.target.value as "member" | "admin")} style={{ width: "100%", padding: 10 }}>
+        <select value={role} onChange={(event) => { setRole(event.target.value as "member" | "admin"); setCompanyId(""); }} style={{ width: "100%", padding: 10 }}>
           <option value="member">Członek</option>
           <option value="admin">Administrator</option>
         </select>
       </label>
+
+      {companies.length > 0 && role === "member" ? (
+        <label>
+          <div style={{ marginBottom: 6, fontWeight: 600 }}>Firma</div>
+          <select value={companyId} disabled={busy} onChange={(event) => { setCompanyId(event.target.value); setLogo(null); }} style={{ width: "100%", padding: 10 }}>
+            <option value="">Nowa firma / oddzielny profil</option>
+            {companies.map(company => <option key={company.id} value={company.id}>{company.name} ({company.userCount} kont; {company.id.slice(-6)})</option>)}
+          </select>
+        </label>
+      ) : null}
 
       <label>
         <div style={{ marginBottom: 6, fontWeight: 600 }}>Hasło</div>
         <input type="password" value={password} onChange={(event) => setPassword(event.target.value)} style={{ width: "100%", padding: 10 }} />
       </label>
 
-      <button type="submit" style={{ padding: "12px 18px", background: "#1f3a5f", color: "white", border: "none", borderRadius: 8, fontWeight: 700 }}>
-        Utwórz użytkownika
+      <button type="submit" disabled={busy} style={{ padding: "12px 18px", background: "#1f3a5f", color: "white", border: "none", borderRadius: 8, fontWeight: 700 }}>
+        {busy ? "Zapisywanie..." : "Utwórz użytkownika"}
       </button>
 
       {message ? <p style={{ margin: 0, color: message.includes("Utworzono") ? "#166534" : "#b91c1c" }}>{message}</p> : null}

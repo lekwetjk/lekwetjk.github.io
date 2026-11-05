@@ -98,6 +98,19 @@ Na produkcji konta i profile nadal korzystaja z Cloudflare D1, a logotypy
 z prywatnego R2 `MEMBER_DOCUMENTS`. Lokalny fallback jest zablokowany przy
 `NODE_ENV=production`; awaria D1/R2 nie tworzy zastepczej lokalnej bazy.
 
+Wiele loginow moze nalezec do jednej firmy. Tabele D1 `member_companies` i
+`member_company_users` (lokalnie rekordy SQLite `companies` i `company-links`)
+oddzielaja firme od kont uzytkownikow. Profil, logo i skala logo sa wspolne,
+a hasla, sesje i blokady pozostaja indywidualne. Identyczne nazwy firm nie
+powoduja automatycznego laczenia. Zmiana przypisania nie kopiuje ani nie kasuje
+poprzedniego profilu. Usuniecie pierwotnego loginu zachowuje dane firmy, jesli
+korzystaja z niej inne konta. Firmy bez loginow pozostaja dostepne do przypisania.
+
+Przed wdrozeniem kodu obslugi firm wykonaj na docelowej bazie idempotentna
+migracje `drizzle/0001_member_companies.sql`, np. przez `wrangler d1 execute`
+z `--file` i konfiguracja odpowiedniego srodowiska. Migracja dodaje tabele i
+rejestruje dotychczasowe firmy bez zmiany profili, hasel i przypisan kont.
+
 ## Biuletyny PDF w strefie członkowskiej
 
 ### Tworzenie biuletynu z DOCX

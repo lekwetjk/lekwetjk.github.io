@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { PageShell } from "../../components/SiteChrome";
-import { AUTH_COOKIE_NAME, getMemberLogoScales, getMemberLogoUserIds, getMemberUsers, verifySessionToken } from "../../lib/auth";
+import { AUTH_COOKIE_NAME, getCurrentMemberSession, getMemberCompanies, getMemberCompanyIds, getMemberLogoScales, getMemberLogoUserIds, getMemberUsers } from "../../lib/auth";
 import CreateUserForm from "./CreateUserForm";
 import AdminUsersList from "./AdminUsersList";
 import MemberReport from "./MemberReport";
@@ -10,7 +10,7 @@ import ImportUsersForm from "./ImportUsersForm";
 
 export default async function AdminUsersPage() {
   const cookieStore = await cookies();
-  const session = verifySessionToken(cookieStore.get(AUTH_COOKIE_NAME)?.value);
+  const session = await getCurrentMemberSession(cookieStore.get(AUTH_COOKIE_NAME)?.value);
 
   if (!session || session.role !== "admin") {
     redirect("/login/czlonkowie?redirect=/admin/uzytkownicy");
@@ -19,7 +19,14 @@ export default async function AdminUsersPage() {
   const users = await getMemberUsers();
   const logoUserIds = await getMemberLogoUserIds(users.map((user) => user.id));
   const logoScales = await getMemberLogoScales(users.map((user) => user.id));
-  const usersWithLogoState = users.map((user) => ({ user, hasLogo: logoUserIds.has(user.id), logoScale: logoScales[user.id] }));
+  const companies = await getMemberCompanies();
+  const companyIds = await getMemberCompanyIds(users.map(user => user.id));
+  const usersWithLogoState = users.map((user) => ({
+    user: { id: user.id, username: user.username, name: user.name, role: user.role, isActive: user.isActive },
+    companyId: companyIds[user.id],
+    hasLogo: logoUserIds.has(user.id),
+    logoScale: logoScales[user.id],
+  }));
 
   return (
     <PageShell>
@@ -44,11 +51,11 @@ export default async function AdminUsersPage() {
           </div>
           <div id="raport-czlonkow"><MemberReport /></div>
           <div style={{ marginTop: 28, marginBottom: 28 }}>
-            <CreateUserForm />
+            <CreateUserForm companies={companies} />
             <ImportUsersForm />
           </div>
 
-          <AdminUsersList users={usersWithLogoState} />
+          <AdminUsersList users={usersWithLogoState} companies={companies} />
         </div>
       </section>
     </PageShell>

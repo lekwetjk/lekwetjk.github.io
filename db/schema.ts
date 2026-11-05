@@ -25,6 +25,16 @@ export const memberProfiles = sqliteTable("member_profiles", {
   updatedAt: text("updated_at").notNull().default(sql`CURRENT_TIMESTAMP`),
 });
 
+export const memberCompanies = sqliteTable("member_companies", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+});
+
+export const memberCompanyUsers = sqliteTable("member_company_users", {
+  userId: text("user_id").primaryKey().references(() => memberUsers.id, { onDelete: "cascade" }),
+  companyId: text("company_id").notNull().references(() => memberCompanies.id),
+});
+
 export const memberExportPermitOptions = sqliteTable("member_export_permit_options", {
   name: text("name").primaryKey(),
   createdAt: text("created_at").notNull().default(sql`CURRENT_TIMESTAMP`),

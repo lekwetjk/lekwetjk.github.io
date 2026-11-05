@@ -3,8 +3,9 @@ import crypto from "node:crypto";
 import { eq, inArray, sql } from "drizzle-orm";
 
 import { getDb, getMemberDocumentsBucket } from "../../db/index.ts";
-import { memberProfiles, memberUserLogos, memberUsers } from "../../db/schema.ts";
+import { memberCompanies, memberCompanyUsers, memberProfiles, memberUserLogos, memberUsers } from "../../db/schema.ts";
 import { getLocalMemberStore } from "./local-member-store.ts";
+import { assignUserCompany, getMemberCompanyId, getMemberCompanyIds, listMemberCompanies } from "./member-companies.ts";
 import type { MemberProfileData } from "./member-profile";
 
 export const AUTH_COOKIE_NAME = "krd_member_session";
@@ -89,6 +90,16 @@ async function readLocalMemberLogos() {
   return (await getLocalMemberStore()).list<LocalMemberLogo>("logos");
 }
 
+export { getMemberCompanyId, getMemberCompanyIds } from "./member-companies.ts";
+
+export async function getMemberCompanies() {
+  return listMemberCompanies(await getMemberUsers());
+}
+
+export async function assignMemberCompany(userId: string, companyId: string) {
+  return assignUserCompany(await getMemberUsers(), userId, companyId);
+}
+
 function requireMissingD1Binding(error: unknown) {
   if (!(error instanceof Error && error.message.includes("binding `DB` is unavailable"))) throw error;
 }
@@ -101,7 +112,7 @@ function isMissingR2Binding(error: unknown) {
   return error instanceof Error && error.message.includes("binding `MEMBER_DOCUMENTS` is unavailable");
 }
 
-export async function getMemberLogoScales(userIds: string[]) {
+async function readMemberLogoScales() {
   let scales: Record<string, number> = {};
   try {
     const object = await getMemberDocumentsBucket().get(MEMBER_LOGO_SETTINGS_KEY);
@@ -119,15 +130,21 @@ export async function getMemberLogoScales(userIds: string[]) {
       Object.entries(logos).flatMap(([userId, logo]) => typeof logo.scale === "number" ? [[userId, logo.scale]] : []),
     );
   }
-  return Object.fromEntries(userIds.map((userId) => [userId, scales[userId] ?? 1]));
+  return scales;
+}
+
+export async function getMemberLogoScales(userIds: string[]) {
+  const [scales, companyIds] = await Promise.all([readMemberLogoScales(), getMemberCompanyIds(userIds)]);
+  return Object.fromEntries(userIds.map(userId => [userId, scales[companyIds[userId]] ?? 1]));
 }
 
 export async function saveMemberLogoScale(userId: string, scale: number) {
+  userId = await getMemberCompanyId(userId);
   if (!Number.isFinite(scale) || scale < 0.5 || scale > 1) {
     throw new Error("Skala logo musi mieścić się w zakresie od 50% do 100%.");
   }
   try {
-    const scales = await getMemberLogoScales((await getMemberUsers()).map((user) => user.id));
+    const scales = await readMemberLogoScales();
     scales[userId] = scale;
     await getMemberDocumentsBucket().put(
       MEMBER_LOGO_SETTINGS_KEY,
@@ -256,10 +273,14 @@ export async function verifyCredentials(username: string, password: string): Pro
 }
 
 export async function getCurrentMemberSession(token?: string) {
-  return verifySessionToken(token);
+  const session = verifySessionToken(token);
+  if (!session) return null;
+  const user = (await getMemberUsers()).find(candidate => candidate.id === session.sub && candidate.isActive);
+  return user ? { ...session, username: user.username, name: user.name, role: user.role } : null;
 }
 
 export async function saveMemberLogo(userId: string, content: Buffer, contentType: string) {
+  userId = await getMemberCompanyId(userId);
   try {
     await getMemberDocumentsBucket().put(memberLogoKey(userId), content, { httpMetadata: { contentType } });
     return;
@@ -281,6 +302,7 @@ export async function saveMemberLogo(userId: string, content: Buffer, contentTyp
 }
 
 export async function getMemberLogo(userId: string, options: { strict?: boolean } = {}) {
+  userId = await getMemberCompanyId(userId);
   try {
     const object = await getMemberDocumentsBucket().get(memberLogoKey(userId));
     if (object) {
@@ -310,6 +332,8 @@ export async function getMemberLogoUserIds(userIds: string[]) {
     return new Set<string>();
   }
 
+  const companyIds = await getMemberCompanyIds(userIds);
+  const uniqueCompanyIds = [...new Set(Object.values(companyIds))];
   const logoUserIds = new Set<string>();
   try {
     const result = await getMemberDocumentsBucket().list({ prefix: MEMBER_LOGOS_PREFIX });
@@ -323,23 +347,35 @@ export async function getMemberLogoUserIds(userIds: string[]) {
 
   try {
     const db = getDb();
-    for (let offset = 0; offset < userIds.length; offset += D1_MAX_BIND_PARAMETERS) {
+    for (let offset = 0; offset < uniqueCompanyIds.length; offset += D1_MAX_BIND_PARAMETERS) {
       const rows = await db
         .select({ userId: memberUserLogos.userId })
         .from(memberUserLogos)
-        .where(inArray(memberUserLogos.userId, userIds.slice(offset, offset + D1_MAX_BIND_PARAMETERS)));
+        .where(inArray(memberUserLogos.userId, uniqueCompanyIds.slice(offset, offset + D1_MAX_BIND_PARAMETERS)));
       rows.forEach((row) => logoUserIds.add(row.userId));
     }
   } catch (error) {
     requireMissingD1Binding(error);
     const logos = await readLocalMemberLogos();
-    userIds.filter((userId) => Boolean(logos[userId])).forEach((userId) => logoUserIds.add(userId));
+    for (const companyId of uniqueCompanyIds) {
+      if (logos[companyId]) logoUserIds.add(companyId);
+    }
   }
-  return new Set(userIds.filter((userId) => logoUserIds.has(userId)));
+  return new Set(userIds.filter((userId) => logoUserIds.has(companyIds[userId])));
 }
 
 export async function getPublicMemberBannerItems() {
-  const users = (await getMemberUsers()).filter((user) => user.role === "member" && user.isActive);
+  const users: MemberUser[] = [];
+  const companies = new Set<string>();
+  const activeUsers = (await getMemberUsers()).filter((user) => user.role === "member" && user.isActive);
+  const companyIds = await getMemberCompanyIds(activeUsers.map(user => user.id));
+  for (const user of activeUsers) {
+    const companyId = companyIds[user.id];
+    if (!companies.has(companyId)) {
+      users.push(user);
+      companies.add(companyId);
+    }
+  }
   const logoUserIds = await getMemberLogoUserIds(users.map((user) => user.id));
   const visibleUsers = users.filter((user) => logoUserIds.has(user.id));
   const userIds = visibleUsers.map((user) => user.id);
@@ -357,29 +393,35 @@ export async function getPublicMemberBannerItems() {
 
 async function getMemberProfilesByUserId(userIds: string[]) {
   if (userIds.length === 0) return {} as Record<string, MemberProfileData>;
+  const companyIds = await getMemberCompanyIds(userIds);
+  const uniqueCompanyIds = [...new Set(Object.values(companyIds))];
   try {
     const db = getDb();
     const rows: Array<{ userId: string; data: string }> = [];
-    for (let offset = 0; offset < userIds.length; offset += D1_MAX_BIND_PARAMETERS) {
+    for (let offset = 0; offset < uniqueCompanyIds.length; offset += D1_MAX_BIND_PARAMETERS) {
       rows.push(...await db.select({ userId: memberProfiles.userId, data: memberProfiles.data })
         .from(memberProfiles)
-        .where(inArray(memberProfiles.userId, userIds.slice(offset, offset + D1_MAX_BIND_PARAMETERS))));
+        .where(inArray(memberProfiles.userId, uniqueCompanyIds.slice(offset, offset + D1_MAX_BIND_PARAMETERS))));
     }
-    return Object.fromEntries(rows.map((row) => [row.userId, JSON.parse(row.data) as MemberProfileData]));
+      const profiles = Object.fromEntries(rows.map((row) => [row.userId, JSON.parse(row.data) as MemberProfileData]));
+      return Object.fromEntries(userIds.filter(userId => profiles[companyIds[userId]]).map(userId => [userId, profiles[companyIds[userId]]]));
   } catch (error) {
     requireMissingD1Binding(error);
     const store = await getLocalMemberStore();
-    return Object.fromEntries(userIds.flatMap((userId) => {
-      const profile = store.get<MemberProfileData>("profiles", userId);
-      return profile ? [[userId, profile]] : [];
-    }));
+    const entries: Array<[string, MemberProfileData]> = [];
+    for (const userId of userIds) {
+      const profile = store.get<MemberProfileData>("profiles", companyIds[userId]);
+      if (profile) entries.push([userId, profile]);
+    }
+    return Object.fromEntries(entries);
   }
 }
 
 export async function deleteMemberLogo(userId: string) {
+  userId = await getMemberCompanyId(userId);
   try {
     const bucket = getMemberDocumentsBucket();
-    const scales = await getMemberLogoScales((await getMemberUsers()).map((user) => user.id));
+    const scales = await readMemberLogoScales();
     delete scales[userId];
     await Promise.all([
       bucket.delete(memberLogoKey(userId)),
@@ -399,6 +441,7 @@ export async function deleteMemberLogo(userId: string) {
 }
 
 export async function getMemberProfile(userId: string): Promise<MemberProfileData | null> {
+  userId = await getMemberCompanyId(userId);
   try {
     const db = getDb();
     await db.run(sql`CREATE TABLE IF NOT EXISTS member_profiles (user_id TEXT PRIMARY KEY NOT NULL, data TEXT NOT NULL, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)`);
@@ -411,6 +454,7 @@ export async function getMemberProfile(userId: string): Promise<MemberProfileDat
 }
 
 export async function saveMemberProfile(userId: string, data: MemberProfileData) {
+  userId = await getMemberCompanyId(userId);
   const serialized = JSON.stringify(data);
   try {
     const db = getDb();
@@ -427,6 +471,7 @@ export async function createMemberAccount(input: {
   name: string;
   role: MemberRole;
   password: string;
+  companyId?: string;
 }) {
   const username = normalizeImportedText(input.username).trim();
   const name = normalizeImportedText(input.name).trim();
@@ -441,6 +486,11 @@ export async function createMemberAccount(input: {
     throw new Error("User with this username already exists.");
   }
 
+  if (input.companyId) {
+    if (input.role !== "member") throw new Error("Wybierz konto członkowskie.");
+    if (!(await getMemberCompanies()).some(company => company.id === input.companyId)) throw new Error("Nie znaleziono firmy.");
+  }
+
   const user: MemberUser = {
     id: `member-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     username,
@@ -452,7 +502,7 @@ export async function createMemberAccount(input: {
 
   try {
     const db = getDb();
-    await db.insert(memberUsers).values({
+    const insertUser = db.insert(memberUsers).values({
       id: user.id,
       username: user.username,
       name: user.name,
@@ -460,12 +510,18 @@ export async function createMemberAccount(input: {
       passwordHash: user.passwordHash,
       isActive: user.isActive ? "true" : "false",
     });
-    return user;
+    if (input.companyId) {
+      await db.batch([insertUser, db.insert(memberCompanyUsers).values({ userId: user.id, companyId: input.companyId })]);
+    } else {
+      await insertUser;
+    }
   } catch (error) {
     requireMissingD1Binding(error);
     await writeLocalMemberUser(user);
-    return user;
+    if (input.companyId) await assignMemberCompany(user.id, input.companyId);
   }
+
+  return user;
 }
 
 export async function updateMemberAccount(userId: string, input: { username: string; name: string; role: MemberRole; password?: string }) {
@@ -554,20 +610,33 @@ export async function deleteMemberAccount(userId: string) {
     throw new Error("The primary admin account cannot be deleted.");
   }
 
+  const users = await getMemberUsers();
+  const otherCompanyIds = Object.values(await getMemberCompanyIds(users.filter(user => user.id !== userId).map(user => user.id)));
+  const keepCompany = otherCompanyIds.includes(userId);
   try {
     const db = getDb();
-    await db.delete(memberUsers).where(eq(memberUsers.id, userId));
+    const deleteLink = db.delete(memberCompanyUsers).where(eq(memberCompanyUsers.userId, userId));
+    const deleteUser = db.delete(memberUsers).where(eq(memberUsers.id, userId));
+    if (keepCompany) {
+      await db.batch([deleteLink, deleteUser]);
+    } else {
+      await db.batch([deleteLink, deleteUser, db.delete(memberProfiles).where(eq(memberProfiles.userId, userId)), db.delete(memberCompanies).where(eq(memberCompanies.id, userId))]);
+    }
   } catch (error) {
     requireMissingD1Binding(error);
     const store = await getLocalMemberStore();
     store.delete("users", userId);
-    store.delete("profiles", userId);
+    store.delete("company-links", userId);
+    if (!keepCompany) {
+      store.delete("profiles", userId);
+      store.delete("logos", userId);
+      store.delete("companies", userId);
+    }
+    return getMemberUsers();
   }
 
-  await deleteMemberLogo(userId);
-
-  const users = await getMemberUsers();
-  return users.filter((user) => user.id !== userId);
+  if (!keepCompany) await deleteMemberLogo(userId);
+  return getMemberUsers();
 }
 
 function base64UrlEncode(value: string) {

@@ -133,3 +133,65 @@ test("production refuses the local member fallback", async () => {
     });
   } finally { await rm(root, { recursive: true, force: true }); }
 });
+
+test("company users share profile and logo but keep independent credentials and sessions", async () => {
+  const root = await mkdtemp(path.join(os.tmpdir(), "member-company-test-"));
+  try {
+    const script = `
+      import assert from 'node:assert/strict';
+      const auth = await import(${JSON.stringify(new URL("../app/lib/auth.ts", import.meta.url).href)});
+      const first = await auth.createMemberAccount({username:'company-first',name:'Shared company',role:'member',password:'FirstTest123!'});
+      const second = await auth.createMemberAccount({username:'company-second',name:'Second person',role:'member',password:'SecondTest123!'});
+      const other = await auth.createMemberAccount({username:'other-company',name:'Other company',role:'member',password:'OtherTest123!'});
+      await auth.saveMemberProfile(first.id, {companyName:'Shared company',city:'Warsaw'});
+      await auth.saveMemberLogo(first.id, Buffer.from('shared-logo'), 'image/png');
+      await auth.assignMemberCompany(second.id, first.id);
+      assert.deepEqual(await auth.getMemberProfile(second.id), await auth.getMemberProfile(first.id));
+      assert.equal(Buffer.from((await auth.getMemberLogo(second.id)).content,'base64').toString(), 'shared-logo');
+      await auth.saveMemberProfile(second.id, {companyName:'Shared company',city:'Krakow'});
+      assert.equal((await auth.getMemberProfile(first.id)).city, 'Krakow');
+      assert.equal(await auth.getMemberProfile(other.id), null);
+      assert.equal(await auth.verifyCredentials(second.username,'SecondTest123!'), true);
+      assert.equal(await auth.verifyCredentials(second.username,'FirstTest123!'), false);
+      assert.equal(auth.verifySessionToken(auth.createSessionToken(second)).sub, second.id);
+      const secondToken = auth.createSessionToken(second);
+      await auth.setMemberAccountActive(second.id, false);
+      assert.equal(await auth.getCurrentMemberSession(secondToken), null);
+      assert.equal(await auth.verifyCredentials(first.username,'FirstTest123!'), true);
+      await auth.setMemberAccountActive(second.id, true);
+      assert.equal((await auth.getCurrentMemberSession(secondToken)).sub, second.id);
+      await auth.saveMemberLogoScale(second.id, 0.65);
+      assert.equal((await auth.getMemberLogoScales([first.id]))[first.id], 0.65);
+      const companies = await auth.getMemberCompanies();
+      assert.equal(companies.find(company => company.id === first.id).userCount, 2);
+      const banner = await auth.getPublicMemberBannerItems();
+      assert.equal(banner.filter(item => item.name === 'Shared company').length, 1);
+      const added = await auth.createMemberAccount({username:'company-added',name:'Added person',role:'member',password:'AddedTest123!',companyId:first.id});
+      assert.equal((await auth.getMemberProfile(added.id)).city, 'Krakow');
+      await auth.deleteMemberAccount(first.id);
+      assert.equal((await auth.getMemberProfile(second.id)).city, 'Krakow');
+      assert.ok(await auth.getMemberLogo(second.id));
+      assert.equal(await auth.verifyCredentials(second.username,'SecondTest123!'), true);
+      await assert.rejects(auth.assignMemberCompany(other.id,'missing-company'));
+      await auth.assignMemberCompany(second.id, second.id);
+      assert.equal(await auth.getMemberProfile(second.id), null);
+      await assert.rejects(auth.assignMemberCompany('member-admin', second.id));
+    `;
+    execFileSync(process.execPath, ["--experimental-strip-types", "--input-type=module", "-e", script], {
+      env: { ...process.env, NODE_ENV: "development", LOCAL_MEMBER_DATA_DIR: path.join(root, "data"), TEMP: root, TMP: root, TMPDIR: root },
+      cwd: root, stdio: "pipe",
+    });
+    execFileSync(process.execPath, ["--experimental-strip-types", "--input-type=module", "-e", `
+      import assert from 'node:assert/strict';
+      const auth = await import(${JSON.stringify(new URL("../app/lib/auth.ts", import.meta.url).href)});
+      const added = await auth.findMemberUserByUsername('company-added');
+      assert.equal((await auth.getMemberProfile(added.id)).city, 'Krakow');
+      assert.ok(await auth.getMemberLogo(added.id));
+      const second = await auth.findMemberUserByUsername('company-second');
+      assert.equal(await auth.getMemberProfile(second.id), null);
+    `], {
+      env: { ...process.env, NODE_ENV: "development", LOCAL_MEMBER_DATA_DIR: path.join(root, "data"), TEMP: root, TMP: root, TMPDIR: root },
+      cwd: root, stdio: "pipe",
+    });
+  } finally { await rm(root, { recursive: true, force: true }); }
+});

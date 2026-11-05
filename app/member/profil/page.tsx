@@ -2,14 +2,14 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { PageShell } from "../../components/SiteChrome";
-import { AUTH_COOKIE_NAME, getMemberLogo, getMemberProfile, isMemberPasswordResetRequired, verifySessionToken } from "../../lib/auth";
+import { AUTH_COOKIE_NAME, getCurrentMemberSession, getMemberCompanies, getMemberCompanyId, getMemberLogo, getMemberProfile, isMemberPasswordResetRequired } from "../../lib/auth";
 import { withBasePath } from "../../lib/basePath";
 import MemberProfileSection from "./MemberProfileSection";
 import ProfileDictionaryManager from "../../admin/uzytkownicy/ProfileDictionaryManager";
 
 export default async function MemberProfilePage() {
   const cookieStore = await cookies();
-  const session = verifySessionToken(cookieStore.get(AUTH_COOKIE_NAME)?.value);
+  const session = await getCurrentMemberSession(cookieStore.get(AUTH_COOKIE_NAME)?.value);
 
   if (!session) {
     redirect("/login/czlonkowie?redirect=/member/profil");
@@ -21,6 +21,8 @@ export default async function MemberProfilePage() {
 
   const logo = await getMemberLogo(session.sub);
   const profile = await getMemberProfile(session.sub);
+  const companyId = await getMemberCompanyId(session.sub);
+  const company = (await getMemberCompanies()).find(item => item.id === companyId);
 
   return (
     <PageShell>
@@ -28,7 +30,7 @@ export default async function MemberProfilePage() {
         <div className="shell" style={{ maxWidth: 900, paddingTop: 56, paddingBottom: 56 }}>
           <p className="article-kicker">Profil użytkownika</p>
           <h1 style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            {session.name}
+            {company?.name ?? session.name}
             {logo ? <img src={`data:${logo.contentType};base64,${logo.content}`} alt="Logo użytkownika" style={{ width: 64, height: 64, objectFit: "contain" }} /> : null}
           </h1>
           <p style={{ maxWidth: 700 }}>
@@ -38,6 +40,7 @@ export default async function MemberProfilePage() {
           <div style={{ display: "grid", gap: 18, marginTop: 32 }}>
             <div style={{ border: "1px solid #d5d9df", borderRadius: 12, padding: 18 }}>
               <strong>Login:</strong> {session.username}
+              {company ? <div style={{ marginTop: 8 }}><strong>Użytkownik:</strong> {session.name}<br /><strong>Użytkownicy firmy:</strong> {company.userCount}</div> : null}
             </div>
             {session.role === "admin" ? (
               <div style={{ border: "1px solid #d5d9df", borderRadius: 12, padding: 18 }}>

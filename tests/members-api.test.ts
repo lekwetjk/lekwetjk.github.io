@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { DatabaseSync, type SQLInputValue } from "node:sqlite";
 import test from "node:test";
 
@@ -37,6 +38,7 @@ async function withDatabase(run: (database: DatabaseSync) => Promise<void>) {
       user_id TEXT PRIMARY KEY, content TEXT, content_type TEXT, updated_at TEXT
     );
   `);
+  database.exec(readFileSync(new URL("../drizzle/0001_member_companies.sql", import.meta.url), "utf8"));
   runtime.env = {
     MEMBERS_API_KEY: KEY,
     DB: {
@@ -165,6 +167,23 @@ test("API exports exactly the requested fields, includes inactive members and ex
       ],
     });
     assert.doesNotMatch(JSON.stringify(body), /private-|username|password|email|phone|contactPerson|nip|consent/);
+  });
+});
+
+test("API uses the shared company profile and logo without changing account IDs", async () => {
+  await withDatabase(async database => {
+    addMember(database, "owner");
+    addMember(database, "colleague");
+    database.prepare("INSERT INTO member_companies VALUES (?, ?)").run("owner", "Shared company");
+    database.prepare("INSERT INTO member_company_users VALUES (?, ?)").run("colleague", "owner");
+    database.prepare("INSERT INTO member_profiles VALUES (?, ?)").run("owner", JSON.stringify({ companyName: "Shared company", city: "Warsaw" }));
+    database.prepare("INSERT INTO member_profiles VALUES (?, ?)").run("colleague", JSON.stringify({ companyName: "Old company", city: "Gdansk" }));
+    database.prepare("INSERT INTO member_user_logos VALUES (?, ?, ?, ?)").run("owner", "bG9nbw==", "image/png", "2026-01-01");
+    const response = await GET(request());
+    assert.equal(response.status, 200);
+    const { members } = await response.json();
+    assert.deepEqual(members.map((member: { id: string }) => member.id), ["colleague", "owner"]);
+    assert.ok(members.every((member: { name: string; address: { city: string }; logo: string }) => member.name === "Shared company" && member.address.city === "Warsaw" && member.logo === "data:image/png;base64,bG9nbw=="));
   });
 });
 

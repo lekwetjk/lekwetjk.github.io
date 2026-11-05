@@ -1,12 +1,12 @@
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 
-import { AUTH_COOKIE_NAME, createMemberAccount, saveMemberLogo, verifySessionToken } from "../../../../lib/auth";
+import { AUTH_COOKIE_NAME, createMemberAccount, getCurrentMemberSession, saveMemberLogo } from "../../../../lib/auth";
 import { recordAuditEventSafely } from "../../../../lib/audit-log";
 
 export async function POST(request: Request) {
   const cookieStore = await cookies();
-  const session = verifySessionToken(cookieStore.get(AUTH_COOKIE_NAME)?.value);
+  const session = await getCurrentMemberSession(cookieStore.get(AUTH_COOKIE_NAME)?.value);
 
   if (!session || session.role !== "admin") {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
@@ -14,6 +14,11 @@ export async function POST(request: Request) {
 
   const formData = await request.formData();
   const logo = formData.get("logo");
+  const companyId = String(formData.get("companyId") ?? "").trim();
+
+  if (companyId && logo instanceof File && logo.size > 0) {
+    return NextResponse.json({ error: "Istniejąca firma ma wspólne logo. Zmień je w jej profilu." }, { status: 400 });
+  }
 
   if (logo instanceof File && logo.size > 0) {
     if (!["image/jpeg", "image/bmp", "image/png"].includes(logo.type)) {
@@ -30,6 +35,7 @@ export async function POST(request: Request) {
       name: String(formData.get("name") ?? ""),
       role: formData.get("role") === "admin" ? "admin" : "member",
       password: String(formData.get("password") ?? ""),
+      companyId: companyId || undefined,
     });
 
     if (logo instanceof File && logo.size > 0) {
@@ -44,7 +50,7 @@ export async function POST(request: Request) {
       targetId: user.id,
       details: { username: user.username, role: user.role, logoAdded: logo instanceof File && logo.size > 0 },
     });
-    return NextResponse.json({ ok: true, user });
+    return NextResponse.json({ ok: true, user: { id: user.id, username: user.username, name: user.name, role: user.role, isActive: user.isActive } });
   } catch (error) {
     await recordAuditEventSafely({
       actor: session,
