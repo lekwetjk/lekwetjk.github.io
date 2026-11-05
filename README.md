@@ -67,6 +67,37 @@ lokalnego adaptera SQLite i pliku `.wrangler/state/local-managed-posts.sqlite`.
 Wpisy lokalne pozostają po odświeżeniu i ponownym uruchomieniu serwera;
 nie są wysyłane do produkcyjnej bazy. Produkcja nie korzysta z tego fallbacku.
 
+## Trwale dane czlonkow w lokalnym podgladzie
+
+Bez bindingow Cloudflare konta, profile, logotypy i skala logotypow sa
+przechowywane w prywatnej bazie SQLite `private/member-data/members.sqlite`.
+Sciezka domyslna jest wzgledna wobec kodu projektu, nie katalogu terminala.
+Magazyn nie jest w `public`, jest ignorowany przez Git i przetrwa restart
+serwera oraz czyszczenie katalogu tymczasowego systemu. Rownolegle importy
+zapisują osobne rekordy zamiast nadpisywac caly plik JSON.
+
+Przy pierwszym otwarciu automatycznie migrowane sa istniejace pliki
+`krd-ig-member-users.json`, `krd-ig-member-logos.json` i
+`krd-ig-member-profiles.json` z systemowego katalogu tymczasowego.
+Migracja jest jednorazowa i transakcyjna; oryginaly pozostaja bez zmian.
+Uszkodzony plik lub blad bazy jest zglaszany, a nie zastepowany pustymi danymi.
+Danych usunietych wczesniej z TEMP nie da sie odzyskac bez kopii zapasowej.
+
+Opcjonalnie ustaw serwerowa zmienna `LOCAL_MEMBER_DATA_DIR` na bezwzgledna
+sciezke do prywatnego katalogu poza repozytorium. Dzieki temu dane mozna
+zachowac rowniez przy wymianie calej kopii projektu. Nie ustawiaj jej na
+katalog publiczny ani nie synchronizuj otwartej bazy przez Git.
+
+Kopia zapasowa: zatrzymaj lokalny serwer i inne procesy korzystajace z bazy,
+a nastepnie skopiuj caly katalog `private/member-data` (lub katalog wskazany
+przez `LOCAL_MEMBER_DATA_DIR`) na drugi nosnik. Przywracaj caly katalog przy
+zatrzymanej aplikacji. Kopia zawiera dane osobowe i hashe hasel; zabezpiecz
+ja tak samo jak produkcyjna baze. Sam trwaly zapis nie zastepuje backupu.
+
+Na produkcji konta i profile nadal korzystaja z Cloudflare D1, a logotypy
+z prywatnego R2 `MEMBER_DOCUMENTS`. Lokalny fallback jest zablokowany przy
+`NODE_ENV=production`; awaria D1/R2 nie tworzy zastepczej lokalnej bazy.
+
 ## Biuletyny PDF w strefie członkowskiej
 
 ### Tworzenie biuletynu z DOCX

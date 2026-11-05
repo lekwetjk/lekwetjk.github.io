@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { access, readFile, mkdtemp, mkdir, writeFile, rm } from "node:fs/promises";
+import { access, readFile, readdir, mkdtemp, mkdir, writeFile, rm } from "node:fs/promises";
 import { execFileSync } from "node:child_process";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -149,8 +149,10 @@ test("member ticker uses active member logos with bounded administrator-controll
   const styles = await readProjectFile("app/globals.css");
 
   assert.match(ticker, /getPublicMemberBannerItems/);
-  assert.doesNotMatch(ticker, /commission-banner\.json/);
-  assert.match(ticker, /animationDuration: "112s"/);
+  assert.match(ticker, /process\.env\.NODE_ENV === "development"\s*\? commissionBanner\.map/);
+  assert.match(ticker, /src=\{withBasePath\(item\.href\)\}/);
+  assert.match(ticker, /animationDuration: "224s"/);
+  assert.match(styles, /animation: commissionTicker 224s linear infinite/);
   assert.match(ticker, /--member-logo-scale/);
   assert.match(auth, /user\.role === "member" && user\.isActive/);
   assert.doesNotMatch(auth, /user\.role === "admin" && user\.isActive/);
@@ -159,7 +161,34 @@ test("member ticker uses active member logos with bounded administrator-controll
   assert.doesNotMatch(publicLogoRoute, /getMemberProfile/);
   assert.match(editForm, /name="logoScale" type="range" min="50" max="100"/);
   assert.match(styles, /\.commission-ticker-logo-wrap \{[\s\S]*width: 100%;[\s\S]*height: 76px;[\s\S]*overflow: hidden;/);
+  assert.match(styles, /\.commission-ticker-logo-wrap \{[^}]*grid-template-rows: minmax\(0, 1fr\);/);
+  assert.match(styles, /\.commission-ticker-logo \{[^}]*min-height: 0;/);
   assert.match(styles, /\.commission-ticker-logo \{[\s\S]*object-fit: contain;[\s\S]*object-position: center;/);
+  assert.match(styles, /@media \(prefers-reduced-motion: reduce\) \{\s*html \{[^}]*\}\s*\* \{[^}]*\}\s*\}/);
+  assert.match(styles, /@media \(prefers-reduced-motion: reduce\) \{\s*\.commission-ticker-track, \.campaign-websites-track \{ animation: none; \}\s*\.commission-ticker-track-wrap, \.campaign-websites-track-wrap \{ overflow-x: auto; \}\s*\}/);
+});
+
+test("member ticker development manifest includes every repository logo", async () => {
+  const items = JSON.parse((await readProjectFile("app/data/commission-banner.json")).replace(/^\uFEFF/, ""));
+  const logoFiles = await readdir(new URL("../public/media/komisje/", import.meta.url));
+  assert.ok(items.length > 1);
+  assert.equal(new Set(items.map((item) => item.href)).size, items.length);
+  assert.deepEqual(items.map((item) => item.href).sort(), logoFiles.map((name) => `/media/komisje/${name}`).sort());
+  for (const item of items) {
+    assert.ok(item.folder.trim());
+    await access(new URL(`../public${item.href}`, import.meta.url));
+  }
+});
+
+test("members map retains the Ctrl zoom hint without a redundant external-map button", async () => {
+  const article = await readProjectFile("app/components/ArticleBody.tsx");
+  const styles = await readProjectFile("app/globals.css");
+  assert.match(article, /className="czlonkowie-map-container"/);
+  assert.match(article, /className="czlonkowie-map-gesture-hint"/);
+  assert.match(article, /<kbd>Ctrl<\/kbd>/);
+  assert.match(article, /Hold .* and scroll to zoom the map/);
+  assert.doesNotMatch(article, /Open the KRD-IG members map/);
+  assert.match(styles, /\.czlonkowie-map-gesture-hint \{[^}]*pointer-events: none;/);
 });
 
 test("report archive is public while interactive bulletins and their PDF files remain member-only", async () => {

@@ -3970,6 +3970,11 @@ blockquote {
     scroll-behavior: auto;
   }
 
+  * {
+    transition: none !important;
+  }
+}
+
   /* Shared controls and media used by the language and member pages. */
   .inline-text-small { font-size: 0.85em; }
   .inline-text-large { font-size: 1.2em; }
@@ -4012,6 +4017,26 @@ blockquote {
     justify-self: center;
     object-fit: contain;
   }
+  .czlonkowie-map-container {
+    position: relative;
+  }
+  .prose .czlonkowie-map-gesture-hint {
+    position: absolute;
+    z-index: 1;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: calc(100% - 112px);
+    margin: 0;
+    padding: 8px 12px;
+    background: white;
+    color: var(--ink);
+    font-size: 13px;
+    line-height: 1.4;
+    text-align: center;
+    pointer-events: none;
+  }
   .czlonkowie-map-frame {
     display: block;
     width: 100%;
@@ -4030,7 +4055,7 @@ blockquote {
     display: flex;
     gap: 14px;
     padding: 4px 0;
-    animation: commissionTicker 112s linear infinite;
+    animation: commissionTicker 224s linear infinite;
   }
   .commission-ticker:hover .commission-ticker-track,
   .commission-ticker:focus-within .commission-ticker-track { animation-play-state: paused; }
@@ -4047,6 +4072,8 @@ blockquote {
   }
   .commission-ticker-logo-wrap {
     display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
     width: 100%;
     height: 76px;
     min-width: 0;
@@ -4056,6 +4083,8 @@ blockquote {
   }
   .prose .commission-ticker-logo {
     display: block;
+    min-width: 0;
+    min-height: 0;
     width: var(--member-logo-scale, 100%);
     height: var(--member-logo-scale, 100%);
     max-width: 100%;
@@ -4142,8 +4171,3 @@ blockquote {
     .commission-ticker-track, .campaign-websites-track { animation: none; }
     .commission-ticker-track-wrap, .campaign-websites-track-wrap { overflow-x: auto; }
   }
-
-  * {
-    transition: none !important;
-  }
-}

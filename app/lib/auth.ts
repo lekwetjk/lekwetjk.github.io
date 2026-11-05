@@ -1,12 +1,10 @@
 import crypto from "node:crypto";
-import { readFile, writeFile } from "node:fs/promises";
-import os from "node:os";
-import path from "node:path";
 
 import { eq, inArray, sql } from "drizzle-orm";
 
 import { getDb, getMemberDocumentsBucket } from "../../db/index.ts";
 import { memberProfiles, memberUserLogos, memberUsers } from "../../db/schema.ts";
+import { getLocalMemberStore } from "./local-member-store.ts";
 import type { MemberProfileData } from "./member-profile";
 
 export const AUTH_COOKIE_NAME = "krd_member_session";
@@ -16,9 +14,6 @@ const PASSWORD_HASH_PREFIX = "pbkdf2-sha256";
 const PASSWORD_HASH_ITERATIONS = 10_000;
 const LEGACY_DEFAULT_PASSWORD_HASH = "fd1a5d2ecc9e98159009f5da7c147abb1571d75f2486c5d576cc379ee47427a927a37d93cebc63dd25d57777dc6cf974b49900be047f09818806de273c53b3e9";
 const LEGACY_DEFAULT_PASSWORD = "Test123!";
-const LOCAL_MEMBER_USERS_FILE = path.join(os.tmpdir(), "krd-ig-member-users.json");
-const LOCAL_MEMBER_LOGOS_FILE = path.join(os.tmpdir(), "krd-ig-member-logos.json");
-const LOCAL_MEMBER_PROFILES_FILE = path.join(os.tmpdir(), "krd-ig-member-profiles.json");
 const MEMBER_LOGOS_PREFIX = "member-logos/";
 const MEMBER_LOGO_SETTINGS_KEY = "member-logo-settings.json";
 
@@ -80,24 +75,21 @@ const DEFAULT_MEMBER_USERS: MemberUser[] = [
 ];
 
 async function readLocalMemberUsers() {
-  try {
-    const value = JSON.parse(await readFile(LOCAL_MEMBER_USERS_FILE, "utf8")) as MemberUser[];
-    return Array.isArray(value) ? value : [];
-  } catch {
-    return [];
-  }
+  return Object.values((await getLocalMemberStore()).list<MemberUser>("users"));
 }
 
-async function writeLocalMemberUsers(users: MemberUser[]) {
-  await writeFile(LOCAL_MEMBER_USERS_FILE, JSON.stringify(users, null, 2), "utf8");
+async function writeLocalMemberUser(user: MemberUser) {
+  (await getLocalMemberStore()).set("users", user.id, user);
 }
 
-async function readLocalMemberLogos(): Promise<Record<string, { content: string; contentType: string; scale?: number }>> {
-  try {
-    return JSON.parse(await readFile(LOCAL_MEMBER_LOGOS_FILE, "utf8")) as Record<string, { content: string; contentType: string; scale?: number }>;
-  } catch {
-    return {};
-  }
+type LocalMemberLogo = { content: string; contentType: string; scale?: number };
+
+async function readLocalMemberLogos() {
+  return (await getLocalMemberStore()).list<LocalMemberLogo>("logos");
+}
+
+function requireMissingD1Binding(error: unknown) {
+  if (!(error instanceof Error && error.message.includes("binding `DB` is unavailable"))) throw error;
 }
 
 function memberLogoKey(userId: string) {
@@ -143,11 +135,9 @@ export async function saveMemberLogoScale(userId: string, scale: number) {
     );
   } catch (error) {
     if (!isMissingR2Binding(error)) throw error;
-    const logos = await readLocalMemberLogos();
-    if (logos[userId]) {
-      logos[userId].scale = scale;
-      await writeFile(LOCAL_MEMBER_LOGOS_FILE, JSON.stringify(logos), "utf8");
-    }
+    const store = await getLocalMemberStore();
+    const logo = store.get<LocalMemberLogo>("logos", userId);
+    if (logo) store.set("logos", userId, { ...logo, scale });
   }
 }
 
@@ -196,8 +186,8 @@ export async function ensureMemberUsersSeeded() {
         passwordHash: user.passwordHash,
       })),
     );
-  } catch {
-    // If the database is not configured yet, the app falls back to the in-memory defaults.
+  } catch (error) {
+    requireMissingD1Binding(error);
   }
 }
 
@@ -219,7 +209,8 @@ export async function getMemberUsers(): Promise<MemberUser[]> {
 
     await ensureMemberUsersSeeded();
     return getMemberUsers();
-  } catch {
+  } catch (error) {
+    requireMissingD1Binding(error);
     const localUsers = await readLocalMemberUsers();
     if (localUsers.length > 0) {
       return [...DEFAULT_MEMBER_USERS.filter((defaultUser) => !localUsers.some((user) => user.username === defaultUser.username)), ...localUsers];
@@ -280,10 +271,11 @@ export async function saveMemberLogo(userId: string, content: Buffer, contentTyp
     await db.run(sql`CREATE TABLE IF NOT EXISTS member_user_logos (user_id TEXT PRIMARY KEY NOT NULL, content TEXT NOT NULL, content_type TEXT NOT NULL, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)`);
     await db.insert(memberUserLogos).values({ userId, content: content.toString("base64"), contentType })
       .onConflictDoUpdate({ target: memberUserLogos.userId, set: { content: content.toString("base64"), contentType, updatedAt: new Date().toISOString() } });
-  } catch {
-    const logos = await readLocalMemberLogos();
-    logos[userId] = { content: content.toString("base64"), contentType };
-    await writeFile(LOCAL_MEMBER_LOGOS_FILE, JSON.stringify(logos), "utf8");
+  } catch (error) {
+    requireMissingD1Binding(error);
+    const store = await getLocalMemberStore();
+    const previous = store.get<LocalMemberLogo>("logos", userId);
+    store.set("logos", userId, { ...previous, content: content.toString("base64"), contentType });
   }
 }
 
@@ -304,8 +296,9 @@ export async function getMemberLogo(userId: string, options: { strict?: boolean 
     const rows = await db.select().from(memberUserLogos).where(eq(memberUserLogos.userId, userId)).limit(1);
     if (rows[0]) return rows[0];
   } catch (error) {
-    if (options.strict) throw error;
-    const logo = (await readLocalMemberLogos())[userId];
+    if (options.strict && process.env.NODE_ENV === "production") throw error;
+    requireMissingD1Binding(error);
+    const logo = (await getLocalMemberStore()).get<LocalMemberLogo>("logos", userId);
     if (logo) return logo;
   }
   return null;
@@ -334,7 +327,8 @@ export async function getMemberLogoUserIds(userIds: string[]) {
       .from(memberUserLogos)
       .where(inArray(memberUserLogos.userId, userIds));
     rows.forEach((row) => logoUserIds.add(row.userId));
-  } catch {
+  } catch (error) {
+    requireMissingD1Binding(error);
     const logos = await readLocalMemberLogos();
     userIds.filter((userId) => Boolean(logos[userId])).forEach((userId) => logoUserIds.add(userId));
   }
@@ -366,13 +360,13 @@ async function getMemberProfilesByUserId(userIds: string[]) {
       .from(memberProfiles)
       .where(inArray(memberProfiles.userId, userIds));
     return Object.fromEntries(rows.map((row) => [row.userId, JSON.parse(row.data) as MemberProfileData]));
-  } catch {
-    try {
-      const profiles = JSON.parse(await readFile(LOCAL_MEMBER_PROFILES_FILE, "utf8")) as Record<string, MemberProfileData>;
-      return Object.fromEntries(userIds.flatMap((userId) => profiles[userId] ? [[userId, profiles[userId]]] : []));
-    } catch {
-      return {} as Record<string, MemberProfileData>;
-    }
+  } catch (error) {
+    requireMissingD1Binding(error);
+    const store = await getLocalMemberStore();
+    return Object.fromEntries(userIds.flatMap((userId) => {
+      const profile = store.get<MemberProfileData>("profiles", userId);
+      return profile ? [[userId, profile]] : [];
+    }));
   }
 }
 
@@ -392,10 +386,9 @@ export async function deleteMemberLogo(userId: string) {
   try {
     const db = getDb();
     await db.delete(memberUserLogos).where(eq(memberUserLogos.userId, userId));
-  } catch {
-    const logos = await readLocalMemberLogos();
-    delete logos[userId];
-    await writeFile(LOCAL_MEMBER_LOGOS_FILE, JSON.stringify(logos), "utf8");
+  } catch (error) {
+    requireMissingD1Binding(error);
+    (await getLocalMemberStore()).delete("logos", userId);
   }
 }
 
@@ -405,13 +398,9 @@ export async function getMemberProfile(userId: string): Promise<MemberProfileDat
     await db.run(sql`CREATE TABLE IF NOT EXISTS member_profiles (user_id TEXT PRIMARY KEY NOT NULL, data TEXT NOT NULL, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)`);
     const rows = await db.select().from(memberProfiles).where(eq(memberProfiles.userId, userId)).limit(1);
     return rows[0] ? JSON.parse(rows[0].data) as MemberProfileData : null;
-  } catch {
-    try {
-      const profiles = JSON.parse(await readFile(LOCAL_MEMBER_PROFILES_FILE, "utf8")) as Record<string, MemberProfileData>;
-      return profiles[userId] ?? null;
-    } catch {
-      return null;
-    }
+  } catch (error) {
+    requireMissingD1Binding(error);
+    return (await getLocalMemberStore()).get<MemberProfileData>("profiles", userId);
   }
 }
 
@@ -421,11 +410,9 @@ export async function saveMemberProfile(userId: string, data: MemberProfileData)
     const db = getDb();
     await db.run(sql`CREATE TABLE IF NOT EXISTS member_profiles (user_id TEXT PRIMARY KEY NOT NULL, data TEXT NOT NULL, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)`);
     await db.insert(memberProfiles).values({ userId, data: serialized }).onConflictDoUpdate({ target: memberProfiles.userId, set: { data: serialized, updatedAt: new Date().toISOString() } });
-  } catch {
-    let profiles: Record<string, MemberProfileData> = {};
-    try { profiles = JSON.parse(await readFile(LOCAL_MEMBER_PROFILES_FILE, "utf8")) as Record<string, MemberProfileData>; } catch { /* create local store */ }
-    profiles[userId] = data;
-    await writeFile(LOCAL_MEMBER_PROFILES_FILE, JSON.stringify(profiles), "utf8");
+  } catch (error) {
+    requireMissingD1Binding(error);
+    (await getLocalMemberStore()).set("profiles", userId, data);
   }
 }
 
@@ -468,9 +455,9 @@ export async function createMemberAccount(input: {
       isActive: user.isActive ? "true" : "false",
     });
     return user;
-  } catch {
-    const localUsers = await readLocalMemberUsers();
-    await writeLocalMemberUsers([...localUsers, user]);
+  } catch (error) {
+    requireMissingD1Binding(error);
+    await writeLocalMemberUser(user);
     return user;
   }
 }
@@ -491,13 +478,13 @@ export async function updateMemberAccount(userId: string, input: { username: str
       ...(input.password ? { passwordHash: hashPassword(input.password) } : {}),
       updatedAt: new Date().toISOString(),
     }).where(eq(memberUsers.id, userId));
-  } catch {
+  } catch (error) {
+    requireMissingD1Binding(error);
     const users = await getMemberUsers();
     const index = users.findIndex((user) => user.id === userId);
     if (index < 0) throw new Error("User not found.");
     const updatedUser = { ...users[index], username, name, role: input.role, ...(input.password ? { passwordHash: hashPassword(input.password) } : {}) };
-    const localUsers = await readLocalMemberUsers();
-    await writeLocalMemberUsers([...localUsers.filter((user) => user.id !== userId), updatedUser]);
+    await writeLocalMemberUser(updatedUser);
   }
 
   return (await getMemberUsers()).find((user) => user.id === userId) ?? null;
@@ -511,15 +498,12 @@ export async function setMemberPassword(userId: string, password: string, passwo
   try {
     const db = await ensurePasswordResetColumn();
     await db.run(sql`UPDATE member_users SET password_hash = ${hashPassword(password)}, password_reset_required = ${passwordResetRequired ? "true" : "false"}, updated_at = CURRENT_TIMESTAMP WHERE id = ${userId}`);
-  } catch {
+  } catch (error) {
+    requireMissingD1Binding(error);
     const users = await getMemberUsers();
     const user = users.find((candidate) => candidate.id === userId);
     if (!user) throw new Error("User not found.");
-    const localUsers = await readLocalMemberUsers();
-    await writeLocalMemberUsers([
-      ...localUsers.filter((candidate) => candidate.id !== userId),
-      { ...user, passwordHash: hashPassword(password) },
-    ]);
+    await writeLocalMemberUser({ ...user, passwordHash: hashPassword(password) });
   }
 }
 
@@ -528,7 +512,8 @@ export async function isMemberPasswordResetRequired(userId: string) {
     const db = await ensurePasswordResetColumn();
     const row = await db.get<{ passwordResetRequired?: string }>(sql`SELECT password_reset_required AS passwordResetRequired FROM member_users WHERE id = ${userId} LIMIT 1`);
     return row?.passwordResetRequired === "true";
-  } catch {
+  } catch (error) {
+    requireMissingD1Binding(error);
     return false;
   }
 }
@@ -547,13 +532,13 @@ export async function setMemberAccountActive(userId: string, isActive: boolean) 
     const db = getDb();
     await db.update(memberUsers).set({ isActive: isActive ? "true" : "false", updatedAt: new Date().toISOString() }).where(eq(memberUsers.id, userId));
     return isActive;
-  } catch {
+  } catch (error) {
+    requireMissingD1Binding(error);
     const users = await getMemberUsers();
     const index = users.findIndex((user) => user.id === userId);
     if (index < 0) throw new Error("User not found.");
-    const localUsers = await readLocalMemberUsers();
     const updatedUser = { ...users[index], isActive };
-    await writeLocalMemberUsers([...localUsers.filter((user) => user.id !== userId), updatedUser]);
+    await writeLocalMemberUser(updatedUser);
     return isActive;
   }
 }
@@ -566,13 +551,11 @@ export async function deleteMemberAccount(userId: string) {
   try {
     const db = getDb();
     await db.delete(memberUsers).where(eq(memberUsers.id, userId));
-  } catch {
-    // Fallback is intentionally silent when DB is unavailable.
-  }
-
-  const localUsers = await readLocalMemberUsers();
-  if (localUsers.length > 0) {
-    await writeLocalMemberUsers(localUsers.filter((user) => user.id !== userId));
+  } catch (error) {
+    requireMissingD1Binding(error);
+    const store = await getLocalMemberStore();
+    store.delete("users", userId);
+    store.delete("profiles", userId);
   }
 
   await deleteMemberLogo(userId);

@@ -1,12 +1,23 @@
 import type { CSSProperties } from "react";
 import { connection } from "next/server";
 
+import commissionBanner from "../data/commission-banner.json";
 import { getPublicMemberBannerItems } from "../lib/auth";
 import { withBasePath } from "../lib/basePath";
 
 export async function CommissionTicker() {
   await connection();
-  const items = await getPublicMemberBannerItems();
+  const items = process.env.NODE_ENV === "development"
+    ? commissionBanner.map((item) => ({
+        id: item.href,
+        name: item.folder,
+        scale: 1,
+        href: item.href,
+      }))
+    : (await getPublicMemberBannerItems()).map((item) => ({
+        ...item,
+        href: `/api/member-logos/${encodeURIComponent(item.id)}`,
+      }));
 
   if (!items.length) {
     return null;
@@ -19,7 +30,7 @@ export async function CommissionTicker() {
   return (
     <section className="commission-ticker" aria-label="Logotypy członków KRD-IG">
       <div className="commission-ticker-track-wrap">
-        <div className="commission-ticker-track" style={{ animationDuration: "112s" }}>
+        <div className="commission-ticker-track" style={{ animationDuration: "224s" }}>
           {doubled.map((item, index) => (
             <article
               key={`${item.id}-${index}`}
@@ -30,7 +41,7 @@ export async function CommissionTicker() {
               <span className="commission-ticker-logo-wrap" aria-hidden="true">
                 <img
                   className="commission-ticker-logo"
-                  src={withBasePath(`/api/member-logos/${encodeURIComponent(item.id)}`)}
+                  src={withBasePath(item.href)}
                   alt=""
                   loading="lazy"
                 />

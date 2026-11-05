@@ -3699,24 +3699,24 @@ export async function ArticleBody({
         )}
         {slug === "czlonkowie" && <CommissionTicker />}
         {slug === "czlonkowie" && (
-          <iframe
-            className="czlonkowie-map-frame"
-            title={language === "en" ? "KRD-IG members map" : "Mapa członków KRD-IG"}
-            src={language === "en" ? "https://www.procarto.net/krd-ig/map.html?map=krd-ig-en" : "https://www.procarto.net/krd-ig/map.html"}
-            loading="lazy"
-            width="100%"
-            height="900"
-            style={{ border: 0 }}
-          />
+          <div className="czlonkowie-map-container">
+            <p className="czlonkowie-map-gesture-hint">
+              {language === "en"
+                ? <>Hold <kbd>Ctrl</kbd> and scroll to zoom the map.</>
+                : <>Przytrzymaj <kbd>Ctrl</kbd> i przewijaj, aby zmienić przybliżenie mapy.</>}
+            </p>
+            <iframe
+              className="czlonkowie-map-frame"
+              title={language === "en" ? "KRD-IG members map" : "Mapa członków KRD-IG"}
+              src={language === "en" ? "https://www.procarto.net/krd-ig/map.html?map=krd-ig-en" : "https://www.procarto.net/krd-ig/map.html"}
+              loading="lazy"
+              width="100%"
+              height="900"
+              style={{ border: 0 }}
+            />
+          </div>
         )}
         {slug === "czlonkowie" && <>
-          <p>
-            <a className="inline-download-link"
-              href={language === "en" ? "https://www.procarto.net/krd-ig/map.html?map=krd-ig-en" : "https://www.procarto.net/krd-ig/map.html"}
-              target="_blank" rel="noopener noreferrer">
-              {language === "en" ? "Open the KRD-IG members map" : "Otwórz mapę członków KRD-IG"}
-            </a>
-          </p>
           <p>{language === "en" ? "Additional map layers and features are available after signing in." : "Dodatkowe warstwy mapy i funkcjonalności dostępne są po zalogowaniu"}</p>
         </>}
         {slug === "polska-odzyskala-status-kraju-wolnego-od-grypy-ptakow-2026" && (
