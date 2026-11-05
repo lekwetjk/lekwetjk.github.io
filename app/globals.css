@@ -4080,7 +4080,7 @@ blockquote {
     display: flex;
     gap: 14px;
     padding: 4px 0;
-    animation: commissionTicker 448s linear infinite;
+    animation: commissionTicker calc(448s / 1.5) linear infinite;
   }
   .commission-ticker:hover .commission-ticker-track,
   .commission-ticker:focus-within .commission-ticker-track { animation-play-state: paused; }
