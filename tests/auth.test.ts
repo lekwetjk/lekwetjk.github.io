@@ -2,6 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import test from "node:test";
 import assert from "node:assert/strict";
+import { execFileSync } from "node:child_process";
 
 import {
   createSessionToken,
@@ -15,6 +16,55 @@ test("member users are available", async () => {
   const users = await getMemberUsers();
   assert.ok(users.length > 0);
   assert.ok(users.every((user) => user.username && user.passwordHash));
+});
+
+test("public member banner respects the D1 parameter limit for more than 100 members", () => {
+  const script = `
+    import assert from 'node:assert/strict';
+    const ids = Array.from({ length: 205 }, (_, index) => 'member-' + index);
+    const batches = { logos: [], profiles: [] };
+    globalThis.env = {
+      DB: {
+        prepare(query) {
+          return {
+            bind(...values) {
+              assert.ok(values.length <= 100, 'too many SQL variables: ' + values.length);
+              return {
+                async raw() {
+                  if (query.includes('from "member_users"')) {
+                    return ids.map(id => [id, id, id, 'member', 'unused', 'true', '', '']);
+                  }
+                  if (query.includes('from "member_user_logos"')) {
+                    batches.logos.push(values.length);
+                    return values.map(id => [id]);
+                  }
+                  if (query.includes('from "member_profiles"')) {
+                    batches.profiles.push(values.length);
+                    return values.map(id => [id, JSON.stringify({ companyName: 'Company ' + id })]);
+                  }
+                  throw new Error('Unexpected query: ' + query);
+                },
+              };
+            },
+          };
+        },
+      },
+      MEMBER_DOCUMENTS: {
+        async list() { return { objects: [] }; },
+        async get() { return null; },
+      },
+    };
+    const { getPublicMemberBannerItems } = await import(${JSON.stringify(new URL("../app/lib/auth.ts", import.meta.url).href)});
+    const items = await getPublicMemberBannerItems();
+    assert.equal(items.length, ids.length);
+    assert.deepEqual(new Set(items.map(item => item.id)), new Set(ids));
+    assert.ok(items.every(item => item.name === 'Company ' + item.id && item.scale === 1));
+    assert.deepEqual(batches.logos, [100, 100, 5]);
+    assert.deepEqual(batches.profiles, [100, 100, 5]);
+  `;
+  execFileSync(process.execPath, ["--experimental-strip-types", "--input-type=module", "-e", script], {
+    env: { ...process.env, NODE_ENV: "production" }, stdio: "pipe",
+  });
 });
 
 test("default admin credentials are valid", async () => {

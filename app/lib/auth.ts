@@ -16,6 +16,7 @@ const LEGACY_DEFAULT_PASSWORD_HASH = "fd1a5d2ecc9e98159009f5da7c147abb1571d75f24
 const LEGACY_DEFAULT_PASSWORD = "Test123!";
 const MEMBER_LOGOS_PREFIX = "member-logos/";
 const MEMBER_LOGO_SETTINGS_KEY = "member-logo-settings.json";
+const D1_MAX_BIND_PARAMETERS = 100;
 
 export type MemberRole = "member" | "admin";
 
@@ -322,11 +323,13 @@ export async function getMemberLogoUserIds(userIds: string[]) {
 
   try {
     const db = getDb();
-    const rows = await db
-      .select({ userId: memberUserLogos.userId })
-      .from(memberUserLogos)
-      .where(inArray(memberUserLogos.userId, userIds));
-    rows.forEach((row) => logoUserIds.add(row.userId));
+    for (let offset = 0; offset < userIds.length; offset += D1_MAX_BIND_PARAMETERS) {
+      const rows = await db
+        .select({ userId: memberUserLogos.userId })
+        .from(memberUserLogos)
+        .where(inArray(memberUserLogos.userId, userIds.slice(offset, offset + D1_MAX_BIND_PARAMETERS)));
+      rows.forEach((row) => logoUserIds.add(row.userId));
+    }
   } catch (error) {
     requireMissingD1Binding(error);
     const logos = await readLocalMemberLogos();
@@ -356,9 +359,12 @@ async function getMemberProfilesByUserId(userIds: string[]) {
   if (userIds.length === 0) return {} as Record<string, MemberProfileData>;
   try {
     const db = getDb();
-    const rows = await db.select({ userId: memberProfiles.userId, data: memberProfiles.data })
-      .from(memberProfiles)
-      .where(inArray(memberProfiles.userId, userIds));
+    const rows: Array<{ userId: string; data: string }> = [];
+    for (let offset = 0; offset < userIds.length; offset += D1_MAX_BIND_PARAMETERS) {
+      rows.push(...await db.select({ userId: memberProfiles.userId, data: memberProfiles.data })
+        .from(memberProfiles)
+        .where(inArray(memberProfiles.userId, userIds.slice(offset, offset + D1_MAX_BIND_PARAMETERS))));
+    }
     return Object.fromEntries(rows.map((row) => [row.userId, JSON.parse(row.data) as MemberProfileData]));
   } catch (error) {
     requireMissingD1Binding(error);
