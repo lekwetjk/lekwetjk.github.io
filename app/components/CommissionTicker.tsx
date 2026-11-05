@@ -30,7 +30,7 @@ export async function CommissionTicker() {
   return (
     <section className="commission-ticker" aria-label="Logotypy członków KRD-IG">
       <div className="commission-ticker-track-wrap">
-        <div className="commission-ticker-track" style={{ animationDuration: "224s" }}>
+        <div className="commission-ticker-track" style={{ animationDuration: "448s" }}>
           {doubled.map((item, index) => (
             <article
               key={`${item.id}-${index}`}

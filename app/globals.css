@@ -4050,6 +4050,18 @@ blockquote {
     text-align: center;
     pointer-events: none;
   }
+  @media (min-width: 840px) {
+    .czlonkowie-map-container,
+    .commission-ticker {
+      --member-map-width: min(1280px, calc(100vw - 56px));
+      width: var(--member-map-width);
+      margin-inline: calc((100% - var(--member-map-width)) / 2);
+    }
+    .prose .czlonkowie-map-gesture-hint {
+      left: calc(50% + 160px);
+      max-width: calc(100% - 360px);
+    }
+  }
   .czlonkowie-map-frame {
     display: block;
     width: 100%;
@@ -4068,7 +4080,7 @@ blockquote {
     display: flex;
     gap: 14px;
     padding: 4px 0;
-    animation: commissionTicker 224s linear infinite;
+    animation: commissionTicker 448s linear infinite;
   }
   .commission-ticker:hover .commission-ticker-track,
   .commission-ticker:focus-within .commission-ticker-track { animation-play-state: paused; }
