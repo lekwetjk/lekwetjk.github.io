@@ -181,21 +181,21 @@ const partnerOrganisations = [
   {
     name: "AVEC",
     url: "https://avec-poultry.eu/",
-    logo: "/media/partners/avec.svg",
+    logo: "/media/partners/avec.png",
     description:
       "Od 2005 roku KRD-IG reprezentuje polską branżę drobiarską w AVEC. Stowarzyszenie reprezentuje interesy europejskiej branży drobiowej i wypracowuje wspólne rozwiązania dla rynku drobiu w UE.",
   },
   {
     name: "UECBV",
     url: "https://uecbv.eu/",
-    logo: "https://uecbv.eu/UECBV2/OWS/Images/galerie/Logo_UECBV2.png",
+    logo: "/media/partners/uecbv.png",
     description:
       "Europejska organizacja reprezentująca sektor hodowli i handlu żywcem oraz mięsem. UECBV zrzesza federacje z wielu krajów i reprezentuje tysiące firm oraz miejsc pracy.",
   },
   {
     name: "CLITRAVI",
     url: "https://www.clitravi.com/",
-    logo: "/media/partners/clitravi.svg",
+    logo: "/media/partners/clitravi.png",
     description:
       "Organizacja branżowa działająca od 1958 roku, reprezentująca interesy europejskiego przemysłu przetwórstwa mięsa w dialogu z instytucjami UE.",
   },
@@ -209,7 +209,7 @@ const partnerOrganisations = [
   {
     name: "WPSA",
     url: "https://www.wpsa.com/",
-    logo: "/media/partners/wpsa.svg",
+    logo: "/media/partners/wpsa.png",
     description:
       "Światowa organizacja naukowa rozwijająca wiedzę o drobiarstwie i łącząca badaczy, edukatorów oraz praktyków branży od 1912 roku.",
   },
@@ -223,7 +223,7 @@ const partnerOrganisations = [
   {
     name: "FGŻ",
     url: "https://www.fgzrp.pl/",
-    logo: "/media/partners/fgz.svg",
+    logo: "/media/partners/fgz.png",
     description:
       "Federacja Gospodarki Żywnościowej RP z siedzibą w Warszawie, współpracująca z KRD-IG od 2008 roku.",
   },

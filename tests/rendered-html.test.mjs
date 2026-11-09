@@ -476,17 +476,26 @@ test("header keeps member controls and membership CTA inside their responsive gr
   assert.match(css, /\.header-inner > \.mobile-menu \{ grid-column: 2; grid-row: 1;/);
 });
 
-test("about page renders locally bundled partner organisation logos", async () => {
+test("about page renders locally bundled official partner organisation logos", async () => {
   const source = await readProjectFile("app/components/ArticleBody.tsx");
 
   assert.match(source, /slug === "o-nas"/);
   assert.match(source, /partner-organisations/);
-  for (const logo of ["avec", "clitravi", "ipc", "wpsa", "elpha", "fgz"]) {
-    assert.ok(source.includes(`/media/partners/${logo}.svg`), logo);
-    await access(new URL(`../public/media/partners/${logo}.svg`, import.meta.url));
+  const partners = source.slice(source.indexOf("const partnerOrganisations = ["), source.indexOf("export async function ArticleBody"));
+  const logos = [...partners.matchAll(/logo: "([^"]+)"/g)].map((match) => match[1]);
+  assert.deepEqual(logos, ["avec.png", "uecbv.png", "clitravi.png", "ipc.svg", "wpsa.png", "elpha.svg", "fgz.png"].map((file) => `/media/partners/${file}`));
+  for (const logo of logos) {
+    const bytes = await readFile(new URL(`../public${logo}`, import.meta.url));
+    if (logo.endsWith(".png")) {
+      assert.deepEqual([...bytes.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10], logo);
+      assert.ok(bytes.readUInt32BE(16) > 0 && bytes.readUInt32BE(20) > 0, logo);
+    } else {
+      const svg = bytes.toString("utf8");
+      assert.match(svg, /<svg\b/);
+      assert.doesNotMatch(svg, /<text\b|<(?:script|foreignObject|image)\b|(?:href|src)\s*=/i);
+    }
   }
   assert.match(source, /name: "UECBV"/);
-  assert.ok(source.includes("https://uecbv.eu/UECBV2/OWS/Images/galerie/Logo_UECBV2.png"));
 });
 
 test("CSV import accepts Polish header names with diacritics", async () => {
