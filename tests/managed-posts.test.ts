@@ -39,6 +39,7 @@ test("publication SEO and image fit migrate legacy data and persist independentl
     assert.equal(legacy.seoTitle, "");
     assert.equal(legacy.seoDescription, "");
     assert.equal(legacy.imageFit, "contain");
+    assert.equal(legacy.justify, true);
     assert.deepEqual(legacy.paragraphs, ["Original content"]);
 
     for (const kind of ["news", "tender"] as const) {
@@ -52,10 +53,13 @@ test("publication SEO and image fit migrate legacy data and persist independentl
       assert.equal(publicPost.seoTitle, `SEO ${kind}`);
       assert.equal(publicPost.title, input.title);
       assert.equal(publicPost.imageFit, "contain");
+      assert.equal(publicPost.justify, true);
       const mergedPosts = await mergeManagedPosts([], kind);
       assert.equal(mergedPosts.filter((post) => post.slug === slug).length, 1);
+      assert.equal(mergedPosts.find((post) => post.slug === slug)?.justify, true);
       await updateManagedPost(adminPost.id, { ...input, imageFit: "cover" });
       assert.equal((await getManagedPostBySlug(slug))?.imageFit, "cover");
+      assert.equal((await getManagedPostBySlug(slug))?.justify, true);
       assert.equal((await listManagedPostsForAdmin()).find((post) => post.slug === slug)?.imageFit, "cover");
       await assert.rejects(updateManagedPost(adminPost.id, { ...input, imageFit: "stretch" }), /dopasowanie/);
       await assert.rejects(createManagedPost({ ...input, imageFit: "stretch" }), /dopasowanie/);

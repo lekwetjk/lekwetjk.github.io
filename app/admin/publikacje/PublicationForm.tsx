@@ -56,7 +56,7 @@ export default function PublicationForm({ kind }: { kind: "news" | "tender" }) {
           <h1>{title || "Tytuł"}</h1>
           <p>{excerpt}</p>
           {imagePreview ? <img src={imagePreview} alt="Podgląd grafiki" style={{ width: "100%", height: 360, objectFit: imageFit, objectPosition: "center", padding: imageFit === "contain" ? 16 : 0, background: "#fff" }} /> : null}
-          <div>{content.split(/\n\s*\n/).filter(Boolean).map((paragraph, index) => paragraph.startsWith("## ")
+          <div className="prose-justified">{content.split(/\n\s*\n/).filter(Boolean).map((paragraph, index) => paragraph.startsWith("## ")
             ? <h2 key={index}>{renderInlineMarkdown(paragraph.slice(3), `preview-${index}`)}</h2>
             : <p key={index}>{renderInlineMarkdown(paragraph, `preview-${index}`)}</p>)}</div>
           {attachmentNames.length ? <section className="resource-box" aria-label="Pliki do pobrania"><h2>Pliki do pobrania</h2>{attachmentNames.map((name) => <p key={name} style={{ margin: "8px 0" }}><strong>{name}</strong></p>)}</section> : null}

@@ -85,6 +85,14 @@ test("publication editor uses consistent Markdown formatting without raw HTML ta
   assert.match(await readProjectFile("app/admin/publikacje/ManagedPostsManager.tsx"), /aria-label="Obecne pliki"/);
 });
 
+test("publication editor, preview and public articles apply automatic justification", async () => {
+  assert.match(await readProjectFile("app/admin/publikacje/MarkdownEditor.tsx"), /textAlign: "justify"/);
+  assert.match(await readProjectFile("app/admin/publikacje/PublicationForm.tsx"), /<div className="prose-justified">\{content\.split/);
+  assert.match(await readProjectFile("app/aktualnosci/[slug]/page.tsx"), /justify=\{post\.justify\}/);
+  assert.match(await readProjectFile("app/components/ArticleBody.tsx"), /shouldJustifyArticleText \? " prose-justified"/);
+  assert.match(await readProjectFile("app/globals.css"), /\.prose-justified p\s*\{\s*text-align: justify;/);
+});
+
 test("imported campaign edits take precedence in public views and require an admin import action", async () => {
   const detail = await readProjectFile("app/aktualnosci/[slug]/page.tsx");
   assert.equal(detail.match(/resolvePublishedPost\(slug, postBySlug\(slug\)\)/g)?.length, 2);

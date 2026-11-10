@@ -98,7 +98,7 @@ export default function MarkdownEditor({ name, value, onChange, rows = 10, requi
           selectionRef.current = { start: event.currentTarget.selectionStart, end: event.currentTarget.selectionEnd };
           onChange(event.target.value);
         }}
-        style={{ width: "100%", padding: 10 }}
+        style={{ width: "100%", padding: 10, textAlign: "justify" }}
       />
     </>
   );
