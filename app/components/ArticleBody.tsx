@@ -10,6 +10,7 @@ import { CommissionTicker } from "./CommissionTicker";
 import { CampaignWebsiteTicker } from "./CampaignWebsiteTicker";
 import { TerritorialCoverageMap } from "./TerritorialCoverageMap";
 import { WstawieniaTable } from "./WstawieniaTable";
+import { WstawieniaChart } from "./WstawieniaChart";
 import { MethodologyDocuments } from "./MethodologyDocuments";
 import { getLocalProposals } from "../lib/local-proposals-server";
 import { cleanProposedParagraph, localContentHref } from "../lib/local-proposal-content";
@@ -1022,6 +1023,7 @@ export async function ArticleBody({
 
           <WstawieniaTable columns={columnLabels.slice(0, maxValueCount)} fallbackRows={tableRowsWithDynamics} transpose={proposals.wstawienia} />
 
+          <WstawieniaChart fallbackRows={tableRowsWithDynamics}>
           {chartPoints.length > 0 && (
             <section className="wstawienia-chart" aria-label="Wykres rocznych wstawień">
               <h2>Wykres rocznych wstawień (kolumna „Rok”)</h2>
@@ -1252,6 +1254,7 @@ export async function ArticleBody({
               </div>
             </section>
           )}
+          </WstawieniaChart>
 
           {lastEditText && <p className="wstawienia-meta-line">{lastEditText}</p>}
           {opracowanieText && (
