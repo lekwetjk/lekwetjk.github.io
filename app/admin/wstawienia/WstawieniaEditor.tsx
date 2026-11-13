@@ -20,6 +20,11 @@ function parseCsvLine(line: string) {
   return values;
 }
 
+function formatMonthlyValue(value: string) {
+  const digits = value.replace(/\s+/g, "");
+  return /^\d+$/.test(digits) ? digits.replace(/\B(?=(\d{3})+(?!\d))/g, " ") : value;
+}
+
 export default function WstawieniaEditor() {
   const [data, setData] = useState<WstawieniaData | null>(null);
   const [status, setStatus] = useState("");
@@ -98,7 +103,7 @@ export default function WstawieniaEditor() {
           <thead><tr><th>Rok</th>{data.columns.map((column) => <th key={column}>{column}</th>)}</tr></thead>
           <tbody>{data.rows.map((row, rowIndex) => <tr key={`${row.year}-${rowIndex}`}>
             <th scope="row"><input value={row.year} onChange={(event) => setData({ ...data, rows: data.rows.map((item, index) => index === rowIndex ? { ...item, year: event.target.value } : item) })} style={{ width: 64 }} /></th>
-            {data.columns.map((column, columnIndex) => <td key={`${rowIndex}-${columnIndex}`}><input value={row.values[columnIndex] ?? ""} onChange={(event) => updateCell(rowIndex, columnIndex, event.target.value)} inputMode={MONTHLY_INDEXES.has(columnIndex) ? "numeric" : undefined} disabled={!MONTHLY_INDEXES.has(columnIndex)} aria-label={`${row.year} ${column}`} style={{ minWidth: 84, background: MONTHLY_INDEXES.has(columnIndex) ? "#fff" : "#f1f5f9" }} /></td>)}
+            {data.columns.map((column, columnIndex) => <td key={`${rowIndex}-${columnIndex}`}><input value={MONTHLY_INDEXES.has(columnIndex) ? formatMonthlyValue(row.values[columnIndex] ?? "") : row.values[columnIndex] ?? ""} onChange={(event) => updateCell(rowIndex, columnIndex, event.target.value)} inputMode={MONTHLY_INDEXES.has(columnIndex) ? "numeric" : undefined} disabled={!MONTHLY_INDEXES.has(columnIndex)} aria-label={`${row.year} ${column}`} style={{ minWidth: 84, background: MONTHLY_INDEXES.has(columnIndex) ? "#fff" : "#f1f5f9" }} /></td>)}
           </tr>)}</tbody>
         </table>
       </div>
