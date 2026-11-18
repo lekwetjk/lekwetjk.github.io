@@ -3531,18 +3531,18 @@ export async function ArticleBody({
           const trimmedParagraph = paragraph.trim();
           const heading = trimmedParagraph.match(/^(#{1,6})\s+(.+)$/);
           if (heading) {
-            const text = renderInlineMarkdown(heading[2], `heading-${index}`);
+            const text = renderInlineMarkdown(heading[2], `heading-${index}`, categories.includes("Kampanie"));
             return heading[1].length > 2 ? <h3 key={index}>{text}</h3> : <h2 key={index}>{text}</h2>;
           }
           const blockLines = trimmedParagraph.split("\n");
           if (blockLines.every((line) => /^\s*[-*]\s+/.test(line))) {
-            return <ul key={index}>{blockLines.map((line, itemIndex) => <li key={itemIndex}>{renderInlineMarkdown(line.replace(/^\s*[-*]\s+/, ""), `list-${index}-${itemIndex}`)}</li>)}</ul>;
+            return <ul key={index}>{blockLines.map((line, itemIndex) => <li key={itemIndex}>{renderInlineMarkdown(line.replace(/^\s*[-*]\s+/, ""), `list-${index}-${itemIndex}`, categories.includes("Kampanie"))}</li>)}</ul>;
           }
           if (blockLines.every((line) => /^\s*\d+\.\s+/.test(line))) {
             const start = Number(blockLines[0].match(/^\s*(\d+)\./)?.[1] ?? 1);
-            return <ol key={index} start={start}>{blockLines.map((line, itemIndex) => <li key={itemIndex}>{renderInlineMarkdown(line.replace(/^\s*\d+\.\s+/, ""), `list-${index}-${itemIndex}`)}</li>)}</ol>;
+            return <ol key={index} start={start}>{blockLines.map((line, itemIndex) => <li key={itemIndex}>{renderInlineMarkdown(line.replace(/^\s*\d+\.\s+/, ""), `list-${index}-${itemIndex}`, categories.includes("Kampanie"))}</li>)}</ol>;
           }
-          const formattedParagraph = renderInlineMarkdown(paragraph, `paragraph-${index}`);
+          const formattedParagraph = renderInlineMarkdown(paragraph, `paragraph-${index}`, categories.includes("Kampanie"));
           const displayParagraph = trimmedParagraph;
           if (slug === "akcja-stopdezinformacjizywnosciowej" && displayParagraph === "www.stopdezinformacjizywnosciowej.pl") {
             return <h2 key={index}><a href="https://stopdezinformacjizywnosciowej.pl/">{displayParagraph}</a></h2>;
