@@ -32,6 +32,8 @@ const legacySlugs: Record<number, string> = {
 };
 
 const list = (items: string[]) => items.map((item) => `- ${item}`).join("\n");
+const videoLinks = (text: string) =>
+  text.replace(/https:\/\/www\.youtube\.com\/watch\?v=[\w-]+/g, (url) => `[${url}](${url})`);
 const heading = (text: string) => `## ${text}`;
 const punctuation = (text: string) => text.replace(/\s+([,.!:;])/g, "$1");
 const indykArchive =
@@ -131,7 +133,7 @@ export function correctCampaignPost(post: NewsPost): NewsPost {
       correction = {
         excerpt: p[0],
         paragraphs: [
-          p[0], heading("Programy telewizyjne"), p[1], list(p.slice(2, 5)),
+          p[0], heading("Programy telewizyjne"), p[1], list(p.slice(2, 5).map(videoLinks)),
           "W październiku aktualizowano stronę kampanii indykajemy.pl.", indykArchive,
           "Reklama digitalowa zapewniła obecność kampanii na polskich portalach informacyjnych i branżowych, m.in. [interia.pl](https://www.interia.pl/), [wp.pl](https://www.wp.pl/) oraz foodservice24.pl. Nazwa foodservice24.pl jest wzmianką historyczną; portal jest obecnie niedostępny.",
           heading("Współpraca z twórcami internetowymi"),
@@ -146,7 +148,7 @@ export function correctCampaignPost(post: NewsPost): NewsPost {
             "[Natalia Maszkowska Food & Travel](https://www.instagram.com/nathallae/)",
           ]),
           p[8], heading("Handel i wydarzenia kulinarne"),
-          list([p[9], p[10]]),
+          list([p[9], videoLinks(p[10])]),
           "[Raport za październik 2024 (PDF)](/media/reports/KRD-indyk_pazdziernik.pdf)",
           p[13],
         ],
@@ -173,10 +175,10 @@ export function correctCampaignPost(post: NewsPost): NewsPost {
         excerpt: lead,
         paragraphs: [
           lead, heading("Programy telewizyjne"), p[1],
-          list([p[2], "Dzień dobry TVN — archiwalny materiał kulinarny jest obecnie niedostępny (dawny odnośnik zwraca błąd 404)."]),
+          list([videoLinks(p[2]), "Dzień dobry TVN — archiwalny materiał kulinarny jest obecnie niedostępny (dawny odnośnik zwraca błąd 404)."]),
           "Powstała strona kampanii indykajemy.pl z przepisami na dania z indyka oraz sekcją dla HoReCa.", indykArchive,
           "Reklama internetowa w postaci banerów display na portalach konsumenckich (m.in. [interia.pl](https://www.interia.pl/), [wp.pl](https://www.wp.pl/)) oraz branżowych HoReCa dotarła do szerokiego grona odbiorców. W archiwalnym opisie wymieniono foodservice24.pl, e-restauracja.pl, hurt&detal i horectrends.pl. Wskazane adresy branżowe pozostawiamy wyłącznie jako nazwy historyczne, bez aktywnych odnośników: część portali jest już niedostępna, a e-restauracja.pl prowadzi do strony parkingowej. Nie potwierdzono poprawnego adresu horectrends.pl.",
-          heading("Wydarzenia kulinarne"), p[6], list(p.slice(7, 9)),
+          heading("Wydarzenia kulinarne"), p[6], list(p.slice(7, 9).map(videoLinks)),
           "Raport za wrzesień 2024 (PDF) nie jest dostępny w zachowanych lokalnych materiałach archiwalnych.",
           p[11], p[12],
         ],

@@ -24,12 +24,18 @@ const bundled = await build({
       import { renderToStaticMarkup } from "react-dom/server";
       import { ArticleBody } from "./app/components/ArticleBody";
       import { CampaignWebsiteTicker } from "./app/components/CampaignWebsiteTicker";
+      import { correctCampaignPost } from "./app/lib/campaign-posts";
+      import content from "./app/data/content.json";
       import { createElement } from "react";
       export async function article(props) {
         return renderToStaticMarkup(await ArticleBody(props));
       }
       export function ticker() {
         return renderToStaticMarkup(createElement(CampaignWebsiteTicker));
+      }
+      export async function campaign(id) {
+        const post = correctCampaignPost(content.posts.find(post => post.id === id));
+        return article(post);
       }
     `,
     resolveDir: fileURLToPath(new URL("..", import.meta.url)),
@@ -56,6 +62,25 @@ new Function("require", "module", "exports", bundled.outputFiles[0].text)(
   createRequire(import.meta.url), compiled, compiled.exports,
 );
 const renderer = compiled.exports;
+
+test("September and October campaign lists render every video URL as a clickable link", async () => {
+  for (const [id, videos] of [
+    [10327, ["Z2WEizeYu3Y", "26JVlEYkA5E", "MsHERFblSA4", "GugWDWgAG9g", "OZYS01PwB4k"]],
+    [10323, ["dM2ocu-mjkc", "7xuw_iO4wYg", "naO7mpsL5r0", "-rBEOlBXz_E"]],
+  ]) {
+    const $ = load(await renderer.campaign(id));
+    for (const video of videos) {
+      const url = `https://www.youtube.com/watch?v=${video}`;
+      const link = $(`article li a[href="${url}"]`);
+      assert.equal(link.length, 1, `${id}: ${url}`);
+      assert.equal(link.text(), url);
+    }
+    if (id === 10327) {
+      assert.equal($('a[href="/media/reports/KRD-indyk_pazdziernik.pdf"]').length, 1);
+      assert.equal($('a[href*="localhost"]').length, 0);
+    }
+  }
+});
 
 test("campaign articles keep ordinary text out of headings and preserve explicit sections and lists", async () => {
   const props = {
