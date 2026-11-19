@@ -7,6 +7,7 @@ import { connection } from "next/server";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getLocalProposals, getLocalSeoDraft } from "../../lib/local-proposals-server";
+import { renderInlineMarkdown } from "../../lib/inlineMarkdown";
 
 export const dynamic = "force-dynamic";
 
@@ -122,7 +123,7 @@ export default async function NewsDetailPage({
                 <span className="tender-deadline-highlight">{tenderDeadlineSentence}</span>
               </p>
             ) : (
-              post.excerpt && <p>{post.excerpt}</p>
+              post.excerpt && <p>{post.categories.includes("Kampanie") ? renderInlineMarkdown(post.excerpt, "campaign-excerpt", true) : post.excerpt}</p>
             )}
           </div>
           {post.image && (

@@ -8,13 +8,25 @@ export function WstawieniaTable({ columns, fallbackRows, transpose = false }: { 
   const [rows, setRows] = useState(fallbackRows);
 
   useEffect(() => {
-    void fetch("/api/wstawienia")
-      .then((response) => response.ok ? response.json() : null)
-      .then((data: { rows?: WstawieniaRow[] } | null) => {
-        if (data?.rows?.length) setRows(data.rows);
-      })
-      .catch(() => undefined);
-  }, []);
+    let controller: AbortController | undefined;
+    const loadRows = () => {
+      controller?.abort();
+      controller = new AbortController();
+      void fetch("/api/wstawienia", { cache: "no-store", signal: controller.signal })
+        .then((response) => response.ok ? response.json() : null)
+        .then((data: { rows?: WstawieniaRow[] } | null) => {
+          if (data?.rows?.length) setRows(data.rows);
+        })
+        .catch(() => undefined);
+    };
+
+    loadRows();
+    window.addEventListener("focus", loadRows);
+    return () => {
+      controller?.abort();
+      window.removeEventListener("focus", loadRows);
+    };
+  }, [fallbackRows]);
 
   if (transpose) {
     return (
