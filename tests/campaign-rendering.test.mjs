@@ -2,6 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { fileURLToPath } from "node:url";
 import { createRequire } from "node:module";
+import { readFileSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { build } from "esbuild";
 import { load } from "cheerio";
 
@@ -62,6 +64,23 @@ new Function("require", "module", "exports", bundled.outputFiles[0].text)(
   createRequire(import.meta.url), compiled, compiled.exports,
 );
 const renderer = compiled.exports;
+
+test("recovered downloads render real links to verified original PDF files", async () => {
+  for (const [id, href, hash, label] of [
+    [10323, "/media/reports/KRD_Indyk_wrzesien.pdf", "8d06ec78a63f098f8a979dbe6665c860a0512f2a30b5f9e84452934c8cf15273", "Raport za wrzesień 2024 (PDF)"],
+    [10384, "/media/reports/POLSKI-DROB-W-OCZACH-DZIECKA-1.pdf", "212b3d3c7a2feac8bf1213e21e5c2e008c7dfacc07f6ab73bedbb13b8dec223d", "Polski drób w oczach dziecka – rymowanka 1 (PDF)"],
+    [10384, "/media/reports/POLSKI-DROB-W-OCZACH-DZIECKA-2.pdf", "0c743e6a4247e668a40c746ee50251f2a36defc35eb3b11b23736ea5b99be7d3", "Polski drób w oczach dziecka – rymowanka 2 (PDF)"],
+  ]) {
+    const $ = load(await renderer.campaign(id));
+    const link = $(`article a[href="${href}"]`);
+    assert.equal(link.length, 1, `${id}: ${href}`);
+    assert.equal(link.text(), label);
+    assert.doesNotMatch($("article").text(), /(?:Raport za wrzesień 2024.*nie jest dostępny|Dwa archiwalne pliki PDF.*nie są dostępne)/);
+    const bytes = readFileSync(new URL(`../public${href}`, import.meta.url));
+    assert.equal(bytes.subarray(0, 5).toString(), "%PDF-");
+    assert.equal(createHash("sha256").update(bytes).digest("hex"), hash);
+  }
+});
 
 test("September and October campaign lists render every video URL as a clickable link", async () => {
   for (const [id, videos] of [

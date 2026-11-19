@@ -179,11 +179,14 @@ export function correctCampaignPost(post: NewsPost): NewsPost {
           "Powstała strona kampanii indykajemy.pl z przepisami na dania z indyka oraz sekcją dla HoReCa.", indykArchive,
           "Reklama internetowa w postaci banerów display na portalach konsumenckich (m.in. [interia.pl](https://www.interia.pl/), [wp.pl](https://www.wp.pl/)) oraz branżowych HoReCa dotarła do szerokiego grona odbiorców. W archiwalnym opisie wymieniono foodservice24.pl, e-restauracja.pl, hurt&detal i horectrends.pl. Wskazane adresy branżowe pozostawiamy wyłącznie jako nazwy historyczne, bez aktywnych odnośników: część portali jest już niedostępna, a e-restauracja.pl prowadzi do strony parkingowej. Nie potwierdzono poprawnego adresu horectrends.pl.",
           heading("Wydarzenia kulinarne"), p[6], list(p.slice(7, 9).map(videoLinks)),
-          "Raport za wrzesień 2024 (PDF) nie jest dostępny w zachowanych lokalnych materiałach archiwalnych.",
+          "[Raport za wrzesień 2024 (PDF)](/media/reports/KRD_Indyk_wrzesien.pdf)",
           p[11], p[12],
         ],
-        links: post.links.filter((link) =>
-          !/indykajemy\.pl|dziendobry\.tvn\.pl|KRD_Indyk_wrzesien\.pdf/.test(link.href)),
+        links: [
+          ...post.links.filter((link) =>
+            !/indykajemy\.pl|dziendobry\.tvn\.pl|KRD_Indyk_wrzesien\.pdf/.test(link.href)),
+          { href: "/media/reports/KRD_Indyk_wrzesien.pdf", label: "Raport za wrzesień 2024 (PDF)", document: true },
+        ],
       };
       break;
     }
@@ -297,9 +300,13 @@ export function correctCampaignPost(post: NewsPost): NewsPost {
           punctuation(p[0]),
           p[1].replace("Artur Moroz przygotowując", "Artur Moroz, przygotowując").replace("nieodłączonym", "nieodłącznym"),
           "Jedna z młodszych uczestniczek pikniku, ośmioletnia Oliwia, słuchała prezentacji szefa kuchni i próbowała przygotowanych potraw. Swoje wrażenia opisała w rymowankach o polskim drobiu, spisanych przez jej dziadka.",
-          "Dwa archiwalne pliki PDF „Polski drób w oczach dziecka” z rymowankami nie są dostępne w zachowanych lokalnych materiałach. Dawne odnośniki zwracają błąd 404.",
+          "[Polski drób w oczach dziecka – rymowanka 1 (PDF)](/media/reports/POLSKI-DROB-W-OCZACH-DZIECKA-1.pdf)",
+          "[Polski drób w oczach dziecka – rymowanka 2 (PDF)](/media/reports/POLSKI-DROB-W-OCZACH-DZIECKA-2.pdf)",
         ],
-        links: [],
+        links: [
+          { href: "/media/reports/POLSKI-DROB-W-OCZACH-DZIECKA-1.pdf", label: "Polski drób w oczach dziecka – rymowanka 1 (PDF)", document: true },
+          { href: "/media/reports/POLSKI-DROB-W-OCZACH-DZIECKA-2.pdf", label: "Polski drób w oczach dziecka – rymowanka 2 (PDF)", document: true },
+        ],
       };
       break;
     case 10367: {

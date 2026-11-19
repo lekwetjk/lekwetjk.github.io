@@ -52,7 +52,7 @@ test("October report is a real local Markdown link, not an old download CTA", ()
 });
 
 test("broken references are notes, not active recommendations", () => {
-  const forbidden = /indykajemy\.pl|foodservice24\.pl|e-restauracja\.pl|horectrends\.pl|st8084416|Prezentacja_indyk\.pptx|KRD_Indyk_wrzesien\.pdf|POLSKI-DROB-W-OCZACH-DZIECKA|krd-test-2|https?:\/\/m\.in\b/;
+  const forbidden = /indykajemy\.pl|foodservice24\.pl|e-restauracja\.pl|horectrends\.pl|st8084416|Prezentacja_indyk\.pptx|https?:.*(?:KRD_Indyk_wrzesien\.pdf|POLSKI-DROB-W-OCZACH-DZIECKA)|krd-test-2|https?:\/\/m\.in\b/;
   for (const post of campaigns.map((post) => correctCampaignPost(sanitize(post)))) {
     for (const link of post.links) assert.doesNotMatch(link.href, forbidden);
     for (const match of post.paragraphs.join("\n").matchAll(/https?:\/\/[^\s)]+/g)) {
@@ -71,8 +71,6 @@ test("broken references are notes, not active recommendations", () => {
 
 test("missing attachments and eight absent media captions have explicit notices", () => {
   assert.match(body(12815), /Prezentacja.*nie jest dostępna/);
-  assert.match(body(10323), /Raport za wrzesień 2024.*nie jest dostępny/);
-  assert.match(body(10384), /Dwa archiwalne pliki PDF.*nie są dostępne/);
   for (const id of [10378, 10381]) {
     assert.equal(corrected(id).paragraphs.filter((text) => /Archiwalne spoty/.test(text)).length, 1);
     assert.doesNotMatch(body(id), /^(?:Spot|SPOT) (?:TV|RADIO)/m);
