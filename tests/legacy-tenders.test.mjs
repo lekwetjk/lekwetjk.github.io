@@ -6,15 +6,17 @@ import test from "node:test";
 import { build } from "esbuild";
 import { load } from "cheerio";
 import { renderToStaticMarkup } from "react-dom/server";
+import { unzipSync } from "fflate";
 import { articleBody, categoryForTitle, extractArticle, textDigest } from "../scripts/import-legacy-tenders.mjs";
 
 const root = new URL("../", import.meta.url);
 const manifest = JSON.parse(await readFile(new URL("docs/imports/legacy-tenders-pages-8-10.json", root), "utf8"));
+const repairs = JSON.parse(await readFile(new URL("app/data/tender-attachment-repairs.json", root), "utf8"));
 const { outputFiles } = await build({
-  stdin: { contents: 'export { newsPosts, tenderPosts } from "./app/lib/content.ts"; export { renderInlineMarkdown } from "./app/lib/inlineMarkdown.tsx";', resolveDir: fileURLToPath(root), loader: "ts" },
+  stdin: { contents: 'export { newsPosts, tenderPosts } from "./app/lib/content.ts"; export { renderInlineMarkdown } from "./app/lib/inlineMarkdown.tsx"; export { restoreTenderAttachments } from "./app/lib/tender-attachments.ts";', resolveDir: fileURLToPath(root), loader: "ts" },
   bundle: true, write: false, platform: "node", format: "esm", jsx: "automatic",
 });
-const { newsPosts, tenderPosts, renderInlineMarkdown } = await import(`data:text/javascript;base64,${Buffer.from(outputFiles[0].text).toString("base64")}`);
+const { newsPosts, tenderPosts, renderInlineMarkdown, restoreTenderAttachments } = await import(`data:text/javascript;base64,${Buffer.from(outputFiles[0].text).toString("base64")}`);
 
 test("the three requested archive pages contain exactly the expected 27 publications", () => {
   assert.deepEqual(manifest.records.map(({ id }) => id), [1817, 1819, 1842, 1846, 1857, 1860, 1864, 1681, 1871, 1677, 1633, 1631, 1629, 1627, 1623, 1620, 1604, 1601, 1597, 1573, 1569, 1550, 1564, 1408, 1396, 1382, 755]);
@@ -40,6 +42,12 @@ test("rendered paragraphs retain all source text, including long bilingual invit
     assert.equal(post.justify, true);
     assert.ok(post.paragraphs.every((paragraph) => !paragraph.includes("****")));
     assert.doesNotMatch(html, /href="https?:\/\/[^" ]+\/(?:upload\/file|wp-content\/uploads)\//);
+    const $ = load(html);
+    const expected = new Set(record.attachments.filter(asset => asset.status === "available").map(asset => asset.local));
+    for (const href of $('a[href^="/media/tenders/"]').map((_, a) => $(a).attr("href")).get()) {
+      assert.ok(expected.has(href), `${record.id}: unexpected download ${href}`);
+    }
+    for (const href of expected) assert.ok($(`a[href="${href}"]`).length > 0, `${record.id}: missing download ${href}`);
   }
 });
 
@@ -63,8 +71,8 @@ test("categories and same-day ordering follow the original publications", () => 
 test("available attachments are verified local PDFs; missing files have explicit status", async () => {
   const attachments = manifest.records.flatMap((record) => record.attachments);
   assert.equal(attachments.length, 45);
-  assert.equal(attachments.filter((asset) => asset.status === "available").length, 8);
-  assert.equal(attachments.filter((asset) => asset.status === "unavailable").length, 37);
+  assert.equal(attachments.filter((asset) => asset.status === "available").length, 21);
+  assert.equal(attachments.filter((asset) => asset.status === "unavailable").length, 24);
   for (const asset of attachments) {
     if (asset.status === "unavailable") {
       assert.equal(asset.local, undefined);
@@ -76,6 +84,53 @@ test("available attachments are verified local PDFs; missing files have explicit
     assert.equal(bytes.subarray(0, 5).toString(), "%PDF-");
     assert.equal(createHash("sha256").update(bytes).digest("hex"), asset.sha256);
   }
+});
+
+test("restored tender downloads are original, deployable documents rather than HTML error pages", async () => {
+  const verified = new Set();
+  for (const [source, asset] of Object.entries(repairs.assets)) {
+    assert.match(asset.href, /^\/media\/tenders\/restored\/[a-f0-9]{24}\.(?:pdf|docx?|xlsx?)$/);
+    if (verified.has(asset.href)) continue;
+    const bytes = await readFile(new URL(`public${asset.href}`, root));
+    assert.equal(bytes.length, asset.size, source);
+    assert.equal(createHash("sha256").update(bytes).digest("hex"), asset.sha256, source);
+    if (asset.href.endsWith(".pdf")) {
+      assert.equal(bytes.subarray(0, 5).toString(), "%PDF-", source);
+      assert.ok(bytes.subarray(-4096).includes(Buffer.from("%%EOF")), `Truncated PDF: ${source}`);
+    } else if (/\.(?:docx|xlsx)$/.test(asset.href)) {
+      const entries = unzipSync(bytes);
+      assert.ok(entries["[Content_Types].xml"], source);
+      assert.ok(entries[asset.href.endsWith(".docx") ? "word/document.xml" : "xl/workbook.xml"], source);
+    } else {
+      assert.equal(bytes.subarray(0, 8).toString("hex"), "d0cf11e0a1b11ae1", source);
+    }
+    verified.add(asset.href);
+  }
+});
+
+test("repeated download labels link to the right files without changing the existing tender text or order", async () => {
+  const raw = JSON.parse(await readFile(new URL("app/data/content.json", root), "utf8")).posts;
+  for (const [slug, source] of Object.entries(repairs.posts)) {
+    const post = newsPosts.find(post => post.slug === slug);
+    const original = raw.find(post => post.id === source.id && post.slug === slug);
+    assert.ok(original, slug);
+    const render = paragraphs => load(paragraphs.map((text, index) => renderToStaticMarkup(renderInlineMarkdown(text, String(index)))).join(""));
+    const $ = render(post.paragraphs);
+    const existing = source.appendedParagraphCount ? post.paragraphs.slice(0, -source.appendedParagraphCount) : post.paragraphs;
+    assert.equal(textDigest(render(existing).text()), textDigest(original.paragraphs.join(" ")), slug);
+    for (const link of post.links.filter(link => link.document)) {
+      assert.ok($(`a[href="${link.href}"]`).length > 0, `${slug}: ${link.href}`);
+    }
+  }
+});
+
+test("attachment repairs leave CMS copy untouched and keep mismatched record paragraphs", () => {
+  const [slug, source] = Object.entries(repairs.posts)[0];
+  const original = newsPosts.find(post => post.slug === slug);
+  const managed = { ...original, managed: true };
+  assert.equal(restoreTenderAttachments(managed), managed);
+  const mismatched = { ...original, id: source.id + 1, paragraphs: ["Other publication."] };
+  assert.deepEqual(restoreTenderAttachments(mismatched).paragraphs, mismatched.paragraphs);
 });
 
 test("HTML extraction preserves paragraphs, formatting, email links and table text", () => {

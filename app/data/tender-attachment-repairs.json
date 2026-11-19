@@ -1,0 +1,1430 @@
+{
+  "assets": {
+    "https://isap.sejm.gov.pl/isap.nsf/download.xsp/WDU20230001122/O/D20231122.pdf": {
+      "href": "/media/tenders/restored/dc2859706497c90ab1fd73c0.pdf",
+      "size": 232481,
+      "sha256": "dc2859706497c90ab1fd73c02962c1159afe925c03db7f7e37e1b239f729bbdc",
+      "downloadedFrom": "https://api.sejm.gov.pl/eli/acts/DU/2023/1122/text.pdf"
+    },
+    "https://krd-ig.com.pl/upload/file/KRD-IG-238_2017_zapytanie_ofertowe_powierzchnia.pdf": {
+      "href": "/media/tenders/restored/67d10d79f93aaa6a1fd73604.pdf",
+      "size": 345651,
+      "sha256": "67d10d79f93aaa6a1fd736048076a2f00ee99c89395b0ee783671cee8c45458f",
+      "downloadedFrom": "https://old.krd-ig.com.pl/wp-content/uploads/2017/10/KRD-IG-238_2017_zapytanie_ofertowe_powierzchnia.pdf"
+    },
+    "https://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_2018_II_czesc_spotkania/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf": {
+      "href": "/media/tenders/restored/5853e5604762bf19b61dab3b.pdf",
+      "size": 237086,
+      "sha256": "5853e5604762bf19b61dab3be5a9d44197122a0eeaa4a707bb5d0e978437303f",
+      "downloadedFrom": "http://web.archive.org/web/20190201071101id_/http://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_2018_II_czesc_spotkania/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf",
+      "archive": {
+        "provider": "Internet Archive",
+        "capturedAt": "20190201071101",
+        "payloadSha1": "4KOWKGU5B5AVKPBZYPAYEBFBATUDRKYO",
+        "originalUrl": "http://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_2018_II_czesc_spotkania/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf"
+      }
+    },
+    "https://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_2018_II_czesc_spotkania/Zapytanie_ofertowe_dot__zadania_Niwelowanie_barier_na_rynku_krajowym_SPOTKANIA.pdf": {
+      "href": "/media/tenders/restored/7b2650574f10ee35fcd80355.pdf",
+      "size": 484354,
+      "sha256": "7b2650574f10ee35fcd8035512e98bdc200c34655d79a502c2a104708b8630ec",
+      "downloadedFrom": "http://web.archive.org/web/20190201090424id_/http://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_2018_II_czesc_spotkania/Zapytanie_ofertowe_dot__zadania_Niwelowanie_barier_na_rynku_krajowym_SPOTKANIA.pdf",
+      "archive": {
+        "provider": "Internet Archive",
+        "capturedAt": "20190201090424",
+        "payloadSha1": "DSX4E3XM4W3XAAWMUMOPNBFFK7LPMGUT",
+        "originalUrl": "http://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_2018_II_czesc_spotkania/Zapytanie_ofertowe_dot__zadania_Niwelowanie_barier_na_rynku_krajowym_SPOTKANIA.pdf"
+      }
+    },
+    "https://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/AKTUALIZACJA_ZAL._NR_1_2018_07_12/AKTUALIZACJA_Zalacznik_1_do_Zapytania_ofertowego_2018_07_12.pdf": {
+      "href": "/media/tenders/restored/a8b8c0ac371cabe1955712bb.pdf",
+      "size": 207697,
+      "sha256": "a8b8c0ac371cabe1955712bb5ce07d3e5a551017e960be18cf432f7fa49a678d",
+      "downloadedFrom": "http://web.archive.org/web/20190131022144id_/http://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/AKTUALIZACJA_ZAL._NR_1_2018_07_12/AKTUALIZACJA_Zalacznik_1_do_Zapytania_ofertowego_2018_07_12.pdf",
+      "archive": {
+        "provider": "Internet Archive",
+        "capturedAt": "20190131022144",
+        "payloadSha1": "T74A3KSJLRIESQWXLINETYENUZAT5TI6",
+        "originalUrl": "http://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/AKTUALIZACJA_ZAL._NR_1_2018_07_12/AKTUALIZACJA_Zalacznik_1_do_Zapytania_ofertowego_2018_07_12.pdf"
+      }
+    },
+    "https://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf": {
+      "href": "/media/tenders/restored/5853e5604762bf19b61dab3b.pdf",
+      "size": 237086,
+      "sha256": "5853e5604762bf19b61dab3be5a9d44197122a0eeaa4a707bb5d0e978437303f",
+      "downloadedFrom": "http://web.archive.org/web/20190131041507id_/http://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf",
+      "archive": {
+        "provider": "Internet Archive",
+        "capturedAt": "20190131041507",
+        "payloadSha1": "4KOWKGU5B5AVKPBZYPAYEBFBATUDRKYO",
+        "originalUrl": "http://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf"
+      }
+    },
+    "https://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/Zapytanie_ofertowe_dot__zadania_Niwelowanie_barier_na_rynku_krajowym.pdf": {
+      "href": "/media/tenders/restored/c4391dcb48705dcb16f487ce.pdf",
+      "size": 496260,
+      "sha256": "c4391dcb48705dcb16f487cece37baf1da2744c6129c021a68e56730c235e35d",
+      "downloadedFrom": "http://web.archive.org/web/20190131022201id_/http://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/Zapytanie_ofertowe_dot__zadania_Niwelowanie_barier_na_rynku_krajowym.pdf",
+      "archive": {
+        "provider": "Internet Archive",
+        "capturedAt": "20190131022201",
+        "payloadSha1": "QPW2TTA6NBNJC6FBM7OQNTA5H4PDC6FL",
+        "originalUrl": "http://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/Zapytanie_ofertowe_dot__zadania_Niwelowanie_barier_na_rynku_krajowym.pdf"
+      }
+    },
+    "https://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_13.02.2019/PYTANIA_OFERENTA_20190214_(002).pdf": {
+      "href": "/media/tenders/restored/4c8350e73f75c240e0134b41.pdf",
+      "size": 223507,
+      "sha256": "4c8350e73f75c240e0134b41c661a5f7c1cc97aff40259b2a7a5ba032bdce554",
+      "downloadedFrom": "http://web.archive.org/web/20190915135200id_/http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_13.02.2019/PYTANIA_OFERENTA_20190214_(002).pdf",
+      "archive": {
+        "provider": "Internet Archive",
+        "capturedAt": "20190915135200",
+        "payloadSha1": "UQ3LIG4Z3OGAIYK63AGNTZQ7Q54L4ATZ",
+        "originalUrl": "http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_13.02.2019/PYTANIA_OFERENTA_20190214_(002).pdf"
+      }
+    },
+    "https://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_14.02.2019/PYTANIA_OFERENTOW_ALL_20190218.pdf": {
+      "href": "/media/tenders/restored/dd0743d6668940d86f06ea12.pdf",
+      "size": 443883,
+      "sha256": "dd0743d6668940d86f06ea127f795f4acee7570c7c6a8aab937ac878ae7466d5",
+      "downloadedFrom": "http://web.archive.org/web/20190915135126id_/http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_14.02.2019/PYTANIA_OFERENTOW_ALL_20190218.pdf",
+      "archive": {
+        "provider": "Internet Archive",
+        "capturedAt": "20190915135126",
+        "payloadSha1": "337I7XLAA7U2NYFFRF3U74HRL4H5TG5X",
+        "originalUrl": "http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_14.02.2019/PYTANIA_OFERENTOW_ALL_20190218.pdf"
+      }
+    },
+    "https://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_19.02.2019/PYTANIA_OFERENTA_20190219_B.pdf": {
+      "href": "/media/tenders/restored/9911c1e76410822dfd8600e4.pdf",
+      "size": 377044,
+      "sha256": "9911c1e76410822dfd8600e4e3501a967326f6a1c429ce9c916a74da3294c5a8",
+      "downloadedFrom": "http://web.archive.org/web/20190915143134id_/http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_19.02.2019/PYTANIA_OFERENTA_20190219_B.pdf",
+      "archive": {
+        "provider": "Internet Archive",
+        "capturedAt": "20190915143134",
+        "payloadSha1": "43F3FNNNURULIBSOGYHTOJURR7SL2LK7",
+        "originalUrl": "http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_19.02.2019/PYTANIA_OFERENTA_20190219_B.pdf"
+      }
+    },
+    "https://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_19.02.2019/PYTANIA_OFERENTA_20190219.pdf": {
+      "href": "/media/tenders/restored/731eb93cd86493f326ebdaff.pdf",
+      "size": 341673,
+      "sha256": "731eb93cd86493f326ebdaff67eab724b9f876c5dd04a4d396d82c25f06b3ad5",
+      "downloadedFrom": "http://web.archive.org/web/20190915135214id_/http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_19.02.2019/PYTANIA_OFERENTA_20190219.pdf",
+      "archive": {
+        "provider": "Internet Archive",
+        "capturedAt": "20190915135214",
+        "payloadSha1": "MHXB7AZLA36WXEXDZZAO7PH5WCEFDUSL",
+        "originalUrl": "http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_19.02.2019/PYTANIA_OFERENTA_20190219.pdf"
+      }
+    },
+    "https://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Zalacznik_nr_2_do_SIWZ_-_Szczegolowa_tabela_budzetowa.pdf": {
+      "href": "/media/tenders/restored/810d8c137e3ef0039e2c61a1.pdf",
+      "size": 174069,
+      "sha256": "810d8c137e3ef0039e2c61a181fd5415980768de736d442e064d0f9b9f88821c",
+      "downloadedFrom": "https://old.krd-ig.com.pl/wp-content/uploads/2020/04/Zalacznik_nr_2_do_SIWZ_szczegolowa_tabela_budzetowa.pdf"
+    },
+    "https://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Zalacznik_nr_3_do_SIWZ_-_Logo_KRD-IG_eng.pdf": {
+      "href": "/media/tenders/restored/ba2c319ad3ed2bcc8e40abdb.pdf",
+      "size": 118242,
+      "sha256": "ba2c319ad3ed2bcc8e40abdb792ea3ff7613ab06f707b7ec8aba2da22e165885",
+      "downloadedFrom": "https://old.krd-ig.com.pl/wp-content/uploads/2020/04/Zalacznik_nr_3_do_SIWZ_-_Logo_KRD-IG_eng.pdf"
+    },
+    "https://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Zalacznik_nr_6_do_SIWZ_-_Zestawienie_kosztow_kwalifikowalnych_programow_prostych.pdf": {
+      "href": "/media/tenders/restored/2a9c9437ddd079c334b77662.pdf",
+      "size": 112347,
+      "sha256": "2a9c9437ddd079c334b776624d6681d93ec2b72138017d9e381f6e1e0d30f941",
+      "downloadedFrom": "https://old.krd-ig.com.pl/wp-content/uploads/2020/04/Zalacznik_nr_6_do_SIWZ_-_zestawienie_kosztow_kwalifikowalnych_programow_prostych.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/1__Zaproszenie_do_skladania_ofert-_Przeciwdzialanie_kampaniom_dezinform._2019.pdf": {
+      "href": "/media/tenders/restored/3f0651169868a9d77288551f.pdf",
+      "size": 491800,
+      "sha256": "3f0651169868a9d77288551f3b3f467beff2c0babc809d94853da5d7b9affd25",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/1__Zaproszenie_do_skladania_ofert-_Przeciwdzialanie_kampaniom_dezinform._2019.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/1__Zaproszenie_do_skladania_ofert-OCHRONA_WIZERUNKU_KRAJ_2020.pdf": {
+      "href": "/media/tenders/restored/59c6b801a63bc46bb5ad48fc.pdf",
+      "size": 475016,
+      "sha256": "59c6b801a63bc46bb5ad48fc38a67b2d482b7a9d79287e552eb3519a069668d5",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/1__Zaproszenie_do_skladania_ofert-OCHRONA_WIZERUNKU_KRAJ_2020.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/1__Zaproszenie_do_skladania_ofert-Organizacja_wyjazdu_na_Zgromadzenie_Ogolne_a_v_e_c__CLITRAVI_ELPHA_oraz_zjazd_IPC.pdf": {
+      "href": "/media/tenders/restored/3ed740825020fa125e798f6c.pdf",
+      "size": 477089,
+      "sha256": "3ed740825020fa125e798f6c3a87564579d4c71acf365a0f8abc28f62791c9c8",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/1__Zaproszenie_do_skladania_ofert-Organizacja_wyjazdu_na_Zgromadzenie_Ogolne_a_v_e_c__CLITRAVI_ELPHA_oraz_zjazd_IPC.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/2__Zalaczniki_1-4_do_Zapytania_ofertowego-1.pdf": {
+      "href": "/media/tenders/restored/67f5e711edd5b33e034adab8.pdf",
+      "size": 233523,
+      "sha256": "67f5e711edd5b33e034adab8c6a5e03f821a12d6506a94713ceac964160084ba",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/2__Zalaczniki_1-4_do_Zapytania_ofertowego-1.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/2__Zalaczniki_1-4_do_Zapytania_ofertowego-2.pdf": {
+      "href": "/media/tenders/restored/5d5fe4f71c8e933593442e2c.pdf",
+      "size": 249115,
+      "sha256": "5d5fe4f71c8e933593442e2cd4a727ef7c5522abe943a94f517dd8f38e8d2c5d",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/2__Zalaczniki_1-4_do_Zapytania_ofertowego-2.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/2__Zalaczniki_1-4_do_Zapytania_ofertowego.pdf": {
+      "href": "/media/tenders/restored/93234c2e877cf087223a6ffd.pdf",
+      "size": 249599,
+      "sha256": "93234c2e877cf087223a6ffdbee0564f6bcdc296b553015e3500e59ad02980be",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/2__Zalaczniki_1-4_do_Zapytania_ofertowego.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/Czesc_VI_Uniewaznienie_przetargu.pdf": {
+      "href": "/media/tenders/restored/56591dcd880d399b8e50e37c.pdf",
+      "size": 363889,
+      "sha256": "56591dcd880d399b8e50e37c550708d588e2bda8407028273c96a978daae01be",
+      "downloadedFrom": "https://old.krd-ig.com.pl/wp-content/uploads/2020/04/Czesc_VI_Uniewaznienie_przetargu.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/Czesc_VI_Zalaczniki_1_3_do_zapytania_ofertowego.pdf": {
+      "href": "/media/tenders/restored/6ee6eb1cec91270ce2979874.pdf",
+      "size": 864443,
+      "sha256": "6ee6eb1cec91270ce2979874a7e55e3a3bc5081f3cd73beac5e36908e021d2fa",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/Czesc_VI_Zalaczniki_1_3_do_zapytania_ofertowego.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/I__Zaproszenie_do_skladania_ofert_Drob_z_europ__paszportem_18_02_2020.pdf": {
+      "href": "/media/tenders/restored/e691be44fe207987681b2657.pdf",
+      "size": 290599,
+      "sha256": "e691be44fe207987681b2657ceb27d222de5cbaadc2eda5263bb2186a454b489",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/I__Zaproszenie_do_skladania_ofert_Drob_z_europ__paszportem_18_02_2020.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/II__SIWZ_CHINY_JAPONIA_z_uwaga_OFERENTA_25_02_2020.pdf": {
+      "href": "/media/tenders/restored/6bd8dca8fba1bc898102bd49.pdf",
+      "size": 588477,
+      "sha256": "6bd8dca8fba1bc898102bd49d607b8b51a61bb696d26a00bd4ef27dda4c50472",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/II__SIWZ_CHINY_JAPONIA_z_uwaga_OFERENTA_25_02_2020.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/II__SIWZ_CHINY_JAPONIA_z_uwagami_czw_20200214.pdf": {
+      "href": "/media/tenders/restored/fb847abad8aaf48a925b7116.pdf",
+      "size": 587140,
+      "sha256": "fb847abad8aaf48a925b71168a109849bd6dffcec85ad59690744d1d80765f69",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/II__SIWZ_CHINY_JAPONIA_z_uwagami_czw_20200214.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/PYTANIE_OFERENTA_12_03_2020.pdf": {
+      "href": "/media/tenders/restored/8a1f7879ccc847d7186d12e1.pdf",
+      "size": 123967,
+      "sha256": "8a1f7879ccc847d7186d12e15598fa430acba6639e78fdbb62802a1d0cdb0615",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/PYTANIE_OFERENTA_12_03_2020.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/PYTANIE_OFERENTA_25_02_2020.pdf": {
+      "href": "/media/tenders/restored/94cebed8c9db9c4c4f20fc8a.pdf",
+      "size": 109859,
+      "sha256": "94cebed8c9db9c4c4f20fc8a5f110fa990949cda443e5a73615b89e5c48c6344",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/PYTANIE_OFERENTA_25_02_2020.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/Pytanie_oferenta_27_04_2020_i_odp__Zamawiajacego_z_28_04_2020.pdf": {
+      "href": "/media/tenders/restored/e09669779d9276cfec5875fe.pdf",
+      "size": 90125,
+      "sha256": "e09669779d9276cfec5875fe93cee4c13096db6058447dc9492daa84e84cf54a",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/Pytanie_oferenta_27_04_2020_i_odp__Zamawiajacego_z_28_04_2020.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zalacznik_nr_1_do_SIWZ_-_Opis_programu_Drob_z_europejskim_paszportem.pdf": {
+      "href": "/media/tenders/restored/ecd31ccefd97ab6915c0e9da.pdf",
+      "size": 1532067,
+      "sha256": "ecd31ccefd97ab6915c0e9da70673328b90998161ba02590d5c29169014fbf91",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zalacznik_nr_1_do_SIWZ_-_Opis_programu_Drob_z_europejskim_paszportem.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zalacznik_nr_2_do_SIWZ_szczegolowa_tabela_budzetowa.pdf": {
+      "href": "/media/tenders/restored/810d8c137e3ef0039e2c61a1.pdf",
+      "size": 174069,
+      "sha256": "810d8c137e3ef0039e2c61a181fd5415980768de736d442e064d0f9b9f88821c",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zalacznik_nr_2_do_SIWZ_szczegolowa_tabela_budzetowa.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zalacznik_nr_3_do_SIWZ_-_Logo_KRD-IG_eng.pdf": {
+      "href": "/media/tenders/restored/ba2c319ad3ed2bcc8e40abdb.pdf",
+      "size": 118242,
+      "sha256": "ba2c319ad3ed2bcc8e40abdb792ea3ff7613ab06f707b7ec8aba2da22e165885",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zalacznik_nr_3_do_SIWZ_-_Logo_KRD-IG_eng.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zalacznik_nr_4_do_SIWZ_-_Wzor_formularza_ofertowego_20200218.pdf": {
+      "href": "/media/tenders/restored/e6686af86994475d27531bf1.pdf",
+      "size": 170095,
+      "sha256": "e6686af86994475d27531bf1c257d31d28aeca4fcf31abf40f4aa9e79947b30e",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zalacznik_nr_4_do_SIWZ_-_Wzor_formularza_ofertowego_20200218.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zalacznik_nr_5_do_SIWZ_-_Projekt_istotnych_postanowien_umowy_-_Drob_z_europejskim_paszportem_20200218.pdf": {
+      "href": "/media/tenders/restored/037fd14f2d37c223d35fc31f.pdf",
+      "size": 337519,
+      "sha256": "037fd14f2d37c223d35fc31f81f3298cbda2f41bf32793edc6d0f987f525bac7",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zalacznik_nr_5_do_SIWZ_-_Projekt_istotnych_postanowien_umowy_-_Drob_z_europejskim_paszportem_20200218.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zalacznik_nr_6_do_SIWZ_-_zestawienie_kosztow_kwalifikowalnych_programow_prostych.pdf": {
+      "href": "/media/tenders/restored/2a9c9437ddd079c334b77662.pdf",
+      "size": 112347,
+      "sha256": "2a9c9437ddd079c334b776624d6681d93ec2b72138017d9e381f6e1e0d30f941",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zalacznik_nr_6_do_SIWZ_-_zestawienie_kosztow_kwalifikowalnych_programow_prostych.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zalaczniki_1_3_do_zapytania_ofertowego_wzorkonsum.pdf": {
+      "href": "/media/tenders/restored/f8d34822b7e3efde52ac71a5.pdf",
+      "size": 101848,
+      "sha256": "f8d34822b7e3efde52ac71a50650af39bc2a31185e3c38ff22b034f8902b608d",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zalaczniki_1_3_do_zapytania_ofertowego_wzorkonsum.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zalaczniki_1-4_do_Zapytania_ofertowego-1-1.pdf": {
+      "href": "/media/tenders/restored/12893fe502fb72feba19961e.pdf",
+      "size": 237459,
+      "sha256": "12893fe502fb72feba19961ede83ab14a4842bfb88955bc7a0e25c55417d89c1",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zalaczniki_1-4_do_Zapytania_ofertowego-1-1.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zalaczniki_1-4_do_Zapytania_ofertowego-1.pdf": {
+      "href": "/media/tenders/restored/12893fe502fb72feba19961e.pdf",
+      "size": 237459,
+      "sha256": "12893fe502fb72feba19961ede83ab14a4842bfb88955bc7a0e25c55417d89c1",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zalaczniki_1-4_do_Zapytania_ofertowego-1.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf": {
+      "href": "/media/tenders/restored/ba431512e59e8e60273dfea9.pdf",
+      "size": 231916,
+      "sha256": "ba431512e59e8e60273dfea92348846f25956ada08c759098a783240870cb512",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zaproszenie_do_skladania_ofert_-_KRD_ANUGA_2019.pdf": {
+      "href": "/media/tenders/restored/c4e6a414383c695321ffc38a.pdf",
+      "size": 514366,
+      "sha256": "c4e6a414383c695321ffc38a8d9d3a49e31ce99a50aca5e40105e3e4d255a159",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zaproszenie_do_skladania_ofert_-_KRD_ANUGA_2019.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zaproszenie_do_skladania_ofert_-_KRD_SIAL_PARYZ_2020.pdf": {
+      "href": "/media/tenders/restored/64fc38721d8b527d88808dc8.pdf",
+      "size": 517112,
+      "sha256": "64fc38721d8b527d88808dc8fa266143fd4cb7d14b152ed6e9bb9420a96f5215",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zaproszenie_do_skladania_ofert_-_KRD_SIAL_PARYZ_2020.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zaproszenie_do_skladania_ofert-Wsparcie_ekspansja_Chiny_Japonia.pdf": {
+      "href": "/media/tenders/restored/8364ecdb9c49911a1b44f5ac.pdf",
+      "size": 601258,
+      "sha256": "8364ecdb9c49911a1b44f5ace12bee704fb7e77c865c8d8d5b1a7dbdb5e9b131",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zaproszenie_do_skladania_ofert-Wsparcie_ekspansja_Chiny_Japonia.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zapytanie_ofertowe_czesc_VI.pdf": {
+      "href": "/media/tenders/restored/3c747063b4da9daca56ce7b6.pdf",
+      "size": 668794,
+      "sha256": "3c747063b4da9daca56ce7b62cfb853e8569c2ad5d813de6be14ebae5e20a2a0",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zapytanie_ofertowe_czesc_VI.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zapytanie_ofertowe_wzorkonsum.pdf": {
+      "href": "/media/tenders/restored/142ed44fc5eec41635d40428.pdf",
+      "size": 392697,
+      "sha256": "142ed44fc5eec41635d40428f563c69338ac61de7ce39ca861ff811fd3eae09b",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/04/Zapytanie_ofertowe_wzorkonsum.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/05/Zalaczniki_1_3_do_zapytania_ofertowego_wzorkonsum.pdf": {
+      "href": "/media/tenders/restored/f8d34822b7e3efde52ac71a5.pdf",
+      "size": 101848,
+      "sha256": "f8d34822b7e3efde52ac71a50650af39bc2a31185e3c38ff22b034f8902b608d",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/05/Zalaczniki_1_3_do_zapytania_ofertowego_wzorkonsum.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2020/05/Zapytanie_ofertowe_wzorkonsum.pdf": {
+      "href": "/media/tenders/restored/142ed44fc5eec41635d40428.pdf",
+      "size": 392697,
+      "sha256": "142ed44fc5eec41635d40428f563c69338ac61de7ce39ca861ff811fd3eae09b",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2020/05/Zapytanie_ofertowe_wzorkonsum.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2021/05/1.-Zaproszenie-do-skladania-ofert-OCHRONA-WIZERUNKU-KRAJ-2021-PR.pdf": {
+      "href": "/media/tenders/restored/a24d8e18f1852e433578808b.pdf",
+      "size": 547419,
+      "sha256": "a24d8e18f1852e433578808b279e18f5de5d47981d389438f545c424ef688f84",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2021/05/1.-Zaproszenie-do-skladania-ofert-OCHRONA-WIZERUNKU-KRAJ-2021-PR.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2021/05/10.-PYTANIA-OFERENTA-z-dnia-25.05.2021-ODPOWIEDZI-z-dnia-26.05.2021-003.pdf": {
+      "href": "/media/tenders/restored/33dd9d8a9701857dfd8a8e0b.pdf",
+      "size": 172439,
+      "sha256": "33dd9d8a9701857dfd8a8e0b67e14e9efac894143138177f6ed11917d0524e2a",
+      "downloadedFrom": "https://old.krd-ig.com.pl/wp-content/uploads/2021/05/10.-PYTANIA-OFERENTA-z-dnia-25.05.2021-ODPOWIEDZI-z-dnia-26.05.2021-003.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2021/05/19.-PYTANIE-OFERENTA-z-dnia-26.05.2021-ODPOWIEDZ-z-dnia-27.05.2021.pdf": {
+      "href": "/media/tenders/restored/bbd1283194351f5daf0814e3.pdf",
+      "size": 138407,
+      "sha256": "bbd1283194351f5daf0814e3a43385fba8fcfbb972d3c1b7ecad24f3b726bbe2",
+      "downloadedFrom": "https://old.krd-ig.com.pl/wp-content/uploads/2021/05/19.-PYTANIE-OFERENTA-z-dnia-26.05.2021-ODPOWIEDZ-z-dnia-27.05.2021.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2021/05/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-PR.pdf": {
+      "href": "/media/tenders/restored/1a21d7530c7c8431fade597a.pdf",
+      "size": 297985,
+      "sha256": "1a21d7530c7c8431fade597a0b6deac93fe89e2fbbe389194aba34ee367dee28",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2021/05/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-PR.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2021/05/28.-PYTANIE-OFERENTA-z-dnia-27.05.2021-ODPOWIEDZ-z-dnia-27.05.2021.pdf": {
+      "href": "/media/tenders/restored/ef97cfdf462511f74b17d155.pdf",
+      "size": 86452,
+      "sha256": "ef97cfdf462511f74b17d155557dd9eef19be744cc2f8e1e6eb07a0e73a77d43",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2021/05/28.-PYTANIE-OFERENTA-z-dnia-27.05.2021-ODPOWIEDZ-z-dnia-27.05.2021.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2021/05/Kopia-0.-Kalkulacja-do-Zapytania-ofertowego-Ochrona-2021-PR_-002.xlsx": {
+      "href": "/media/tenders/restored/af6f4294c403196e5b4acd8d.xlsx",
+      "size": 13602,
+      "sha256": "af6f4294c403196e5b4acd8d42e90df91d026aa419bc955d7dda7785679173bb",
+      "downloadedFrom": "https://old.krd-ig.com.pl/wp-content/uploads/2021/05/Kopia-0.-Kalkulacja-do-Zapytania-ofertowego-Ochrona-2021-PR_-002.xlsx"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2021/07/1.-Zaproszenie-do-skladania-ofert-KRD_ANUGA-2021.pdf": {
+      "href": "/media/tenders/restored/c4e3b6122e61d8dd92a4d83e.pdf",
+      "size": 556673,
+      "sha256": "c4e3b6122e61d8dd92a4d83e6c406e8334d92ebb5588117d538b93747aa8e2aa",
+      "downloadedFrom": "https://old.krd-ig.com.pl/wp-content/uploads/2021/07/1.-Zaproszenie-do-skladania-ofert-KRD_ANUGA-2021.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2021/07/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-ANUGA-2021.pdf": {
+      "href": "/media/tenders/restored/28c0f0cd136ad5d976a2e687.pdf",
+      "size": 333474,
+      "sha256": "28c0f0cd136ad5d976a2e687094dfe754fe79c71030e40ecce815cc9e1e9a6d4",
+      "downloadedFrom": "https://old.krd-ig.com.pl/wp-content/uploads/2021/07/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-ANUGA-2021.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2021/07/Ograniczenia_importowe_HPAI_wedlug_krajow_05.07.2021.pdf": {
+      "href": "/media/tenders/restored/919a7735939caabf978c9fd8.pdf",
+      "size": 457159,
+      "sha256": "919a7735939caabf978c9fd8b25450a3a69cf06101915546d4725a395da135a2",
+      "downloadedFrom": "https://old.krd-ig.com.pl/wp-content/uploads/2021/07/Ograniczenia_importowe_HPAI_wedlug_krajow_05.07.2021.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2021/12/1.-Zaproszenie-do-skladania-ofert-KRD_IFE-LONDYN-2022.pdf": {
+      "href": "/media/tenders/restored/7d962c25162ad7d5cb39c3b0.pdf",
+      "size": 540012,
+      "sha256": "7d962c25162ad7d5cb39c3b014ec23bba09ad860c0168c516662c5224c2fb480",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2021/12/1.-Zaproszenie-do-skladania-ofert-KRD_IFE-LONDYN-2022.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2021/12/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-IFE.pdf": {
+      "href": "/media/tenders/restored/98e5f5212b3899d7bc4265ac.pdf",
+      "size": 292628,
+      "sha256": "98e5f5212b3899d7bc4265ac457de1633aaedf2729789377af0d0b0da329ec84",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2021/12/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-IFE.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2022/06/1.-Zaproszenie-do-skladania-ofert-OCHRONA-WIZERUNKU-KRAJ-2022-1.pdf": {
+      "href": "/media/tenders/restored/412c3154d7b1ec13a513202e.pdf",
+      "size": 657052,
+      "sha256": "412c3154d7b1ec13a513202ed13d5fd6ed7b0b8ce2ad0a301e83353fb161cdfa",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2022/06/1.-Zaproszenie-do-skladania-ofert-OCHRONA-WIZERUNKU-KRAJ-2022-1.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2022/06/1.-Zaproszenie-do-skladania-ofert-PROMOCJA-MIESA-INDYCZEGO-2022.pdf": {
+      "href": "/media/tenders/restored/8cbfb12e8d7ecb369ee0d8e4.pdf",
+      "size": 631176,
+      "sha256": "8cbfb12e8d7ecb369ee0d8e465d697bc86dbaa96aabb70a9f96415aef00eaba6",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2022/06/1.-Zaproszenie-do-skladania-ofert-PROMOCJA-MIESA-INDYCZEGO-2022.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2022/06/1.-Zaproszenie-do-skladania-ofert-PROMOCJA-MIESA-KURCZECEGO-2022.pdf": {
+      "href": "/media/tenders/restored/ddb2bedc3e9b01837972db72.pdf",
+      "size": 635140,
+      "sha256": "ddb2bedc3e9b01837972db7228d7656bdf86da60c5c83a09e439a9a7507423ab",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2022/06/1.-Zaproszenie-do-skladania-ofert-PROMOCJA-MIESA-KURCZECEGO-2022.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2022/06/2.-Zalaczniki-1-5-do-Zapytania-ofertowego_INDYK.docx": {
+      "href": "/media/tenders/restored/1d15713d991ca9193a9695bb.docx",
+      "size": 94054,
+      "sha256": "1d15713d991ca9193a9695bbfafe923ce48e6a2d4426599d73eb8946e7efabfb",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2022/06/2.-Zalaczniki-1-5-do-Zapytania-ofertowego_INDYK.docx"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2022/06/2.-Zalaczniki-1-5-do-Zapytania-ofertowego_INDYK.pdf": {
+      "href": "/media/tenders/restored/4f78975f523b38d36d692930.pdf",
+      "size": 309849,
+      "sha256": "4f78975f523b38d36d692930e06250ddba4d107d3f7712ffe5ce85a150dde326",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2022/06/2.-Zalaczniki-1-5-do-Zapytania-ofertowego_INDYK.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2022/06/2.-Zalaczniki-1-5-do-Zapytania-ofertowego_KURCZAK.docx": {
+      "href": "/media/tenders/restored/a9f3f38211fe3798b1158511.docx",
+      "size": 89976,
+      "sha256": "a9f3f38211fe3798b1158511f03cf0c8b2e44673154893f5d472fda6837ab0cc",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2022/06/2.-Zalaczniki-1-5-do-Zapytania-ofertowego_KURCZAK.docx"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2022/06/2.-Zalaczniki-1-5-do-Zapytania-ofertowego_KURCZAK.pdf": {
+      "href": "/media/tenders/restored/3643c39af3b75f1a672aedc1.pdf",
+      "size": 309952,
+      "sha256": "3643c39af3b75f1a672aedc1b9cb8457963446e0238a4e8477e12723a905c961",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2022/06/2.-Zalaczniki-1-5-do-Zapytania-ofertowego_KURCZAK.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2022/06/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.docx": {
+      "href": "/media/tenders/restored/6f214c0dcd5b09cc394ec381.docx",
+      "size": 87599,
+      "sha256": "6f214c0dcd5b09cc394ec381caeca44236bb47c158223bbae815080ef18b4a51",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2022/06/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.docx"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2022/06/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.pdf": {
+      "href": "/media/tenders/restored/90415da1524c621d3f151640.pdf",
+      "size": 325083,
+      "sha256": "90415da1524c621d3f151640333739cde3e85e6f99032b27a49d65cb428ef521",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2022/06/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2022/06/2.-Zalaczniki-1-7-do-Zapytania-ofertowego.docx": {
+      "href": "/media/tenders/restored/c6236daaeb8382c6e380b7c9.docx",
+      "size": 106351,
+      "sha256": "c6236daaeb8382c6e380b7c92fcd4fa0c84a5bba547fdbbc17f22731d8f8cee1",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2022/06/2.-Zalaczniki-1-7-do-Zapytania-ofertowego.docx"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2022/06/2.-Zalaczniki-1-7-do-Zapytania-ofertowego.pdf": {
+      "href": "/media/tenders/restored/7cb71358f2f336ac2860d7cf.pdf",
+      "size": 464564,
+      "sha256": "7cb71358f2f336ac2860d7cf733884b2ada845fa2aaadb4ef932ddddb9fe51ad",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2022/06/2.-Zalaczniki-1-7-do-Zapytania-ofertowego.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2022/06/3.-Zalacznik-nr-5-do-Zapytania-ofertowego-KOSZTORYS.xlsx": {
+      "href": "/media/tenders/restored/07231ffa0425a366caa17aff.xlsx",
+      "size": 31171,
+      "sha256": "07231ffa0425a366caa17aff65916f4736b8a62c12c5c1d2d87e6018bf33d292",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2022/06/3.-Zalacznik-nr-5-do-Zapytania-ofertowego-KOSZTORYS.xlsx"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2022/06/Zalacznik_nr_5_wzor_umowy.pdf": {
+      "href": "/media/tenders/restored/2eea2bde5d41b304a63b25e6.pdf",
+      "size": 207764,
+      "sha256": "2eea2bde5d41b304a63b25e68accf7069cfb065448340b9456ebc7d90ed12da6",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2022/06/Zalacznik_nr_5_wzor_umowy.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2022/06/Zalaczniki_nr_1_nr_2_nr_3_nr_4_do_zapytania_ofertowego_edytowalne.docx": {
+      "href": "/media/tenders/restored/7c25b1b9be24e897cb30862f.docx",
+      "size": 29085,
+      "sha256": "7c25b1b9be24e897cb30862fcdc473af101b504d1130df774b917e15ee3685b0",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2022/06/Zalaczniki_nr_1_nr_2_nr_3_nr_4_do_zapytania_ofertowego_edytowalne.docx"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2022/06/Zapytanie_ofertowe_2020_06_20.pdf": {
+      "href": "/media/tenders/restored/6fb36cde83a17eb8419cd354.pdf",
+      "size": 436697,
+      "sha256": "6fb36cde83a17eb8419cd35460eed8624b93da341cb0df6f62705d77d6aea4cf",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2022/06/Zapytanie_ofertowe_2020_06_20.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2022/06/Zapytanie_ofertowe_2020_06_22_aktualizacja.pdf": {
+      "href": "/media/tenders/restored/758d825a833580c246d72ebe.pdf",
+      "size": 439042,
+      "sha256": "758d825a833580c246d72ebe6890d69c45e0e9b25a06d088ae37eb4bcf794e5e",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2022/06/Zapytanie_ofertowe_2020_06_22_aktualizacja.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2022/07/1.-Zaproszenie-do-skladania-ofert-KRD_RPA-INDIE-1.pdf": {
+      "href": "/media/tenders/restored/0d84a63f518bd0879a0e959e.pdf",
+      "size": 683504,
+      "sha256": "0d84a63f518bd0879a0e959e7d8ee4f57926bcbe1841c43f21c0b2b1f4ca80a7",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2022/07/1.-Zaproszenie-do-skladania-ofert-KRD_RPA-INDIE-1.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2022/07/1.-Zaproszenie-do-skladania-ofert-KRD_RPA-INDIE.pdf": {
+      "href": "/media/tenders/restored/fe108b1ebc10d85ef60b3c78.pdf",
+      "size": 679449,
+      "sha256": "fe108b1ebc10d85ef60b3c784950e35efbc869e97411f8524f409648024c9261",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2022/07/1.-Zaproszenie-do-skladania-ofert-KRD_RPA-INDIE.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2022/07/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.docx": {
+      "href": "/media/tenders/restored/16f9e11e0f0de275df740bb3.docx",
+      "size": 89199,
+      "sha256": "16f9e11e0f0de275df740bb348d93dc0dc3cc7bbe62912c02e12f736702ef6b0",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2022/07/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.docx"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2022/07/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.pdf": {
+      "href": "/media/tenders/restored/8d93a6dfc1a451f660384cea.pdf",
+      "size": 347456,
+      "sha256": "8d93a6dfc1a451f660384cea357bb7fa15d0689d971282eb1638178e0c61e4f9",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2022/07/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2022/07/6.-WYDLUZENIE-TERMINU-skladania-ofert-Zaproszenie-do-skladania-ofert-PROMOCJA-MIESA-INDYCZEGO-2022.pdf": {
+      "href": "/media/tenders/restored/b36e454489dce467dd002572.pdf",
+      "size": 678536,
+      "sha256": "b36e454489dce467dd002572bbf56cf9d0c78b5da6669aa173f566c53277ec9e",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2022/07/6.-WYDLUZENIE-TERMINU-skladania-ofert-Zaproszenie-do-skladania-ofert-PROMOCJA-MIESA-INDYCZEGO-2022.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2022/07/9.-WYDLUZENIE-TERMINU-skladania-ofert-Zaproszenie-do-skladania-ofert-PROMOCJA-MIESA-KURCZECEGO-2022.pdf": {
+      "href": "/media/tenders/restored/6ed98553ff07e4c383993bc9.pdf",
+      "size": 683477,
+      "sha256": "6ed98553ff07e4c383993bc9d0ab87c2df8fbf8b10c2c12ed5c73560fc54bf4e",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2022/07/9.-WYDLUZENIE-TERMINU-skladania-ofert-Zaproszenie-do-skladania-ofert-PROMOCJA-MIESA-KURCZECEGO-2022.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2023/01/1.-Zaproszenie-do-skladania-ofert-KRD_IFE-LONDYN-2023..pdf": {
+      "href": "/media/tenders/restored/7e510ca2b7e1c62a60b9646f.pdf",
+      "size": 1067189,
+      "sha256": "7e510ca2b7e1c62a60b9646fada49966f610b0af0a0c8022328bc82752fd9cef",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2023/01/1.-Zaproszenie-do-skladania-ofert-KRD_IFE-LONDYN-2023..pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2023/01/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-IFE.pdf": {
+      "href": "/media/tenders/restored/56024bff1eaedda12a48a384.pdf",
+      "size": 333601,
+      "sha256": "56024bff1eaedda12a48a384943c9d1b1636bbf8066bae7917c92c44166dce03",
+      "downloadedFrom": "https://old.krd-ig.com.pl/wp-content/uploads/2023/01/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-IFE.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2023/02/1.-Zaproszenie-do-skladania-ofert-Organizacja-wyjazdu-na-Zgromadzenie-Ogolne-a.v.e.c.-CLITRAVI-ELPHA-oraz-zjazd-IPC-1.pdf": {
+      "href": "/media/tenders/restored/a7b628372df67b2e0e017b31.pdf",
+      "size": 636965,
+      "sha256": "a7b628372df67b2e0e017b317c0d02e0d7157e682eb379128b6de77d4bad2683",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2023/02/1.-Zaproszenie-do-skladania-ofert-Organizacja-wyjazdu-na-Zgromadzenie-Ogolne-a.v.e.c.-CLITRAVI-ELPHA-oraz-zjazd-IPC-1.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2023/02/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.pdf": {
+      "href": "/media/tenders/restored/9b7bd636b22ccfddc6c19ad8.pdf",
+      "size": 319059,
+      "sha256": "9b7bd636b22ccfddc6c19ad856b7bc57325d86449df22fb7f05c1613bdbc5681",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2023/02/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2023/03/1.-Zaproszenie-do-skladania-ofert-KRD_FANCY-FOOD-NOWY-JORK-2023.pdf": {
+      "href": "/media/tenders/restored/186d80dc1ee2e0a48f5b8345.pdf",
+      "size": 597237,
+      "sha256": "186d80dc1ee2e0a48f5b83450d0d663843e3a2bc671a06fc380acf1d44a7fcfc",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2023/03/1.-Zaproszenie-do-skladania-ofert-KRD_FANCY-FOOD-NOWY-JORK-2023.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2023/03/1.-Zaproszenie-do-skladania-ofert-KRD-WYSTAWA-POZNAN-2023.pdf": {
+      "href": "/media/tenders/restored/c8b9af6f73f8a66acdbee15c.pdf",
+      "size": 650309,
+      "sha256": "c8b9af6f73f8a66acdbee15ca18728145606fa2b1546d3a0d6b05c607086a1e7",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2023/03/1.-Zaproszenie-do-skladania-ofert-KRD-WYSTAWA-POZNAN-2023.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2023/03/2.-Zalaczniki-1-4-do-Zapytania-ofertowego-KRD-WYSTAWA-POZNAN-2023.pdf": {
+      "href": "/media/tenders/restored/6d2aabcf414f822ffffd4e34.pdf",
+      "size": 235500,
+      "sha256": "6d2aabcf414f822ffffd4e34bf1388727dd10908e46c735c50a4a52f594a2484",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2023/03/2.-Zalaczniki-1-4-do-Zapytania-ofertowego-KRD-WYSTAWA-POZNAN-2023.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2023/03/3.-Zalacznik-nr-5-do-Zapytania-ofertowego.pdf": {
+      "href": "/media/tenders/restored/b37effb9c508f9c090c429ca.pdf",
+      "size": 219765,
+      "sha256": "b37effb9c508f9c090c429cab5d1b013b7567419ea73b9d1e417baf23b03819f",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2023/03/3.-Zalacznik-nr-5-do-Zapytania-ofertowego.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2023/04/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-FANCY-FOOD-SHOW-NY.pdf": {
+      "href": "/media/tenders/restored/c97892261fa8d86ac15a015b.pdf",
+      "size": 693721,
+      "sha256": "c97892261fa8d86ac15a015bdb84642431c792b4e748fd4ec80d5956fb915810",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2023/04/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-FANCY-FOOD-SHOW-NY.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2023/06/1.-Zaproszenie-do-skladania-ofert-KRD_ANUGA-2023.pdf": {
+      "href": "/media/tenders/restored/e6c0755b05567d3070141ef0.pdf",
+      "size": 1075399,
+      "sha256": "e6c0755b05567d3070141ef05d8817f762995623f79531354e153984eb497efc",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2023/06/1.-Zaproszenie-do-skladania-ofert-KRD_ANUGA-2023.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2023/06/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-ANUGA-2023-pdf.pdf": {
+      "href": "/media/tenders/restored/a4c91a5005b312b887253312.pdf",
+      "size": 699897,
+      "sha256": "a4c91a5005b312b887253312c6c4d73b4082b7ba2f21564c3db680cd5cde8fcc",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2023/06/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-ANUGA-2023-pdf.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2023/07/1.-Zaproszenie-do-skladania-ofert-konferencja-podczas-Zjazdu-AVEC.pdf": {
+      "href": "/media/tenders/restored/bfc8f382fd717d10a1803c02.pdf",
+      "size": 603480,
+      "sha256": "bfc8f382fd717d10a1803c026326c524230bd0815a9d0fd090086b5ad0409308",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2023/07/1.-Zaproszenie-do-skladania-ofert-konferencja-podczas-Zjazdu-AVEC.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2023/07/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-1.pdf": {
+      "href": "/media/tenders/restored/af0f58e6d01463733b5ca6c4.pdf",
+      "size": 321469,
+      "sha256": "af0f58e6d01463733b5ca6c4fe5ca461eba056d5415efb950615aa7affada2c9",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2023/07/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-1.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2023/07/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.pdf": {
+      "href": "/media/tenders/restored/e9e4b796b107e07766ce7ec1.pdf",
+      "size": 321599,
+      "sha256": "e9e4b796b107e07766ce7ec19aee7a9d9f515e542d75de2533118e8586c2e00d",
+      "downloadedFrom": "https://old.krd-ig.com.pl/wp-content/uploads/2023/07/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2023/08/1.-Zaproszenie-do-skladania-ofert-OCHRONA-WIZERUNKU-KRAJ-2023.pdf": {
+      "href": "/media/tenders/restored/924961af622b61c735910b41.pdf",
+      "size": 1219142,
+      "sha256": "924961af622b61c735910b41369496539b60c77a25f00fbf657d7764aee70feb",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2023/08/1.-Zaproszenie-do-skladania-ofert-OCHRONA-WIZERUNKU-KRAJ-2023.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2023/08/2-Zalaczniki-1-7-do-Zapytania-ofertowego.docx": {
+      "href": "/media/tenders/restored/370676e79f1bc9f7d11177fc.docx",
+      "size": 107916,
+      "sha256": "370676e79f1bc9f7d11177fc4de166323f6d73fdc8e1b421b3bde26003da8f96",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2023/08/2-Zalaczniki-1-7-do-Zapytania-ofertowego.docx"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2023/08/2-Zalaczniki-1-7-do-Zapytania-ofertowego.pdf": {
+      "href": "/media/tenders/restored/d2c3d30244b289e8c3e9c0cb.pdf",
+      "size": 1103369,
+      "sha256": "d2c3d30244b289e8c3e9c0cb28afffd8ffa98470777afb3c02792cfa2578a08b",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2023/08/2-Zalaczniki-1-7-do-Zapytania-ofertowego.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2023/08/3.-Zalacznik-nr-5-do-Zapytania-ofertowego-KOSZTORYS-1.xlsx": {
+      "href": "/media/tenders/restored/2961e592d40f164c2fca646b.xlsx",
+      "size": 30793,
+      "sha256": "2961e592d40f164c2fca646ba91190326958f8cd4cd5803ac91257cb2029bae1",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2023/08/3.-Zalacznik-nr-5-do-Zapytania-ofertowego-KOSZTORYS-1.xlsx"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2023/10/EURSPO_Call-for-tender_Final.pdf": {
+      "href": "/media/tenders/restored/0103c89774c1a064a546712c.pdf",
+      "size": 187859,
+      "sha256": "0103c89774c1a064a546712c78fd27abe6e0b98260704fd6c0e2937f471dbf0e",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2023/10/EURSPO_Call-for-tender_Final.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2023/12/2023-12-15-EURSPO_Call-for-tender_Evaluation-Agency_Final.pdf": {
+      "href": "/media/tenders/restored/cd26c0de27c5e9d4d810c388.pdf",
+      "size": 336849,
+      "sha256": "cd26c0de27c5e9d4d810c38813c1cb19af5e9abbf9b80e2a35b7abc785147e86",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2023/12/2023-12-15-EURSPO_Call-for-tender_Evaluation-Agency_Final.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2024/03/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.pdf": {
+      "href": "/media/tenders/restored/c0b0350821e54b7ceb5f4c5e.pdf",
+      "size": 334281,
+      "sha256": "c0b0350821e54b7ceb5f4c5e1542e833c4297fb1d6e722b46e1d329f5bc3de38",
+      "downloadedFrom": "https://old.krd-ig.com.pl/wp-content/uploads/2024/03/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2024/08/1.-Zaproszenie-do-skladania-ofert-OCHRONA-WIZERUNKU-KRAJ-2024.pdf": {
+      "href": "/media/tenders/restored/78e5f761ddee3b7a96a269fb.pdf",
+      "size": 693866,
+      "sha256": "78e5f761ddee3b7a96a269fb8ce85f67ecce09d27f84c0f7a1353663dbc0205b",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2024/08/1.-Zaproszenie-do-skladania-ofert-OCHRONA-WIZERUNKU-KRAJ-2024.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2024/08/2-Zalaczniki-1-7-do-Zapytania-ofertowego.docx": {
+      "href": "/media/tenders/restored/d3f60ca012d2ef2abd2e50b7.docx",
+      "size": 107929,
+      "sha256": "d3f60ca012d2ef2abd2e50b7f12ddd47e24af20219582e1777d9968f1b3c47ee",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2024/08/2-Zalaczniki-1-7-do-Zapytania-ofertowego.docx"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2024/08/2-Zalaczniki-1-7-do-Zapytania-ofertowego.pdf": {
+      "href": "/media/tenders/restored/00e715bd143d242ab1b577b1.pdf",
+      "size": 497268,
+      "sha256": "00e715bd143d242ab1b577b1a5fe4e273493e3f514823fc373675824a12fa7a9",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2024/08/2-Zalaczniki-1-7-do-Zapytania-ofertowego.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2024/08/3.-Zalacznik-nr-5-do-Zapytania-ofertowego-KOSZTORYS.xlsx": {
+      "href": "/media/tenders/restored/5b1ad44f4eb838c047b9a8e6.xlsx",
+      "size": 31333,
+      "sha256": "5b1ad44f4eb838c047b9a8e613c30efddec9dc96083ffe3b521e1d5b883b6348",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2024/08/3.-Zalacznik-nr-5-do-Zapytania-ofertowego-KOSZTORYS.xlsx"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/1.-Zaproszenie-do-skladania-ofert-KRD_Alimentaria-2024.pdf": {
+      "href": "/media/tenders/restored/0c10c578daeee5fb875c14d3.pdf",
+      "size": 741715,
+      "sha256": "0c10c578daeee5fb875c14d34903e54ac1f883f7ddf70211a82df42e5cc65d76",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/1.-Zaproszenie-do-skladania-ofert-KRD_Alimentaria-2024.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/1.-Zaproszenie-do-skladania-ofert-KRD_SIAL-2024.pdf": {
+      "href": "/media/tenders/restored/f0a7844302f6db8eebe1b851.pdf",
+      "size": 557928,
+      "sha256": "f0a7844302f6db8eebe1b851ae6bec41735d2565e98d31cb2bbfc435e08936af",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/1.-Zaproszenie-do-skladania-ofert-KRD_SIAL-2024.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/1.-Zaproszenie-do-skladania-ofert-OCHRONA-WIZERUNKU-KRAJ-2024.pdf": {
+      "href": "/media/tenders/restored/78e5f761ddee3b7a96a269fb.pdf",
+      "size": 693866,
+      "sha256": "78e5f761ddee3b7a96a269fb8ce85f67ecce09d27f84c0f7a1353663dbc0205b",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/1.-Zaproszenie-do-skladania-ofert-OCHRONA-WIZERUNKU-KRAJ-2024.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/1.-Zaproszenie-do-skladania-ofert-SKLADKI-WYJAZDY-2025.pdf": {
+      "href": "/media/tenders/restored/d9ccf01c40e18806bbd5885a.pdf",
+      "size": 669884,
+      "sha256": "d9ccf01c40e18806bbd5885a533036e32c06dc5a3496c0ea197e323a39bc004d",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/1.-Zaproszenie-do-skladania-ofert-SKLADKI-WYJAZDY-2025.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/1.-Zaproszenie-do-skladania-ofert-SKLADKI-WYJAZDY2024.pdf": {
+      "href": "/media/tenders/restored/6efb6f7b8bc46e0475051716.pdf",
+      "size": 664724,
+      "sha256": "6efb6f7b8bc46e0475051716deaf8de3f97ee2c38fbc32e02a44d86162474fce",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/1.-Zaproszenie-do-skladania-ofert-SKLADKI-WYJAZDY2024.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/1.-Zapytanie-ofertowe-Kampania-promocyjna-miesa-indyczego-2024.pdf": {
+      "href": "/media/tenders/restored/afa550b2b76af79625390bcd.pdf",
+      "size": 638047,
+      "sha256": "afa550b2b76af79625390bcdbfc33443ab2bd6d5ed982b03d630e600caa3f597",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/1.-Zapytanie-ofertowe-Kampania-promocyjna-miesa-indyczego-2024.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/2-Zalaczniki-1-7-do-Zapytania-ofertowego.docx": {
+      "href": "/media/tenders/restored/d3f60ca012d2ef2abd2e50b7.docx",
+      "size": 107929,
+      "sha256": "d3f60ca012d2ef2abd2e50b7f12ddd47e24af20219582e1777d9968f1b3c47ee",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/2-Zalaczniki-1-7-do-Zapytania-ofertowego.docx"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/2-Zalaczniki-1-7-do-Zapytania-ofertowego.pdf": {
+      "href": "/media/tenders/restored/00e715bd143d242ab1b577b1.pdf",
+      "size": 497268,
+      "sha256": "00e715bd143d242ab1b577b1a5fe4e273493e3f514823fc373675824a12fa7a9",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/2-Zalaczniki-1-7-do-Zapytania-ofertowego.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/2.-II.-SIWZ_Europejski-drob-z-naszych-ferm-na-Twoj-stol.pdf": {
+      "href": "/media/tenders/restored/936ee68209522b53ed45c274.pdf",
+      "size": 689961,
+      "sha256": "936ee68209522b53ed45c27453a015b6c79f2bfe2896122f8758c04715acdb03",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/2.-II.-SIWZ_Europejski-drob-z-naszych-ferm-na-Twoj-stol.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/2.-Zalaczniki-1-5-do-Zapytania-ofertowego_INDYK_2024.docx": {
+      "href": "/media/tenders/restored/6c1351a76861c6851c09f308.docx",
+      "size": 92858,
+      "sha256": "6c1351a76861c6851c09f30897b29fbf5b67ba3b219a6e100bd54452a1410b93",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/2.-Zalaczniki-1-5-do-Zapytania-ofertowego_INDYK_2024.docx"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/2.-Zalaczniki-1-5-do-Zapytania-ofertowego_INDYK_2024.pdf": {
+      "href": "/media/tenders/restored/c62a7f45616baae8fac3c911.pdf",
+      "size": 370535,
+      "sha256": "c62a7f45616baae8fac3c91194ebb18a20effc432cb1c35ab67f63b5db580abc",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/2.-Zalaczniki-1-5-do-Zapytania-ofertowego_INDYK_2024.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-.pdf": {
+      "href": "/media/tenders/restored/f7cbd1ec47f44a17a37ebb9c.pdf",
+      "size": 334247,
+      "sha256": "f7cbd1ec47f44a17a37ebb9c813f2db520acab970357da5dd6a472f310bca37e",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-1.pdf": {
+      "href": "/media/tenders/restored/90278c3bc365728dc2089ec5.pdf",
+      "size": 351193,
+      "sha256": "90278c3bc365728dc2089ec5f3dbe6eb34cd131037d665b15b88edc9981f02f8",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-1.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.docx": {
+      "href": "/media/tenders/restored/87637cb912163735b56713d7.docx",
+      "size": 90508,
+      "sha256": "87637cb912163735b56713d7639d6aa5a1b0cf84c4ad0f9889ed250a1d088b38",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.docx"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.pdf": {
+      "href": "/media/tenders/restored/886d4e7f2698e239b2075aee.pdf",
+      "size": 334323,
+      "sha256": "886d4e7f2698e239b2075aee6ed71a6957a2cf4cca061049b3173cfd86280054",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/2a.-Zalacznik-nr-1-do-SIWZ-Opis-programu-EU-POULTRYp.pdf": {
+      "href": "/media/tenders/restored/0e3680d73f45ea282f20e0e1.pdf",
+      "size": 2153260,
+      "sha256": "0e3680d73f45ea282f20e0e10edaeed37627a4b63f9c3a1ea039c36b7a524d2d",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/2a.-Zalacznik-nr-1-do-SIWZ-Opis-programu-EU-POULTRYp.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/3.-Zalacznik-6-do-Zapytania-ofertowego-Postawy-konsumenckie-wobec-miesa-indyczego_raport-z-badania_Atena-RC_2.10.2023.pdf": {
+      "href": "/media/tenders/restored/95b84a1f7e5bcd6b108ac408.pdf",
+      "size": 3238278,
+      "sha256": "95b84a1f7e5bcd6b108ac40801e573a0f037f3466931eb2e8f7a0f71c91bb313",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/3.-Zalacznik-6-do-Zapytania-ofertowego-Postawy-konsumenckie-wobec-miesa-indyczego_raport-z-badania_Atena-RC_2.10.2023.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/3.-Zalacznik-nr-5-do-Zapytania-ofertowego-KOSZTORYS.xlsx": {
+      "href": "/media/tenders/restored/5b1ad44f4eb838c047b9a8e6.xlsx",
+      "size": 31333,
+      "sha256": "5b1ad44f4eb838c047b9a8e613c30efddec9dc96083ffe3b521e1d5b883b6348",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/3.-Zalacznik-nr-5-do-Zapytania-ofertowego-KOSZTORYS.xlsx"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/I.-Zaproszenie-do-skladania-ofert-Europejski-drob-z-naszych-ferm-na-Twoj-stol-30.12.2024-.pdf": {
+      "href": "/media/tenders/restored/777519c09caef8ff92d49095.pdf",
+      "size": 376790,
+      "sha256": "777519c09caef8ff92d49095073823200e5caeac12e477978f0b1444bf6d83a6",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/I.-Zaproszenie-do-skladania-ofert-Europejski-drob-z-naszych-ferm-na-Twoj-stol-30.12.2024-.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-10-do-SIWZ-Logo-KRD-IG-eng.pdf": {
+      "href": "/media/tenders/restored/ba2c319ad3ed2bcc8e40abdb.pdf",
+      "size": 118242,
+      "sha256": "ba2c319ad3ed2bcc8e40abdb792ea3ff7613ab06f707b7ec8aba2da22e165885",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-10-do-SIWZ-Logo-KRD-IG-eng.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-2-do-SIWZ-Wzor-formularza-ofertowego.pdf": {
+      "href": "/media/tenders/restored/055ebe4968a2a158aa7d44eb.pdf",
+      "size": 200879,
+      "sha256": "055ebe4968a2a158aa7d44eb5c4865d0cf90cedeecaaee9c46d834e80927abb6",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-2-do-SIWZ-Wzor-formularza-ofertowego.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-3-do-SIWZ_wykaz_zrealizowanych-kampanii.pdf": {
+      "href": "/media/tenders/restored/7236588ac892608750314452.pdf",
+      "size": 163581,
+      "sha256": "7236588ac892608750314452cd7203a8f36e2070240eb80803bf83f7200398ef",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-3-do-SIWZ_wykaz_zrealizowanych-kampanii.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-4-do-SIWZ_wykaz_osob.pdf": {
+      "href": "/media/tenders/restored/889128494896e45995ca3c41.pdf",
+      "size": 159700,
+      "sha256": "889128494896e45995ca3c414b65924ffac05a09fffb973b43af65d5c675fa95",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-4-do-SIWZ_wykaz_osob.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-5-do-SIWZ_brak-powiazan-Ukraina.pdf": {
+      "href": "/media/tenders/restored/45c16c0a13bfcd1ea6a07db6.pdf",
+      "size": 154931,
+      "sha256": "45c16c0a13bfcd1ea6a07db6d1b7f7fafc39665607aa84eef5745785ffda7d39",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-5-do-SIWZ_brak-powiazan-Ukraina.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-6-do-SIWZ_RODO.pdf": {
+      "href": "/media/tenders/restored/415caf055c0678fbf728090d.pdf",
+      "size": 201310,
+      "sha256": "415caf055c0678fbf728090d7cf981939f0d86802e0d7be252cc4a7ae8253b5c",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-6-do-SIWZ_RODO.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-7-do-SIWZ-Projekt-istotnych-postanowien-umowy-UE-POULTRY.pdf": {
+      "href": "/media/tenders/restored/801538f38580e75e000a2b07.pdf",
+      "size": 378805,
+      "sha256": "801538f38580e75e000a2b07560b828716c750b001e3421e285157a0839fccc2",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-7-do-SIWZ-Projekt-istotnych-postanowien-umowy-UE-POULTRY.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-8-do-SIWZ-zestawienie-kosztow-kwalifikowalnych-programow-prostych.pdf": {
+      "href": "/media/tenders/restored/3e769ceb4e7d60cdf3152d9d.pdf",
+      "size": 131560,
+      "sha256": "3e769ceb4e7d60cdf3152d9d993dfd4355aed0e1b7f9e880bae5b8dd26656320",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-8-do-SIWZ-zestawienie-kosztow-kwalifikowalnych-programow-prostych.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-9-do-SIWZ-Tabela-oceny-oferty_is.pdf": {
+      "href": "/media/tenders/restored/6a1f6008c3d269a253dc6cac.pdf",
+      "size": 237966,
+      "sha256": "6a1f6008c3d269a253dc6cac371ad8ad47e9ee8efb5ce33d836f0b4baa243066",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-9-do-SIWZ-Tabela-oceny-oferty_is.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/02/1.-Zaproszenie-do-skladania-ofert-konferencja-1.pdf": {
+      "href": "/media/tenders/restored/91f575e4b822bfa853acae05.pdf",
+      "size": 669458,
+      "sha256": "91f575e4b822bfa853acae05820ad9233ca4f9b5c7613926e7fca9260e055594",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/02/1.-Zaproszenie-do-skladania-ofert-konferencja-1.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/02/1.-Zaproszenie-do-skladania-ofert-konferencja.pdf": {
+      "href": "/media/tenders/restored/4b01bfd1c9f6b4e2e75856b5.pdf",
+      "size": 669153,
+      "sha256": "4b01bfd1c9f6b4e2e75856b53880f7fa752c392cc865e1ef0085358b3acfffdf",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/02/1.-Zaproszenie-do-skladania-ofert-konferencja.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/02/1.-Zaproszenie-do-skladania-ofert-KRD_ANUGA-2025.pdf": {
+      "href": "/media/tenders/restored/03982519d2d18e87edde231a.pdf",
+      "size": 522453,
+      "sha256": "03982519d2d18e87edde231ae9b1de81cfcf21f02ec5874e1e32d4c06526f6c1",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/02/1.-Zaproszenie-do-skladania-ofert-KRD_ANUGA-2025.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/02/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.docx": {
+      "href": "/media/tenders/restored/0f2ad07b9c7a8ea20235e6d9.docx",
+      "size": 90566,
+      "sha256": "0f2ad07b9c7a8ea20235e6d9b58fb52297d1146d89194ecba49dd0a22174dc4c",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/02/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.docx"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/02/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.pdf": {
+      "href": "/media/tenders/restored/aaf68aed660779637e038a24.pdf",
+      "size": 335974,
+      "sha256": "aaf68aed660779637e038a24d8121626317e7c6373ae56d4f5f0d03b54564e7a",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/02/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/02/Pytanie-Oferenta-20.02.2025-i-odp.-Zamawiajacego-z-21.02.2025.pdf": {
+      "href": "/media/tenders/restored/4ea7b829cc64c97d9592c837.pdf",
+      "size": 109371,
+      "sha256": "4ea7b829cc64c97d9592c837e5d9e13a45697a045b79c43c4763b38cd492e5af",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/02/Pytanie-Oferenta-20.02.2025-i-odp.-Zamawiajacego-z-21.02.2025.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/03/2.2.Zalacznik-nr-2-do-SIWZ-Wzor-formularza-ofertowego_ZBN-2.pdf": {
+      "href": "/media/tenders/restored/5cbf78836744cafc85fa9e31.pdf",
+      "size": 191981,
+      "sha256": "5cbf78836744cafc85fa9e312d15f770125527c21467575394ad8d27336ab4b1",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/03/2.2.Zalacznik-nr-2-do-SIWZ-Wzor-formularza-ofertowego_ZBN-2.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/03/I.-na-www-tresc-ZAPROSZENIA-DO-SKLADANIA-OFERT_ewaluacja.pdf": {
+      "href": "/media/tenders/restored/30b1d666c2114906da37c632.pdf",
+      "size": 226816,
+      "sha256": "30b1d666c2114906da37c632f5d8bf8d87a542cc0cfce7da6b182ee1348d0f36",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/03/I.-na-www-tresc-ZAPROSZENIA-DO-SKLADANIA-OFERT_ewaluacja.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/03/II.-SIWZ_WIETNAM_KOREA_FILIPINY_ewaluacja-5.pdf": {
+      "href": "/media/tenders/restored/c19b26fd13a79d5f1e22b432.pdf",
+      "size": 617702,
+      "sha256": "c19b26fd13a79d5f1e22b4328eca824aa6695b4d1f3cb40e7904872f472dfd22",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/03/II.-SIWZ_WIETNAM_KOREA_FILIPINY_ewaluacja-5.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/03/II.-SIWZ_WIETNAM_KOREA_FILIPINY_ZBN.pdf": {
+      "href": "/media/tenders/restored/26c7a25732593a96b5b7d26a.pdf",
+      "size": 423993,
+      "sha256": "26c7a25732593a96b5b7d26a716705df45bf0597903148c5e774fe1286846d27",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/03/II.-SIWZ_WIETNAM_KOREA_FILIPINY_ZBN.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-1-do-SIWZ-Opis-programu-EU-POULTRY.pdf": {
+      "href": "/media/tenders/restored/45937824aed1135baaa6db41.pdf",
+      "size": 1968970,
+      "sha256": "45937824aed1135baaa6db41c63bfffd852cbfb1f6979e3a029371f56279cb1a",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-1-do-SIWZ-Opis-programu-EU-POULTRY.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-1-do-SIWZ-Wyciag-z-programu-w-jezyku-polskim.pdf": {
+      "href": "/media/tenders/restored/e56835b0ada7673aaa33e907.pdf",
+      "size": 2188116,
+      "sha256": "e56835b0ada7673aaa33e907ec56064fc761002175b27a76dd036f59815b40ab",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-1-do-SIWZ-Wyciag-z-programu-w-jezyku-polskim.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-2-do-SIWZ-Logo-KRD-IG-eng.pdf": {
+      "href": "/media/tenders/restored/ba2c319ad3ed2bcc8e40abdb.pdf",
+      "size": 118242,
+      "sha256": "ba2c319ad3ed2bcc8e40abdb792ea3ff7613ab06f707b7ec8aba2da22e165885",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-2-do-SIWZ-Logo-KRD-IG-eng.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-3-3.1.-do-SIWZ-Wzor-formularza-ofertowego.pdf": {
+      "href": "/media/tenders/restored/1a8a56bc8a056ea61ce06c20.pdf",
+      "size": 215787,
+      "sha256": "1a8a56bc8a056ea61ce06c20248e2db85be6a45e362fe76beda9eaaa7b226be4",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-3-3.1.-do-SIWZ-Wzor-formularza-ofertowego.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-3-do-SIWZ-Wykaz-uslug_ZBN.pdf": {
+      "href": "/media/tenders/restored/35a63b914c26d8ea414b470e.pdf",
+      "size": 97927,
+      "sha256": "35a63b914c26d8ea414b470e51decb4c616a2f00cb3f282c952f87f73dd4dba5",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-3-do-SIWZ-Wykaz-uslug_ZBN.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-4-do-SIWZ-Projekt-istotnych-postanowien-umowy-UE-POULTRY.pdf": {
+      "href": "/media/tenders/restored/a7fdee8690fac3bb5fe88945.pdf",
+      "size": 343849,
+      "sha256": "a7fdee8690fac3bb5fe88945d54d7523397b651435656a9d2598c382a8de7983",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-4-do-SIWZ-Projekt-istotnych-postanowien-umowy-UE-POULTRY.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-4-do-SIWZ-Wykaz-osob_ZBN.pdf": {
+      "href": "/media/tenders/restored/389d4fa37e6495338b4f07ed.pdf",
+      "size": 102621,
+      "sha256": "389d4fa37e6495338b4f07ed537d0918179f3c91164d1ebc160645fd185bb881",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-4-do-SIWZ-Wykaz-osob_ZBN.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-5-do-SIWZ_brak-powiazan-Ukraina.pdf": {
+      "href": "/media/tenders/restored/29e4d7373c8b684bda35aaef.pdf",
+      "size": 154892,
+      "sha256": "29e4d7373c8b684bda35aaefbfdaa40b10934b51cb2c8ad7935df6e6c5707844",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-5-do-SIWZ_brak-powiazan-Ukraina.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-5-do-SIWZ-Wzor-Istotnych-Postanowien-Umowy.pdf": {
+      "href": "/media/tenders/restored/7ab186f8968286accdc070b5.pdf",
+      "size": 201130,
+      "sha256": "7ab186f8968286accdc070b5e4c5bed0fbc539562b9b7cd522b4cc6ab6dddd93",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-5-do-SIWZ-Wzor-Istotnych-Postanowien-Umowy.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-6-do-SIWZ_RODO.pdf": {
+      "href": "/media/tenders/restored/268e0841c0f98a350f257294.pdf",
+      "size": 201393,
+      "sha256": "268e0841c0f98a350f2572947cf99dff0b648300aa7ec0b5525eb5feef91d5c5",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-6-do-SIWZ_RODO.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-7-do-SIWZ-zestawienie-kosztow-kwalifikowalnych-programow-prostych.pdf": {
+      "href": "/media/tenders/restored/00c02b1eff1ecae9d858f805.pdf",
+      "size": 131553,
+      "sha256": "00c02b1eff1ecae9d858f805720c44e56cd6e37d00b7575c840074bb710c29e1",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-7-do-SIWZ-zestawienie-kosztow-kwalifikowalnych-programow-prostych.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-8-do-SIWZ-Tabela-oceny-oferty.pdf": {
+      "href": "/media/tenders/restored/97490226056cb8d935e120ac.pdf",
+      "size": 218482,
+      "sha256": "97490226056cb8d935e120acdf1f8a5d1bd7aff42f2c71576df0dd7622b17c55",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-8-do-SIWZ-Tabela-oceny-oferty.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/04/1.-Zaproszenie-do-skladania-ofert-KRD_SIAL_China_2025-1.pdf": {
+      "href": "/media/tenders/restored/e6b74497815a6b8a922e34b1.pdf",
+      "size": 560777,
+      "sha256": "e6b74497815a6b8a922e34b1bfde9439329b1373dd8fbf29e177ee9693ed96b6",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/04/1.-Zaproszenie-do-skladania-ofert-KRD_SIAL_China_2025-1.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/07/1.-Zaproszenie-do-skladania-ofert-OCHRONA-WIZERUNKU-KRAJ-2025.pdf": {
+      "href": "/media/tenders/restored/089272b0ffea3c863123b826.pdf",
+      "size": 592253,
+      "sha256": "089272b0ffea3c863123b8268b5aec9f99c6c2da715c8a14d10d3b971fa18d2b",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/07/1.-Zaproszenie-do-skladania-ofert-OCHRONA-WIZERUNKU-KRAJ-2025.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/07/2-Zalaczniki-1-7-do-Zapytania-ofertowego.docx": {
+      "href": "/media/tenders/restored/de8ef7ebeab72dd3238ed005.docx",
+      "size": 108458,
+      "sha256": "de8ef7ebeab72dd3238ed005e917e3079092afab35e88dbbd04a160d3b2a91e8",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/07/2-Zalaczniki-1-7-do-Zapytania-ofertowego.docx"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/07/2-Zalaczniki-1-7-do-Zapytania-ofertowego.pdf": {
+      "href": "/media/tenders/restored/b0cf728ab8f52c464760eb7f.pdf",
+      "size": 555390,
+      "sha256": "b0cf728ab8f52c464760eb7faaea121c04ce06415c8a5999cb3735e0f49f278d",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/07/2-Zalaczniki-1-7-do-Zapytania-ofertowego.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/07/3.-Zalacznik-nr-5-do-Zapytania-ofertowego-KOSZTORYS.xlsx": {
+      "href": "/media/tenders/restored/d606f332ba867e62987904c8.xlsx",
+      "size": 31313,
+      "sha256": "d606f332ba867e62987904c8b6a260415a84ab147edf9aaf27918dec8b035772",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/07/3.-Zalacznik-nr-5-do-Zapytania-ofertowego-KOSZTORYS.xlsx"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/11/1.-Zaproszenie-do-skladania-ofert-SKLADKI-WYJAZDY-2026-3.pdf": {
+      "href": "/media/tenders/restored/ecab24aa9449ecb56ea119fd.pdf",
+      "size": 760800,
+      "sha256": "ecab24aa9449ecb56ea119fd433e42eea23132605e77d5836ee9098582bb8dfc",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/11/1.-Zaproszenie-do-skladania-ofert-SKLADKI-WYJAZDY-2026-3.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/11/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.pdf": {
+      "href": "/media/tenders/restored/4af3983c503201c876cc85a4.pdf",
+      "size": 223888,
+      "sha256": "4af3983c503201c876cc85a417c19a5d62d7732902a958f52327b5e6736d1f9b",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/11/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/12/1.-Zaproszenie-do-skladania-ofert-KRD_Alimentaria-2026-3.pdf": {
+      "href": "/media/tenders/restored/2bf8dd63faa635039eb802b2.pdf",
+      "size": 632143,
+      "sha256": "2bf8dd63faa635039eb802b2797d4762d100163235e01e5d08a8e94840ef28d0",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/12/1.-Zaproszenie-do-skladania-ofert-KRD_Alimentaria-2026-3.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/12/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.docx": {
+      "href": "/media/tenders/restored/1451825f9b4cdba992150cc9.docx",
+      "size": 91366,
+      "sha256": "1451825f9b4cdba992150cc96d98a92fdeee8bc834ccddce68de52a90c5d6473",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/12/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.docx"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2025/12/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.pdf": {
+      "href": "/media/tenders/restored/c94956b08450043ec993acb6.pdf",
+      "size": 401979,
+      "sha256": "c94956b08450043ec993acb677fe44365a7ff7e994910a5745b3e697f72b4ad6",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2025/12/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2026/03/1.-Zaproszenie-do-skladania-ofert-konferencja-1.pdf": {
+      "href": "/media/tenders/restored/36845605bff32f67fc33a94e.pdf",
+      "size": 597441,
+      "sha256": "36845605bff32f67fc33a94e281ef18df8068f28e88ce845dc3beb947540ba9d",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2026/03/1.-Zaproszenie-do-skladania-ofert-konferencja-1.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2026/03/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-1.docx": {
+      "href": "/media/tenders/restored/e1a2880e1c671c9cdcbcfad3.docx",
+      "size": 33769,
+      "sha256": "e1a2880e1c671c9cdcbcfad3a3a961a38c1a95e4820886d70422eb7fa8b012d6",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2026/03/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-1.docx"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2026/03/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-1.pdf": {
+      "href": "/media/tenders/restored/f757dd41706c579b1c81e105.pdf",
+      "size": 201630,
+      "sha256": "f757dd41706c579b1c81e105c9e462b6979ba90cc49a6b840ee9a34ec2aabc1c",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2026/03/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-1.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2026/05/1.-Zaproszenie-do-skladania-ofert-WYBIERZ-TWOJE-WARTOSCI-1.pdf": {
+      "href": "/media/tenders/restored/f3eca7baacc86b575cb30a70.pdf",
+      "size": 572573,
+      "sha256": "f3eca7baacc86b575cb30a7036c2393982305ae358ddc9379bc6b57a5a5b63f2",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2026/05/1.-Zaproszenie-do-skladania-ofert-WYBIERZ-TWOJE-WARTOSCI-1.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2026/05/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-2.docx": {
+      "href": "/media/tenders/restored/9830a922806999e657ae7b97.docx",
+      "size": 36653,
+      "sha256": "9830a922806999e657ae7b97de61b3565bebef773c392f110b31402eaba3b644",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2026/05/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-2.docx"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2026/05/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-2.pdf": {
+      "href": "/media/tenders/restored/1257d72762fa9044d9f51d83.pdf",
+      "size": 220825,
+      "sha256": "1257d72762fa9044d9f51d8387b9f7e1c58f4a327ee7d0b8ab0403f11a3c6dee",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2026/05/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-2.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2026/06/1.-Zaproszenie-do-skladania-ofert-KRD_SIAL-2026-5.pdf": {
+      "href": "/media/tenders/restored/5e4e0e2c2747b2c6e19a58c4.pdf",
+      "size": 707434,
+      "sha256": "5e4e0e2c2747b2c6e19a58c46f69df4846975f0b9e1d157876774ef7740debc6",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2026/06/1.-Zaproszenie-do-skladania-ofert-KRD_SIAL-2026-5.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2026/06/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.docx": {
+      "href": "/media/tenders/restored/4c40b6abe1f71ea93d0868c6.docx",
+      "size": 91322,
+      "sha256": "4c40b6abe1f71ea93d0868c6ccc59360ba7a4c2ce01d76319369d29cb48ef57b",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2026/06/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.docx"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2026/06/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.pdf": {
+      "href": "/media/tenders/restored/4ec40aa35938e4521280d477.pdf",
+      "size": 468938,
+      "sha256": "4ec40aa35938e4521280d477d96b15d020bb6318459c1ba6ecd4d2827a2627f7",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2026/06/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2026/08/1.-Zaproszenie-do-skladania-ofert-OCHRONA-WIZERUNKU-KRAJ-2026-1.pdf": {
+      "href": "/media/tenders/restored/ed36d9be9ed71b4e61f3028b.pdf",
+      "size": 646979,
+      "sha256": "ed36d9be9ed71b4e61f3028b4e35a634eba73d0aa4ce3a84b581635b0d42d0bb",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2026/08/1.-Zaproszenie-do-skladania-ofert-OCHRONA-WIZERUNKU-KRAJ-2026-1.pdf",
+      "archive": {
+        "provider": "Common Crawl",
+        "index": "CC-MAIN-2026-39",
+        "capturedAt": "20260915034404",
+        "filename": "crawl-data/CC-MAIN-2026-39/segments/1788492992222.68/warc/CC-MAIN-20260915021126-20260915051126-00465.warc.gz",
+        "offset": 266285806,
+        "length": 580192,
+        "recordId": "01a0a32a-27bf-7354-9a74-1ab244cd7f03",
+        "payloadSha1": "I5SXUVL4JH7PN2PORBPBDTANDOAHO2Y4"
+      },
+      "originalServer": {
+        "hostname": "krd-ig.com.pl",
+        "address": "109.95.157.137",
+        "tlsVerified": true
+      }
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2026/08/1.-Zaproszenie-do-skladania-ofert-OCHRONA-WIZERUNKU-KRAJ-2026.pdf": {
+      "href": "/media/tenders/restored/648fec9fc98598c0412c271e.pdf",
+      "size": 647197,
+      "sha256": "648fec9fc98598c0412c271eae524dfd5164572e0f3bc77b7c7dd958676f234f",
+      "downloadedFrom": "https://web.archive.org/web/20261031041940id_/https://krd-ig.com.pl/wp-content/uploads/2026/08/1.-Zaproszenie-do-skladania-ofert-OCHRONA-WIZERUNKU-KRAJ-2026.pdf"
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2026/08/2-Zalaczniki-1-7-do-Zapytania-ofertowego.docx": {
+      "href": "/media/tenders/restored/39c300c6f0c35202da315f03.docx",
+      "size": 108524,
+      "sha256": "39c300c6f0c35202da315f031936b80682d976292222c6b9dc2753bcaee54037",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2026/08/2-Zalaczniki-1-7-do-Zapytania-ofertowego.docx",
+      "originalServer": {
+        "hostname": "krd-ig.com.pl",
+        "address": "109.95.157.137",
+        "tlsVerified": true
+      }
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2026/08/2-Zalaczniki-1-7-do-Zapytania-ofertowego.pdf": {
+      "href": "/media/tenders/restored/1cf84bfb852041262633a3d1.pdf",
+      "size": 319193,
+      "sha256": "1cf84bfb852041262633a3d1240a795df776fa9fa309e8d00fd9b514fcd10450",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2026/08/2-Zalaczniki-1-7-do-Zapytania-ofertowego.pdf",
+      "archive": {
+        "provider": "Common Crawl",
+        "index": "CC-MAIN-2026-39",
+        "capturedAt": "20260915030801",
+        "filename": "crawl-data/CC-MAIN-2026-39/segments/1788492992222.68/warc/CC-MAIN-20260915021126-20260915051126-00330.warc.gz",
+        "offset": 284448198,
+        "length": 271240,
+        "recordId": "01a0a309-26ae-740d-aa73-86b8a87977b5",
+        "payloadSha1": "INJ6L2I65IQMWQO6U34JM3M6IBYZ4SSZ"
+      },
+      "originalServer": {
+        "hostname": "krd-ig.com.pl",
+        "address": "109.95.157.137",
+        "tlsVerified": true
+      }
+    },
+    "https://krd-ig.com.pl/wp-content/uploads/2026/08/3.-Zalacznik-nr-5-do-Zapytania-ofertowego-KOSZTORYS.xlsx": {
+      "href": "/media/tenders/restored/2eac7e79a5975dc78b26f8ce.xlsx",
+      "size": 31617,
+      "sha256": "2eac7e79a5975dc78b26f8ce44b83e36959f42553978a0ddbe4a57637b4b3813",
+      "downloadedFrom": "https://krd-ig.com.pl/wp-content/uploads/2026/08/3.-Zalacznik-nr-5-do-Zapytania-ofertowego-KOSZTORYS.xlsx",
+      "originalServer": {
+        "hostname": "krd-ig.com.pl",
+        "address": "109.95.157.137",
+        "tlsVerified": true
+      }
+    }
+  },
+  "posts": {
+    "zaproszenie-do-skladania-ofert-na-przygotowanie-koncepcji-i-przeprowadzenie-badania-efektywnosci-3-letniego-programu-informacyjno-promocyjnego-dotyczacego-miesa-drobiowego-pn-europejski-drob": {
+      "id": 12399,
+      "paragraphs": [
+        "Warszawa, 5 marca 2025 r.",
+        "Krajowa Rada Drobiarstwa – Izba Gospodarcza z siedzibą w Warszawie, przy ul. Czackiego 3/5 zaprasza do wzięcia udziału w postępowaniu przetargowym, mającym za zadanie wyłonić podmiot, który przygotuje koncepcję i przeprowadzi badania efektywności w/w Programu informacyjno- promocyjnego.",
+        "Budżet przewidziany na realizację Programu wynosi 251 372,64 EUR brutto.",
+        "Wykonawca zostanie wybrany na podstawie przepisów:",
+        "– Rozporządzenia Parlamentu Europejskiego i Rady (UE) nr 1144/2014 w sprawie działań informacyjnych i promocyjnych dotyczących produktów rolnych wdrażanych na rynku wewnętrznym i w państwach trzecich oraz uchylające rozporządzenie Rady (WE) nr 3/2008 (Dz.Urz.UE L 317/56 z 4.11.2014);",
+        "– Rozporządzenia delegowanego Komisji (UE) 2015/1829 uzupełniającego rozporządzenie Parlamentu Europejskiego i Rady (UE) nr 1144/2014 w sprawie działań informacyjnych i promocyjnych dotyczących produktów rolnych na rynku wewnętrznym i w państwach trzecich (Dz.Urz.UE L 266/3 z 13.10.2015);",
+        "– Dyrektywy Parlamentu Europejskiego i Rady 2014/24/UE z dnia 26 lutego 2014 r. w sprawie zamówień publicznych, uchylająca dyrektywę 2004/18/WE (Dz.Urz.UE L 94/65 z 28.03.2014);",
+        "– Rozporządzenia wykonawczego Komisji (UE) 2015/1831 ustanawiającego zasady stosowania rozporządzenia Parlamentu Europejskiego i Rady (UE) nr 1144/2014 w sprawie działań informacyjnych i promocyjnych dotyczących produktów rolnych wdrażanych na rynku wewnętrznym i w państwach trzecich (Dz.Urz.UE L 266/14 z 13.10.2015);",
+        "– Wskazówek dotyczących procedury konkursowej opublikowane przez Komisję Europejską w dniu 7 lipca 2016 r. znak DDG1.B5/MJ/db D (2016) 3210777;",
+        "– Przepisów Tytułu VII rozporządzenia Parlamentu Europejskiego i Rady (UE, Euratom)2018/1046.",
+        "Program realizowany jest w ramach mechanizmu Wspólnej Polityki Rolnej „Wsparcie działań promocyjnych i informacyjnych na rynkach wybranych produktów rolnych”.",
+        "Ofertę należy dostarczyć na adres:",
+        "Krajowa Rada Drobiarstwa – Izba Gospodarcza",
+        "ul. Czackiego 3/5",
+        "00-043 Warszawa",
+        "pok. 401 (4 piętro)",
+        "Ostateczny termin składania ofert upływa w dniu 11 kwietnia 2025 r., o godz. 10.00",
+        "Specyfikacja Istotnych Warunków Zamówienia (SIWZ) wraz z jej załącznikami takimi jak: opis działań ewaluacyjnych i Programu, wzór formularza ofertowego, wykaz zrealizowanych kampanii, wykaz osób, które będą uczestniczyć we wdrożeniu kampanii, oświadczenie o braku powiązań, klauzula informacyjna dotycząca RODO, wzór Istotnych Postanowień Umowy (IPU), zestawienie kosztów kwalifikowalnych programów, tabela oceny oferty, logo Krajowej Rady Drobiarstwa-Izby Gospodarczej stanowią załączniki (8) do niniejszego zaproszenia.",
+        "Osobą dedykowaną do kontaktu z Oferentami jest p. Marta Kędel/Irena Sikorska. Ewentualne pytania do treści dokumentów udostępnionych w postępowaniu przetargowym należy kierować drogą mailową na adres: m.kedel@krd-ig.pl /i.sikorska@krd-ig.pl",
+        "Niniejsze zaproszenie opublikowano w dn. 5 marca 2025 r.",
+        "Zaproszenie dn. 5 marca 2025 r. zamieszczone zostało na stronie www.krd-ig.com.pl pod zakładką Zapytania ofertowe oraz na https://www.biznes-polska.pl/ .",
+        "Załączniki:",
+        "I. Zaproszenie do składania Ofert na PRZYGOTOWANIE KONCEPCJI I PRZEPROWADZENIE BADANIA EFEKTYWNOŚCI 3-letniego programu informacyjno-promocyjnego dotyczącego mięsa drobiowego pn. „EUROPEJSKI DRÓB – Z NASZYCH FERM NA TWÓJ STÓŁ” na rynkach Korei PŁD., Wietnamu I Filipin – [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/03/I.-na-www-tresc-ZAPROSZENIA-DO-SKLADANIA-OFERT_ewaluacja.pdf)",
+        "II. Specyfikacja Istotnych Warunków Zamówienia w postępowaniu przetargowym na PRZYGOTOWANIE KONCEPCJI I PRZEPROWADZENIE BADANIA EFEKTYWNOŚCI 3-letniego programu informacyjno-promocyjnego dotyczącego mięsa drobiowego pn. „ EUROPEJSKI DRÓB – Z NASZYCH FERM NA TWÓJ STÓŁ” na rynkach Korei PŁD., Wietnamu I Filipin - [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/03/II.-SIWZ_WIETNAM_KOREA_FILIPINY_ewaluacja-5.pdf)",
+        "1. Załącznik nr 1 do SIWZ – Opis badań ewaluacyjnych i programu informacyjno-promocyjnego dotyczącego mięsa drobiowego pn. „EUROPEJSKI DRÓB – Z NASZYCH FERM NA TWÓJ STÓŁ” na rynkach Korei Płd., Wietnamu i Filipin - [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-1-do-SIWZ-Opis-programu-EU-POULTRY.pdf)",
+        "2. Załącznik nr 2 do SIWZ – Logo Krajowej Rady Drobiarstwa – Izby Gospodarczej – [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-2-do-SIWZ-Logo-KRD-IG-eng.pdf)",
+        "3. Załącznik nr 3, 3.1 do SIWZ – Wzór formularza ofertowego oraz Wykaz przeprowadzonych badań oraz dysponowanie potencjałem ludzkim – [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-3-3.1.-do-SIWZ-Wzor-formularza-ofertowego.pdf)",
+        "4. Załącznik nr 4 do SIWZ – Projekt Istotnych Postanowień Umowy (IPU) – [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-4-do-SIWZ-Projekt-istotnych-postanowien-umowy-UE-POULTRY.pdf)",
+        "5. Załącznik nr 5 do SIWZ – Oświadczenie o braku powiązań – [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-5-do-SIWZ_brak-powiazan-Ukraina.pdf)",
+        "6. Załącznik nr 6 do SIWZ – Projekt istotnych postanowień umowy – UE – POULTRY – [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-6-do-SIWZ_RODO.pdf)",
+        "7. Załącznik nr 7 do SIWZ – zestawienie kosztów kwalifikowalnych programów prostych– [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-7-do-SIWZ-zestawienie-kosztow-kwalifikowalnych-programow-prostych.pdf)",
+        "8. Załącznik nr 8 do SIWZ – Tabela oceny oferty– [pobierz .pdf](https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-8-do-SIWZ-Tabela-oceny-oferty.pdf)",
+        "13.03.2025",
+        "Pytanie Oferenta i odpowiedź Zamawiającego dot. zadania pt.: PRZYGOTOWANIE KONCEPCJI I PRZEPROWADZENIE BADANIA EFEKTYWNOŚCI 3-LETNIEGO PROGRAMU INFORMACYJNO-PROMOCYJNEGO DOTYCZĄCEGO MIĘSA DROBIOWEGO PN. „EUROPEJSKI DRÓB – Z NASZYCH FERM NA TWÓJ STÓŁ” NA RYNKACH KOREI PŁD., WIETNAMU I FILIPIN",
+        "Pytanie Oferenta z dnia 12.03.2025 Szanowni Państwo mamy pytanie: w zakresie: Kryterium K.1. Ocena koncepcji przeprowadzenia badań ewaluacyjnych punkt Dodatkowe działania bezkosztowe: Znaczenie dla pozyskania dodatkowych danych jako źródła szczegółowych informacji o rynkach docelowych oraz ich potencjale konsumpcyjnym i sprzedażowym.",
+        "Pytanie: W jaki sposób w koncepcji badawczej trzeba przedstawić w/w element oceny? Czy ma być to wykaz źródeł informacji (lista publikacji, raportów itp.) czy/lub/i obszary dotyczące potencjału konsumpcyjnego i sprzedażowego. W jaki sposób mają być przedstawione źródła szczegółowych informacji o rynkach docelowych oraz ich potencjale konsumpcyjnym i sprzedażowym? Odpowiedź Zamawiającego z dnia 13.03.2025 Szanowny Panie,",
+        "Dot. postepowania w zakresie wyboru wykonawcy działania: „PRZYGOTOWANIE KONCEPCJI I PRZEPROWADZENIE BADANIA EFEKTYWNOŚCI 3-LETNIEGO PROGRAMU INFORMACYJNO-PROMOCYJNEGO DOTYCZĄCEGO MIĘSA DROBIOWEGO PN. „EUROPEJSKI DRÓB – Z NASZYCH FERM NA TWÓJ STÓŁ” NA RYNKACH KOREI PŁD., WIETNAMU I FILIPIN”.",
+        "W odpowiedzi na Pana pytanie dotyczące kryterium K.1. Ocena koncepcji przeprowadzenia badań ewaluacyjnych – punkt Dodatkowe działania bezkosztowe, uprzejmie informujemy, że sposób przedstawienia tego elementu oceny zależy od inwencji Oferenta i jego podejścia do realizacji badań. Oferent ma swobodę w określeniu, jakie działania i źródła danych uzna za najbardziej wartościowe i adekwatne do celu badania.",
+        "Może to obejmować m.in.: • wykaz potencjalnych źródeł informacji (np. publikacje, raporty, bazy danych), • opis dodatkowych analiz rynkowych, • wskazanie metod pozyskiwania szczegółowych danych o rynkach docelowych, • propozycję działań pogłębiających analizę potencjału konsumpcyjnego i sprzedażowego.",
+        "Nie narzucamy jednej konkretnej formy przedstawienia tych informacji – istotne jest, aby zaproponowane przez Oferenta podejście było spójne, uzasadnione i wnosiło wartość dodaną do badania.",
+        "Każda oferta będzie oceniana obiektywnie i indywidualnie przez członków zespołu oceniającego, z uwzględnieniem jej spójności, kompletności oraz potencjalnego wkładu w realizację badań ewaluacyjnych.",
+        "W razie dodatkowych pytań pozostajemy do dyspozycji."
+      ],
+      "appendedParagraphCount": 0
+    },
+    "zaproszenie-do-skladania-ofert-na-wybor-zewnetrznego-biura-nadzoru-3-letniego-programu-informacyjno-promocyjnego-dotyczacego-miesa-drobiowego-pn-europejski-drob-z-naszych-ferm-na-twoj-stol": {
+      "id": 12518,
+      "paragraphs": [
+        "Warszawa, 12 marca 2025 r.",
+        "Krajowa Rada Drobiarstwa – Izba Gospodarcza z siedzibą w Warszawie, przy ul. Czackiego 3/5 zaprasza do wzięcia udziału w postępowaniu przetargowym, mającym za zadanie wyłonić zewnętrzne biuro nadzoru.",
+        "Wykonawca zostanie wybrany na podstawie przepisów:",
+        "– Postępowanie prowadzone jest na podstawie przepisów ustawy Kodeks cywilny z dnia 23 kwietnia 1964 r. (Dz.U.2020.1740 t.j. z dnia 2020.10.08 .) art. 701- 705, z zachowaniem zasad uczciwej konkurencji.",
+        "Program realizowany będzie w ramach mechanizmu Wspólnej Polityki Rolnej „Wsparcie działań promocyjnych i informacyjnych na rynkach wybranych produktów rolnych”.",
+        "Ofertę należy dostarczyć na adres:",
+        "Krajowa Rada Drobiarstwa – Izba Gospodarcza",
+        "ul. Czackiego 3/5",
+        "00-043 Warszawa",
+        "pok. 401 (4 piętro)",
+        "Ostateczny termin składania ofert upływa w dniu 24 marca 2025 r., o godz. 10.00",
+        "Specyfikacja Istotnych Warunków Zamówienia (SIWZ) wraz z jej załącznikami takimi jak: wyciąg z Programu, wzór formularza ofertowego, wykaz zrealizowanych kampanii, wykaz osób, które będą uczestniczyć we wdrożeniu kampanii, wzór Istotnych Postanowień Umowy (IPU) stanowią załączniki do niniejszego zaproszenia.",
+        "Osobą dedykowaną do kontaktu z Oferentami jest p. Marta Kędel. Ewentualne pytania do treści dokumentów udostępnionych w postępowaniu przetargowym należy kierować drogą mailową na adres: m.kedel@krd-ig.pl , i.sikorska@krd-ig.pl",
+        "Niniejsze zaproszenie opublikowano w dn. 12 marca 2025 r.",
+        "Zaproszenie dn. 12 marca 2025 r. zamieszczone zostało na stronie www.krd-ig.com.pl pod zakładką ZAPYTANIA OFERTOWE.",
+        "Załączniki:",
+        "II. Specyfikacja Istotnych Warunków Zamówienia w postępowaniu przetargowym na WYBÓR ZEWNĘTRZNEGOBIURA NADZORU 3-letniego programu informacyjno-promocyjnego dotyczącego mięsa drobiowego pn. „ EUROPEJSKI DRÓB – Z NASZYCH FERM NA TWÓJ STÓŁ” na rynkach Korei PŁD., Wietnamu I Filipin - [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/03/II.-SIWZ_WIETNAM_KOREA_FILIPINY_ZBN.pdf)",
+        "1. Załącznik nr 1 do SIWZ – Wyciąg z programu w języku polskim – [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-1-do-SIWZ-Wyciag-z-programu-w-jezyku-polskim.pdf)",
+        "2. Załącznik nr 2 do SIWZ – Wzór formularza ofertowego –> [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/03/2.2.Zalacznik-nr-2-do-SIWZ-Wzor-formularza-ofertowego_ZBN-2.pdf)",
+        "3. Załącznik nr 3 do SIWZ – Wykaz wykonanych usług – [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-3-do-SIWZ-Wykaz-uslug_ZBN.pdf)",
+        "4. Załącznik nr 4 do SIWZ – Wykaz osób, które będą uczestniczyć w wykonaniu zadania/projektu – [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-4-do-SIWZ-Wykaz-osob_ZBN.pdf)",
+        "5. Załącznik nr 5 do SIWZ – Projekt Istotnych Postanowień Umowy (IPU) – [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/03/Zalacznik-nr-5-do-SIWZ-Wzor-Istotnych-Postanowien-Umowy.pdf)"
+      ],
+      "appendedParagraphCount": 0
+    },
+    "zaproszenie-do-skladania-ofert-na-wdrozenie-3-letniego-programu-informacyjno-promocyjnego-dotyczacego-miesa-drobiowego-pn-europejski-drob-z-naszych-ferm-na-twoj-stolna-rynkach-kor": {
+      "id": 10333,
+      "paragraphs": [
+        "Warszawa, 30 grudnia 2024 r.",
+        "Krajowa Rada Drobiarstwa – Izba Gospodarcza z siedzibą w Warszawie, przy ul. Czackiego 3/5 zaprasza do wzięcia udziału w postępowaniu przetargowym, mającym za zadanie wyłonić podmiot, który wdroży w/w Program informacyjno- promocyjny.",
+        "Budżet przewidziany na realizację całego Programu wynosi 4 080 797,36 EUR brutto",
+        "Wykonawca zostanie wybrany na podstawie przepisów: – Rozporządzenia Parlamentu Europejskiego i Rady (UE) nr 1144/2014 w sprawie działań informacyjnych i promocyjnych dotyczących produktów rolnych wdrażanych na rynku wewnętrznym i w państwach trzecich oraz uchylające rozporządzenie Rady (WE) nr 3/2008 (Dz.Urz.UE L 317/56 z 4.11.2014); – Rozporządzenia delegowanego Komisji (UE) 2015/1829 uzupełniającego rozporządzenie Parlamentu Europejskiego i Rady (UE) nr 1144/2014 w sprawie działań informacyjnych i promocyjnych dotyczących produktów rolnych na rynku wewnętrznym i w państwach trzecich (Dz.Urz.UE L 266/3 z 13.10.2015); – Dyrektywy Parlamentu Europejskiego i Rady 2014/24/UE z dnia 26 lutego 2014 r. w sprawie zamówień publicznych, uchylająca dyrektywę 2004/18/WE (Dz.Urz.UE L 94/65 z 28.03.2014); – Rozporządzenia wykonawczego Komisji (UE) 2015/1831 ustanawiającego zasady stosowania rozporządzenia Parlamentu Europejskiego i Rady (UE) nr 1144/2014 w sprawie działań informacyjnych i promocyjnych dotyczących produktów rolnych wdrażanych na rynku wewnętrznym i w państwach trzecich (Dz.Urz.UE L 266/14 z 13.10.2015); – Wskazówek dotyczących procedury konkursowej opublikowane przez Komisję Europejską w dniu 7 lipca 2016 r. znak DDG1.B5/MJ/db D (2016) 3210777; – Przepisów Tytułu VII rozporządzenia Parlamentu Europejskiego i Rady (UE, Euratom)2018/1046.",
+        "Program realizowany będzie w ramach mechanizmu Wspólnej Polityki Rolnej „Wsparcie działań promocyjnych i informacyjnych na rynkach wybranych produktów rolnych”.",
+        "Ofertę należy dostarczyć na adres:",
+        "Krajowa Rada Drobiarstwa – Izba Gospodarcza ul. Czackiego 3/5",
+        "00-043 Warszawa pok. 401",
+        "Ostateczny termin składania ofert upływa w dniu 5 lutego 2025 r., o godz. 10.00",
+        "Specyfikacja Istotnych Warunków Zamówienia (SIWZ) wraz z jej załącznikami takimi jak: opis Programu, wzór formularza ofertowego, wykaz zrealizowanych kampanii i wydarzeń o charakterze wystawienniczym, wykaz osób, które będą uczestniczyć we wdrożeniu kampanii, oświadczenie o braku powiązań, klauzula informacyjna dotycząca RODO, wzór Istotnych Postanowień Umowy (IPU), zestawienie kosztów kwalifikowalnych programów tabela oceny oferty, logo Krajowej Rady Drobiarstwa-Izby Gospodarczej stanowią załączniki (10) do niniejszego zaproszenia.",
+        "Osobami dedykowanymi do kontaktu z Oferentami jest p. Marta Kędel / p. Irena Sikorska.",
+        "Ewentualne pytania do treści dokumentów udostępnionych w postępowaniu przetargowym należy kierować drogą mailową na adresy: m.kedel@krd-ig.pl / i.sikorska@krd-i g.pl",
+        "Niniejsze zaproszenie opublikowano w dnia 30 grudnia 2024 r.",
+        "Zaproszenie dnia 30 grudnia 2024 r. zamieszczone zostało na stronie www.krd-ig.com.pl pod zakładką ZAPYTANIA OFERTOWE i AKTUALNOŚCI.",
+        "Załączniki:",
+        "I. Zaproszenie do składania Ofert na wdrożenie 3-letniego programu informacyjno-promocyjnego dotyczącego mięsa drobiowego pn. „EUROPEJSKI DRÓB – Z NASZYCH FERM NA TWÓJ STÓŁ” na rynkach Korei PŁD., Wietnamu i Filipin –> [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/01/I.-Zaproszenie-do-skladania-ofert-Europejski-drob-z-naszych-ferm-na-Twoj-stol-30.12.2024-.pdf)",
+        "II. Specyfikacja Istotnych Warunków Zamówienia w postępowaniu przetargowym na wdrożenie 3-letniego programu informacyjno-promocyjnego dotyczącego mięsa drobiowego pn. „EUROPEJSKI DRÓB – Z NASZYCH FERM NA TWÓJ STÓŁ” na rynkach Korei PŁD., Wietnamu i Filipin -> [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/01/2.-II.-SIWZ_Europejski-drob-z-naszych-ferm-na-Twoj-stol.pdf)",
+        "1. Załącznik nr 1 do SIWZ – Opis programu informacyjno-promocyjnego pn. „EUROPEJSKI DRÓB – Z NASZYCH FERM NA TWÓJ STÓŁ” w języku polskim -> [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/01/2a.-Zalacznik-nr-1-do-SIWZ-Opis-programu-EU-POULTRYp.pdf)",
+        "2. Załącznik nr 2 do SIWZ – Wzór formularza ofertowego –> [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-2-do-SIWZ-Wzor-formularza-ofertowego.pdf)",
+        "3. Załącznik nr 3 do SIWZ – Wykaz zrealizowanych kampanii –> [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-3-do-SIWZ_wykaz_zrealizowanych-kampanii.pdf)",
+        "4. Załącznik nr 4 do SIWZ – Wykaz osób, które będą uczestniczyć we wdrożeniu kampanii –> [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-4-do-SIWZ_wykaz_osob.pdf)",
+        "5. Załącznik nr 5 do SIWZ – Oświadczenie o braku powiązań –> [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-5-do-SIWZ_brak-powiazan-Ukraina.pdf)",
+        "6. Załącznik nr 6 do SIWZ – Klauzula informacyjna dotycząca RODO –> [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-6-do-SIWZ_RODO.pdf)",
+        "7. Załącznik nr 7 do SIWZ – Wzór Istotnych Postanowień Umowy (IPU) –> [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-7-do-SIWZ-Projekt-istotnych-postanowien-umowy-UE-POULTRY.pdf)",
+        "8. Załącznik nr 8 do SIWZ – Zestawienie kosztów kwalifikowalnych programów prostych –> [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-8-do-SIWZ-zestawienie-kosztow-kwalifikowalnych-programow-prostych.pdf)",
+        "9. Załącznik nr 9 do SIWZ – Tabela oceny oferty –> [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-9-do-SIWZ-Tabela-oceny-oferty_is.pdf)",
+        "10. Załącznik nr 10 do SIWZ – Logo Krajowej Rady Drobiarstwa – Izby Gospodarczej –> [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/01/Zalacznik-nr-10-do-SIWZ-Logo-KRD-IG-eng.pdf)"
+      ],
+      "appendedParagraphCount": 0
+    },
+    "zapytanie-ofertowe-dotyczace-projektu-zadania-pt-skladki-do-miedzynarodowych-organizacji-branzowych-avec-clitravi-elpha-ipc-wraz-z-organizacja-wyjazdu-przedstawicieli-polskiej": {
+      "id": 8285,
+      "paragraphs": [
+        "Krajowa Rada Drobiarstwa – Izba Gospodarcza zaprasza do przygotowania i przedstawienia oferty dotyczącej projektu (zadania) pt. „Składki do międzynarodowych organizacji branżowych AVEC, CLITRAVI, ELPHA, IPC wraz z organizacją wyjazdu przedstawicieli polskiej branży drobiarskiej na Zgromadzenie Ogólne AVEC, CLITRAVI, ELPHA oraz zjazd członków IPC”.",
+        "Termin składania ofert upływa 27 marca 2024 r. o godz. 09.00 .",
+        "Treść Zapytania ofertowego —> [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/01/1.-Zaproszenie-do-skladania-ofert-SKLADKI-WYJAZDY2024.pdf)",
+        "Załączniki (1-5) do Zapytania ofertowego —> [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2025/01/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-.pdf)",
+        "Załączniki (1-5) do Zapytania ofertowego dostępne są także w formie edytowalnej w biurze KRD-IG. Mogą Państwo poprosić o przesłanie wersji edytowalnej Załączników wysyłając prośbę mailem na adres m.kedel@krd-ig.pl",
+        "[2.-Zalaczniki-1-5-do-Zapytania-ofertowego.pdf](https://krd-ig.com.pl/wp-content/uploads/2024/03/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.pdf)"
+      ],
+      "appendedParagraphCount": 1
+    },
+    "zaproszenie-do-skladania-ofert-na-wybor-agencji-ewaluacyjnej-dla-unijnego-programu-multi-1144-2014-eurspo-program-promocji-drobiu-na-rynkach-francji-polski-niemiec-i-hiszpanii": {
+      "id": 8275,
+      "paragraphs": [
+        "Krajowa Rada Drobiarstwa – Izba Gospodarcza połączyła siły z trzema innymi krajami członkowskimi (Francją, Hiszpanią i Niemcami) celem stworzenia programu promocyjno-informacyjnego na temat zrównoważonych europejskich produktów drobiowych oraz korzyści płynących ze spożycia europejskiego mięsa drobiowego.",
+        "GŁÓWNE CELE PROGRAMU: – podkreślenie specyfiki państw członkowskich, szczególnie pod względem poszanowania środowiska i zrównoważonego rozwoju, celem podkreślenia zrównoważonej strategii, którą europejska branża mięsa drobiowego wdraża od lat; – podnoszenie świadomości na temat korzyści płynących z wyboru produktów UE w celu promowania zdrowego stylu życia; – zwiększenie konkurencyjności i spożycia europejskich produktów drobiowych, a tym samym zwiększenie udziału w rynku europejskim w Niemczech, Francji, Hiszpanii i Polsce.",
+        "Zgodnie z przepisami UE program promocji musi zostać poddany ocenie przez zewnętrzną jednostkę oceniającą, aby zapewnić zgodność z planowanymi rezultatami, koszty i cele.",
+        "PEŁNA TREŚĆ ZAPYTANIA OFERTOWEGO do POBRANIA tutaj : [EURSPO_Call for tender_Evaluation Agency.pdf](https://krd-ig.com.pl/wp-content/uploads/2023/12/2023-12-15-EURSPO_Call-for-tender_Evaluation-Agency_Final.pdf)",
+        "DOSTARCZENIE OFERT:",
+        "Szczegółową ofertę należy przesłać w języku angielskim do p. Yanna Brice’a (dyrektora wykonawczego CIDEF-CIPC-CICAR-ATM Avicole) pocztą elektroniczną na adres cipc.poulet@orange.fr i yann.brice@cidef.fr .",
+        "HARMONOGRAM:",
+        "31 stycznia 2024 r. do godz. 18:00 : Termin nadsyłania ofert (wszystkie oferty przesłane po tym terminie nie będą rozpatrywane).",
+        "15 lutego do godz. 18:00 : Powiadomienie wybranej agencji i szczegółowe powiadomienie pozostałych agencji o niewybraniu",
+        "KONTAKT:",
+        "Wszelkie pytania proszę kierować drogą mailową do zespołu koordynującego program oraz p. Yann Brice (dyrektor wykonawczy CIDEF-CIPC-CICAR-ATM Avicole) na adresy cipc.poulet@orange.fr i yann.brice@cidef.fr . Każda korespondencja w ramach niniejszego zaproszenia do składania ofert powinna być napisana w języku angielskim i zawierać w temacie wiadomości „EURSPO: Call for Tender – Evaluation Agency” .",
+        "—————————————————————————————————————————————————————————————————————–",
+        "OPEN CALL FOR EVALUATION BODY:",
+        "Tender for the selection of an Evaluation Agency for the assessment of a multi-Programme REA EU 1144/2014 for the promotion of poultry",
+        "EURSPO: PROMOTION PROGRAMME IN FRANCE, POLAND, GERMANY AND SPAIN",
+        "The National Poultry Council – Chamber of Commerce has joined forces with three other member countries (France, Spain and Germany) to create a promotional and information program about sustainable European poultry products and the benefits of consuming European poultry meat.",
+        "THE MAIN GOALS OF PROMOTIONAL PROGRAM: – to highlight the specificities of the European Unions, in particular in terms of environmental friendliness and sustainability in order to highlight the sustainable strategies that the European poultry meat industry has been implementing for many years; – to increase the awareness of the benefits of choosing EU products in order to promote a healthy lifestyle; – to increase the competitiveness and consumption of European poultry products, thereby increasing the European market share in Germany, France, Spain and Poland.",
+        "FULL CONTENT OF THE REQUEST FOR QUOTE can be downloaded here: [EURSPO_Call for tender_Evaluation Agency.pdf](https://krd-ig.com.pl/wp-content/uploads/2023/12/2023-12-15-EURSPO_Call-for-tender_Evaluation-Agency_Final.pdf)",
+        "DOCUMENTS TO BE PROVIDED BY THE APPLICANTS:",
+        "The detailed offer should be sent in English to Mr Yann Brice (Executive Director of CIDEF-CIPC-CICAR-ATM Avicole) by email to cipc.poulet@orange.fr i yann.brice@cidef.fr .",
+        "PROPOSED PLANNING:",
+        "31 January 2024 by 18h00 : Deadline for sending application to the tender (all applications sent after this date will not be considered) .",
+        "15 February by 18h00: Notification of the chosen agency and detailed notification to the other agencies of non-selection.",
+        "CONTACTS:",
+        "The Coordination Team and Mr Yann Brice (Executive Officer of CIDEF-CIPC-CICAR-ATM Avicole) are available to answer any questions candidates might have by email at cipc.poulet@orange.fr i yann.brice@cidef.fr . Each email written in the framework of this Call for Tender shall be in English and mention “EURSPO: Call for Tender – Evaluation Agency” in the email subject."
+      ],
+      "appendedParagraphCount": 0
+    },
+    "zapytanie-ofertowe-dotyczace-projektu-zadania-pt-wsparcie-organizacji-dzialan-promocyjnych-i-informacyjnych-podczas-zgromadzenia-ogolnego-avec-w-polsce": {
+      "id": 8263,
+      "paragraphs": [
+        "Krajowa Rada Drobiarstwa – Izba Gospodarcza zaprasza do przygotowania i przedstawienia oferty dotyczącej projektu (zadania) pt. „WSPARCIE ORGANIZACJI DZIAŁAŃ PROMOCYJNYCH I INFORMACYJNYCH PODCZAS ZGROMADZENIA OGÓLNEGO AVEC W POLSCE”.",
+        "Termin składania ofert upływa 24 lipca 2023 r. o godz. 10.00.",
+        "Treść Zapytania ofertowego —> [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2023/07/1.-Zaproszenie-do-skladania-ofert-konferencja-podczas-Zjazdu-AVEC.pdf)",
+        "Załączniki (1-5) do Zapytania ofertowego —> [pobierz.pdf](https://krd-ig.com.pl/wp-content/uploads/2023/07/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-1.pdf)",
+        "Załączniki (1-5) do Zapytania ofertowego dostępne są także w formie edytowalnej w biurze KRD-IG. Mogą Państwo poprosić o przesłanie wersji edytowalnej załączników wysyłając prośbę mailem na adres m.kedel@krd-ig.pl",
+        "[2.-Zalaczniki-1-5-do-Zapytania-ofertowego.pdf](https://krd-ig.com.pl/wp-content/uploads/2023/07/2.-Zalaczniki-1-5-do-Zapytania-ofertowego.pdf)"
+      ],
+      "appendedParagraphCount": 1
+    },
+    "zapytanie-ofertowe-dotyczace-projektu-zadania-pt-promocja-polskiego-drobiu-i-jego-przetworow-na-targach-anuga": {
+      "id": 8180,
+      "paragraphs": [
+        "Krajowa Rada Drobiarstwa – Izba Gospodarcza zaprasza do przygotowania i przedstawienia oferty dotyczącej projektu pt. „ Promocja polskiego drobiu i jego przetworów na targach ANUGA ”.",
+        "Termin składania ofert upływa 28 lipca 2021 r. o godz. 10:00",
+        "[Treść Zaproszenia (pdf.) — kliknij](https://krd-ig.com.pl/wp-content/uploads/2021/07/1.-Zaproszenie-do-skladania-ofert-KRD_ANUGA-2021.pdf)",
+        "[Załączniki (1-5) (pdf.) — kliknij, aby pobrać](https://krd-ig.com.pl/wp-content/uploads/2021/07/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-ANUGA-2021.pdf)",
+        "Załączniki (1-5) do Zapytania ofertowego dostępne są także w formie edytowalnej w biurze KRD-IG. Mogą Państwo poprosić o przesłanie wersji edytowalnej Załączników wysyłając prośbę mailem na adres m.kedel@krd-ig.pl",
+        "[Ograniczenia importowe HPAI wedlug krajow 05.07.2021.pdf](https://krd-ig.com.pl/wp-content/uploads/2021/07/Ograniczenia_importowe_HPAI_wedlug_krajow_05.07.2021.pdf)"
+      ],
+      "appendedParagraphCount": 1
+    },
+    "zapytanie-ofertowe-dotyczace-projektu-zadania-pt-promocja-polskiego-drobiu-i-jego-przetworow-na-targach-ife-2": {
+      "id": 8243,
+      "paragraphs": [
+        "Krajowa Rada Drobiarstwa – Izba Gospodarcza zaprasza do przygotowania i przedstawienia oferty dotyczącej projektu pt. „ Promocja polskiego drobiu i jego przetworów na targach IFE ”.",
+        "Termin składania ofert upływa 19 stycznia 2023 r. o godz. 10:00",
+        "Treść Zaproszenia (pdf.) — kliknij, aby pob[rać](https://krd-ig.com.pl/wp-content/uploads/2021/12/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-IFE.pdf) [https://krd-ig.com.pl/wp-content/uploads/2023/01/1.-Zaproszenie-do-skladania-ofert-KRD_IFE-LONDYN-2023.pdf](https://krd-ig.com.pl/wp-content/uploads/2023/01/1.-Zaproszenie-do-skladania-ofert-KRD_IFE-LONDYN-2023..pdf)",
+        "Załączniki (1-5) (pdf.) — kliknij, aby pob rać [https://krd-ig.com.pl/wp-content/uploads/2023/01/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-IFE.pdf](https://krd-ig.com.pl/wp-content/uploads/2023/01/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-IFE.pdf)",
+        "Załączniki (1-5) do Zapytania ofertowego dostępne są także w formie edytowalnej w biurze KRD-IG. Mogą Państwo poprosić o przesłanie wersji edytowalnej Załączników wysyłając prośbę mailem na adres m.kedel@krd-ig.pl"
+      ],
+      "appendedParagraphCount": 0
+    },
+    "zapytanie-ofertowe-dotyczace-projektu-zadania-pt-ochrona-wizerunku-polskiego-sektora-drobiarskiego-na-rynku-krajowym-wraz-z-przeprowadzeniem-przez-niezalezny-podmiot-badania-efe": {
+      "id": 8176,
+      "paragraphs": [
+        "Krajowa Rada Drobiarstwa – Izba Gospodarcza zaprasza do przygotowania i przedstawienia oferty dotyczącej projektu pt. „Ochrona wizerunku polskiego sektora drobiarskiego na rynku krajowym” wraz z przeprowadzeniem przez niezależny podmiot: badania efektywności projektu (zadania).",
+        "Termin składania ofert upływa 2 czerwca 2021 r. o godz. 10:00",
+        "Treść Zaproszenia (pdf.) [— kliknij, aby pobrać](https://krd-ig.com.pl/wp-content/uploads/2021/05/10.-PYTANIA-OFERENTA-z-dnia-25.05.2021-ODPOWIEDZI-z-dnia-26.05.2021-003.pdf)",
+        "Załączniki (1-5) (pdf.) [— kliknij, aby pobrać](https://krd-ig.com.pl/wp-content/uploads/2021/05/Kopia-0.-Kalkulacja-do-Zapytania-ofertowego-Ochrona-2021-PR_-002.xlsx)",
+        "Załączniki (1-5) do Zapytania ofertowego dostępne są także w formie edytowalnej w biurze KRD-IG. Mogą Państwo poprosić o przesłanie wersji edytowalnej Załączników wysyłając prośbę mailem na adres m.kedel@krd-ig.pl",
+        "16.06.2021 r.",
+        "WYDŁUŻENIE TERMINU II ETAPU POSTĘPOWANIA i TERMINU WYBORU NAJKORZYSTNIEJSZEJ OFERTY – WYKONAWCY",
+        "Powołując się na treść Zapytania ofertowego w części dotyczącej: PODSTAWA PRAWNA I ZASADY PROWADZENIA POSTĘPOWANIA KONKURENCYJNEJ PROCEDURY WYBORU WYKONAWCY , pkt. 6. (str.8), który brzmi: „Zamawiający zastrzega sobie prawo do unieważnienia procedury bez podania przyczyn lub wydłużenia terminów, o czym niezwłocznie poinformuje Oferentów.” – uprzejmie informuję, że Krajowa Rada Drobiarstwa – Izba Gospodarcza wydłuża termin przeprowadzenia II ETAPU POSTĘPOWANIA i tym samym termin wyboru najkorzystniejszej oferty – Wykonawcy.",
+        "Wobec powyższego H ARMONOGRAM POSTĘPOWANIA, WYBÓR I OGŁOSZENIE ZWYCIĘZCY KONKURENCYJNEJ PROCEDURY WYBORU WYKONAWCY od części: Przeprowadzenie ETAPU II POSTĘPOWANIA – spotkania Komisji Oceniającej z Oferentami, którzy zakwalifikowali się do II etapu postępowania przyjmuje następujące terminy:",
+        "TERMIN DZIAŁANIE 14-24.06.2021 r. Przeprowadzenie ETAPU II POSTĘPOWANIA – spotkania Komisji Oceniającej z Oferentami, którzy zakwalifikowali się do II etapu postępowania. 25.06.2021 r. do godz. 16.00 Wybór najkorzystniejszej oferty – Wykonawcy.",
+        "Ogłoszenie wyników postępowania na realizację projektu (zadania) pt. „Ochrona wizerunku polskiego sektora drobiarskiego na rynku krajowym” wraz z przeprowadzeniem przez niezależny podmiot: badania efektywności projektu (zadania).",
+        "Poinformowanie Oferentów drogą elektroniczną (e-mail) o wyborze najkorzystniejszej oferty.",
+        "Zamieszczenie informacji o wyniku postępowania na stronie internetowej Zamawiającego.",
+        "26.05.2021",
+        "Pytania Oferenta i odpowiedzi Zamawiającego dot. projektu (zadania) pt. „Ochrona wizerunku polskiego sektora drobiarskiego na rynku krajowym’’ wraz z przeprowadzeniem przez niezależny podmiot badania efektywności projektu (zadania).",
+        "Pytania Oferenta z dnia 25.05.2021 i odpowiedzi Zamawiającego z dnia 26.05.2021 :",
+        "PYTANIE 1 OFERENTA z dnia 25.05.2021.",
+        "Która z wymienionych w briefie grup docelowych jest dla KRD najistotniejsza? Czy są tutaj ustalone jakieś proporcje do komunikacji?",
+        "ODPOWIEDŹ ZAMAWIAJĄCEGO z dnia 26.05.2021:",
+        "Każda grupa docelowa wymieniona w briefie jest istotna z punktu realizacji przedmiotowego projektu. Na etapie Zapytania ofertowego nie zostały ustalone proporcje do komunikacji.",
+        "PYTANIE 2 OFERENTA z dnia 25.05.2021.",
+        "Czy KRD dysponuje własnymi, wewnętrznymi analizami i opracowaniami, które mogą być pomocne w kampanii? Czy agencja je otrzyma?",
+        "Analiza bieżącej sytuacji i dostosowanie do niej proponowanej komunikacji jest jednym z kryteriów oceny i jej przeprowadzenie należy do Oferenta.",
+        "PYTANIE 3 OFERENTA z dnia 25.05.2021.",
+        "Zasady współpracy z kancelarią prawną. Jaka jest przewidywana rola agencji w tym obszarze?",
+        "Działania Oferenta w ramach prowadzenia biura prasowego muszą być synergiczne z pracą Kancelarii. Współpraca Oferenta w tym obszarze to m.in.: kwalifikowanie zagadnień do analizy Kancelarii lub ewentualnych postępowań w uzgodnieniu z Zamawiającym, kierowanie do Kancelarii zagadnień do opiniowania (analizy), stały kontakt z Kancelarią i koordynacja prac wykonywanych przez Kancelarię (także w przypadku najbardziej rażących naruszeń wizerunku branży drobiarskiej) itp.",
+        "PYTANIE 4 OFERENTA z dnia 25.05.2021:",
+        "Czy KRD rekomenduje ekspertów do wykorzystania w ramach kampanii? Czy oczekuje wykorzystania wskazanych przez siebie ekspertów?",
+        "Rekomendacja ekspertów do wykorzystania w ramach projektu (zadania) leży po stronie Oferenta. Akceptacja zarekomendowanych przez Oferenta ekspertów leży po stronie Zamawiającego.",
+        "PYTANIE 5 OFERENTA z dnia 25.05.2021:",
+        "Aktualizacja, rozwój i promocja serwisu internetowego – czy chodzi o serwis https://krd-ig.com.pl/?",
+        "To działanie dotyczy strony będącej „parasolem” wiedzy na temat drobiu. Mowa tutaj o stronie www.dobrydrob.pl",
+        "PYTANIE 6 OFERENTA z dnia 25.05.2021:",
+        "Materiały informacyjne konieczne do realizacji zadania – czy KRD dysponuje materiałami źródłowymi lub materiałami z poprzednich kampanii i podzieli się nimi z agencją? Czy przewidziane jest tworzenie contentu, czy również zaprojektowanie / odświeżenie identyfikacji wizualnej?",
+        "Materiały informacyjne konieczne do realizacji projektu (zadania) wytworzone zostaną w trakcie jego realizacji, w porozumieniu z Zamawiającym (oraz w razie potrzeby z podmiotem prawnym). Działanie to obejmuje tworzenie contentu, identyfikacji wizualnej oraz produkcję.",
+        "PYTANIE 7 OFERENTA z dnia 25.05.2021:",
+        "Prowadzenie biura prasowego obejmuje identyfikację i reagowanie na kryzysy w mediach w trybie 24/7. Jaki jest oczekiwany czas reakcji w tym przypadku?",
+        "Oczekiwany czas reakcji w ciągu dnia (8:00-17:00) – natychmiast po podjęciu informacji, nie później niż do 3 godzin. W godzinach wieczorno-nocnych natychmiast po podjęciu informacji, nie później niż do 8:30 rano następnego dnia.",
+        "PYTANIE 8 OFERENTA z dnia 25.05.2021:",
+        "Czy KRD dysponuje plikiem excel ze wzorem kosztorysu projektu? (nie ma go w załącznikach)",
+        "Tak. KRD-IG dysponuje plikiem Excel z maksymalnym kosztorysem projektu (zadania). Znajdziecie go Państwo w załączeniu.",
+        "PYTANIE 9 OFERENTA z dnia 25.05.2021:",
+        "Pytanie odnośnie punktu pierwszego z budżetu projektu. Jaki obszar wchodzi w skład Kampanii informacyjno-promocyjnej? Czy budżet obejmuje organiczną działalność w mediach społecznościowych i aktywacje influencerskie?",
+        "ODPOWIEDŹ ZAMAWIAJĄCEGO dnia 26.05.2021:",
+        "Odpowiedź na to pytanie znajduje się na stronie 3. Zapytania ofertowego (pozycja: ZAŁOŻENIA PROJEKTU, pkt. 1. Ogólnopolska kampania informacyjno – promocyjna dotycząca jakości oraz bezpieczeństwa polskiego mięsa drobiowego w Internecie skierowana do konsumentów oraz liderów opinii). Jest tam zapis: „Ważnym aspektem kampanii informacyjno – promocyjnej będą także działania edukacyjne oraz współpraca z influencerami i ekspertami w ich kanałach w mediach społecznościowych.”",
+        "PYTANIE 10 OFERENTA z dnia 25.05.2021:",
+        "Pytanie odnośnie punktu pierwszego z budżetu projektu. Czy kwota 48000 PLN stanowi całość budżetu mediowego w tym fee agencyjne na działania całoroczne?",
+        "W ramach Zapytania ofertowego (str. 6.) Zamawiający przedstawił maksymalny budżet projektu, który obejmuje wskazane w Zapytaniu pozycje kosztowe przypisane do poszczególnych działań. Zamawiający, w pozycji BUDŻET PROJEKTU wskazał również, że w maksymalny budżet projektu (zadania) włącza się Wynagrodzenie Wykonawcy.",
+        "Łączna kwota budżetu w wysokości 48 0000,00 PLN, wskazana w Zapytaniu ofertowym, przewidziana na działanie „Kampania na portalu społecznościowym Twitter, skierowana do grup docelowych, w tym ekspertów branży drobiarskiej i decydentów” stanowi całość budżetu w ramach tego działania.",
+        "Zamawiający w ramach wskazanego maksymalnego budżetu projektu zastrzegł także, że: „KRD-IG zastrzega sobie na etapie podpisania umowy możliwość odchyleń o nie więcej niż 10% pomiędzy poszczególnymi pozycjami kosztów objętych zmianą, przy założeniu, że całkowita kwota realizacji projektu (zadania) nie przekroczy łącznego budżetu 577 232,00 PLN brutto.”",
+        "PYTANIE 11 OFERENTA z dnia 25.05.2021:",
+        "Pytanie odnośnie punktu szóstego z budżetu projektu. Czy kwota 44000 PLN zawiera również budżet na pozycjonowanie strony WWW?",
+        "Tak. Łączna kwota budżetu w wysokości 44 0000,00 PLN, wskazana w Zapytaniu ofertowym, przewidziana na działanie „6.1. Aktualizacja, rozwój i promocja (w tym pozycjonowanie) serwisu internetowego”, jak wynika z samej treści tego działania, obejmuje pozycjonowanie, wspomnianej w odpowiedzi na pytanie 5., strony www.dobrydrob.pl",
+        "Pytania Oferenta z 25.05.2021 i odpowiedzi Zamawiającego z 26.05.2021 [— kliknij, aby pobrać](https://krd-ig.com.pl/wp-content/uploads/2021/05/19.-PYTANIE-OFERENTA-z-dnia-26.05.2021-ODPOWIEDZ-z-dnia-27.05.2021.pdf)",
+        "Kalkulacja do Zapytania ofertowego Ochrona 2021 PR — [kliknij, aby pobrać](https://krd-ig.com.pl/wp-content/uploads/2021/05/1.-Zaproszenie-do-skladania-ofert-OCHRONA-WIZERUNKU-KRAJ-2021-PR.pdf)",
+        "27.05.2021",
+        "Pytanie Oferenta z dnia 26.05.2021 i odpowiedź Zamawiającego z dnia 27.05.2021",
+        "PYTANIE 1 OFERENTA z dnia 26.05.2021.",
+        "Proszę jeszcze o sprecyzowanie, czy KRD zaakceptuje ofertę z podpisami elektronicznymi? Tj. chcemy pominąć drukowanie, podpisywanie ręczne i skanowanie dokumentów i wysłać wszystkie pliki opatrzone podpisem elektronicznym.",
+        "ODPOWIEDŹ ZAMAWIAJĄCEGO z dnia 27.05.2021:",
+        "Treść zapytania ofertowego nie przewiduje możliwości złożenia Oferty za pomocą podpisu elektronicznego. Podpis musi mieć formę tradycyjną. Proszę zwrócić uwagę także na załączniki 1-4., gdzie wskazane jest: „(Podpis i Pieczęć Oferenta)* *Podpis osoby figurującej lub osób figurujących w rejestrach do zaciągania zobowiązań w imieniu Oferenta lub we właściwym upoważnieniu.”.",
+        "Pytanie Oferenta z 26.05.2021 i odpowiedź Zamawiającego z 27.05.2021 — [kliknij, aby pobrać](https://krd-ig.com.pl/wp-content/uploads/2021/05/2.-Zalaczniki-1-5-do-Zapytania-ofertowego-PR.pdf)",
+        "Pytanie Oferenta z dnia 27.05.2021 i odpowiedź Zamawiającego z dnia 27.05.2021",
+        "PYTANIE 1 OFERENTA z dnia 27.05.2021.",
+        "Jaki jest przewidziany czas na realizację obu fal badania efektywności, a dokładnie termin dostarczenia raportów po każdej fali badania?",
+        "Badanie efektywności projektu (zadania) wykonane przez niezależny podmiot należy dostarczyć maksymalnie w ciągu 1 miesiąca po zakończeniu realizacji przedmiotowego projektu (zadania).",
+        "Pytanie oferenta z 27.05.2021 i odpowiedź Zamawiającego z dnia 27.05.2021– [kliknij aby pobrać](https://krd-ig.com.pl/wp-content/uploads/2021/05/28.-PYTANIE-OFERENTA-z-dnia-27.05.2021-ODPOWIEDZ-z-dnia-27.05.2021.pdf)"
+      ],
+      "appendedParagraphCount": 0
+    },
+    "informacja-o-uniewaznieniu-czesci-vi-projektu-ksztaltowanie-wzorcow-konsumenckich-nt-miesa-drobiowego-poprzez-edukacje-i-zaangazowanie-we-wspolne-dzialania": {
+      "id": 8030,
+      "paragraphs": [
+        "Dotyczy: zapytania ofertowego na stworzenie systemu edukacji oraz zaangażowanie konsumentów w zdobywanie wiedzy o mięsie drobiowym poprzez zwiedzanie ekspozycji drobiu na sześciu wystawach hodowlanych w Polsce, udział w ścieżce edukacyjnej oraz rozwiązanie quizu drobiarskiego na stronie www, jak również zachęcenie konsumentów do publikowania własnych przepisów na dania i potrawy z mięsa drobiowego w ramach projektu pn. „KSZTAŁTOWANIE WZORCÓW KONSUMENCKICH NT. MIĘSA DROBIOWEGO POPRZEZ EDUKACJĘ I ZAANGAŻOWANIE WE WSPÓLNE DZIAŁANIA”.",
+        "Treść Unieważnienia — [kliknij, aby pobrać](/wp-content/uploads/2020/04/Czesc_VI_Uniewaznienie_przetargu.pdf)"
+      ],
+      "appendedParagraphCount": 0
+    }
+  }
+}

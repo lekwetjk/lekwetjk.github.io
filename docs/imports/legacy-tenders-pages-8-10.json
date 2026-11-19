@@ -348,40 +348,20 @@
         },
         {
           "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Zalacznik_nr_2_do_SIWZ_-_Szczegolowa_tabela_budzetowa.pdf",
-          "status": "unavailable",
-          "failures": [
-            {
-              "url": "https://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Zalacznik_nr_2_do_SIWZ_-_Szczegolowa_tabela_budzetowa.pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "https://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Zalacznik_nr_2_do_SIWZ_-_Szczegolowa_tabela_budzetowa.pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Zalacznik_nr_2_do_SIWZ_-_Szczegolowa_tabela_budzetowa.pdf",
-              "error": "HTTP 404"
-            }
-          ],
+          "downloadedFrom": "https://old.krd-ig.com.pl/wp-content/uploads/2020/04/Zalacznik_nr_2_do_SIWZ_szczegolowa_tabela_budzetowa.pdf",
+          "local": "/media/tenders/restored/810d8c137e3ef0039e2c61a1.pdf",
+          "status": "available",
+          "bytes": 174069,
+          "sha256": "810d8c137e3ef0039e2c61a181fd5415980768de736d442e064d0f9b9f88821c",
           "label": "Załącznik nr 2 do SIWZ – Szczegółowa tabela budżetowa Programu"
         },
         {
           "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Zalacznik_nr_3_do_SIWZ_-_Logo_KRD-IG_eng.pdf",
-          "status": "unavailable",
-          "failures": [
-            {
-              "url": "https://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Zalacznik_nr_3_do_SIWZ_-_Logo_KRD-IG_eng.pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "https://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Zalacznik_nr_3_do_SIWZ_-_Logo_KRD-IG_eng.pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Zalacznik_nr_3_do_SIWZ_-_Logo_KRD-IG_eng.pdf",
-              "error": "HTTP 404"
-            }
-          ],
+          "downloadedFrom": "https://old.krd-ig.com.pl/wp-content/uploads/2020/04/Zalacznik_nr_3_do_SIWZ_-_Logo_KRD-IG_eng.pdf",
+          "local": "/media/tenders/restored/ba2c319ad3ed2bcc8e40abdb.pdf",
+          "status": "available",
+          "bytes": 118242,
+          "sha256": "ba2c319ad3ed2bcc8e40abdb792ea3ff7613ab06f707b7ec8aba2da22e165885",
           "label": "Załącznik nr 3 do SIWZ – Logo Krajowej Rady Drobiarstwa – Izby Gospodarczej"
         },
         {
@@ -424,21 +404,11 @@
         },
         {
           "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Zalacznik_nr_6_do_SIWZ_-_Zestawienie_kosztow_kwalifikowalnych_programow_prostych.pdf",
-          "status": "unavailable",
-          "failures": [
-            {
-              "url": "https://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Zalacznik_nr_6_do_SIWZ_-_Zestawienie_kosztow_kwalifikowalnych_programow_prostych.pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "https://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Zalacznik_nr_6_do_SIWZ_-_Zestawienie_kosztow_kwalifikowalnych_programow_prostych.pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Zalacznik_nr_6_do_SIWZ_-_Zestawienie_kosztow_kwalifikowalnych_programow_prostych.pdf",
-              "error": "HTTP 404"
-            }
-          ],
+          "downloadedFrom": "https://old.krd-ig.com.pl/wp-content/uploads/2020/04/Zalacznik_nr_6_do_SIWZ_-_zestawienie_kosztow_kwalifikowalnych_programow_prostych.pdf",
+          "local": "/media/tenders/restored/2a9c9437ddd079c334b77662.pdf",
+          "status": "available",
+          "bytes": 112347,
+          "sha256": "2a9c9437ddd079c334b776624d6681d93ec2b72138017d9e381f6e1e0d30f941",
           "label": "Załącznik nr 6 do SIWZ – Zestawienie kosztów kwalifikowanych programów prostych"
         },
         {
@@ -527,21 +497,11 @@
         },
         {
           "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_13.02.2019/PYTANIA_OFERENTA_20190214_(002).pdf",
-          "status": "unavailable",
-          "failures": [
-            {
-              "url": "https://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_13.02.2019/PYTANIA_OFERENTA_20190214_(002).pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "https://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_13.02.2019/PYTANIA_OFERENTA_20190214_(002).pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_13.02.2019/PYTANIA_OFERENTA_20190214_(002).pdf",
-              "error": "HTTP 404"
-            }
-          ],
+          "downloadedFrom": "http://web.archive.org/web/20190915135200id_/http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_13.02.2019/PYTANIA_OFERENTA_20190214_(002).pdf",
+          "local": "/media/tenders/restored/4c8350e73f75c240e0134b41.pdf",
+          "status": "available",
+          "bytes": 223507,
+          "sha256": "4c8350e73f75c240e0134b41c661a5f7c1cc97aff40259b2a7a5ba032bdce554",
           "label": "Załącznik nr 1 do SIWZ (uwzględniający poniższe zmiany zaznaczone w dokumencie na żółto) – Opis programu informacyjno-promocyjnego dotyczącego mięsa indyczego pn. „Indyk z Europy – pod skrzydłami jakości” („Turkey from Europe – Under the Wings of Quality”) na rynkach Polski, Niemiec i Republiki Czeskiej –> pobierz.pdf 2. Pytania Oferenta i odpowiedzi Zamawiającego"
         },
         {
@@ -565,21 +525,11 @@
         },
         {
           "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_14.02.2019/PYTANIA_OFERENTOW_ALL_20190218.pdf",
-          "status": "unavailable",
-          "failures": [
-            {
-              "url": "https://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_14.02.2019/PYTANIA_OFERENTOW_ALL_20190218.pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "https://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_14.02.2019/PYTANIA_OFERENTOW_ALL_20190218.pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_14.02.2019/PYTANIA_OFERENTOW_ALL_20190218.pdf",
-              "error": "HTTP 404"
-            }
-          ],
+          "downloadedFrom": "http://web.archive.org/web/20190915135126id_/http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_14.02.2019/PYTANIA_OFERENTOW_ALL_20190218.pdf",
+          "local": "/media/tenders/restored/dd0743d6668940d86f06ea12.pdf",
+          "status": "available",
+          "bytes": 443883,
+          "sha256": "dd0743d6668940d86f06ea127f795f4acee7570c7c6a8aab937ac878ae7466d5",
           "label": "Załącznik nr 1 do SIWZ (uwzględniający wszystkie zmiany zaznaczone w dokumencie na żółto) – Opis programu informacyjno-promocyjnego dotyczącego mięsa indyczego pn. „Indyk z Europy – pod skrzydłami jakości” („Turkey from Europe – Under the Wings of Quality”) na rynkach Polski, Niemiec i Republiki Czeskiej –> pobierz.pdf 2. Pytania Oferentów i odpowiedzi Zamawiającego"
         },
         {
@@ -603,40 +553,20 @@
         },
         {
           "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_19.02.2019/PYTANIA_OFERENTA_20190219.pdf",
-          "status": "unavailable",
-          "failures": [
-            {
-              "url": "https://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_19.02.2019/PYTANIA_OFERENTA_20190219.pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "https://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_19.02.2019/PYTANIA_OFERENTA_20190219.pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_19.02.2019/PYTANIA_OFERENTA_20190219.pdf",
-              "error": "HTTP 404"
-            }
-          ],
+          "downloadedFrom": "http://web.archive.org/web/20190915135214id_/http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_19.02.2019/PYTANIA_OFERENTA_20190219.pdf",
+          "local": "/media/tenders/restored/731eb93cd86493f326ebdaff.pdf",
+          "status": "available",
+          "bytes": 341673,
+          "sha256": "731eb93cd86493f326ebdaff67eab724b9f876c5dd04a4d396d82c25f06b3ad5",
           "label": "20.02.2019 1. Pytania Oferentów i odpowiedzi Zamawiającego"
         },
         {
           "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_19.02.2019/PYTANIA_OFERENTA_20190219_B.pdf",
-          "status": "unavailable",
-          "failures": [
-            {
-              "url": "https://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_19.02.2019/PYTANIA_OFERENTA_20190219_B.pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "https://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_19.02.2019/PYTANIA_OFERENTA_20190219_B.pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_19.02.2019/PYTANIA_OFERENTA_20190219_B.pdf",
-              "error": "HTTP 404"
-            }
-          ],
+          "downloadedFrom": "http://web.archive.org/web/20190915143134id_/http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_19.02.2019/PYTANIA_OFERENTA_20190219_B.pdf",
+          "local": "/media/tenders/restored/9911c1e76410822dfd8600e4.pdf",
+          "status": "available",
+          "bytes": 377044,
+          "sha256": "9911c1e76410822dfd8600e4e3501a967326f6a1c429ce9c916a74da3294c5a8",
           "label": "21.02.2019 1. Pytania Oferentów i odpowiedzi Zamawiającego"
         }
       ],
@@ -680,40 +610,20 @@
       "attachments": [
         {
           "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_2018_II_czesc_spotkania/Zapytanie_ofertowe_dot__zadania_Niwelowanie_barier_na_rynku_krajowym_SPOTKANIA.pdf",
-          "status": "unavailable",
-          "failures": [
-            {
-              "url": "https://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_2018_II_czesc_spotkania/Zapytanie_ofertowe_dot__zadania_Niwelowanie_barier_na_rynku_krajowym_SPOTKANIA.pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "https://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_2018_II_czesc_spotkania/Zapytanie_ofertowe_dot__zadania_Niwelowanie_barier_na_rynku_krajowym_SPOTKANIA.pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_2018_II_czesc_spotkania/Zapytanie_ofertowe_dot__zadania_Niwelowanie_barier_na_rynku_krajowym_SPOTKANIA.pdf",
-              "error": "HTTP 404"
-            }
-          ],
+          "downloadedFrom": "http://web.archive.org/web/20190201090424id_/http://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_2018_II_czesc_spotkania/Zapytanie_ofertowe_dot__zadania_Niwelowanie_barier_na_rynku_krajowym_SPOTKANIA.pdf",
+          "local": "/media/tenders/restored/7b2650574f10ee35fcd80355.pdf",
+          "status": "available",
+          "bytes": 484354,
+          "sha256": "7b2650574f10ee35fcd8035512e98bdc200c34655d79a502c2a104708b8630ec",
           "label": "pobierz.pdf"
         },
         {
           "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_2018_II_czesc_spotkania/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf",
-          "status": "unavailable",
-          "failures": [
-            {
-              "url": "https://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_2018_II_czesc_spotkania/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "https://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_2018_II_czesc_spotkania/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_2018_II_czesc_spotkania/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf",
-              "error": "HTTP 404"
-            }
-          ],
+          "downloadedFrom": "http://web.archive.org/web/20190201071101id_/http://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_2018_II_czesc_spotkania/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf",
+          "local": "/media/tenders/restored/5853e5604762bf19b61dab3b.pdf",
+          "status": "available",
+          "bytes": 237086,
+          "sha256": "5853e5604762bf19b61dab3be5a9d44197122a0eeaa4a707bb5d0e978437303f",
           "label": "pobierz.pdf"
         }
       ],
@@ -776,59 +686,29 @@
       "attachments": [
         {
           "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/Zapytanie_ofertowe_dot__zadania_Niwelowanie_barier_na_rynku_krajowym.pdf",
-          "status": "unavailable",
-          "failures": [
-            {
-              "url": "https://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/Zapytanie_ofertowe_dot__zadania_Niwelowanie_barier_na_rynku_krajowym.pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "https://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/Zapytanie_ofertowe_dot__zadania_Niwelowanie_barier_na_rynku_krajowym.pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/Zapytanie_ofertowe_dot__zadania_Niwelowanie_barier_na_rynku_krajowym.pdf",
-              "error": "HTTP 404"
-            }
-          ],
+          "downloadedFrom": "http://web.archive.org/web/20190131022201id_/http://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/Zapytanie_ofertowe_dot__zadania_Niwelowanie_barier_na_rynku_krajowym.pdf",
+          "local": "/media/tenders/restored/c4391dcb48705dcb16f487ce.pdf",
+          "status": "available",
+          "bytes": 496260,
+          "sha256": "c4391dcb48705dcb16f487cece37baf1da2744c6129c021a68e56730c235e35d",
           "label": "Treść Zapytania ofertowego"
         },
         {
           "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf",
-          "status": "unavailable",
-          "failures": [
-            {
-              "url": "https://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "https://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf",
-              "error": "HTTP 404"
-            }
-          ],
+          "downloadedFrom": "http://web.archive.org/web/20190131041507id_/http://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf",
+          "local": "/media/tenders/restored/5853e5604762bf19b61dab3b.pdf",
+          "status": "available",
+          "bytes": 237086,
+          "sha256": "5853e5604762bf19b61dab3be5a9d44197122a0eeaa4a707bb5d0e978437303f",
           "label": "Załączniki (1-4) do Zapytania ofertowego"
         },
         {
           "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/AKTUALIZACJA_ZAL._NR_1_2018_07_12/AKTUALIZACJA_Zalacznik_1_do_Zapytania_ofertowego_2018_07_12.pdf",
-          "status": "unavailable",
-          "failures": [
-            {
-              "url": "https://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/AKTUALIZACJA_ZAL._NR_1_2018_07_12/AKTUALIZACJA_Zalacznik_1_do_Zapytania_ofertowego_2018_07_12.pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "https://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/AKTUALIZACJA_ZAL._NR_1_2018_07_12/AKTUALIZACJA_Zalacznik_1_do_Zapytania_ofertowego_2018_07_12.pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/AKTUALIZACJA_ZAL._NR_1_2018_07_12/AKTUALIZACJA_Zalacznik_1_do_Zapytania_ofertowego_2018_07_12.pdf",
-              "error": "HTTP 404"
-            }
-          ],
+          "downloadedFrom": "http://web.archive.org/web/20190131022144id_/http://krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/AKTUALIZACJA_ZAL._NR_1_2018_07_12/AKTUALIZACJA_Zalacznik_1_do_Zapytania_ofertowego_2018_07_12.pdf",
+          "local": "/media/tenders/restored/a8b8c0ac371cabe1955712bb.pdf",
+          "status": "available",
+          "bytes": 207697,
+          "sha256": "a8b8c0ac371cabe1955712bb5ce07d3e5a551017e960be18cf432f7fa49a678d",
           "label": "Załącznik nr 1 (Formularz oferty) po aktualizacji"
         }
       ],
@@ -1256,21 +1136,11 @@
       "attachments": [
         {
           "source": "http://old.krd-ig.com.pl/upload/file/KRD-IG-238_2017_zapytanie_ofertowe_powierzchnia.pdf",
-          "status": "unavailable",
-          "failures": [
-            {
-              "url": "https://old.krd-ig.com.pl/upload/file/KRD-IG-238_2017_zapytanie_ofertowe_powierzchnia.pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "https://krd-ig.com.pl/upload/file/KRD-IG-238_2017_zapytanie_ofertowe_powierzchnia.pdf",
-              "error": "HTTP 404"
-            },
-            {
-              "url": "http://www.krd-ig.com.pl/upload/file/KRD-IG-238_2017_zapytanie_ofertowe_powierzchnia.pdf",
-              "error": "HTTP 404"
-            }
-          ],
+          "downloadedFrom": "https://old.krd-ig.com.pl/wp-content/uploads/2017/10/KRD-IG-238_2017_zapytanie_ofertowe_powierzchnia.pdf",
+          "local": "/media/tenders/restored/67d10d79f93aaa6a1fd73604.pdf",
+          "status": "available",
+          "bytes": 345651,
+          "sha256": "67d10d79f93aaa6a1fd736048076a2f00ee99c89395b0ee783671cee8c45458f",
           "label": "ZAPYTANIE KRD-IG"
         }
       ],

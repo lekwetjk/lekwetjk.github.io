@@ -1,0 +1,516 @@
+{
+  "archive": "https://krd-ig.com.pl/zapytania-ofertowe",
+  "articles": 122,
+  "before": {
+    "visibleUniqueFileUrls": 140,
+    "unavailableVisibleFileUrls": 132
+  },
+  "restored": {
+    "verifiedSourceUrls": 177,
+    "uniqueLocalDocuments": 164,
+    "sourceManifest": "../../app/data/tender-attachment-repairs.json"
+  },
+  "unresolved": [
+    {
+      "slug": "zapytanie-ofertowe-dotyczace-projektu-zadania-pt-promocja-polskiego-drobiu-i-jego-przetworow-na-targach-ife-2019",
+      "title": "ZAPYTANIE OFERTOWE DOTYCZĄCE PROJEKTU (ZADANIA) PT.: „PROMOCJA POLSKIEGO DROBIU I JEGO PRZETWORÓW NA TARGACH IFE 2019”",
+      "date": "2019-01-18T17:33:09",
+      "source": "http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/IFE_LONDYN_2019/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf",
+      "label": "pobierz.pdf",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      }
+    },
+    {
+      "slug": "zapytanie-ofertowe-dotyczace-projektu-zadania-pt-promocja-polskiego-drobiu-i-jego-przetworow-na-targach-ife-2019",
+      "title": "ZAPYTANIE OFERTOWE DOTYCZĄCE PROJEKTU (ZADANIA) PT.: „PROMOCJA POLSKIEGO DROBIU I JEGO PRZETWORÓW NA TARGACH IFE 2019”",
+      "date": "2019-01-18T17:33:09",
+      "source": "http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/IFE_LONDYN_2019/Zaproszenie_do_skladania_ofert_-_KRD_IFE_LONDYN_2019_01_18.pdf",
+      "label": "pobierz.pdf",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      }
+    },
+    {
+      "slug": "uniewaznienie-zapytania-ofertowego-z-dnia-18-01-2019-r-dotyczacego-projektu-zadania-pt-promocja-polskiego-drobiu-i-jego-przetworow-na-targach-ife-2019",
+      "title": "UNIEWAŻNIENIE ZAPYTANIA OFERTOWEGO z dnia 18.01.2019 r. DOTYCZĄCEGO PROJEKTU (ZADANIA) PT.: „PROMOCJA POLSKIEGO DROBIU I JEGO PRZETWORÓW NA TARGACH IFE 2019”",
+      "date": "2019-01-25T15:54:26",
+      "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/IFE_LONDYN_2019/KRD-IG-13_2019_uniewaznienie_zapytania_ofertowego_IFE_2019.pdf",
+      "label": "Treść UNIEWAŻNIENIA Zapytania ofertowego",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      }
+    },
+    {
+      "slug": "zaproszenie-do-skladania-ofert-na-wdrozenie-2-letniego-programu-informacyjno-promocyjnego-dotyczacego-miesa-indyczego-pn-indyk-z-europy-pod-skrzydlami-jakosci-na-rynkach-p",
+      "title": "ZAPROSZENIE DO SKŁADANIA OFERT NA WDROŻENIE 2-LETNIEGO PROGRAMU INFORMACYJNO-PROMOCYJNEGO DOTYCZĄCEGO MIĘSA INDYCZEGO PN. „INDYK Z EUROPY – POD SKRZYDŁAMI JAKOŚCI” NA RYNKACH POLSKI, NIEMIEC I REPUBLIKI CZESKIEJ",
+      "date": "2019-01-21T15:35:55",
+      "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/I__Zaproszenie_do_skladania_ofert_Indyk_z_Europy_21_01_2019.pdf",
+      "label": "Zaproszenie do składania Ofert na wdrożenie 2-letniego programu informacyjno-promocyjnego dotyczącego mięsa indyczego pn. „Indyk z Europy – pod skrzydłami jakości” („Turkey from Europe – Under the Wings of Quality”) na rynkach Polski, Niemiec i Republiki Czeskiej",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      }
+    },
+    {
+      "slug": "zaproszenie-do-skladania-ofert-na-wdrozenie-2-letniego-programu-informacyjno-promocyjnego-dotyczacego-miesa-indyczego-pn-indyk-z-europy-pod-skrzydlami-jakosci-na-rynkach-p",
+      "title": "ZAPROSZENIE DO SKŁADANIA OFERT NA WDROŻENIE 2-LETNIEGO PROGRAMU INFORMACYJNO-PROMOCYJNEGO DOTYCZĄCEGO MIĘSA INDYCZEGO PN. „INDYK Z EUROPY – POD SKRZYDŁAMI JAKOŚCI” NA RYNKACH POLSKI, NIEMIEC I REPUBLIKI CZESKIEJ",
+      "date": "2019-01-21T15:35:55",
+      "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/II__SIWZ_Indyk_z_Europy_-_pod_skrzydlami_jakosci__21_01_2019.pdf",
+      "label": "Specyfikacja Istotnych Warunków Zamówienia w postępowaniu przetargowym na wdrożenie dwuletniego programu informacyjno-promocyjnego dotyczącego mięsa indyczego pn. „Indyk z Europy – pod skrzydłami jakości” („Turkey from Europe – Under the Wings of Quality”) na rynkach Polski, Niemiec i Republiki Czeskiej",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      }
+    },
+    {
+      "slug": "zaproszenie-do-skladania-ofert-na-wdrozenie-2-letniego-programu-informacyjno-promocyjnego-dotyczacego-miesa-indyczego-pn-indyk-z-europy-pod-skrzydlami-jakosci-na-rynkach-p",
+      "title": "ZAPROSZENIE DO SKŁADANIA OFERT NA WDROŻENIE 2-LETNIEGO PROGRAMU INFORMACYJNO-PROMOCYJNEGO DOTYCZĄCEGO MIĘSA INDYCZEGO PN. „INDYK Z EUROPY – POD SKRZYDŁAMI JAKOŚCI” NA RYNKACH POLSKI, NIEMIEC I REPUBLIKI CZESKIEJ",
+      "date": "2019-01-21T15:35:55",
+      "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Zalacznik_nr_1_do_SIWZ_-_Opis_programu_Pod_skrzydlami_jakosci.pdf",
+      "label": "Załącznik nr 1 do SIWZ – Opis programu informacyjno-promocyjnego dotyczącego mięsa indyczego pn. „Indyk z Europy – pod skrzydłami jakości” („Turkey from Europe – Under the Wings of Quality”) na rynkach Polski, Niemiec i Republiki Czeskiej",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      }
+    },
+    {
+      "slug": "zaproszenie-do-skladania-ofert-na-wdrozenie-2-letniego-programu-informacyjno-promocyjnego-dotyczacego-miesa-indyczego-pn-indyk-z-europy-pod-skrzydlami-jakosci-na-rynkach-p",
+      "title": "ZAPROSZENIE DO SKŁADANIA OFERT NA WDROŻENIE 2-LETNIEGO PROGRAMU INFORMACYJNO-PROMOCYJNEGO DOTYCZĄCEGO MIĘSA INDYCZEGO PN. „INDYK Z EUROPY – POD SKRZYDŁAMI JAKOŚCI” NA RYNKACH POLSKI, NIEMIEC I REPUBLIKI CZESKIEJ",
+      "date": "2019-01-21T15:35:55",
+      "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Zalacznik_nr_4_do_SIWZ_-_Wzor_formularza_ofertowego.pdf",
+      "label": "Załącznik nr 4 do SIWZ – Wzór formularza ofertowego",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      }
+    },
+    {
+      "slug": "zaproszenie-do-skladania-ofert-na-wdrozenie-2-letniego-programu-informacyjno-promocyjnego-dotyczacego-miesa-indyczego-pn-indyk-z-europy-pod-skrzydlami-jakosci-na-rynkach-p",
+      "title": "ZAPROSZENIE DO SKŁADANIA OFERT NA WDROŻENIE 2-LETNIEGO PROGRAMU INFORMACYJNO-PROMOCYJNEGO DOTYCZĄCEGO MIĘSA INDYCZEGO PN. „INDYK Z EUROPY – POD SKRZYDŁAMI JAKOŚCI” NA RYNKACH POLSKI, NIEMIEC I REPUBLIKI CZESKIEJ",
+      "date": "2019-01-21T15:35:55",
+      "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Zalacznik_nr_5_do_SIWZ_-_Projekt_istotnych_postanowien_umowy.pdf",
+      "label": "Załącznik nr 5 do SIWZ – Projekt Istotnych Postanowień Umowy (IPU)",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      }
+    },
+    {
+      "slug": "zaproszenie-do-skladania-ofert-na-wdrozenie-2-letniego-programu-informacyjno-promocyjnego-dotyczacego-miesa-indyczego-pn-indyk-z-europy-pod-skrzydlami-jakosci-na-rynkach-p",
+      "title": "ZAPROSZENIE DO SKŁADANIA OFERT NA WDROŻENIE 2-LETNIEGO PROGRAMU INFORMACYJNO-PROMOCYJNEGO DOTYCZĄCEGO MIĘSA INDYCZEGO PN. „INDYK Z EUROPY – POD SKRZYDŁAMI JAKOŚCI” NA RYNKACH POLSKI, NIEMIEC I REPUBLIKI CZESKIEJ",
+      "date": "2019-01-21T15:35:55",
+      "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Zalacznik_nr_7_do_SIWZ_-_Tabela_oceny_oferty.pdf",
+      "label": "7. Załącznik nr 7 do SIWZ – Tabela oceny oferty –> pdf",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      }
+    },
+    {
+      "slug": "zaproszenie-do-skladania-ofert-na-wdrozenie-2-letniego-programu-informacyjno-promocyjnego-dotyczacego-miesa-indyczego-pn-indyk-z-europy-pod-skrzydlami-jakosci-na-rynkach-p",
+      "title": "ZAPROSZENIE DO SKŁADANIA OFERT NA WDROŻENIE 2-LETNIEGO PROGRAMU INFORMACYJNO-PROMOCYJNEGO DOTYCZĄCEGO MIĘSA INDYCZEGO PN. „INDYK Z EUROPY – POD SKRZYDŁAMI JAKOŚCI” NA RYNKACH POLSKI, NIEMIEC I REPUBLIKI CZESKIEJ",
+      "date": "2019-01-21T15:35:55",
+      "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/PO_UWAGACH_OFERENTA_Zalacznik_nr_1_-_opis_programu_Pod_skrzydlami_jakosci.pdf",
+      "label": "Załącznik nr 1 do SIWZ (uwzględniający poniższe zmiany zaznaczone w dokumencie na żółto) – Opis programu informacyjno-promocyjnego dotyczącego mięsa indyczego pn. „Indyk z Europy – pod skrzydłami jakości” („Turkey from Europe – Under the Wings of Quality”) na rynkach Polski, Niemiec i Republiki Czeskiej –> pobierz.pdf 2. Pytania Oferenta i odpowiedzi Zamawiającego",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      }
+    },
+    {
+      "slug": "zaproszenie-do-skladania-ofert-na-wdrozenie-2-letniego-programu-informacyjno-promocyjnego-dotyczacego-miesa-indyczego-pn-indyk-z-europy-pod-skrzydlami-jakosci-na-rynkach-p",
+      "title": "ZAPROSZENIE DO SKŁADANIA OFERT NA WDROŻENIE 2-LETNIEGO PROGRAMU INFORMACYJNO-PROMOCYJNEGO DOTYCZĄCEGO MIĘSA INDYCZEGO PN. „INDYK Z EUROPY – POD SKRZYDŁAMI JAKOŚCI” NA RYNKACH POLSKI, NIEMIEC I REPUBLIKI CZESKIEJ",
+      "date": "2019-01-21T15:35:55",
+      "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/PYTANIA_OFERENTA.pdf",
+      "label": "Załącznik nr 1 do SIWZ (uwzględniający poniższe zmiany zaznaczone w dokumencie na żółto) – Opis programu informacyjno-promocyjnego dotyczącego mięsa indyczego pn. „Indyk z Europy – pod skrzydłami jakości” („Turkey from Europe – Under the Wings of Quality”) na rynkach Polski, Niemiec i Republiki Czeskiej –> pobierz.pdf 2. Pytania Oferenta i odpowiedzi Zamawiającego",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      }
+    },
+    {
+      "slug": "zaproszenie-do-skladania-ofert-na-wdrozenie-2-letniego-programu-informacyjno-promocyjnego-dotyczacego-miesa-indyczego-pn-indyk-z-europy-pod-skrzydlami-jakosci-na-rynkach-p",
+      "title": "ZAPROSZENIE DO SKŁADANIA OFERT NA WDROŻENIE 2-LETNIEGO PROGRAMU INFORMACYJNO-PROMOCYJNEGO DOTYCZĄCEGO MIĘSA INDYCZEGO PN. „INDYK Z EUROPY – POD SKRZYDŁAMI JAKOŚCI” NA RYNKACH POLSKI, NIEMIEC I REPUBLIKI CZESKIEJ",
+      "date": "2019-01-21T15:35:55",
+      "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_13.02.2019/PO_UWAGACH_OFERENTA_Zalacznik_nr_1_-_opis_programu_Pod_skrzydlami_jakosci.pdf",
+      "label": "Załącznik nr 1 do SIWZ (uwzględniający poniższe zmiany zaznaczone w dokumencie na żółto) – Opis programu informacyjno-promocyjnego dotyczącego mięsa indyczego pn. „Indyk z Europy – pod skrzydłami jakości” („Turkey from Europe – Under the Wings of Quality”) na rynkach Polski, Niemiec i Republiki Czeskiej –> pobierz.pdf 2. Pytania Oferenta i odpowiedzi Zamawiającego",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      },
+      "partialArchiveCopy": {
+        "status": "truncated-during-crawl",
+        "downloadedFrom": "http://web.archive.org/web/20190915135206id_/http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_13.02.2019/PO_UWAGACH_OFERENTA_Zalacznik_nr_1_-_opis_programu_Pod_skrzydlami_jakosci.pdf",
+        "archivedBytes": 1048576,
+        "originalBytes": 2375053,
+        "hasPdfEof": false,
+        "assignedAsDownload": false
+      }
+    },
+    {
+      "slug": "zaproszenie-do-skladania-ofert-na-wdrozenie-2-letniego-programu-informacyjno-promocyjnego-dotyczacego-miesa-indyczego-pn-indyk-z-europy-pod-skrzydlami-jakosci-na-rynkach-p",
+      "title": "ZAPROSZENIE DO SKŁADANIA OFERT NA WDROŻENIE 2-LETNIEGO PROGRAMU INFORMACYJNO-PROMOCYJNEGO DOTYCZĄCEGO MIĘSA INDYCZEGO PN. „INDYK Z EUROPY – POD SKRZYDŁAMI JAKOŚCI” NA RYNKACH POLSKI, NIEMIEC I REPUBLIKI CZESKIEJ",
+      "date": "2019-01-21T15:35:55",
+      "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_14.02.2019/PO_UWAGACH_OFERENTA_Zalacznik_nr_1_-_opis_programu_Pod_skrzydlami_jakosci_20190218.pdf",
+      "label": "Załącznik nr 1 do SIWZ (uwzględniający wszystkie zmiany zaznaczone w dokumencie na żółto) – Opis programu informacyjno-promocyjnego dotyczącego mięsa indyczego pn. „Indyk z Europy – pod skrzydłami jakości” („Turkey from Europe – Under the Wings of Quality”) na rynkach Polski, Niemiec i Republiki Czeskiej –> pobierz.pdf 2. Pytania Oferentów i odpowiedzi Zamawiającego",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      },
+      "partialArchiveCopy": {
+        "status": "truncated-during-crawl",
+        "downloadedFrom": "http://web.archive.org/web/20190915135107id_/http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_14.02.2019/PO_UWAGACH_OFERENTA_Zalacznik_nr_1_-_opis_programu_Pod_skrzydlami_jakosci_20190218.pdf",
+        "archivedBytes": 1048576,
+        "originalBytes": 2722780,
+        "hasPdfEof": false,
+        "assignedAsDownload": false
+      }
+    },
+    {
+      "slug": "zaproszenie-do-skladania-ofert-na-wdrozenie-2-letniego-programu-informacyjno-promocyjnego-dotyczacego-miesa-indyczego-pn-indyk-z-europy-pod-skrzydlami-jakosci-na-rynkach-p",
+      "title": "ZAPROSZENIE DO SKŁADANIA OFERT NA WDROŻENIE 2-LETNIEGO PROGRAMU INFORMACYJNO-PROMOCYJNEGO DOTYCZĄCEGO MIĘSA INDYCZEGO PN. „INDYK Z EUROPY – POD SKRZYDŁAMI JAKOŚCI” NA RYNKACH POLSKI, NIEMIEC I REPUBLIKI CZESKIEJ",
+      "date": "2019-01-21T15:35:55",
+      "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_18.02.2019/PYTANIA_OFERENTA__Z_18_02_2019.pdf",
+      "label": "19.02.2019 1. Pytania Oferentów i odpowiedzi Zamawiającego",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      }
+    },
+    {
+      "slug": "zapytanie-ofertowe-dotyczace-projektu-zadania-pt-promocja-polskiego-drobiu-na-targach-sial-paryz-2018",
+      "title": "ZAPYTANIE OFERTOWE DOTYCZĄCE PROJEKTU (ZADANIA) PT.: „PROMOCJA POLSKIEGO DROBIU NA TARGACH SIAL PARYŻ 2018",
+      "date": "2018-07-04T13:02:38",
+      "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/SIAL_2018_pozostale_dzialania/Zaproszenie_do_skladania_ofert_-_KRD_SIAL_PARYZ_2018_07_04.pdf",
+      "label": "Treść Zapytania ofertowego",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      }
+    },
+    {
+      "slug": "zapytanie-ofertowe-dotyczace-projektu-zadania-pt-promocja-polskiego-drobiu-na-targach-sial-paryz-2018",
+      "title": "ZAPYTANIE OFERTOWE DOTYCZĄCE PROJEKTU (ZADANIA) PT.: „PROMOCJA POLSKIEGO DROBIU NA TARGACH SIAL PARYŻ 2018",
+      "date": "2018-07-04T13:02:38",
+      "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/SIAL_2018_pozostale_dzialania/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf",
+      "label": "Załączniki (1-4) do Zapytania ofertowego",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      }
+    },
+    {
+      "slug": "zapytanie-ofertowe-dotyczace-projektu-zadania-pt-promocja-polskiego-drobiu-na-targach-sial-paryz-2018",
+      "title": "ZAPYTANIE OFERTOWE DOTYCZĄCE PROJEKTU (ZADANIA) PT.: „PROMOCJA POLSKIEGO DROBIU NA TARGACH SIAL PARYŻ 2018",
+      "date": "2018-07-04T13:02:38",
+      "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/SIAL_2018_pozostale_dzialania/AKTUALIZACJA_Zapytania_ofertowego_2018_07_10/AKTUALIZACJA_2-_Zaproszenie_do_skladania_ofert_-_KRD_SIAL_PARYZ_2018_07_10.pdf",
+      "label": "Treść Zapytania ofertowego (ujednolicone) po uwzględnieniu w/w korekt",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      }
+    },
+    {
+      "slug": "zapytanie-ofertowe-dotyczace-projektu-zadania-pt-promocja-polskiego-drobiu-na-targach-sial-paryz-2018",
+      "title": "ZAPYTANIE OFERTOWE DOTYCZĄCE PROJEKTU (ZADANIA) PT.: „PROMOCJA POLSKIEGO DROBIU NA TARGACH SIAL PARYŻ 2018",
+      "date": "2018-07-04T13:02:38",
+      "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/SIAL_2018_pozostale_dzialania/AKTUALIZACJA_Zapytania_ofertowego_2018_07_09/AKTUALIZACJA_Zaproszenie_do_skladania_ofert_-_KRD_SIAL_PARYZ_2018_07_09.pdf",
+      "label": "Treść Zapytania ofertowego (ujednolicone) po wprowadzeniu w/w korekt",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      }
+    },
+    {
+      "slug": "zapytanie-ofertowe-dotyczace-projektu-zadania-pt-promocja-polskiego-drobiu-na-targach-sial-paryz-2018",
+      "title": "ZAPYTANIE OFERTOWE DOTYCZĄCE PROJEKTU (ZADANIA) PT.: „PROMOCJA POLSKIEGO DROBIU NA TARGACH SIAL PARYŻ 2018",
+      "date": "2018-07-04T13:02:38",
+      "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/SIAL_2018_pozostale_dzialania/AKTUALIZACJA_Zapytania_ofertowego_2018_07_09/Zal_nr_5_PLAN_STOISKA_KRD-IG_SIAL_PARYZ.JPG",
+      "label": "Załącznik nr 5",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      }
+    },
+    {
+      "slug": "zapytanie-ofertowe-dotyczace-projektu-zadania-pt-organizacja-wyjazdu-przedstawicieli-polskiej-branzy-drobiarskiej-na-zgromadzenie-ogolne-a-v-e-c-elpha-oraz-zjazd-czlonkow-ipc",
+      "title": "ZAPYTANIE OFERTOWE DOTYCZĄCE PROJEKTU (ZADANIA) PT.: „ORGANIZACJA WYJAZDU PRZEDSTAWICIELI POLSKIEJ BRANŻY DROBIARSKIEJ NA ZGROMADZENIE OGÓLNE a.v.e.c., ELPHA ORAZ ZJAZD CZŁONKÓW IPC”",
+      "date": "2018-05-28T11:58:54",
+      "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Zgromadzenia_Ogolne_2018/Zaproszenie_do_skladania_ofert_-_Organizacja_wyjazdu_na_Zgromadzenie_Ogolne_a_v_e_c_,_ELPHA_oraz_zjazd_czlonkow_IPC.pdf",
+      "label": "Treść Zapytania ofertowego",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      }
+    },
+    {
+      "slug": "zapytanie-ofertowe-dotyczace-projektu-zadania-pt-organizacja-wyjazdu-przedstawicieli-polskiej-branzy-drobiarskiej-na-zgromadzenie-ogolne-a-v-e-c-elpha-oraz-zjazd-czlonkow-ipc",
+      "title": "ZAPYTANIE OFERTOWE DOTYCZĄCE PROJEKTU (ZADANIA) PT.: „ORGANIZACJA WYJAZDU PRZEDSTAWICIELI POLSKIEJ BRANŻY DROBIARSKIEJ NA ZGROMADZENIE OGÓLNE a.v.e.c., ELPHA ORAZ ZJAZD CZŁONKÓW IPC”",
+      "date": "2018-05-28T11:58:54",
+      "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Zgromadzenia_Ogolne_2018/Zalaczniki_1-3_do_Zapytania_ofertowego(1).pdf",
+      "label": "Załączniki (1-3) do Zapytania ofertowego",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      }
+    },
+    {
+      "slug": "zapytanie-ofertowe-dotyczace-projektu-zadania-pt-organizacja-wyjazdu-przedstawicieli-polskiej-branzy-drobiarskiej-na-zgromadzenie-ogolne-a-v-e-c-elpha-oraz-zjazd-czlonkow-ipc",
+      "title": "ZAPYTANIE OFERTOWE DOTYCZĄCE PROJEKTU (ZADANIA) PT.: „ORGANIZACJA WYJAZDU PRZEDSTAWICIELI POLSKIEJ BRANŻY DROBIARSKIEJ NA ZGROMADZENIE OGÓLNE a.v.e.c., ELPHA ORAZ ZJAZD CZŁONKÓW IPC”",
+      "date": "2018-05-28T11:58:54",
+      "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Zgromadzenia_Ogolne_2018/AKTUALIZACJA_30_05_2018_Zaproszenie_do_skladania_ofert_-_Organizacja_wyjazdu_na_Zgromadzenie_Ogolne_a_v_e_c_,_ELPHA_oraz_zjazd_czlonkow_IPC.pdf",
+      "label": "AKTUALIZACJA 30 05 2018 Zaproszenie do skladania ofert - Organizacja wyjazdu na Zgromadzenie Ogolne a v e c , ELPHA oraz zjazd czlonkow IPC.pdf",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      }
+    },
+    {
+      "slug": "zaproszenie-do-przygotowania-i-przedstawienia-oferty-na-realizacje-projektu-pt-wsparcie-ekspansji-polskiego-sektora-drobiarskiego-na-wybranych-rynkach-panstw-trzecich",
+      "title": "ZAPROSZENIE DO PRZYGOTOWANIA I PRZEDSTAWIENIA OFERTY NA REALIZACJĘ PROJEKTU pt. „WSPARCIE EKSPANSJI POLSKIEGO SEKTORA DROBIARSKIEGO NA WYBRANYCH RYNKACH PAŃSTW TRZECICH”",
+      "date": "2018-02-20T15:18:22",
+      "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Ekspansja_kraje_III/Zaproszenie_do_skladania_ofert_-_ekspansja_na_rynki_Azji_i_Afryki_2018.pdf",
+      "label": "pobierz.pdf",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      }
+    },
+    {
+      "slug": "zaproszenie-do-przygotowania-i-przedstawienia-oferty-na-realizacje-projektu-pt-wsparcie-ekspansji-polskiego-sektora-drobiarskiego-na-wybranych-rynkach-panstw-trzecich",
+      "title": "ZAPROSZENIE DO PRZYGOTOWANIA I PRZEDSTAWIENIA OFERTY NA REALIZACJĘ PROJEKTU pt. „WSPARCIE EKSPANSJI POLSKIEGO SEKTORA DROBIARSKIEGO NA WYBRANYCH RYNKACH PAŃSTW TRZECICH”",
+      "date": "2018-02-20T15:18:22",
+      "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Ekspansja_kraje_III/Zaproszenie_do_skladania_ofert_-_ekspansja_na_rynki_Azji_i_Afryki_2018_KOREKTA_23_02.pdf",
+      "label": "Treść Zaproszenia (ujednolicone) po wprowadzeniu w/w korekt:",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      }
+    },
+    {
+      "slug": "zaproszenie-do-przedstawienia-oferty-na-zakup-powierzchni-wystawienniczej-na-targach-sial-paris-21-25-pazdziernika-2018-invitation-to-present-an-offer-for-purchase-of-space-on-sial-paris-fairs-21th",
+      "title": "ZAPROSZENIE DO PRZEDSTAWIENIA OFERTY NA ZAKUP POWIERZCHNI WYSTAWIENNICZEJ NA TARGACH SIAL PARIS, 21-25 PAŹDZIERNIKA 2018/ INVITATION TO PRESENT AN OFFER FOR PURCHASE OF SPACE ON SIAL PARIS FAIRS, 21TH -25TH OCTOBER, 2018",
+      "date": "2018-02-03T15:30:47",
+      "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/SIAL_Paryz_2018/POWIERZCHNIA/ZAPROSZENIE_DO_PRZEDSTAWIENIA_OFERT_-_powierzchnia_SIAL_Paris.pdf",
+      "label": "pobierz.pdf",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      }
+    },
+    {
+      "slug": "zaproszenie-do-przedstawienia-oferty-na-zakup-powierzchni-wystawienniczej-na-targach-sial-paris-21-25-pazdziernika-2018-invitation-to-present-an-offer-for-purchase-of-space-on-sial-paris-fairs-21th",
+      "title": "ZAPROSZENIE DO PRZEDSTAWIENIA OFERTY NA ZAKUP POWIERZCHNI WYSTAWIENNICZEJ NA TARGACH SIAL PARIS, 21-25 PAŹDZIERNIKA 2018/ INVITATION TO PRESENT AN OFFER FOR PURCHASE OF SPACE ON SIAL PARIS FAIRS, 21TH -25TH OCTOBER, 2018",
+      "date": "2018-02-03T15:30:47",
+      "source": "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/SIAL_Paryz_2018/POWIERZCHNIA/INQUIRY_-_space_purchase_SIAL_Paris.pdf",
+      "label": "The content of the Invitation (ENG)",
+      "reason": "The original /upload/file/ path also returns HTTP 404 on the original WordPress server with the correct virtual host. No complete verified copy was recovered from the checked local resources or public archives.",
+      "originalServerCheck": {
+        "address": "109.95.157.137",
+        "hostname": "krd-ig.com.pl",
+        "protocol": "https",
+        "tlsVerified": true,
+        "status": 404
+      }
+    }
+  ],
+  "secondPass": {
+    "originalUnresolvedSources": [
+      "https://krd-ig.com.pl/wp-content/uploads/2026/08/2-Zalaczniki-1-7-do-Zapytania-ofertowego.docx",
+      "https://krd-ig.com.pl/wp-content/uploads/2026/08/2-Zalaczniki-1-7-do-Zapytania-ofertowego.pdf",
+      "https://krd-ig.com.pl/wp-content/uploads/2026/08/3.-Zalacznik-nr-5-do-Zapytania-ofertowego-KOSZTORYS.xlsx",
+      "http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/IFE_LONDYN_2019/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf",
+      "http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/IFE_LONDYN_2019/Zaproszenie_do_skladania_ofert_-_KRD_IFE_LONDYN_2019_01_18.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/IFE_LONDYN_2019/KRD-IG-13_2019_uniewaznienie_zapytania_ofertowego_IFE_2019.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/I__Zaproszenie_do_skladania_ofert_Indyk_z_Europy_21_01_2019.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/II__SIWZ_Indyk_z_Europy_-_pod_skrzydlami_jakosci__21_01_2019.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Zalacznik_nr_1_do_SIWZ_-_Opis_programu_Pod_skrzydlami_jakosci.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Zalacznik_nr_4_do_SIWZ_-_Wzor_formularza_ofertowego.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Zalacznik_nr_5_do_SIWZ_-_Projekt_istotnych_postanowien_umowy.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Zalacznik_nr_7_do_SIWZ_-_Tabela_oceny_oferty.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/PO_UWAGACH_OFERENTA_Zalacznik_nr_1_-_opis_programu_Pod_skrzydlami_jakosci.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/PYTANIA_OFERENTA.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_13.02.2019/PO_UWAGACH_OFERENTA_Zalacznik_nr_1_-_opis_programu_Pod_skrzydlami_jakosci.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_13.02.2019/PYTANIA_OFERENTA_20190214_(002).pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_14.02.2019/PO_UWAGACH_OFERENTA_Zalacznik_nr_1_-_opis_programu_Pod_skrzydlami_jakosci_20190218.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_14.02.2019/PYTANIA_OFERENTOW_ALL_20190218.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_18.02.2019/PYTANIA_OFERENTA__Z_18_02_2019.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_19.02.2019/PYTANIA_OFERENTA_20190219.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/Indyk_z_Europy_-_pod_skrzydlami_jakosci/Pytania_19.02.2019/PYTANIA_OFERENTA_20190219_B.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_2018_II_czesc_spotkania/Zapytanie_ofertowe_dot__zadania_Niwelowanie_barier_na_rynku_krajowym_SPOTKANIA.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_2018_II_czesc_spotkania/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/Zapytanie_ofertowe_dot__zadania_Niwelowanie_barier_na_rynku_krajowym.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Niwelowanie_barier_na_rynku_krajowym/AKTUALIZACJA_ZAL._NR_1_2018_07_12/AKTUALIZACJA_Zalacznik_1_do_Zapytania_ofertowego_2018_07_12.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/SIAL_2018_pozostale_dzialania/Zaproszenie_do_skladania_ofert_-_KRD_SIAL_PARYZ_2018_07_04.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/SIAL_2018_pozostale_dzialania/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/SIAL_2018_pozostale_dzialania/AKTUALIZACJA_Zapytania_ofertowego_2018_07_10/AKTUALIZACJA_2-_Zaproszenie_do_skladania_ofert_-_KRD_SIAL_PARYZ_2018_07_10.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/SIAL_2018_pozostale_dzialania/AKTUALIZACJA_Zapytania_ofertowego_2018_07_09/AKTUALIZACJA_Zaproszenie_do_skladania_ofert_-_KRD_SIAL_PARYZ_2018_07_09.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/SIAL_2018_pozostale_dzialania/AKTUALIZACJA_Zapytania_ofertowego_2018_07_09/Zal_nr_5_PLAN_STOISKA_KRD-IG_SIAL_PARYZ.JPG",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Zgromadzenia_Ogolne_2018/Zaproszenie_do_skladania_ofert_-_Organizacja_wyjazdu_na_Zgromadzenie_Ogolne_a_v_e_c_,_ELPHA_oraz_zjazd_czlonkow_IPC.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Zgromadzenia_Ogolne_2018/Zalaczniki_1-3_do_Zapytania_ofertowego(1).pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Zgromadzenia_Ogolne_2018/AKTUALIZACJA_30_05_2018_Zaproszenie_do_skladania_ofert_-_Organizacja_wyjazdu_na_Zgromadzenie_Ogolne_a_v_e_c_,_ELPHA_oraz_zjazd_czlonkow_IPC.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Ekspansja_kraje_III/Zaproszenie_do_skladania_ofert_-_ekspansja_na_rynki_Azji_i_Afryki_2018.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/Ekspansja_kraje_III/Zaproszenie_do_skladania_ofert_-_ekspansja_na_rynki_Azji_i_Afryki_2018_KOREKTA_23_02.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/SIAL_Paryz_2018/POWIERZCHNIA/ZAPROSZENIE_DO_PRZEDSTAWIENIA_OFERT_-_powierzchnia_SIAL_Paris.pdf",
+      "http://old.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2018/SIAL_Paryz_2018/POWIERZCHNIA/INQUIRY_-_space_purchase_SIAL_Paris.pdf"
+    ],
+    "checkedReferences": 38,
+    "recoveredReferences": 12,
+    "remainingReferences": 26,
+    "additionalOriginalDocuments": 12,
+    "localSearch": {
+      "gitObjects": "Git catalog: 305 available commits; all 1521 tree objects inspected, including otherwise unreachable history; 149 PDF blobs inspected.",
+      "uniqueDocumentsInspected": 225,
+      "projectArchive": "moja_strona_14_08.zip: all 254 entries inspected, no PDF, DOC/DOCX or XLS/XLSX."
+    },
+    "originalServer": {
+      "address": "109.95.157.137",
+      "virtualHost": "krd-ig.com.pl",
+      "tlsVerified": true
+    },
+    "publicSearch": [
+      "Original http/https and www/non-www hosts",
+      "Internet Archive original article and download captures",
+      "Common Crawl CDX and original WARC response payloads",
+      "Original WordPress server supplied by the site owner, using correct virtual host and verified TLS"
+    ],
+    "originalWordPress": {
+      "publicMediaMetadataRecordsInspected": 2194,
+      "verifiedOriginalPostIds": [
+        8006,
+        8010,
+        8008,
+        7991,
+        7983,
+        7969,
+        7967
+      ],
+      "remainingHrefStatus": "Original articles still point to the unavailable /upload/file/ paths; no replacement URLs found in those articles."
+    },
+    "archiveLimitations": {
+      "truncatedPdfCopies": 2,
+      "truncatedPdfUsage": "Excluded from downloads; Range confirms the archived objects end at byte 1048575.",
+      "commonCrawl2018To2020": "Several index queries returned HTTP 503/504. Historical Common Crawl collections were not exhaustively searchable."
+    },
+    "remainingRecovery": {
+      "status": "blocked",
+      "requiredSource": "A full backup of the old upload/file directory, or another verified original source. No such backup is currently available to the site owner."
+    }
+  },
+  "after": {
+    "articles": 122,
+    "activeFileReferences": 191,
+    "visibleUniqueFileUrls": 173,
+    "validVisibleUniqueFiles": 171,
+    "unavailableVisibleFileUrls": [
+      "http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/IFE_LONDYN_2019/Zalaczniki_1-4_do_Zapytania_ofertowego.pdf",
+      "http://www.krd-ig.com.pl/upload/file/Zapytania_ofertowe_2019/IFE_LONDYN_2019/Zaproszenie_do_skladania_ofert_-_KRD_IFE_LONDYN_2019_01_18.pdf"
+    ],
+    "remainingUnresolvedReferences": 26
+  }
+}

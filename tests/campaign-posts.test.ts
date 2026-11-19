@@ -158,6 +158,6 @@ test("specific spelling, dates, fund, units and business sentences are corrected
 test("integration calls helper after the final sanitizing map", () => {
   const source = readFileSync(new URL("../app/lib/content.ts", import.meta.url), "utf8");
   const news = source.slice(source.indexOf("export const newsPosts"), source.indexOf("function normalizeTenderCategories"));
-  assert.match(news, /\}\)\)\.map\(correctCampaignPost\);\s*$/);
+  assert.match(news, /\}\)\)\.map\(correctCampaignPost\)\.map\(post => isTenderPost\(post\) \? restoreTenderAttachments\(post\) : post\);\s*$/);
   assert.ok(news.lastIndexOf("sanitizeNewsPost") < news.indexOf(".map(correctCampaignPost)"));
 });

@@ -27,6 +27,7 @@ const bundled = await build({
       import { ArticleBody } from "./app/components/ArticleBody";
       import { CampaignWebsiteTicker } from "./app/components/CampaignWebsiteTicker";
       import { correctCampaignPost } from "./app/lib/campaign-posts";
+      import { newsPosts } from "./app/lib/content";
       import content from "./app/data/content.json";
       import { createElement } from "react";
       export async function article(props) {
@@ -38,6 +39,9 @@ const bundled = await build({
       export async function campaign(id) {
         const post = correctCampaignPost(content.posts.find(post => post.id === id));
         return article(post);
+      }
+      export async function tender(id) {
+        return article(newsPosts.find(post => post.id === id));
       }
     `,
     resolveDir: fileURLToPath(new URL("..", import.meta.url)),
@@ -86,6 +90,26 @@ test("recovered downloads render real links to verified original PDF files", asy
     const bytes = readFileSync(new URL(`../public${href}`, import.meta.url));
     assert.equal(bytes.subarray(0, 5).toString(), "%PDF-");
     assert.equal(createHash("sha256").update(bytes).digest("hex"), hash);
+  }
+});
+
+test("the 2026 tender renders the published invitation and annexes as separate working downloads", async () => {
+  const repairs = JSON.parse(readFileSync(new URL("../app/data/tender-attachment-repairs.json", import.meta.url), "utf8"));
+  const $ = load(await renderer.tender(900001));
+  for (const [filename, context] of [
+    ["1.-Zaproszenie-do-skladania-ofert-OCHRONA-WIZERUNKU-KRAJ-2026-1.pdf", /Treść Zaproszenia/],
+    ["2-Zalaczniki-1-7-do-Zapytania-ofertowego.pdf", /Załączniki \(1-7\)/],
+    ["2-Zalaczniki-1-7-do-Zapytania-ofertowego.docx", /w formie edytowalnej/],
+    ["3.-Zalacznik-nr-5-do-Zapytania-ofertowego-KOSZTORYS.xlsx", /Załącznik nr 5/],
+  ]) {
+    const source = `https://krd-ig.com.pl/wp-content/uploads/2026/08/${filename}`;
+    const asset = repairs.assets[source];
+    assert.ok(asset, source);
+    const link = $(`article a[href="${asset.href}"]`);
+    assert.equal(link.length, 1, source);
+    assert.match(link.closest("p,h2").text(), context);
+    const bytes = readFileSync(new URL(`../public${asset.href}`, import.meta.url));
+    assert.equal(createHash("sha256").update(bytes).digest("hex"), asset.sha256);
   }
 });
 

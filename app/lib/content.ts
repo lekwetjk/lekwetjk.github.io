@@ -1,6 +1,7 @@
 import rawContent from "../data/content.json";
 import generatedContentPosts from "../data/generated-posts.json";
 import { correctCampaignPost } from "./campaign-posts";
+import { restoreTenderAttachments } from "./tender-attachments";
 
 export type ContentLink = {
   href: string;
@@ -299,7 +300,7 @@ const supplementalNewsPosts: NewsPost[] = [
     ],
     links: [
       {
-        href: "https://krd-ig.com.pl/wp-content/uploads/2026/08/1.-Zaproszenie-do-skladania-ofert-OCHRONA-WIZERUNKU-KRAJ-2026.pdf",
+        href: "https://krd-ig.com.pl/wp-content/uploads/2026/08/1.-Zaproszenie-do-skladania-ofert-OCHRONA-WIZERUNKU-KRAJ-2026-1.pdf",
         label: "pobierz.pdf",
         document: true,
       },
@@ -482,7 +483,7 @@ export const newsPosts = [
   }),
   categories: normalizeTenderCategories(post.title, post.categories),
   excerpt: normalizePreviewText(post.excerpt),
-})).map(correctCampaignPost);
+})).map(correctCampaignPost).map(post => isTenderPost(post) ? restoreTenderAttachments(post) : post);
 
 function normalizeTenderCategories(title: string, categories: string[]) {
   const normalizedCategories = new Set<string>(categories.filter(Boolean));
