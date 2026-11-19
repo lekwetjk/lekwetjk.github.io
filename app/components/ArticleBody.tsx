@@ -331,7 +331,11 @@ export async function ArticleBody({
           "Musimy przekonywać krajowych i zagranicznych konsumentów do zwiększenia spożycia drobiu.",
         ]
       : paragraphs;
-  const cleanedParagraphs = proposals["text-cleanup"] ? originalParagraphs.map(cleanProposedParagraph) : originalParagraphs;
+  const cleanedParagraphs = proposals["text-cleanup"] ? originalParagraphs.map((paragraph) =>
+    categories.includes("Kampanie")
+      ? paragraph.split("\n").map(cleanProposedParagraph).join("\n")
+      : cleanProposedParagraph(paragraph),
+  ) : originalParagraphs;
   const visibleParagraphs = slug === "akcja-stopdezinformacjizywnosciowej"
     ? cleanedParagraphs.filter((paragraph) => paragraph !== "Dowiedz się więcej na stronie")
         .map((paragraph) => paragraph.replace(/(?:&#x1f449;|👉) stopdezinformacjizywnosciowej\.pl/, "[👉 stopdezinformacjizywnosciowej.pl](https://stopdezinformacjizywnosciowej.pl/)"))

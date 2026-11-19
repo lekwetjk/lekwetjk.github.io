@@ -7,7 +7,7 @@ import { load } from "cheerio";
 
 const stubs = {
   "next/server": "export async function connection() {}",
-  "../lib/local-proposals-server": "export async function getLocalProposals() { return {}; }",
+  "../lib/local-proposals-server": 'export async function getLocalProposals() { return { "text-cleanup": true }; }',
   "../lib/content": "export const knowledgePages = []; export const newsPosts = [];",
   "../lib/managed-posts": "export async function applyManagedPostOverrides(posts) { return posts; }",
 };
@@ -69,6 +69,10 @@ test("September and October campaign lists render every video URL as a clickable
     [10323, ["dM2ocu-mjkc", "7xuw_iO4wYg", "naO7mpsL5r0", "-rBEOlBXz_E"]],
   ]) {
     const $ = load(await renderer.campaign(id));
+    assert.deepEqual(
+      $("article ul").map((_, list) => $(list).children("li").length).get(),
+      id === 10327 ? [3, 7, 2] : [2, 2],
+    );
     for (const video of videos) {
       const url = `https://www.youtube.com/watch?v=${video}`;
       const link = $(`article li a[href="${url}"]`);
