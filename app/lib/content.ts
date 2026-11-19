@@ -1,5 +1,6 @@
 import rawContent from "../data/content.json";
 import generatedContentPosts from "../data/generated-posts.json";
+import { correctCampaignPost } from "./campaign-posts";
 
 export type ContentLink = {
   href: string;
@@ -481,7 +482,7 @@ export const newsPosts = [
   }),
   categories: normalizeTenderCategories(post.title, post.categories),
   excerpt: normalizePreviewText(post.excerpt),
-}));
+})).map(correctCampaignPost);
 
 function normalizeTenderCategories(title: string, categories: string[]) {
   const normalizedCategories = new Set<string>(categories.filter(Boolean));

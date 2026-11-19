@@ -2388,7 +2388,25 @@ blockquote {
   margin: 0 0 18px;
   color: #2f2f2b;
   font: 400 16px/1.68 "Aptos", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
-  text-align: left;
+  text-align: justify;
+  text-align-last: left;
+}
+
+.prose-campaign :is(p, li) {
+  font: 400 16px/1.65 "Aptos", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  text-align: justify;
+  text-align-last: left;
+}
+
+.article-hero.article-hero-campaign h1 {
+  font-size: clamp(28px, 4.2vw, 34px);
+  line-height: 1.2;
+  letter-spacing: 0;
+}
+
+.article-hero-campaign p:not(.article-kicker) {
+  text-align: justify;
+  text-align-last: left;
 }
 
 .kampanie-list {
@@ -2423,12 +2441,16 @@ blockquote {
 .kampanie-main {
   display: grid;
   gap: 4px;
+  min-width: 0;
+  flex: 1;
 }
 
 .kampanie-summary {
   color: #3e3d39;
   font: 400 14px/1.55 "Aptos", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   text-transform: none;
+  text-align: justify;
+  text-align-last: left;
 }
 
 .kampanie-date {
@@ -4169,6 +4191,12 @@ blockquote {
   }
   .campaign-website-copy { display: flex; flex-direction: column; gap: 8px; }
   .campaign-website-label { font-size: 17px; font-weight: 700; line-height: 1.2; }
+  .campaign-website-status {
+    max-width: 240px;
+    color: var(--muted);
+    font-size: 13px;
+    line-height: 1.4;
+  }
   @keyframes campaignWebsites {
     from { transform: translateX(0); }
     to { transform: translateX(calc(-50% - 7px)); }

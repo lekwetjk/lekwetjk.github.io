@@ -67,6 +67,7 @@ export default async function NewsDetailPage({
     notFound();
   }
 
+  const isCampaign = post.categories.includes("Kampanie");
   const tenderSplitTitlePrefix = "ZAPYTANIE OFERTOWE";
   const tenderSplitTitleSuffix = shouldUseTenderSplitTitle
     ? post.title.replace(/^Zapytanie ofertowe/i, "").trimStart()
@@ -85,7 +86,7 @@ export default async function NewsDetailPage({
 
   return (
     <PageShell>
-      <section className="article-hero">
+      <section className={`article-hero${isCampaign ? " article-hero-campaign" : ""}`}>
         <div className="shell article-hero-grid">
           <div>
             <p className="article-kicker">

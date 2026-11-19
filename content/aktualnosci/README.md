@@ -35,3 +35,26 @@ W trybie development, gdy binding D1 nie jest dostępny, publikacje korzystają 
 | `source` | nie | Link do materiału źródłowego |
 | `links` | nie | Lista załączników (patrz szablon) |
 | `justify` | nie | Wpisz `tak`, aby wyjustrować tekst akapitów (wyrównanie do obu marginesów) |
+
+## Korekta archiwalnych kampanii
+
+`app/lib/campaign-posts.ts` zawiera ręczne korekty 26 wpisów z dawnej kategorii „Kampanie” oraz formatowania „Wybierz Twoje Wartości!”. Korekty są ograniczone do kategorii i par identyfikator–historyczny slug (wpis generowany rozpoznawany jest po slugu). Nie zmieniają adresów, dat ani plików źródłowych JSON. W `app/lib/content.ts` wykonywane są **po ostatnim sanitizowaniu**: wcześniejszy sanitizer spłaszcza nowe linie, niszcząc listy Markdown. Rzeczywiste sekcje mają jawne nagłówki `##`, a elementy list są łączone nowymi liniami w jednym akapicie.
+
+Wersje zarządzane w CMS mają nadal pierwszeństwo; helper pomija także wpisy oznaczone `managed`. Po imporcie kampanii do panelu dalsze korekty należy nanosić w panelu.
+
+### Materiały przywrócone i braki
+
+- Raport „Indyk ma wiele do dania” za październik 2024 przywrócono jako lokalny link Markdown do `/media/reports/KRD-indyk_pazdziernik.pdf` (25 stron, okładka „RAPORT PAŹDZIERNIK 2024”).
+- Nie odnaleziono prezentacji `Prezentacja_indyk.pptx`, raportu `KRD_Indyk_wrzesien.pdf` ani dwóch plików `POLSKI-DROB-W-OCZACH-DZIECKA-1.pdf` i `-2.pdf`. Zamiast niesprawnych linków zamieszczono informacje o niedostępności, zachowując historyczny opis wydarzeń.
+- W kampaniach indyczej i kurczęcej z 2022 r. nie zachowały się pliki czterech spotów (TV/radio, 30/15 sekund) dla każdej kampanii. Cztery puste podpisy zastąpiono jedną informacją o braku nagrań w każdym artykule.
+- `indykajemy.pl` pozostaje wzmianką historyczną z informacją o niedostępności, bez aktywnego odnośnika. Wrześniowy materiał „Dzień dobry TVN” oznaczono jako niedostępny (404). `foodservice24.pl`, `e-restauracja.pl` (obecnie parking domeny) i niepotwierdzony `horectrends.pl` nie są aktywnie polecane. Nie zgadujemy alternatywnej pisowni adresu tego ostatniego portalu.
+- Eksport `wordpress/export/content-export.json` nie zawiera pełnej treści „Czerwonej kartki dla dezinformacji”; opis oparto wyłącznie na zachowanym tytule i zapowiedzi o Szymonie Marciniaku, jawnie zaznaczając brak materiału.
+- W najstarszych projektach zachowano daty i pełne zdania wstępu obecne wyłącznie w zapowiedziach. Eksport również ucina końcówki zapowiedzi „Indyk z Europy…” i „Drób z europejskim paszportem…”, więc urwanych zdań nie dopisywano. Zachowano pełne istniejące akapity o kontroli produkcji i piórach. Rok 2019 w opisie projektu azjatyckiego odróżniono od publikacji w 2020 r.; nie ustalano nieudokumentowanych dat realizacji.
+
+Sprawdzono pliki w `public/`, lokalne materiały oraz nazwy zasobów w archiwach `wordpress/krd-ig-media.zip` i `moja_strona_sources.zip`; nie pobierano zewnętrznych załączników. Aby przywrócić brakujący materiał, należy najpierw potwierdzić jego treść i pochodzenie, umieścić zweryfikowany plik w `public/media/`, a następnie zastąpić konkretną notę w nadpisaniu danego wpisu linkiem Markdown do rzeczywistej ścieżki lokalnej. Nie należy dodawać samego przycisku „pobierz” ani zgadywanego URL. Po imporcie wpisu do CMS przywrócenie wykonuje się w jego wersji panelowej.
+
+Testy korekt: `node --experimental-strip-types --test tests/campaign-posts.test.ts`.
+
+### Zewnętrzne strony kampanii w tickerze
+
+W komponencie `CampaignWebsiteTicker` Dobry Drób korzysta z kanonicznego adresu HTTPS: `https://dobrydrob.pl/`. StopDezinformacji (timeout), Wings (wygasły certyfikat TLS) i Podaj (wygasły certyfikat HTTPS, choć HTTP działa) pozostawiono jako nieklikalne kafle z jawnym statusem niedostępności. Nie obchodzimy zabezpieczeń TLS ani nie zastępujemy HTTPS działającym HTTP. Po ponownym potwierdzeniu dostępności i poprawnego HTTPS redakcja może przywrócić `href` i logo oraz usunąć `unavailable` w tym komponencie.

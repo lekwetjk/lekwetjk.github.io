@@ -1680,7 +1680,7 @@ export async function ArticleBody({
 
     return (
       <div className="article-layout article-layout-full shell">
-        <article className="prose prose-kampanie">
+        <article className="prose prose-justified prose-kampanie">
           <CampaignWebsiteTicker />
           <h2>Realizowane kampanie</h2>
           <p>
@@ -2809,9 +2809,10 @@ export async function ArticleBody({
   }
 
   const isImportedTender = source.startsWith("https://old.krd-ig.com.pl/");
-  const inferParagraphHeadings = inferHeadings && !isImportedTender;
+  const isCampaign = categories.includes("Kampanie");
+  const inferParagraphHeadings = inferHeadings && !isImportedTender && !isCampaign;
   const shouldJustifyArticleText =
-    justify || isImportedTender || isTenderLikeSlug || categories.includes("Prawo") || slug === "bezpieczenstwo-bialkowe" ||
+    justify || isCampaign || isImportedTender || isTenderLikeSlug || categories.includes("Prawo") || slug === "bezpieczenstwo-bialkowe" ||
     slug === "globalizacja-rynku" ||
     slug === "przedstawicielstwo-w-chinach";
   const shouldUseFullWidthArticleLayout =
@@ -2846,7 +2847,7 @@ export async function ArticleBody({
 
     return (
       <div className="article-layout article-layout-full shell">
-        <article className="prose prose-justified prose-alimentaria">
+        <article className="prose prose-justified prose-campaign prose-alimentaria">
           <p>
             Targi Alimentaria 2026 w Barcelonie przejdą do historii zarówno jako rekordowa
             edycja wydarzenia, jak i jeden z najmocniejszych występów polskiej branży
@@ -3522,7 +3523,7 @@ export async function ArticleBody({
       className={`article-layout${shouldUseFullWidthArticleLayout ? " article-layout-full" : ""} shell`}
     >
       <article
-        className={`prose${shouldJustifyArticleText ? " prose-justified" : ""}${isImportedTender ? " prose-imported-tender" : ""}${slug === "pierze-i-puch-certyfikacja" ? " prose-pierze" : ""}`}
+        className={`prose${shouldJustifyArticleText ? " prose-justified" : ""}${isCampaign ? " prose-campaign" : ""}${isImportedTender ? " prose-imported-tender" : ""}${slug === "pierze-i-puch-certyfikacja" ? " prose-pierze" : ""}`}
       >
         {visibleParagraphs.map((paragraph, index) => {
           const trimmedParagraph = paragraph.trim();
