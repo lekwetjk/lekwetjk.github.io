@@ -65,6 +65,13 @@ new Function("require", "module", "exports", bundled.outputFiles[0].text)(
 );
 const renderer = compiled.exports;
 
+test("red card campaign renders the confirmed website as a clickable link", async () => {
+  const $ = load(await renderer.campaign(14223));
+  const link = $('article a[href="https://www.stopdezinformacjizywnosciowej.pl/"]');
+  assert.equal(link.length, 1);
+  assert.equal(link.text(), "www.stopdezinformacjizywnosciowej.pl");
+});
+
 test("recovered downloads render real links to verified original PDF files", async () => {
   for (const [id, href, hash, label] of [
     [10323, "/media/reports/KRD_Indyk_wrzesien.pdf", "8d06ec78a63f098f8a979dbe6665c860a0512f2a30b5f9e84452934c8cf15273", "Raport za wrzesień 2024 (PDF)"],

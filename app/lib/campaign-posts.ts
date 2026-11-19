@@ -74,6 +74,7 @@ export function correctCampaignPost(post: NewsPost): NewsPost {
         excerpt: "Szymon Marciniak ambasadorem polskiego drobiu.",
         paragraphs: [
           "„Czerwona kartka dla dezinformacji” — Szymon Marciniak ambasadorem polskiego drobiu.",
+          "Strona kampanii: [www.stopdezinformacjizywnosciowej.pl](https://www.stopdezinformacjizywnosciowej.pl/).",
           "Pełna treść archiwalnego materiału nie zachowała się w dostępnym eksporcie. Powyższy opis opiera się wyłącznie na zachowanym tytule i zapowiedzi publikacji.",
         ],
       };
