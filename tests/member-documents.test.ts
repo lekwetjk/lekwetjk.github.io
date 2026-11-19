@@ -2,8 +2,9 @@ import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { DatabaseSync, type SQLInputValue } from "node:sqlite";
 import test from "node:test";
+import { unzipSync } from "fflate";
 
-import { deleteMemberDocument, documentContentType, getMemberDocument, listMemberDocuments, memberDocumentScope, normalizeMethodologyTitle, saveMemberDocument, updateMethodologyDocumentTitle } from "../app/lib/member-documents.ts";
+import { createMemberDocumentsArchive, deleteMemberDocument, documentContentType, getMemberDocument, listMemberDocuments, memberDocumentScope, normalizeMethodologyTitle, saveMemberDocument, updateMethodologyDocumentTitle } from "../app/lib/member-documents.ts";
 import type { getMemberDocumentsBucket } from "../db/index.ts";
 
 test("document scope supports private and public sections and rejects unknown sections", () => {
@@ -24,6 +25,11 @@ test("local documents with identical names remain isolated across sections", asy
     assert.equal((await getMemberDocument(fileName, "epi-geo"))?.content.toString(), "epidemiology");
     assert.equal((await listMemberDocuments()).some((document) => document.fileName === fileName), true);
     assert.equal((await listMemberDocuments("epi-geo")).some((document) => document.fileName === fileName), true);
+    const archive = await createMemberDocumentsArchive();
+    assert.equal(archive.fileCount, 1);
+    const archivedFiles = unzipSync(archive.content);
+    assert.deepEqual(Object.keys(archivedFiles), [fileName]);
+    assert.equal(new TextDecoder().decode(archivedFiles[fileName]), "general");
     assert.equal(await deleteMemberDocument(fileName, "epi-geo"), true);
     assert.equal(await getMemberDocument(fileName, "epi-geo"), null);
     assert.equal((await getMemberDocument(fileName))?.content.toString(), "general");
@@ -108,6 +114,7 @@ test("R2 failures surface instead of returning empty lists or false success", as
   try {
     await assert.rejects(saveMemberDocument({ fileName: "failure.pdf", content: Buffer.from("data"), contentType: "application/pdf", title: "Failure" }, "methodology"), /R2 write failed/);
     await assert.rejects(listMemberDocuments("methodology"), /R2 list failed/);
+    await assert.rejects(createMemberDocumentsArchive(), /R2 list failed/);
     await assert.rejects(getMemberDocument("failure.pdf", "methodology"), /R2 read failed/);
     await assert.rejects(updateMethodologyDocumentTitle("failure.pdf", "Failure"), /R2 read failed/);
     bucket.get = async () => ({ body: new Response("data").body!, uploaded: new Date() });
@@ -187,6 +194,11 @@ for (const storage of ["R2", "D1"] as const) {
       assert.deepEqual((await listMemberDocuments("epi-geo")).map((document) => document.fileName), [fileName]);
       assert.equal(await new Response((await getMemberDocument(fileName))!.content).text(), "general");
       assert.equal(await new Response((await getMemberDocument(fileName, "epi-geo"))!.content).text(), "epi updated");
+      const archive = await createMemberDocumentsArchive();
+      assert.equal(archive.fileCount, 1);
+      const archivedFiles = unzipSync(archive.content);
+      assert.deepEqual(Object.keys(archivedFiles), [fileName]);
+      assert.equal(new TextDecoder().decode(archivedFiles[fileName]), "general");
       if (storage === "R2") {
         assert.deepEqual([...objects.keys()].sort(), [`epi-geo-documents/${fileName}`, `member-documents/${fileName}`]);
       } else {

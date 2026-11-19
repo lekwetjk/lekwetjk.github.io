@@ -159,8 +159,8 @@ test("member ticker uses active member logos with bounded administrator-controll
   assert.match(ticker, /getPublicMemberBannerItems/);
   assert.match(ticker, /process\.env\.NODE_ENV === "development"\s*\? commissionBanner\.map/);
   assert.match(ticker, /src=\{withBasePath\(item\.href\)\}/);
-  assert.match(ticker, /animationDuration: "224s"/);
-  assert.match(styles, /animation: commissionTicker 224s linear infinite/);
+  assert.match(ticker, /animationDuration: "calc\(448s \/ 1\.5\)"/);
+  assert.match(styles, /animation: commissionTicker calc\(448s \/ 1\.5\) linear infinite/);
   assert.match(ticker, /--member-logo-scale/);
   assert.match(auth, /user\.role === "member" && user\.isActive/);
   assert.doesNotMatch(auth, /user\.role === "admin" && user\.isActive/);
@@ -265,7 +265,7 @@ test("report archive is public while interactive bulletins and their PDF files r
   assert.match(reportsManager, /Utwórz biuletyn z DOCX/);
   assert.match(reportsManager, /buildBulletinFromDocx\(file, period\)/);
   assert.match(reportsManager, /JSON\.stringify\(generated\.bulletin\)/);
-  assert.match(reportsManager, /disabled=\{busy \|\| !approved\}/);
+  assert.match(reportsManager, /disabled=\{busy \|\| !approved \|\| !generated\.bulletin\.exportMap\}/);
   assert.match(reportsManager, /validatePreparedBulletin\(generated\.bulletin\)/);
   const ocrReview = await readProjectFile("app/admin/raporty/DocxOcrReview.tsx");
   assert.match(ocrReview, /Zatwierdź i dodaj dane OCR/);

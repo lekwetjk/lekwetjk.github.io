@@ -1,9 +1,25 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { NextRequest } from "next/server";
+import { createRequire } from "node:module";
+import { fileURLToPath } from "node:url";
+import { buildSync } from "esbuild";
 
 import { AUTH_COOKIE_NAME, createSessionToken } from "../app/lib/auth.ts";
-import { proxy } from "../proxy.ts";
+
+const require = createRequire(import.meta.url);
+const { NextRequest } = require("next/server") as typeof import("next/server");
+// Match the bundled runtime; native ESM cannot resolve Next's extensionless subpath.
+const bundled = buildSync({
+  entryPoints: [fileURLToPath(new URL("../proxy.ts", import.meta.url))],
+  bundle: true,
+  packages: "external",
+  platform: "node",
+  format: "cjs",
+  write: false,
+});
+const proxyModule = { exports: {} };
+new Function("require", "module", "exports", bundled.outputFiles[0].text)(require, proxyModule, proxyModule.exports);
+const { proxy } = proxyModule.exports as typeof import("../proxy.ts");
 
 function request(path: string, token?: string) {
   const headers = token ? { cookie: `${AUTH_COOKIE_NAME}=${token}` } : undefined;

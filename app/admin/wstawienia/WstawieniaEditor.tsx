@@ -62,8 +62,9 @@ export default function WstawieniaEditor() {
     setStatus("");
     try {
       const response = await fetch("/api/admin/wstawienia", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ rows }) });
-      const result = await response.json().catch(() => ({})) as { error?: string };
+      const result = await response.json() as WstawieniaData & { error?: string };
       if (!response.ok) throw new Error(result.error ?? "Nie udało się zapisać tabeli.");
+      setData({ columns: result.columns, rows: result.rows });
       setStatus("Tabela została zapisana.");
     } catch (error) {
       setStatus(error instanceof Error ? error.message : "Nie udało się zapisać tabeli.");
@@ -90,20 +91,20 @@ export default function WstawieniaEditor() {
     <div style={{ display: "grid", gap: 16 }}>
       <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
         <button type="button" onClick={() => void saveRows()} disabled={isSaving} className="button button-primary">{isSaving ? "Zapisywanie..." : "Zapisz tabelę"}</button>
-        <button type="button" onClick={addYear} className="button button-outline">Dodaj rok</button>
+        <button type="button" onClick={addYear} disabled={isSaving} className="button button-outline">Dodaj rok</button>
         <a href="/api/admin/wstawienia/export" className="button button-outline">Eksportuj CSV</a>
         <label className="button button-outline" style={{ cursor: "pointer" }}>
           Importuj CSV
-          <input type="file" accept=".csv,text/csv" onChange={(event) => { const file = event.target.files?.[0]; if (file) void importCsv(file); event.currentTarget.value = ""; }} style={{ display: "none" }} />
+          <input type="file" accept=".csv,text/csv" disabled={isSaving} onChange={(event) => { const file = event.target.files?.[0]; if (file) void importCsv(file); event.currentTarget.value = ""; }} style={{ display: "none" }} />
         </label>
       </div>
       <p style={{ margin: 0, color: status.startsWith("Tabela") || status.startsWith("Załadowano") ? "#166534" : "#b91c1c" }}>{status}</p>
       <div className="wstawienia-table-wrap">
         <table className="wstawienia-table">
-          <thead><tr><th>Rok</th>{data.columns.map((column) => <th key={column}>{column}</th>)}</tr></thead>
+          <thead><tr><th>Rok</th>{data.columns.map((column, columnIndex) => <th key={`${columnIndex}-${column}`}>{column}</th>)}</tr></thead>
           <tbody>{data.rows.map((row, rowIndex) => <tr key={`${row.year}-${rowIndex}`}>
-            <th scope="row"><input value={row.year} onChange={(event) => setData({ ...data, rows: data.rows.map((item, index) => index === rowIndex ? { ...item, year: event.target.value } : item) })} style={{ width: 64 }} /></th>
-            {data.columns.map((column, columnIndex) => <td key={`${rowIndex}-${columnIndex}`}><input value={MONTHLY_INDEXES.has(columnIndex) ? formatMonthlyValue(row.values[columnIndex] ?? "") : row.values[columnIndex] ?? ""} onChange={(event) => updateCell(rowIndex, columnIndex, event.target.value)} inputMode={MONTHLY_INDEXES.has(columnIndex) ? "numeric" : undefined} disabled={!MONTHLY_INDEXES.has(columnIndex)} aria-label={`${row.year} ${column}`} style={{ minWidth: 84, background: MONTHLY_INDEXES.has(columnIndex) ? "#fff" : "#f1f5f9" }} /></td>)}
+            <th scope="row"><input value={row.year} disabled={isSaving} onChange={(event) => setData({ ...data, rows: data.rows.map((item, index) => index === rowIndex ? { ...item, year: event.target.value } : item) })} style={{ width: 64 }} /></th>
+            {data.columns.map((column, columnIndex) => <td key={`${rowIndex}-${columnIndex}`}><input value={MONTHLY_INDEXES.has(columnIndex) ? formatMonthlyValue(row.values[columnIndex] ?? "") : row.values[columnIndex] ?? ""} onChange={(event) => updateCell(rowIndex, columnIndex, event.target.value)} inputMode={MONTHLY_INDEXES.has(columnIndex) ? "numeric" : undefined} disabled={isSaving || !MONTHLY_INDEXES.has(columnIndex)} aria-label={`${row.year} ${column}`} style={{ minWidth: 84, background: MONTHLY_INDEXES.has(columnIndex) ? "#fff" : "#f1f5f9" }} /></td>)}
           </tr>)}</tbody>
         </table>
       </div>

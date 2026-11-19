@@ -44,6 +44,18 @@ pnpm dev
 
 Aplikacja będzie dostępna lokalnie na porcie 3000 lub kolejnych wolnych portach, w zależności od aktywności innych procesów.
 
+### Publikacje, dokumenty i Wstawienia
+
+Po dodaniu publikacji lista wpisów w panelu odświeża się bez przeładowania
+strony. Eksport ZIP dokumentów członkowskich pobiera aktualne pliki z tego
+samego magazynu co lista dokumentów (R2, D1 lub lokalny magazyn podglądu);
+nie obejmuje odrębnych sekcji epi-geo i metodyki.
+
+Zapis Wstawień zwraca przeliczone sumy i dynamiki, które od razu trafiają
+do tabeli w panelu. Archiwalny przypis `*` na końcu wartości miesięcznej
+jest zachowywany i nie blokuje zapisu. Nie zmieniono wersji inicjalizacji
+danych ani nie wymuszono ponownego importu istniejącej bazy.
+
 ### Rejestr logów
 
 Administrator otwiera rejestr z kafelka „Rejestr logów” na swoim koncie

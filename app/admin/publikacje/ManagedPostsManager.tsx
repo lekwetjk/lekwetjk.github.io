@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import MarkdownEditor from "./MarkdownEditor";
+import PublicationForm from "./PublicationForm";
 
 type Post = {
   id: string;
@@ -43,6 +44,10 @@ export default function ManagedPostsManager() {
     setPosts(data.posts ?? []);
     setImportablePosts(data.importablePosts ?? []);
     return data.posts ?? [];
+  }
+
+  function refreshPosts() {
+    void loadPosts().catch((error) => setMessage(error instanceof Error ? error.message : "Nie udało się pobrać wpisów."));
   }
 
   async function importPost(slug: string) {
@@ -88,7 +93,7 @@ export default function ManagedPostsManager() {
     setMessage("Wpis został usunięty.");
   }
 
-  return <section style={{ marginTop: 32, display: "grid", gap: 14 }}>
+  return <><div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))", gap: 18 }}><PublicationForm kind="news" onSaved={refreshPosts} /><PublicationForm kind="tender" onSaved={refreshPosts} /></div><section style={{ marginTop: 32, display: "grid", gap: 14 }}>
     <h2 style={{ margin: 0 }}>Opublikowane wpisy</h2>
     {message ? <p style={{ margin: 0, color: message.includes("Nie udało") ? "#b91c1c" : "#166534" }}>{message}</p> : null}
     {!posts.length ? <p style={{ margin: 0, color: "#475569" }}>Brak wpisów dodanych z panelu administratora.</p> : null}
@@ -119,5 +124,5 @@ export default function ManagedPostsManager() {
         <div style={{ display: "flex", gap: 8 }}><button type="submit" className="button button-primary">Zapisz zmiany</button><button type="button" className="button button-outline" onClick={() => setEditing(null)}>Anuluj</button></div>
       </form> : null}
     </article>)}
-  </section>;
+  </section></>;
 }

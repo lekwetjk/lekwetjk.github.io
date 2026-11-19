@@ -1,4 +1,4 @@
-import rawContent from "../data/content.json";
+import rawContent from "../data/content.json" with { type: "json" };
 
 import { getDb } from "../../db/index.ts";
 import { sql } from "drizzle-orm";
@@ -154,8 +154,8 @@ export async function saveWstawieniaRows(rows: WstawieniaRow[], updatedBy: strin
   for (const row of normalizedRows) {
     for (const index of MONTHLY_INDEXES) {
       const value = row.values[index];
-      if (value && !/^\d+$/.test(value.replace(/\s+/g, ""))) {
-        throw new Error(`Wartość dla roku ${row.year} musi zawierać wyłącznie cyfry.`);
+      if (value && !/^\d+\*?$/.test(value.replace(/\s+/g, ""))) {
+        throw new Error(`Wartość dla roku ${row.year} musi zawierać wyłącznie cyfry, opcjonalnie zakończone przypisem *.`);
       }
     }
   }

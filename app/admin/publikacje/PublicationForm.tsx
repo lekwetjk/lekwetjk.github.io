@@ -5,7 +5,7 @@ import { renderInlineMarkdown } from "../../lib/inlineMarkdown";
 
 const tenderCategories = ["Zapytania ofertowe", "Zaproszenie do składania ofert", "Wybór wykonawcy", "Wyniki postępowania", "Informacja o unieważnieniu"];
 
-export default function PublicationForm({ kind }: { kind: "news" | "tender" }) {
+export default function PublicationForm({ kind, onSaved }: { kind: "news" | "tender"; onSaved?: () => void }) {
   const formRef = useRef<HTMLFormElement>(null);
   const [message, setMessage] = useState("");
   const [saving, setSaving] = useState(false);
@@ -22,7 +22,7 @@ export default function PublicationForm({ kind }: { kind: "news" | "tender" }) {
   async function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault(); setSaving(true); setMessage("");
     const form = event.currentTarget;
-    try { const response = await fetch("/api/admin/managed-posts", { method: "POST", body: new FormData(form) }); const data = await response.json().catch(() => ({})) as { error?: string }; if (!response.ok) throw new Error(data.error ?? "Nie udało się zapisać."); formRef.current?.reset(); setTitle(""); setExcerpt(""); setContent(""); setImagePreview(""); setImageName(""); setImageFit("contain"); setAttachmentNames([]); setMessage("Wpis został opublikowany."); }
+    try { const response = await fetch("/api/admin/managed-posts", { method: "POST", body: new FormData(form) }); const data = await response.json().catch(() => ({})) as { error?: string }; if (!response.ok) throw new Error(data.error ?? "Nie udało się zapisać."); formRef.current?.reset(); setTitle(""); setExcerpt(""); setContent(""); setImagePreview(""); setImageName(""); setImageFit("contain"); setAttachmentNames([]); setMessage("Wpis został opublikowany."); onSaved?.(); }
     catch (error) { setMessage(error instanceof Error ? error.message : "Nie udało się zapisać."); } finally { setSaving(false); }
   }
   return <form ref={formRef} onSubmit={submit} style={{ display: "grid", gap: 12, border: "1px solid #d5d9df", borderRadius: 8, padding: 18 }}>

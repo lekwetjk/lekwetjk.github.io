@@ -2,6 +2,7 @@ import { mkdir, readFile, readdir, stat, unlink, writeFile } from "node:fs/promi
 import os from "node:os";
 import path from "node:path";
 import { desc, eq, sql } from "drizzle-orm";
+import { zipSync } from "fflate";
 
 import { getDb, getMemberDocumentsBucket } from "../../db/index.ts";
 import { memberDocuments } from "../../db/schema.ts";
@@ -314,6 +315,17 @@ export async function getMemberDocument(fileName: string, scope: MemberDocumentS
     if (error instanceof Error && "code" in error && error.code === "ENOENT") return null;
     throw error;
   }
+}
+
+export async function createMemberDocumentsArchive() {
+  const documents = await listMemberDocuments();
+  const entries: Array<[string, Uint8Array]> = [];
+  for (const { fileName } of documents) {
+    const document = await getMemberDocument(fileName);
+    if (!document) throw new Error(`Dokument nie został znaleziony: ${fileName}`);
+    entries.push([fileName, new Uint8Array(await new Response(document.content).arrayBuffer())]);
+  }
+  return { content: new Uint8Array(zipSync(Object.fromEntries(entries))), fileCount: entries.length };
 }
 
 export function documentContentType(fileName: string) {

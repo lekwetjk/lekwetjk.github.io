@@ -25,8 +25,9 @@ export async function PUT(request: Request) {
       (body.rows ?? []).map((row) => ({ year: row.year ?? "", values: row.values ?? [] })),
       session.username,
     );
+    const rows = await getWstawieniaRows();
     await recordAuditEventSafely({ actor: session, eventType: "placements_update", result: "success", targetType: "placements", details: { rowCount: body.rows?.length ?? 0 } });
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, columns: WSTAWIENIA_COLUMNS, rows });
   } catch (error) {
     await recordAuditEventSafely({ actor: session, eventType: "placements_update", result: "failure", targetType: "placements", details: { error: error instanceof Error ? error.message : "unknown_error" } });
     return NextResponse.json({ error: error instanceof Error ? error.message : "Nie udało się zapisać tabeli." }, { status: 400 });
