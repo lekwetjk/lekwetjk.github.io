@@ -51,4 +51,8 @@ Podsumowanie audytu oraz lista 26 odwołań, dla których nadal nie odzyskano po
 
 Pozostałe ścieżki `/upload/file/…` odpowiadają 404 również bezpośrednio na pierwotnym serwerze, a źródłowe artykuły WordPressa nadal odsyłają do tych samych adresów. Dwie odnalezione kopie opisów programu „Indyk z Europy” są obcięte przy archiwizacji do 1 MiB (oryginały miały 2 375 053 i 2 722 780 bajtów); nie dodano ich jako załączników. Do pełnego odzyskania pozostałych materiałów potrzebna jest kopia dawnego katalogu `upload/file` lub inne potwierdzone oryginały, np. z kopii zapasowej hostingu.
 
+## Grafiki kafelków
+
+Oryginalne grafiki używane przez kafelki pod dawnymi adresami `/wp-content/uploads/…` są wersjonowane w `public/wp-content/uploads/`. Zachowano oryginalne ścieżki, dzięki czemu obrazy działają również w nagłówkach artykułów i innych wpisach korzystających z tych samych plików, bez odwoływania się do dawnego serwera WordPressa. Test sprawdza obecność i sygnatury grafik całego archiwum, także publikacji niewidocznych na pierwszej stronie.
+
 Walidacja: `node --test tests/legacy-tenders.test.mjs tests/campaign-posts.test.ts tests/campaign-rendering.test.mjs`.

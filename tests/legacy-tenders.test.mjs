@@ -68,6 +68,22 @@ test("categories and same-day ordering follow the original publications", () => 
   assert.ok(newsPosts.find((post) => post.slug === trip.slug).date.startsWith("2018-06-06"));
 });
 
+test("tender card images hosted on this site exist in deployable public assets", async () => {
+  const images = new Set(tenderPosts().map(post => post.image).filter(Boolean));
+  for (const source of images) {
+    const url = new URL(source, "https://krd-ig.com.pl");
+    if (!/^(?:www\.)?krd-ig\.com\.pl$/.test(url.hostname)) continue;
+    const bytes = await readFile(new URL(`public${url.pathname}`, root));
+    const signature = bytes.subarray(0, 8).toString("hex");
+    assert.ok(
+      signature.startsWith("ffd8ff") ||
+      signature === "89504e470d0a1a0a" ||
+      (bytes.subarray(0, 4).toString() === "RIFF" && bytes.subarray(8, 12).toString() === "WEBP"),
+      `Invalid card image: ${source}`,
+    );
+  }
+});
+
 test("available attachments are verified local PDFs; missing files have explicit status", async () => {
   const attachments = manifest.records.flatMap((record) => record.attachments);
   assert.equal(attachments.length, 45);
