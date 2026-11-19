@@ -51,7 +51,7 @@ test("October report is a real local Markdown link, not an old download CTA", ()
   assert.doesNotMatch(body(10327), /pobierz\.pdf/);
 });
 
-test("broken references are notes, not active recommendations", () => {
+test("broken references remain inactive without public technical warnings", () => {
   const forbidden = /indykajemy\.pl|foodservice24\.pl|e-restauracja\.pl|horectrends\.pl|st8084416|Prezentacja_indyk\.pptx|https?:.*(?:KRD_Indyk_wrzesien\.pdf|POLSKI-DROB-W-OCZACH-DZIECKA)|krd-test-2|https?:\/\/m\.in\b/;
   for (const post of campaigns.map((post) => correctCampaignPost(sanitize(post)))) {
     for (const link of post.links) assert.doesNotMatch(link.href, forbidden);
@@ -59,24 +59,28 @@ test("broken references are notes, not active recommendations", () => {
       assert.doesNotMatch(match[0], forbidden);
     }
   }
-  for (const id of [12815, 10327, 10323]) assert.match(body(id), /indykajemy\.pl[\s\S]*niedostępna/);
-  assert.match(body(10323), /Dzień dobry TVN.*niedostępny.*404/);
-  assert.match(body(10323), /e-restauracja\.pl.*parkingowej/);
-  assert.match(body(10323), /Nie potwierdzono poprawnego adresu horectrends\.pl/);
+  for (const id of [12815, 10327, 10323]) assert.match(body(id), /indykajemy\.pl/);
+  assert.match(body(10323), /Dzień dobry TVN/);
   for (const id of [10327, 10323]) {
     assert.match(body(id), /\[interia\.pl\]\(https:\/\/www\.interia\.pl\/\)/);
     assert.match(body(id), /\[wp\.pl\]\(https:\/\/www\.wp\.pl\/\)/);
   }
 });
 
-test("missing attachments and eight absent media captions have explicit notices", () => {
-  assert.match(body(12815), /Prezentacja.*nie jest dostępna/);
+test("campaign copy omits migration notices and missing download promises", () => {
+  for (const post of campaigns.map((post) => correctCampaignPost(sanitize(post)))) {
+    assert.doesNotMatch(
+      `${post.excerpt}\n${post.paragraphs.join("\n")}`,
+      /nie zachowa|dostępnym eksporcie|lokalnych materiałach|niedostępn|nie (?:jest|są) dostępn|brakujących nagrań|404|historyczny adres|nie podaje pełnego|Nie potwierdzono|parkingowej|Archiwalny opis|zachowany opis|Wpis opublikowano/i,
+      post.slug,
+    );
+  }
+  assert.doesNotMatch(body(12815), /Prezentacja podsumowująca|pobierz/i);
   for (const id of [10378, 10381]) {
-    assert.equal(corrected(id).paragraphs.filter((text) => /Archiwalne spoty/.test(text)).length, 1);
+    assert.doesNotMatch(body(id), /Archiwalne spoty/);
     assert.doesNotMatch(body(id), /^(?:Spot|SPOT) (?:TV|RADIO)/m);
   }
   assert.match(body(14223), /Szymon Marciniak ambasadorem polskiego drobiu/);
-  assert.match(body(14223), /Pełna treść archiwalnego materiału nie zachowała się/);
 });
 
 test("full existing leads and excerpt-only introductions are retained", () => {
@@ -147,7 +151,7 @@ test("specific spelling, dates, fund, units and business sentences are corrected
   assert.equal(corrected(10358).links[0].href, "https://dobrydrob.pl/");
   assert.match(body(10121), /Część z nich indywidualnie nie zdecydowałaby się/);
   assert.match(body(10105), /Chin \(w tym Hongkongu\) i Japonii/);
-  assert.match(body(10105), /2020 r\..*2019 r\./);
+  assert.match(body(10105), /priorytetów w 2019 r\./);
   assert.doesNotMatch(body(10105), /Południowo-wschodniej|dwóch najważniejszych/);
 });
 

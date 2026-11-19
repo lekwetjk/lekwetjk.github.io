@@ -36,10 +36,6 @@ const videoLinks = (text: string) =>
   text.replace(/https:\/\/www\.youtube\.com\/watch\?v=[\w-]+/g, (url) => `[${url}](${url})`);
 const heading = (text: string) => `## ${text}`;
 const punctuation = (text: string) => text.replace(/\s+([,.!:;])/g, "$1");
-const indykArchive =
-  "Strona indykajemy.pl była częścią kampanii; obecnie jest niedostępna (archiwalny adres, bez aktywnego odnośnika).";
-const mediaUnavailable =
-  "Archiwalne spoty telewizyjne i radiowe (wersje 30- i 15-sekundowe) nie są dostępne w zachowanych materiałach. Nie udostępniamy odnośników do brakujących nagrań.";
 
 function joinAdjacentLists(paragraphs: string[]) {
   const result: string[] = [];
@@ -75,7 +71,6 @@ export function correctCampaignPost(post: NewsPost): NewsPost {
         paragraphs: [
           "„Czerwona kartka dla dezinformacji” — Szymon Marciniak ambasadorem polskiego drobiu.",
           "Strona kampanii: [www.stopdezinformacjizywnosciowej.pl](https://www.stopdezinformacjizywnosciowej.pl/).",
-          "Pełna treść archiwalnego materiału nie zachowała się w dostępnym eksporcie. Powyższy opis opiera się wyłącznie na zachowanym tytule i zapowiedzi publikacji.",
         ],
       };
       break;
@@ -123,9 +118,8 @@ export function correctCampaignPost(post: NewsPost): NewsPost {
         paragraphs: [
           p[0], heading(p[1]), p[2], p[3], heading(p[4]), p[5],
           list(p.slice(6, 10)),
-          "W ramach kampanii uruchomiono stronę indykajemy.pl, zawierającą bazę przepisów, porady oraz narzędzia kalkulacyjne dla HoReCa. Obecnie strona jest niedostępna.",
+          "W ramach kampanii uruchomiono stronę indykajemy.pl, zawierającą bazę przepisów, porady oraz narzędzia kalkulacyjne dla HoReCa.",
           heading(p[11]), p[12], heading(p[13]), p[14],
-          "Prezentacja podsumowująca kampanię nie jest dostępna w zachowanych lokalnych materiałach archiwalnych.",
         ],
         links: [],
       };
@@ -135,8 +129,8 @@ export function correctCampaignPost(post: NewsPost): NewsPost {
         excerpt: p[0],
         paragraphs: [
           p[0], heading("Programy telewizyjne"), p[1], list(p.slice(2, 5).map(videoLinks)),
-          "W październiku aktualizowano stronę kampanii indykajemy.pl.", indykArchive,
-          "Reklama digitalowa zapewniła obecność kampanii na polskich portalach informacyjnych i branżowych, m.in. [interia.pl](https://www.interia.pl/), [wp.pl](https://www.wp.pl/) oraz foodservice24.pl. Nazwa foodservice24.pl jest wzmianką historyczną; portal jest obecnie niedostępny.",
+          "W październiku aktualizowano stronę kampanii indykajemy.pl.",
+          "Reklama digitalowa zapewniła obecność kampanii na polskich portalach informacyjnych i branżowych, m.in. [interia.pl](https://www.interia.pl/), [wp.pl](https://www.wp.pl/) oraz foodservice24.pl.",
           heading("Współpraca z twórcami internetowymi"),
           "Podjęto współpracę ze znanymi blogerami kulinarnymi i kucharzami, m.in.:",
           list([
@@ -176,9 +170,9 @@ export function correctCampaignPost(post: NewsPost): NewsPost {
         excerpt: lead,
         paragraphs: [
           lead, heading("Programy telewizyjne"), p[1],
-          list([videoLinks(p[2]), "Dzień dobry TVN — archiwalny materiał kulinarny jest obecnie niedostępny (dawny odnośnik zwraca błąd 404)."]),
-          "Powstała strona kampanii indykajemy.pl z przepisami na dania z indyka oraz sekcją dla HoReCa.", indykArchive,
-          "Reklama internetowa w postaci banerów display na portalach konsumenckich (m.in. [interia.pl](https://www.interia.pl/), [wp.pl](https://www.wp.pl/)) oraz branżowych HoReCa dotarła do szerokiego grona odbiorców. W archiwalnym opisie wymieniono foodservice24.pl, e-restauracja.pl, hurt&detal i horectrends.pl. Wskazane adresy branżowe pozostawiamy wyłącznie jako nazwy historyczne, bez aktywnych odnośników: część portali jest już niedostępna, a e-restauracja.pl prowadzi do strony parkingowej. Nie potwierdzono poprawnego adresu horectrends.pl.",
+          list([videoLinks(p[2]), "Dzień dobry TVN — materiał kulinarny."]),
+          "Powstała strona kampanii indykajemy.pl z przepisami na dania z indyka oraz sekcją dla HoReCa.",
+          "Reklama internetowa w postaci banerów display na portalach konsumenckich (m.in. [interia.pl](https://www.interia.pl/), [wp.pl](https://www.wp.pl/)) oraz branżowych HoReCa (foodservice24.pl, e-restauracja.pl, hurt&detal i horectrends.pl) dotarła do szerokiego grona odbiorców.",
           heading("Wydarzenia kulinarne"), p[6], list(p.slice(7, 9).map(videoLinks)),
           "[Raport za wrzesień 2024 (PDF)](/media/reports/KRD_Indyk_wrzesien.pdf)",
           p[11], p[12],
@@ -244,7 +238,7 @@ export function correctCampaignPost(post: NewsPost): NewsPost {
       correction = {
         title: "Promocja polskiego drobiu na targach SIAL Paryż 2022 – projekt zaplanowany na 2020 r.",
         paragraphs: [
-          "Projekt realizowany w terminie od 15 stycznia 2020 do 31 października 2022 r. Targi zaplanowane pierwotnie na 2020 r. odbyły się w 2022 r.; historyczny adres publikacji zachowuje rok 2020.",
+          "Projekt realizowany w terminie od 15 stycznia 2020 do 31 października 2022 r. Targi zaplanowane pierwotnie na 2020 r. odbyły się w 2022 r.",
           p[0].replace("targach SIAL, nie", "targach SIAL nie"),
           p[1].replace("tegorocznej edycji targów IFE", "edycji targów SIAL w 2022 r.").replace("spowodowanej sytuacją", "spowodowany sytuacją"),
           ...p.slice(2),
@@ -266,7 +260,6 @@ export function correctCampaignPost(post: NewsPost): NewsPost {
             p[8],
           ]),
           heading("Emisje i działania niestandardowe"), p[9], p[10],
-          mediaUnavailable,
         ],
       };
       break;
@@ -290,7 +283,6 @@ export function correctCampaignPost(post: NewsPost): NewsPost {
             "TV – spoty 30- i 15-sekundowe: 5–30 października 2022 r.; wejścia kuchenne w „Pytaniu na śniadanie”: 15 października 2022 r.",
             "RADIO – spoty 30- i 15-sekundowe: 3–23 października 2022 r.; lokowanie w programie „Cztery Pory Roku” zaplanowano na drugą połowę listopada 2022 r.",
           ]),
-          mediaUnavailable,
         ],
       };
       break;
@@ -393,8 +385,8 @@ export function correctCampaignPost(post: NewsPost): NewsPost {
         paragraphs: [
           "Przedmiotem działalności promocyjnej będzie mięso drobiowe z Unii Europejskiej. Głównym celem kampanii jest zwiększenie eksportu europejskiego drobiu na rynki docelowe: Chiny, Hongkong i Japonia.",
           p[0],
-          "Archiwalny opis wskazuje promocję drobiu na rynkach azjatyckich jako jeden z priorytetów w 2019 r. Kampania miała zwiększać świadomość grup docelowych co do wysokiej jakości drobiu z Europy, jego właściwości zdrowotnych i bezpieczeństwa, wynikającego z podejścia „od pola do stołu”, możliwości śledzenia, kontroli ryzyka, zrównoważonej produkcji oraz wiarygodności dostawców.",
-          "Działania kampanii zaplanowano na rynkach Chin (w tym Hongkongu) i Japonii. Wpis opublikowano w 2020 r.; zachowany opis odnosi się do priorytetów z 2019 r. i nie podaje pełnego okresu realizacji kampanii.",
+          "Promocja drobiu na rynkach azjatyckich była jednym z priorytetów w 2019 r. Kampania miała zwiększać świadomość grup docelowych co do wysokiej jakości drobiu z Europy, jego właściwości zdrowotnych i bezpieczeństwa, wynikającego z podejścia „od pola do stołu”, możliwości śledzenia, kontroli ryzyka, zrównoważonej produkcji oraz wiarygodności dostawców.",
+          "Działania kampanii zaplanowano na rynkach Chin (w tym Hongkongu) i Japonii.",
           p[3],
         ],
       };
