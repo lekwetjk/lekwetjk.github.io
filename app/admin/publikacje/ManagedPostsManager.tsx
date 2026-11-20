@@ -5,6 +5,8 @@ import MarkdownEditor from "./MarkdownEditor";
 import PublicationForm from "./PublicationForm";
 import MediaPicker from "../media/MediaPicker";
 import { mediaHref, type MediaAsset } from "../../lib/media-references";
+import GalleryEditor from "../media/GalleryEditor";
+import { appendGalleryFormData, type GalleryItem } from "../../lib/post-gallery";
 
 type Post = {
   id: string;
@@ -22,6 +24,7 @@ type Post = {
   imageFit?: "contain" | "cover";
   imported?: boolean;
   attachments: Array<{ name: string; key: string }>;
+  gallery?: GalleryItem[];
 };
 
 type ImportablePost = { slug: string; title: string; date: string };
@@ -30,14 +33,14 @@ const tenderCategories = ["Zapytania ofertowe", "Zaproszenie do składania ofert
 
 export default function ManagedPostsManager({ mediaEnabled = false }: { mediaEnabled?: boolean }) {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [editing, setEditing] = useState<{ id: string; content: string; libraryImage: MediaAsset | null; libraryAttachments: MediaAsset[] } | null>(null);
+  const [editing, setEditing] = useState<{ id: string; content: string; libraryImage: MediaAsset | null; libraryAttachments: MediaAsset[]; gallery: GalleryItem[] } | null>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState("");
   const [importablePosts, setImportablePosts] = useState<ImportablePost[]>([]);
   const [importing, setImporting] = useState(false);
 
   function toggleEditor(post: Post) {
-    setEditing((current) => current?.id === post.id ? null : { id: post.id, content: post.content, libraryImage: null, libraryAttachments: [] });
+    setEditing((current) => current?.id === post.id ? null : { id: post.id, content: post.content, libraryImage: null, libraryAttachments: [], gallery: post.gallery ?? [] });
   }
 
   async function loadPosts() {
@@ -65,7 +68,7 @@ export default function ManagedPostsManager({ mediaEnabled = false }: { mediaEna
       if (!response.ok) throw new Error(data.error ?? "Nie udało się zaimportować wpisu.");
       const updatedPosts = await loadPosts();
       const importedPost = updatedPosts.find((post) => post.slug === slug);
-      setEditing(importedPost ? { id: importedPost.id, content: importedPost.content, libraryImage: null, libraryAttachments: [] } : null);
+      setEditing(importedPost ? { id: importedPost.id, content: importedPost.content, libraryImage: null, libraryAttachments: [], gallery: importedPost.gallery ?? [] } : null);
       setMessage("Wpis jest dostępny do edycji. Zachowano adres i datę publikacji.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Nie udało się zaimportować wpisu.");
@@ -79,7 +82,10 @@ export default function ManagedPostsManager({ mediaEnabled = false }: { mediaEna
   async function savePost(event: React.FormEvent<HTMLFormElement>, id: string) {
     event.preventDefault();
     setMessage("");
-    const response = await fetch(`/api/admin/managed-posts/${id}`, { method: "PATCH", body: new FormData(event.currentTarget) });
+    if (!editing || editing.id !== id) { setMessage("Nie znaleziono otwartego formularza edycji."); return; }
+    const body = new FormData(event.currentTarget);
+    if (mediaEnabled) appendGalleryFormData(body, editing.gallery);
+    const response = await fetch(`/api/admin/managed-posts/${id}`, { method: "PATCH", body });
     const data = await response.json().catch(() => ({})) as { error?: string };
     if (!response.ok) { setMessage(data.error ?? "Nie udało się zapisać wpisu."); return; }
     setEditing(null);
@@ -129,6 +135,7 @@ export default function ManagedPostsManager({ mediaEnabled = false }: { mediaEna
         <label>Dodaj załączniki (PDF, DOCX, XLSX)<input name="attachments" type="file" accept=".pdf,.docx,.xlsx" multiple /></label>
         {mediaEnabled ? <MediaPicker kind="attachment" selected={editing.libraryAttachments} onChange={assets => setEditing(current => current ? { ...current, libraryAttachments: assets } : current)} /> : null}
         {post.attachments.length ? <section className="resource-box" aria-label="Obecne pliki"><h3 style={{ marginTop: 0 }}>Obecne pliki</h3>{post.attachments.map((item) => <a href={mediaHref(item.key)} key={item.key} target="_blank" rel="noreferrer">{item.name}</a>)}</section> : null}
+        {mediaEnabled ? <GalleryEditor value={editing.gallery} onChange={gallery => setEditing(current => current ? { ...current, gallery } : current)} /> : null}
         <label>Link źródłowy<input name="source" type="url" defaultValue={post.source} style={{ width: "100%", padding: 10 }} /></label>
         <div style={{ display: "flex", gap: 8 }}><button type="submit" className="button button-primary">Zapisz zmiany</button><button type="button" className="button button-outline" onClick={() => setEditing(null)}>Anuluj</button></div>
       </form> : null}

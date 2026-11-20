@@ -3,13 +3,32 @@ import { DatabaseSync, type SQLInputValue } from "node:sqlite";
 import test from "node:test";
 import { changeMediaTrash, getBulletinSourceDownload, listMediaAssets, MAX_MEDIA_BYTES, resolveMediaSelection, uploadMediaAsset } from "../app/lib/media-library.ts";
 import { collectMediaReferences } from "../app/lib/media-references.ts";
-import { createManagedPost, deleteManagedPost, getManagedPostBySlug, listManagedPostsForAdmin, updateManagedPost } from "../app/lib/managed-posts.ts";
+import { createManagedPost, deleteManagedPost, getManagedPostBySlug, listManagedPostsForAdmin, restoreManagedPost, updateManagedPost } from "../app/lib/managed-posts.ts";
+import { appendGalleryFormData, readGalleryFormData } from "../app/lib/post-gallery.ts";
 import { restoreContentRevision, currentRevisionState } from "../app/lib/content-history-actions.ts";
 import { contentStateHash, listContentHistory } from "../app/lib/content-history.ts";
 import staticCatalog from "../app/data/media-catalog.json" with { type: "json" };
 
 const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/l9sAAAAASUVORK5CYII=", "base64");
 const input = { kind: "news" as const, title: "Testowa publikacja", excerpt: "Opis testowy", content: "Treść testowa", category: "Aktualności", source: "", createdBy: "fixture" };
+
+test("gallery multipart preserves mixed order, supports clearing, and rejects malformed or unused files", () => {
+  const file = new File([png], "galeria.png", { type: "image/png" });
+  const form = new FormData();
+  assert.equal(readGalleryFormData(form), undefined);
+  appendGalleryFormData(form, [{ id: "static:/photo.jpg", name: "Archiwum", href: "/photo.jpg" }, { id: "local", name: file.name, href: "blob:local", file }]);
+  const parsed = readGalleryFormData(form)!;
+  assert.deepEqual(parsed[0], { id: "static:/photo.jpg" });
+  assert.ok("file" in parsed[1] && parsed[1].file.name === file.name);
+  const empty = new FormData(); empty.set("gallery", "[]");
+  assert.deepEqual(readGalleryFormData(empty), []);
+  for (const value of ["null", "{}", "{", '[{"file":0}]', '[{"id":"a","file":0}]', JSON.stringify(Array.from({ length: 6 }, () => ({ id: "static:/photo.jpg" })))]) {
+    const invalid = new FormData(); invalid.set("gallery", value);
+    assert.throws(() => readGalleryFormData(invalid));
+  }
+  empty.append("galleryFiles", file);
+  assert.throws(() => readGalleryFormData(empty), /spoza galerii/);
+});
 
 async function fixture() {
   const runtime = globalThis as typeof globalThis & { env?: unknown };
@@ -58,6 +77,68 @@ async function fixture() {
   await createManagedPost(input);
   return { db, environment, objects, control, close() { runtime.env = previous; db.close(); } };
 }
+
+test("five-photo galleries persist independently of the hero and documents, survive edits, history restore and trash without deleting originals", async () => {
+  const f = await fixture();
+  try {
+    const hero = await uploadMediaAsset(new File([png], "hero.png", { type: "image/png" }), "fixture");
+    const pdf = await uploadMediaAsset(new File(["%PDF-1.7\nfixture"], "zalacznik.pdf"), "fixture");
+    const archived = staticCatalog.filter(asset => asset.contentType.startsWith("image/")).slice(0, 3);
+    const gallery = [{ id: archived[0].id }, { file: new File([png], "zdjecie-galerii.png", { type: "image/png" }) }, { id: archived[1].id }, { id: hero }, { id: archived[2].id }];
+    const puts = f.control.puts;
+    const slug = await createManagedPost({ ...input, title: "Publikacja z galerią", libraryImage: hero, libraryAttachments: [pdf], gallery });
+    assert.equal(f.control.puts, puts + 1);
+    const post = (await listManagedPostsForAdmin()).find(post => post.slug === slug)!;
+    const published = (await getManagedPostBySlug(slug))!;
+    assert.equal(published.gallery?.length, 5);
+    assert.equal(published.links.length, 1);
+    assert.equal(post.attachments.length, 1);
+    assert.deepEqual(post.gallery?.map(item => item.id).filter(id => id.startsWith("static:")), archived.map(item => item.id));
+    const uploaded = post.gallery![1];
+    assert.ok(uploaded.id.startsWith("r2:media-library/"));
+    const originalObjects = structuredClone(f.objects);
+    await assert.rejects(changeMediaTrash(uploaded.id, "trash", "fixture"), /używany/);
+    await updateManagedPost(post.id, { ...input, title: "Edycja starszym formularzem" });
+    assert.deepEqual((await getManagedPostBySlug(slug))?.gallery, published.gallery);
+    await updateManagedPost(post.id, { ...input, title: "Galeria odłączona", gallery: [] });
+    assert.equal((await getManagedPostBySlug(slug))?.gallery, undefined);
+    assert.equal((await getManagedPostBySlug(slug))?.image, published.image);
+    assert.equal((await getManagedPostBySlug(slug))?.links.length, 1);
+    await assert.rejects(changeMediaTrash(uploaded.id, "trash", "fixture"), /używany/);
+    const revision = (await listContentHistory()).find(entry => entry.resourceId === post.id && JSON.parse(entry.snapshotJson).title === "Edycja starszym formularzem")!;
+    await restoreContentRevision(revision.id, contentStateHash(await currentRevisionState(revision)), "fixture");
+    assert.deepEqual((await getManagedPostBySlug(slug))?.gallery, published.gallery);
+    await deleteManagedPost(post.id, "fixture");
+    assert.equal(await getManagedPostBySlug(slug), null);
+    assert.ok((await listMediaAssets()).find(asset => asset.id === uploaded.id)?.usages.some(usage => usage.kind === "trash"));
+    await restoreManagedPost(post.id);
+    assert.deepEqual((await getManagedPostBySlug(slug))?.gallery, published.gallery);
+    assert.deepEqual(f.objects, originalObjects);
+  } finally { f.close(); }
+});
+
+test("gallery limits, duplicates, private files and invalid image signatures are rejected before uploading or changing publications", async () => {
+  const f = await fixture();
+  try {
+    const archived = staticCatalog.filter(asset => asset.contentType.startsWith("image/"));
+    const pdf = staticCatalog.find(asset => asset.contentType === "application/pdf")!;
+    f.objects.set("member-documents/private.png", { bytes: png, uploaded: new Date("2026-01-01"), httpMetadata: { contentType: "image/png" } });
+    const before = f.db.prepare("SELECT COUNT(*) AS count FROM managed_posts").get()!.count;
+    const puts = f.control.puts;
+    for (const gallery of [
+      archived.slice(0, 6).map(asset => ({ id: asset.id })),
+      [{ id: archived[0].id }, { id: archived[0].id }],
+      [{ id: pdf.id }],
+      [{ id: "r2:member-documents/private.png" }],
+      [{ file: new File(["invalid"], "bad.png", { type: "image/png" }) }],
+      [{ file: new File(["%PDF-1.7\nfixture"], "document.pdf", { type: "application/pdf" }) }],
+    ]) await assert.rejects(createManagedPost({ ...input, gallery }));
+    assert.equal(f.control.puts, puts);
+    assert.equal(f.db.prepare("SELECT COUNT(*) AS count FROM managed_posts").get()!.count, before);
+    f.environment.CMS_MEDIA_ENABLED = "false";
+    await assert.rejects(createManagedPost({ ...input, gallery: [{ id: archived[0].id }] }), /wyłączona/);
+  } finally { f.close(); }
+});
 
 test("usage detection normalizes owned URLs and encoded keys without treating external URLs as local files", () => {
   const references = collectMediaReferences({

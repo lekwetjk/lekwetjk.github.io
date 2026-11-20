@@ -191,8 +191,9 @@ export async function getBulletinSourceDownload(id: string) {
   return { body: object.body, name: asset.name };
 }
 
-export async function resolveMediaSelection(imageId?: string, attachmentIds: string[] = []) {
-  if (!imageId && !attachmentIds.length) return { image: undefined, attachments: [] };
+export async function resolveMediaSelection(imageId?: string, attachmentIds: string[] = [], galleryIds: string[] = []) {
+  if (galleryIds.length > 5 || new Set(galleryIds).size !== galleryIds.length) throw new MediaLibraryError("Wybierz najwyżej 5 różnych zdjęć do galerii.");
+  if (!imageId && !attachmentIds.length && !galleryIds.length) return { image: undefined, attachments: [], gallery: [] };
   requireEnabled();
   if (attachmentIds.length > 30) throw new MediaLibraryError("Jednorazowo można wybrać najwyżej 30 załączników.");
   const assets = await listMediaAssets();
@@ -205,11 +206,12 @@ export async function resolveMediaSelection(imageId?: string, attachmentIds: str
   if (image && !image.contentType.startsWith("image/")) throw new MediaLibraryError("Jako grafikę wybierz plik graficzny.");
   const attachments = [...new Set(attachmentIds)].map(choose);
   if (attachments.some(asset => !/\.(pdf|docx|xlsx)$/i.test(asset.key))) throw new MediaLibraryError("Załączniki mogą być tylko w formacie PDF, DOCX lub XLSX.");
-  return { image, attachments };
+  const gallery = galleryIds.map(choose);
+  if (gallery.some(asset => !asset.contentType.startsWith("image/"))) throw new MediaLibraryError("Galeria może zawierać tylko zdjęcia.");
+  return { image, attachments, gallery };
 }
 
-export async function uploadMediaAsset(file: File, createdBy: string) {
-  requireEnabled();
+export async function validateMediaUpload(file: File) {
   if (!file.size) throw new MediaLibraryError("Wybrany plik jest pusty.");
   if (file.size > MAX_MEDIA_BYTES) throw new MediaLibraryError("Maksymalny rozmiar pliku w bibliotece to 25 MB.", 413);
   const extension = file.name.split(".").at(-1)?.toLowerCase() ?? "";
@@ -223,6 +225,12 @@ export async function uploadMediaAsset(file: File, createdBy: string) {
     : bytes[0] === 80 && bytes[1] === 75 && bytes[2] === 3 && bytes[3] === 4;
   if (!signatureValid) throw new MediaLibraryError("Zawartość pliku nie odpowiada jego rozszerzeniu.", 415);
   const safeName = file.name.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9._-]/g, "-").slice(-180);
+  return { bytes, contentType, safeName };
+}
+
+export async function uploadMediaAsset(file: File, createdBy: string) {
+  requireEnabled();
+  const { bytes, contentType, safeName } = await validateMediaUpload(file);
   const key = `media-library/${crypto.randomUUID()}/${safeName}`;
   const db = await database();
   await getMemberDocumentsBucket().put(key, bytes, { httpMetadata: { contentType }, customMetadata: { originalName: file.name } });

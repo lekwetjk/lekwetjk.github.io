@@ -147,6 +147,7 @@ export default async function NewsDetailPage({
         justify={post.justify}
         categories={post.categories}
         inferHeadings={!post.managed}
+        gallery={post.gallery}
       />
     </PageShell>
   );

@@ -51,6 +51,7 @@ const bundled = await build({
   format: "cjs",
   jsx: "automatic",
   write: false,
+  outfile: "campaign-rendering.cjs",
   plugins: [{
     name: "campaign-rendering-fixtures",
     setup(builder) {
@@ -64,10 +65,23 @@ const bundled = await build({
   }],
 });
 const compiled = { exports: {} };
-new Function("require", "module", "exports", bundled.outputFiles[0].text)(
+new Function("require", "module", "exports", bundled.outputFiles.find(file => file.path.endsWith(".cjs")).text)(
   createRequire(import.meta.url), compiled, compiled.exports,
 );
 const renderer = compiled.exports;
+
+test("post galleries render below text and before downloads, while older posts have no gallery markup", async () => {
+  const props = { slug: "gallery-rendering-fixture", paragraphs: ["Treść przed galerią."], links: [{ label: "Dokument PDF", href: "/manual.pdf", document: true, managedAttachment: true }], source: "", inferHeadings: false };
+  const images = Array.from({ length: 5 }, (_, index) => ({ name: `Zdjęcie ${index + 1}`, href: `/media/photo-${index + 1}.jpg` }));
+  const $ = load(await renderer.article({ ...props, gallery: images }));
+  const gallery = $('section[aria-label="Galeria zdjęć"]');
+  assert.equal(gallery.find("button img").length, 5);
+  assert.deepEqual(gallery.find("img").map((_, image) => $(image).attr("src")).get(), images.map(image => image.href));
+  assert.ok(gallery.prevAll("p").text().includes("Treść przed galerią."));
+  assert.equal(gallery.next('section[aria-label="Pliki do pobrania"]').length, 1);
+  const previous = load(await renderer.article(props));
+  assert.equal(previous('section[aria-label="Galeria zdjęć"]').length, 0);
+});
 
 test("red card campaign renders the confirmed website as a clickable link", async () => {
   const $ = load(await renderer.campaign(14223));

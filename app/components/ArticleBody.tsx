@@ -18,6 +18,8 @@ import { knowledgePages, newsPosts } from "../lib/content";
 import { applyManagedPostOverrides } from "../lib/managed-posts";
 import { memberProfileOptions } from "../lib/member-profile-options";
 import { connection } from "next/server";
+import PostGallery from "./PostGallery";
+import type { GalleryImage } from "../lib/post-gallery";
 
 function looksLikeHeading(value: string) {
   return (
@@ -240,6 +242,7 @@ export async function ArticleBody({
   categories = [],
   reportBulletinHref,
   inferHeadings = true,
+  gallery = [],
 }: {
   paragraphs: string[];
   links: ContentLink[];
@@ -250,6 +253,7 @@ export async function ArticleBody({
   categories?: string[];
   reportBulletinHref?: string;
   inferHeadings?: boolean;
+  gallery?: GalleryImage[];
 }) {
   const proposals = await getLocalProposals();
   const contentTargets = proposals.links ? [
@@ -3675,6 +3679,7 @@ export async function ArticleBody({
             <p key={`${index}-${paragraph.slice(0, 20)}`}>{formattedParagraph}</p>
           );
         })}
+        <PostGallery images={gallery} />
         {uploadedAttachments.length ? (
           <section className="resource-box" aria-label="Pliki do pobrania">
             <h2>Pliki do pobrania</h2>

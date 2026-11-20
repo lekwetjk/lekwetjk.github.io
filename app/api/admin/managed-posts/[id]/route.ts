@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 import { AUTH_COOKIE_NAME, verifySessionToken } from "../../../../lib/auth";
 import { deleteManagedPost, updateManagedPost } from "../../../../lib/managed-posts";
 import { recordAuditEventSafely } from "../../../../lib/audit-log";
+import { readGalleryFormData } from "../../../../lib/post-gallery";
 
 async function requireAdmin() {
   const session = verifySessionToken((await cookies()).get(AUTH_COOKIE_NAME)?.value);
@@ -16,7 +17,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ id
   const { id } = await params;
   const form = await request.formData();
   try {
-    await updateManagedPost(id, { title: String(form.get("title") ?? ""), excerpt: String(form.get("excerpt") ?? ""), seoTitle: form.has("seoTitle") ? String(form.get("seoTitle")) : undefined, seoDescription: form.has("seoDescription") ? String(form.get("seoDescription")) : undefined, imageFit: form.has("imageFit") ? String(form.get("imageFit")) : undefined, content: String(form.get("content") ?? ""), category: String(form.get("category") ?? ""), source: String(form.get("source") ?? ""), image: form.get("image") instanceof File ? form.get("image") as File : null, attachments: form.getAll("attachments").filter((item): item is File => item instanceof File && item.size > 0), libraryImage: String(form.get("libraryImage") ?? ""), libraryAttachments: form.getAll("libraryAttachments").map(String), changedBy: session.username });
+    await updateManagedPost(id, { gallery: readGalleryFormData(form), title: String(form.get("title") ?? ""), excerpt: String(form.get("excerpt") ?? ""), seoTitle: form.has("seoTitle") ? String(form.get("seoTitle")) : undefined, seoDescription: form.has("seoDescription") ? String(form.get("seoDescription")) : undefined, imageFit: form.has("imageFit") ? String(form.get("imageFit")) : undefined, content: String(form.get("content") ?? ""), category: String(form.get("category") ?? ""), source: String(form.get("source") ?? ""), image: form.get("image") instanceof File ? form.get("image") as File : null, attachments: form.getAll("attachments").filter((item): item is File => item instanceof File && item.size > 0), libraryImage: String(form.get("libraryImage") ?? ""), libraryAttachments: form.getAll("libraryAttachments").map(String), changedBy: session.username });
     await recordAuditEventSafely({ actor: session, eventType: "post_update", result: "success", targetType: "post", targetId: id });
     return NextResponse.json({ ok: true });
   } catch (error) {

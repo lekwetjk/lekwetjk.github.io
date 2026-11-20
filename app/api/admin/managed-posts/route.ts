@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { AUTH_COOKIE_NAME, verifySessionToken } from "../../../lib/auth";
 import { TENDER_CATEGORIES, createManagedPost, importExistingPost, listImportablePosts, listManagedPostsForAdmin } from "../../../lib/managed-posts";
 import { recordAuditEventSafely } from "../../../lib/audit-log";
+import { readGalleryFormData } from "../../../lib/post-gallery";
 
 const PRODUCTION_API_BASE = "https://krd-ig-website-concept.lek-wet-jk.workers.dev";
 
@@ -35,7 +36,7 @@ export async function POST(request: Request) {
       await recordAuditEventSafely({ actor: session, eventType: "post_import", result: "success", targetType: "post", targetId: slug });
       return NextResponse.json({ ok: true, slug });
     }
-    const slug = await createManagedPost({ kind, title: String(form.get("title") ?? ""), excerpt: String(form.get("excerpt") ?? ""), seoTitle: String(form.get("seoTitle") ?? ""), seoDescription: String(form.get("seoDescription") ?? ""), imageFit: String(form.get("imageFit") ?? "contain"), content: String(form.get("content") ?? ""), category: String(form.get("category") ?? ""), source: String(form.get("source") ?? ""), image: form.get("image") instanceof File ? form.get("image") as File : null, attachments: form.getAll("attachments").filter((item): item is File => item instanceof File && item.size > 0), libraryImage: String(form.get("libraryImage") ?? ""), libraryAttachments: form.getAll("libraryAttachments").map(String), createdBy: session.username });
+    const slug = await createManagedPost({ gallery: readGalleryFormData(form), kind, title: String(form.get("title") ?? ""), excerpt: String(form.get("excerpt") ?? ""), seoTitle: String(form.get("seoTitle") ?? ""), seoDescription: String(form.get("seoDescription") ?? ""), imageFit: String(form.get("imageFit") ?? "contain"), content: String(form.get("content") ?? ""), category: String(form.get("category") ?? ""), source: String(form.get("source") ?? ""), image: form.get("image") instanceof File ? form.get("image") as File : null, attachments: form.getAll("attachments").filter((item): item is File => item instanceof File && item.size > 0), libraryImage: String(form.get("libraryImage") ?? ""), libraryAttachments: form.getAll("libraryAttachments").map(String), createdBy: session.username });
     await recordAuditEventSafely({ actor: session, eventType: "post_create", result: "success", targetType: "post", targetId: slug, details: { kind } });
     return NextResponse.json({ ok: true, slug, categories: TENDER_CATEGORIES });
   } catch (error) {

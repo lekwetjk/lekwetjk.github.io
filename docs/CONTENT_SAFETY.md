@@ -238,6 +238,28 @@ wybor z dysku. Prywatne dokumenty i zrodla biuletynow nie sa udostepniane jako
 publiczne zalaczniki. Materialy metodyki pozostaja publiczne, zgodnie z obecnym
 endpointem; ponowne uzycie zachowuje adres z `scope=methodology`.
 
+Wybor z biblioteki otwiera duze okno modalne z miniaturami, wyszukiwaniem
+i stronicowaniem, bez opuszczania ani resetowania formularza. Wybor grafiki
+zamyka okno; przy zalacznikach mozna wskazac kilka plikow przed zamknieciem.
+Przycisk zamkniecia i Escape wracaja do formularza bez zapisu publikacji.
+Okno jest poza formularzem, aby Enter w wyszukiwaniu nie publikowal wpisu.
+
+Publikacje i zapytania moga dodatkowo miec do 5 zdjec w osobnej galerii pod
+tekstem. Grafika kafelka oraz zalaczniki pozostaja niezalezne. Miniatury maja
+160 x 120 px na komputerze; powiekszenie miesci pelny obraz w ramce
+1024 x 768 px, bez rozciagania, z dopasowaniem do mniejszego ekranu.
+Nowe pole pozwala mieszac zdjecia z dysku i biblioteki oraz zmieniac kolejnosc.
+Zdjecia z dysku przechodza kontrole sygnatury i limit 25 MB na plik.
+
+Galeria korzysta z istniejacego `attachments_json`: jej wpisy maja dodatkowe
+`gallery: true`, sa oddzielane od dokumentow w API i na stronie. Nie wymaga
+migracji ani przepisywania dotychczasowych rekordow. Historia, kosz i indeks
+uzycia obejmuja te same wpisy, wiec odpiecie zdjecia nie kasuje oryginalu;
+plik obecny w historii nadal jest chroniony. Starszy formularz bez pola
+`gallery` zachowuje istniejaca galerie; jawne `[]` ja odlacza.
+Wylaczenie `CMS_MEDIA_ENABLED` ukrywa nowe pole i blokuje nowe wybory, lecz
+zapisane galerie nadal wyswietlaja sie i sa zachowywane przy zwyklej edycji.
+
 Kosz biblioteki jest osobnym widokiem w tym panelu. Dotyczy tylko publicznych
 plikow R2; uzycie w tresci, historii lub koszu blokuje przeniesienie. Statyczne
 archiwum, dokumenty sekcyjne i zrodla biuletynow sa chronione i nadal zarzadzane

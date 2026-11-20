@@ -8,8 +8,9 @@ import generatedPosts from "../data/generated-posts.json" with { type: "json" };
 import { getLocalManagedPostsDb } from "../../db/local-managed-posts.ts";
 import { completeTrashRestore, trashResource } from "./content-trash.ts";
 import { captureContentRevision } from "./content-history.ts";
-import { resolveMediaSelection } from "./media-library.ts";
-import { mediaHref, mediaPostKey } from "./media-references.ts";
+import { mediaLibraryEnabled, resolveMediaSelection, uploadMediaAsset, validateMediaUpload } from "./media-library.ts";
+import { mediaHref, mediaPostKey, mediaReference, type MediaAsset } from "./media-references.ts";
+import { MAX_GALLERY_IMAGES, type GalleryInput } from "./post-gallery.ts";
 
 export const TENDER_CATEGORIES = ["Zapytania ofertowe", "Zaproszenie do składania ofert", "Wybór wykonawcy", "Wyniki postępowania", "Informacja o unieważnieniu"];
 const PRODUCTION_API_BASE = "https://krd-ig-website-concept.lek-wet-jk.workers.dev";
@@ -98,9 +99,10 @@ function slugify(value: string) {
 }
 
 function toPost(row: typeof managedPosts.$inferSelect): NewsPost {
-  const attachments = JSON.parse(row.attachmentsJson || "[]") as Array<{ name: string; key: string }>;
+  const attachments = parseAttachments(row.attachmentsJson);
+  const gallery = attachments.filter(item => item.gallery).map(item => ({ name: item.name, href: mediaHref(item.key) }));
   const original = importablePosts.find((post) => post.slug === row.slug);
-  return { id: Number.parseInt(row.id.slice(0, 8), 16) || 0, slug: row.slug, title: row.title, date: row.createdAt, year: Number(row.createdAt.slice(0, 4)), excerpt: row.excerpt, seoTitle: row.seoTitle, seoDescription: row.seoDescription, paragraphs: normalizePublicationMarkdown(row.content).split(/\n\s*\n/).map((item) => item.trim()).filter(Boolean), links: [...(original?.links ?? []), ...attachments.map((attachment) => ({ label: attachment.name, href: mediaHref(attachment.key), document: true, managedAttachment: true }))], categories: original?.categories ?? [row.category], image: row.imageKey ? mediaHref(row.imageKey) : original?.image ?? null, imageFit: row.imageFit, justify: true, source: row.source, managed: true };
+  return { id: Number.parseInt(row.id.slice(0, 8), 16) || 0, slug: row.slug, title: row.title, date: row.createdAt, year: Number(row.createdAt.slice(0, 4)), excerpt: row.excerpt, seoTitle: row.seoTitle, seoDescription: row.seoDescription, paragraphs: normalizePublicationMarkdown(row.content).split(/\n\s*\n/).map((item) => item.trim()).filter(Boolean), links: [...(original?.links ?? []), ...attachments.filter(item => !item.gallery).map((attachment) => ({ label: attachment.name, href: mediaHref(attachment.key), document: true, managedAttachment: true }))], categories: original?.categories ?? [row.category], image: row.imageKey ? mediaHref(row.imageKey) : original?.image ?? null, imageFit: row.imageFit, justify: true, source: row.source, managed: true, ...(gallery.length ? { gallery } : {}) };
 }
 
 export async function importExistingPost(slug: string, createdBy: string) {
@@ -183,7 +185,7 @@ export async function listManagedPosts(kind?: "news" | "tender") {
   return rows.map(toPost);
 }
 
-export async function createManagedPost(input: { kind: "news" | "tender"; title: string; excerpt: string; content: string; category: string; source: string; seoTitle?: string; seoDescription?: string; imageFit?: string; image?: File | null; attachments?: File[]; libraryImage?: string; libraryAttachments?: string[]; createdBy: string }) {
+export async function createManagedPost(input: { kind: "news" | "tender"; title: string; excerpt: string; content: string; category: string; source: string; seoTitle?: string; seoDescription?: string; imageFit?: string; image?: File | null; attachments?: File[]; libraryImage?: string; libraryAttachments?: string[]; gallery?: GalleryInput[]; createdBy: string }) {
   const seo = validateSeo(input);
   const imageFit = validateImageFit(input.imageFit);
   const title = input.title.trim();
@@ -192,7 +194,8 @@ export async function createManagedPost(input: { kind: "news" | "tender"; title:
   if (input.kind === "tender" && !TENDER_CATEGORIES.includes(input.category)) throw new Error("Wybierz poprawną kategorię zapytania.");
   const db = await ensureManagedPostsTable();
   if (input.image?.size && input.libraryImage) throw new Error("Wybierz grafikę z dysku albo z biblioteki, nie obie naraz.");
-  const selected = await resolveMediaSelection(input.libraryImage, input.libraryAttachments);
+  await validateGallery(input.gallery);
+  const selected = await resolveMediaSelection(input.libraryImage, input.libraryAttachments, galleryIds(input.gallery));
   const id = crypto.randomUUID();
   const slug = `${slugify(title)}-${id.slice(0, 8)}`;
   let imageKey: string | null = selected.image ? mediaPostKey(selected.image) : null;
@@ -204,6 +207,7 @@ export async function createManagedPost(input: { kind: "news" | "tender"; title:
     await getMemberDocumentsBucket().put(imageKey, await input.image.arrayBuffer(), { httpMetadata: { contentType: imageContentType } });
   }
   const attachments: Array<{ name: string; key: string }> = selected.attachments.map(asset => ({ name: asset.name, key: mediaPostKey(asset) }));
+  attachments.push(...await storeGallery(input.gallery, selected.gallery, input.createdBy));
   for (const attachment of input.attachments ?? []) {
     if (!/\.(pdf|docx|xlsx)$/i.test(attachment.name)) throw new Error("Załączniki mogą być tylko w formacie PDF, DOCX lub XLSX.");
     const key = `managed-posts/${id}/attachments/${attachment.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`;
@@ -214,10 +218,51 @@ export async function createManagedPost(input: { kind: "news" | "tender"; title:
   return slug;
 }
 
-type ManagedAttachment = { name: string; key: string };
+type ManagedAttachment = { name: string; key: string; gallery?: true };
 
-function parseAttachments(value: string) {
-  try { return JSON.parse(value || "[]") as ManagedAttachment[]; } catch { return []; }
+function validAttachment(item: unknown): item is ManagedAttachment {
+  return Boolean(item && typeof item === "object" && "name" in item && typeof item.name === "string"
+    && "key" in item && typeof item.key === "string" && (!("gallery" in item) || item.gallery === undefined || item.gallery === true));
+}
+
+function parseAttachments(value: string): ManagedAttachment[] {
+  const parsed: unknown = JSON.parse(value);
+  if (!Array.isArray(parsed)) throw new Error("Nieprawidłowy spis plików publikacji.");
+  const files = parsed.map((item: unknown): ManagedAttachment => {
+    if (!validAttachment(item)) throw new Error("Nieprawidłowy plik publikacji.");
+    return item;
+  });
+  const gallery = files.filter(item => item.gallery);
+  if (gallery.length > MAX_GALLERY_IMAGES || new Set(gallery.map(item => item.key)).size !== gallery.length) throw new Error("Nieprawidłowy zapis galerii publikacji.");
+  return files;
+}
+
+function galleryIds(gallery: GalleryInput[] = []) {
+  return gallery.flatMap(item => "id" in item ? [item.id] : []);
+}
+
+async function validateGallery(gallery: GalleryInput[] = []) {
+  if (gallery.length > MAX_GALLERY_IMAGES) throw new Error("Galeria może zawierać maksymalnie 5 zdjęć.");
+  if (gallery.length && !mediaLibraryEnabled()) throw new Error("Biblioteka mediów jest wyłączona.");
+  for (const item of gallery) if ("file" in item) {
+    const { contentType } = await validateMediaUpload(item.file);
+    if (!["image/jpeg", "image/png", "image/webp"].includes(contentType)) throw new Error("Do galerii dodaj zdjęcia JPEG, PNG lub WebP.");
+  }
+}
+
+async function storeGallery(gallery: GalleryInput[] = [], assets: MediaAsset[], actor: string): Promise<ManagedAttachment[]> {
+  const files: ManagedAttachment[] = [];
+  for (const item of gallery) {
+    if ("id" in item) {
+      const asset = assets.find(asset => asset.id === item.id);
+      if (!asset) throw new Error("Nie znaleziono zdjęcia galerii.");
+      files.push({ name: asset.name, key: mediaPostKey(asset), gallery: true });
+    } else {
+      const id = await uploadMediaAsset(item.file, actor);
+      files.push({ name: item.file.name, key: id.slice(3), gallery: true });
+    }
+  }
+  return files;
 }
 
 export async function listManagedPostsForAdmin() {
@@ -230,11 +275,16 @@ export async function listManagedPostsForAdmin() {
     image: toPost(row).image,
     imported: importablePosts.some((post) => post.slug === row.slug),
     imageFit: row.imageFit,
-    attachments: parseAttachments(row.attachmentsJson),
+    attachments: parseAttachments(row.attachmentsJson).filter(item => !item.gallery),
+    ...(toPost(row).gallery?.length ? { gallery: parseAttachments(row.attachmentsJson).filter(item => item.gallery).map(item => {
+      const id = mediaReference(item.key);
+      if (!id) throw new Error("Nieprawidłowy adres zdjęcia galerii.");
+      return { id, name: item.name, href: mediaHref(item.key) };
+    }) } : {}),
   }));
 }
 
-export async function updateManagedPost(id: string, input: { title: string; excerpt: string; content: string; category: string; source: string; seoTitle?: string; seoDescription?: string; imageFit?: string; image?: File | null; attachments?: File[]; libraryImage?: string; libraryAttachments?: string[]; changedBy?: string }) {
+export async function updateManagedPost(id: string, input: { title: string; excerpt: string; content: string; category: string; source: string; seoTitle?: string; seoDescription?: string; imageFit?: string; image?: File | null; attachments?: File[]; libraryImage?: string; libraryAttachments?: string[]; gallery?: GalleryInput[]; changedBy?: string }) {
   const db = await ensureManagedPostsTable();
   const rows = await db.select().from(managedPosts).where(eq(managedPosts.id, id)).limit(1);
   const existing = rows[0];
@@ -245,7 +295,8 @@ export async function updateManagedPost(id: string, input: { title: string; exce
   if (!input.title.trim() || !input.excerpt.trim() || !content) throw new Error("Tytuł, opis i treść są wymagane.");
   if (existing.kind === "tender" && !TENDER_CATEGORIES.includes(input.category)) throw new Error("Wybierz poprawną kategorię zapytania.");
   if (input.image?.size && input.libraryImage) throw new Error("Wybierz grafikę z dysku albo z biblioteki, nie obie naraz.");
-  const selected = await resolveMediaSelection(input.libraryImage, input.libraryAttachments);
+  await validateGallery(input.gallery);
+  const selected = await resolveMediaSelection(input.libraryImage, input.libraryAttachments, galleryIds(input.gallery));
   await captureContentRevision("post", id, existing.title, existing, input.changedBy);
 
   const bucket = input.image?.size || input.attachments?.some((file) => file.size)
@@ -261,7 +312,8 @@ export async function updateManagedPost(id: string, input: { title: string; exce
     imageContentType = input.image.type;
   }
 
-  const attachments = parseAttachments(existing.attachmentsJson);
+  const attachments = parseAttachments(existing.attachmentsJson).filter(item => !item.gallery || input.gallery === undefined);
+  if (input.gallery !== undefined) attachments.push(...await storeGallery(input.gallery, selected.gallery, input.changedBy ?? existing.createdBy));
   for (const asset of selected.attachments) {
     const key = mediaPostKey(asset);
     if (!attachments.some(attachment => attachment.key === key)) attachments.push({ name: asset.name, key });
@@ -310,6 +362,7 @@ export async function restoreManagedPostRevision(id: string, value: unknown, cha
   }
   validateSeo(previous);
   validateImageFit(previous.imageFit);
+  parseAttachments(previous.attachmentsJson);
   await captureContentRevision("post", id, current.title, current, changedBy);
   const db = await ensureManagedPostsTable();
   const changed = await db.update(managedPosts).set({

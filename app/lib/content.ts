@@ -36,6 +36,7 @@ export type NewsPost = {
   categories: string[];
   image: string | null;
   imageFit?: "contain" | "cover";
+  gallery?: Array<{ name: string; href: string }>;
   source: string;
   justify?: boolean;
   managed?: boolean;
