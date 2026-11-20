@@ -1,6 +1,17 @@
 import { sql } from "drizzle-orm";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
+export const mediaAssets = sqliteTable("media_assets", {
+  id: text("id").primaryKey(),
+  name: text("name").notNull(),
+  contentType: text("content_type").notNull(),
+  size: integer("size"),
+  sha256: text("sha256"),
+  createdAt: text("created_at").notNull(),
+  createdBy: text("created_by").notNull(),
+  trashedAt: text("trashed_at"),
+});
+
 export const contentTrash = sqliteTable("content_trash", {
   id: text("id").primaryKey(),
   kind: text("kind").notNull(),

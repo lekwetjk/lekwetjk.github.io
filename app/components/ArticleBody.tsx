@@ -3522,7 +3522,7 @@ export async function ArticleBody({
   }
 
   const uploadedAttachments = links.filter((link, index) =>
-    link.document && link.href.startsWith("/api/media/")
+    link.document && (link.managedAttachment || link.href.startsWith("/api/media/"))
     && links.findIndex((candidate) => candidate.href === link.href) === index,
   );
   return (

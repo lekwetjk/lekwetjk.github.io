@@ -8,6 +8,8 @@ import generatedPosts from "../data/generated-posts.json" with { type: "json" };
 import { getLocalManagedPostsDb } from "../../db/local-managed-posts.ts";
 import { completeTrashRestore, trashResource } from "./content-trash.ts";
 import { captureContentRevision } from "./content-history.ts";
+import { resolveMediaSelection } from "./media-library.ts";
+import { mediaHref, mediaPostKey } from "./media-references.ts";
 
 export const TENDER_CATEGORIES = ["Zapytania ofertowe", "Zaproszenie do składania ofert", "Wybór wykonawcy", "Wyniki postępowania", "Informacja o unieważnieniu"];
 const PRODUCTION_API_BASE = "https://krd-ig-website-concept.lek-wet-jk.workers.dev";
@@ -98,7 +100,7 @@ function slugify(value: string) {
 function toPost(row: typeof managedPosts.$inferSelect): NewsPost {
   const attachments = JSON.parse(row.attachmentsJson || "[]") as Array<{ name: string; key: string }>;
   const original = importablePosts.find((post) => post.slug === row.slug);
-  return { id: Number.parseInt(row.id.slice(0, 8), 16) || 0, slug: row.slug, title: row.title, date: row.createdAt, year: Number(row.createdAt.slice(0, 4)), excerpt: row.excerpt, seoTitle: row.seoTitle, seoDescription: row.seoDescription, paragraphs: normalizePublicationMarkdown(row.content).split(/\n\s*\n/).map((item) => item.trim()).filter(Boolean), links: [...(original?.links ?? []), ...attachments.map((attachment) => ({ label: attachment.name, href: `/api/media/${encodeURIComponent(attachment.key)}`, document: true }))], categories: original?.categories ?? [row.category], image: row.imageKey ? `/api/media/${encodeURIComponent(row.imageKey)}` : original?.image ?? null, imageFit: row.imageFit, justify: true, source: row.source, managed: true };
+  return { id: Number.parseInt(row.id.slice(0, 8), 16) || 0, slug: row.slug, title: row.title, date: row.createdAt, year: Number(row.createdAt.slice(0, 4)), excerpt: row.excerpt, seoTitle: row.seoTitle, seoDescription: row.seoDescription, paragraphs: normalizePublicationMarkdown(row.content).split(/\n\s*\n/).map((item) => item.trim()).filter(Boolean), links: [...(original?.links ?? []), ...attachments.map((attachment) => ({ label: attachment.name, href: mediaHref(attachment.key), document: true, managedAttachment: true }))], categories: original?.categories ?? [row.category], image: row.imageKey ? mediaHref(row.imageKey) : original?.image ?? null, imageFit: row.imageFit, justify: true, source: row.source, managed: true };
 }
 
 export async function importExistingPost(slug: string, createdBy: string) {
@@ -181,7 +183,7 @@ export async function listManagedPosts(kind?: "news" | "tender") {
   return rows.map(toPost);
 }
 
-export async function createManagedPost(input: { kind: "news" | "tender"; title: string; excerpt: string; content: string; category: string; source: string; seoTitle?: string; seoDescription?: string; imageFit?: string; image?: File | null; attachments?: File[]; createdBy: string }) {
+export async function createManagedPost(input: { kind: "news" | "tender"; title: string; excerpt: string; content: string; category: string; source: string; seoTitle?: string; seoDescription?: string; imageFit?: string; image?: File | null; attachments?: File[]; libraryImage?: string; libraryAttachments?: string[]; createdBy: string }) {
   const seo = validateSeo(input);
   const imageFit = validateImageFit(input.imageFit);
   const title = input.title.trim();
@@ -189,17 +191,19 @@ export async function createManagedPost(input: { kind: "news" | "tender"; title:
   if (!title || !input.excerpt.trim() || !content) throw new Error("Tytuł, opis i treść są wymagane.");
   if (input.kind === "tender" && !TENDER_CATEGORIES.includes(input.category)) throw new Error("Wybierz poprawną kategorię zapytania.");
   const db = await ensureManagedPostsTable();
+  if (input.image?.size && input.libraryImage) throw new Error("Wybierz grafikę z dysku albo z biblioteki, nie obie naraz.");
+  const selected = await resolveMediaSelection(input.libraryImage, input.libraryAttachments);
   const id = crypto.randomUUID();
   const slug = `${slugify(title)}-${id.slice(0, 8)}`;
-  let imageKey: string | null = null;
-  let imageContentType: string | null = null;
+  let imageKey: string | null = selected.image ? mediaPostKey(selected.image) : null;
+  let imageContentType: string | null = selected.image?.contentType ?? null;
   if (input.image?.size) {
     if (!input.image.type.startsWith("image/")) throw new Error("Dodaj plik graficzny.");
     imageKey = `managed-posts/${id}/${input.image.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`;
     imageContentType = input.image.type;
     await getMemberDocumentsBucket().put(imageKey, await input.image.arrayBuffer(), { httpMetadata: { contentType: imageContentType } });
   }
-  const attachments: Array<{ name: string; key: string }> = [];
+  const attachments: Array<{ name: string; key: string }> = selected.attachments.map(asset => ({ name: asset.name, key: mediaPostKey(asset) }));
   for (const attachment of input.attachments ?? []) {
     if (!/\.(pdf|docx|xlsx)$/i.test(attachment.name)) throw new Error("Załączniki mogą być tylko w formacie PDF, DOCX lub XLSX.");
     const key = `managed-posts/${id}/attachments/${attachment.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`;
@@ -230,7 +234,7 @@ export async function listManagedPostsForAdmin() {
   }));
 }
 
-export async function updateManagedPost(id: string, input: { title: string; excerpt: string; content: string; category: string; source: string; seoTitle?: string; seoDescription?: string; imageFit?: string; image?: File | null; attachments?: File[]; changedBy?: string }) {
+export async function updateManagedPost(id: string, input: { title: string; excerpt: string; content: string; category: string; source: string; seoTitle?: string; seoDescription?: string; imageFit?: string; image?: File | null; attachments?: File[]; libraryImage?: string; libraryAttachments?: string[]; changedBy?: string }) {
   const db = await ensureManagedPostsTable();
   const rows = await db.select().from(managedPosts).where(eq(managedPosts.id, id)).limit(1);
   const existing = rows[0];
@@ -240,13 +244,15 @@ export async function updateManagedPost(id: string, input: { title: string; exce
   const content = normalizePublicationMarkdown(input.content).trim();
   if (!input.title.trim() || !input.excerpt.trim() || !content) throw new Error("Tytuł, opis i treść są wymagane.");
   if (existing.kind === "tender" && !TENDER_CATEGORIES.includes(input.category)) throw new Error("Wybierz poprawną kategorię zapytania.");
+  if (input.image?.size && input.libraryImage) throw new Error("Wybierz grafikę z dysku albo z biblioteki, nie obie naraz.");
+  const selected = await resolveMediaSelection(input.libraryImage, input.libraryAttachments);
   await captureContentRevision("post", id, existing.title, existing, input.changedBy);
 
   const bucket = input.image?.size || input.attachments?.some((file) => file.size)
     ? getMemberDocumentsBucket()
     : undefined;
-  let imageKey = existing.imageKey;
-  let imageContentType = existing.imageContentType;
+  let imageKey = selected.image ? mediaPostKey(selected.image) : existing.imageKey;
+  let imageContentType = selected.image?.contentType ?? existing.imageContentType;
   if (input.image?.size) {
     if (!input.image.type.startsWith("image/")) throw new Error("Dodaj plik graficzny.");
     const nextKey = `managed-posts/${id}/revisions/${crypto.randomUUID()}/${input.image.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`;
@@ -256,6 +262,10 @@ export async function updateManagedPost(id: string, input: { title: string; exce
   }
 
   const attachments = parseAttachments(existing.attachmentsJson);
+  for (const asset of selected.attachments) {
+    const key = mediaPostKey(asset);
+    if (!attachments.some(attachment => attachment.key === key)) attachments.push({ name: asset.name, key });
+  }
   for (const attachment of input.attachments ?? []) {
     if (!/\.(pdf|docx|xlsx)$/i.test(attachment.name)) throw new Error("Załączniki mogą być tylko w formacie PDF, DOCX lub XLSX.");
     const key = `managed-posts/${id}/attachments/${crypto.randomUUID()}/${attachment.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`;

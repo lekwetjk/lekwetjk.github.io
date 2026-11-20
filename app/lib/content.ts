@@ -7,6 +7,7 @@ export type ContentLink = {
   href: string;
   label: string;
   document: boolean;
+  managedAttachment?: boolean;
 };
 
 export type KnowledgePage = {

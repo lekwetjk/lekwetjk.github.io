@@ -134,7 +134,8 @@ nie zmienia produkcji. Wartosci tekstowe to dokladnie `true` lub `false`.
 | `CMS_READ_ONLY` | `false` | Blokuje zapisy `/admin`, `/api/admin` i `/api/wstawienia` odpowiedzia 503; zachowuje odczyty i logowanie. |
 | `CMS_TRASH_ENABLED` | `false` | Udostepnia administratorowi API i zakladke kosza w panelu. |
 | `CMS_HISTORY_ENABLED` | `false` | Zabezpiecza wersje przed edycja i usunieciem oraz udostepnia porownanie i przywracanie historii. |
-| `CMS_MEDIA_ENABLED`, `CMS_DRAFTS_ENABLED`, `CMS_ARCHIVE_ENABLED` | `false` | Rezerwacja przelacznikow dla kolejnych etapow; te funkcje nie sa jeszcze wdrozone. |
+| `CMS_MEDIA_ENABLED` | `false` | Udostepnia administratorowi biblioteke mediow, upload i wybor istniejacych plikow w publikacjach. |
+| `CMS_DRAFTS_ENABLED`, `CMS_ARCHIVE_ENABLED` | `false` | Rezerwacja przelacznikow dla kolejnych etapow; te funkcje nie sa jeszcze wdrozone. |
 
 Ochrona plikow i kierowanie usuniec do kosza dzialaja niezaleznie od flagi
 `CMS_TRASH_ENABLED`. Wylaczenie interfejsu nie przywraca fizycznego kasowania.
@@ -191,6 +192,65 @@ i wlacza `CMS_TRASH_ENABLED` oraz `CMS_HISTORY_ENABLED`. Przed jego uruchomienie
 wymagane sa aktualna sprawdzona kopia i symulacje migracji opisane powyzej.
 Nie publikuje sie konfiguracji podgladu, fikcyjnych kont ani lokalnych danych
 D1/R2. Testy regresji po wdrozeniu nie powinny modyfikowac rzeczywistych tresci.
+
+## Biblioteka mediow - etap 3
+
+Panel `/admin/media` i API `/api/admin/media` wymagaja administratora oraz
+`CMS_MEDIA_ENABLED=true`. Nowa migracja `db/migrations/content-media.sql`
+wylacznie dodaje tabele `media_assets`. Przed osobno zatwierdzonym wdrozeniem
+sprawdz ja na aktualnej, rzeczywiscie odtworzonej kopii tym samym narzedziem
+`verify-content-migration.mjs`. Zaakceptowany produkcyjny workflow stosuje te
+migracje po migracjach historii i kosza oraz wdraza `CMS_MEDIA_ENABLED=true`,
+zachowujac wlaczone flagi poprzedniego etapu.
+
+Biblioteka laczy indeks wersjonowanych grafik i dokumentow `public`, istniejace
+publiczne pliki publikacji w R2, dokumenty sekcyjne z R2/D1 oraz zrodla aktywnych
+biuletynow. Nie przenosi, nie nadpisuje i nie importuje masowo starych plikow.
+Prywatne dane systemowe, logotypy kont, staging i surowe kopie historii pozostaja
+poza katalogiem plikow do ponownego uzycia.
+
+Aktywne zrodla biuletynow maja wskazane wydanie i osobny adres pobrania
+`/api/admin/media?download=...`, dostepny tylko administratorowi przy wlaczonej
+fladze biblioteki. Pobierany jest dokladnie wybrany plik zrodlowy, a nie glowny
+PDF wydania. Te adresy nie sluza do publicznego udostepniania zalacznikow.
+
+`npm run generate:media` odtwarza `app/data/media-catalog.json` z rzeczywistych,
+wersjonowanych plikow, ich rozmiarow i SHA-256 oraz aktualnie skorygowanych tresci
+strony. Jest czescia predev/prebuild. Po dodaniu nowego statycznego pliku najpierw
+obejmij go wersjonowaniem, a potem odswiez indeks. Plikow ignorowanych, buforow
+odzyskiwania i testowych uploadow nie nalezy dolaczac do tego indeksu.
+
+Wyszukiwanie obejmuje nazwe, sciezke i miejsca uzycia. Indeks laczy publikacje,
+podstrony, wskazania w kodzie, aktualne rekordy CMS, historie i kosz. Wskazanie
+w kodzie jest informacja konserwatywna, nie obietnica wykrycia kazdego dynamicznie
+skladanego adresu. Brak wykrytego odnosnika nie dowodzi, ze plik nie jest uzywany
+np. przez zewnetrzny serwis. Blad odczytu lub niepelna lista R2 blokuje operacje,
+zamiast uznawac nieodczytane pliki za nieuzywane.
+
+Nowe publiczne uploady: JPEG, PNG, WebP, PDF, DOCX i XLSX, do 25 MB, z kontrola
+sygnatury formatu. Kazdy upload ma nowy klucz UUID; powtorzenie nazwy nie nadpisuje
+starych bajtow. Prywatne dokumenty nadal wgrywa sie w ich dotychczasowych sekcjach.
+Nie wolno dodawac ich do publicznego uploadu biblioteki.
+
+Formularze dodawania i edycji publikacji pozwalaja wybierac istniejace publiczne
+grafiki i do 30 zalacznikow bez ponownego uploadu. Zachowuja tez dotychczasowy
+wybor z dysku. Prywatne dokumenty i zrodla biuletynow nie sa udostepniane jako
+publiczne zalaczniki. Materialy metodyki pozostaja publiczne, zgodnie z obecnym
+endpointem; ponowne uzycie zachowuje adres z `scope=methodology`.
+
+Kosz biblioteki jest osobnym widokiem w tym panelu. Dotyczy tylko publicznych
+plikow R2; uzycie w tresci, historii lub koszu blokuje przeniesienie. Statyczne
+archiwum, dokumenty sekcyjne i zrodla biuletynow sa chronione i nadal zarzadzane
+w swoich dotychczasowych miejscach. Zmiana stanu zapisuje tylko metadane D1:
+nie kasuje ani nie przenosi bajtow R2, nie uniewaznia istniejacego URL i nie jest
+mechanizmem cofania dostepu. Nie ma funkcji trwalego oprozniania kosza.
+To zabezpiecza linki takze przy nieznanym odwolaniu lub rownoczesnym zapisie.
+
+Wylaczenie `CMS_MEDIA_ENABLED` chowa nowy panel, API oraz selektory, ale nie
+przerywa dzialania juz wybranych grafik i zalacznikow ani starego uploadu.
+Historia etapu 2 odtwarza ich oryginalne klucze i adresy. Nie cofaj nowej tabeli
+ani nie usuwaj plikow przy rollbacku. `CMS_READ_ONLY` obejmuje nowe zapisy API
+tak samo jak pozostale operacje administratora.
 
 ## Techniczny kosz
 

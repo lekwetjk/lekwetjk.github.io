@@ -3,9 +3,10 @@ import { redirect } from "next/navigation";
 import { PageShell } from "../../components/SiteChrome";
 import { AUTH_COOKIE_NAME, verifySessionToken } from "../../lib/auth";
 import ManagedPostsManager from "./ManagedPostsManager";
+import { mediaLibraryEnabled } from "../../lib/media-library";
 
 export default async function PublicationsAdminPage() {
   const session = verifySessionToken((await cookies()).get(AUTH_COOKIE_NAME)?.value);
   if (!session || session.role !== "admin") redirect("/login/czlonkowie?redirect=/admin/publikacje");
-  return <PageShell><section className="simple-hero"><div className="shell" style={{ maxWidth: 1100, paddingTop: 56, paddingBottom: 56 }}><p className="article-kicker">Administrator</p><h1>Publikacje</h1><ManagedPostsManager /></div></section></PageShell>;
+  return <PageShell><section className="simple-hero"><div className="shell" style={{ maxWidth: 1100, paddingTop: 56, paddingBottom: 56 }}><p className="article-kicker">Administrator</p><h1>Publikacje</h1><ManagedPostsManager mediaEnabled={mediaLibraryEnabled()} /></div></section></PageShell>;
 }

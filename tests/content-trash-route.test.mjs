@@ -35,8 +35,8 @@ test("public media cannot read retained trash records but still serves existing 
   } finally { globalThis.env = previous; }
 });
 
-test("trash list and restore API reject unauthenticated callers before reading data", async () => {
-  for (const name of ["content-trash", "content-history"]) {
+test("content and media administration APIs reject unauthenticated callers before reading data", async () => {
+  for (const name of ["content-trash", "content-history", "media"]) {
   const route = await loadRoute(`../app/api/admin/${name}/route.ts`, [{
     name: "no-session",
     setup(builder) {
@@ -46,6 +46,7 @@ test("trash list and restore API reject unauthenticated callers before reading d
   }]);
   assert.equal((await route.GET(new Request("https://fixture.test/api/admin/private"))).status, 403);
   assert.equal((await route.PATCH(new Request("https://fixture.test/api/admin/content-trash", { method: "PATCH", body: "{}" }))).status, 403);
+  if (name === "media") assert.equal((await route.POST(new Request("https://fixture.test/api/admin/media", { method: "POST" }))).status, 403);
   }
 });
 
@@ -67,6 +68,7 @@ test("trash API respects role and feature gates and restores retained documents"
   }];
   const route = await loadRoute("../app/api/admin/content-trash/route.ts", sessionPlugins);
   const history = await loadRoute("../app/api/admin/content-history/route.ts", sessionPlugins);
+  const media = await loadRoute("../app/api/admin/media/route.ts", sessionPlugins);
   globalThis.env = {
     CMS_TRASH_ENABLED: "false",
     CMS_HISTORY_ENABLED: "false",
@@ -88,9 +90,15 @@ test("trash API respects role and feature gates and restores retained documents"
     globalThis.__cmsSafetyRouteToken = roleToken("member");
     assert.equal((await route.GET()).status, 403);
     assert.equal((await history.GET(new Request("https://fixture.test/api/admin/content-history"))).status, 403);
+    assert.equal((await media.GET()).status, 403);
+    assert.equal((await media.POST(new Request("https://fixture.test/api/admin/media", { method: "POST" }))).status, 403);
+    assert.equal((await media.PATCH(new Request("https://fixture.test/api/admin/media", { method: "PATCH", body: "{}" }))).status, 403);
     globalThis.__cmsSafetyRouteToken = roleToken("admin");
     assert.equal((await route.GET()).status, 404);
     assert.equal((await history.GET(new Request("https://fixture.test/api/admin/content-history"))).status, 404);
+    assert.equal((await media.GET()).status, 404);
+    assert.equal((await media.POST(new Request("https://fixture.test/api/admin/media", { method: "POST" }))).status, 404);
+    assert.equal((await media.PATCH(new Request("https://fixture.test/api/admin/media", { method: "PATCH", body: "{}" }))).status, 404);
     globalThis.env.CMS_HISTORY_ENABLED = "true";
     assert.equal((await history.GET(new Request("https://fixture.test/api/admin/content-history"))).status, 200);
     const snapshot = { scope: "documents", fileName: "fixture.pdf", title: "Previous document", uploadedAt: "2020-01-01", contentType: "application/pdf", asset: { base64: Buffer.from("original file bytes").toString("base64") } };

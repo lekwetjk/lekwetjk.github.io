@@ -7,10 +7,11 @@
   },
   "scripts": {
     "generate:posts": "node scripts/generate-content-posts.mjs",
+    "generate:media": "node scripts/generate-media-catalog.mjs",
     "materials:metodyka": "node scripts/prepare-methodology-materials.mjs",
     "prepare:ocr": "node scripts/prepare-ocr-assets.mjs",
-    "predev": "npm run generate:posts && npm run prepare:ocr",
-    "prebuild": "npm run generate:posts && npm run prepare:ocr",
+    "predev": "npm run generate:posts && npm run generate:media && npm run prepare:ocr",
+    "prebuild": "npm run generate:posts && npm run generate:media && npm run prepare:ocr",
     "dev": "vinext dev",
     "build": "vinext build",
     "build:static": "next build",

@@ -96,6 +96,12 @@ export default async function MemberProfilePage() {
                 <span style={{ display: "block", marginTop: 6, color: "#475569" }}>Porównuj zachowane wersje i przywracaj treści oraz dokumenty bez utraty plików.</span>
               </a>
             ) : null}
+            {session.role === "admin" && cmsFlag(cmsEnvironment?.CMS_MEDIA_ENABLED) ? (
+              <a href="/admin/media" style={{ display: "block", border: "1px solid #d5d9df", borderRadius: 12, padding: 18, color: "#0f172a", textDecoration: "none" }}>
+                <strong>Biblioteka mediów</strong>
+                <span style={{ display: "block", marginTop: 6, color: "#475569" }}>Wyszukuj pliki, sprawdzaj miejsca użycia i wykorzystuj ponownie grafiki oraz załączniki.</span>
+              </a>
+            ) : null}
             {session.role === "admin" ? <ProfileDictionaryManager /> : null}
           </div>
           <p style={{ marginTop: 32, overflowWrap: "anywhere" }}>

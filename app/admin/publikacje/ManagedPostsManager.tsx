@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import MarkdownEditor from "./MarkdownEditor";
 import PublicationForm from "./PublicationForm";
+import MediaPicker from "../media/MediaPicker";
+import { mediaHref, type MediaAsset } from "../../lib/media-references";
 
 type Post = {
   id: string;
@@ -26,15 +28,16 @@ type ImportablePost = { slug: string; title: string; date: string };
 
 const tenderCategories = ["Zapytania ofertowe", "Zaproszenie do składania ofert", "Wybór wykonawcy", "Wyniki postępowania", "Informacja o unieważnieniu"];
 
-export default function ManagedPostsManager() {
+export default function ManagedPostsManager({ mediaEnabled = false }: { mediaEnabled?: boolean }) {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [editing, setEditing] = useState<{ id: string; content: string } | null>(null);
+  const [editing, setEditing] = useState<{ id: string; content: string; libraryImage: MediaAsset | null; libraryAttachments: MediaAsset[] } | null>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState("");
   const [importablePosts, setImportablePosts] = useState<ImportablePost[]>([]);
   const [importing, setImporting] = useState(false);
 
   function toggleEditor(post: Post) {
-    setEditing((current) => current?.id === post.id ? null : { id: post.id, content: post.content });
+    setEditing((current) => current?.id === post.id ? null : { id: post.id, content: post.content, libraryImage: null, libraryAttachments: [] });
   }
 
   async function loadPosts() {
@@ -62,7 +65,7 @@ export default function ManagedPostsManager() {
       if (!response.ok) throw new Error(data.error ?? "Nie udało się zaimportować wpisu.");
       const updatedPosts = await loadPosts();
       const importedPost = updatedPosts.find((post) => post.slug === slug);
-      setEditing(importedPost ? { id: importedPost.id, content: importedPost.content } : null);
+      setEditing(importedPost ? { id: importedPost.id, content: importedPost.content, libraryImage: null, libraryAttachments: [] } : null);
       setMessage("Wpis jest dostępny do edycji. Zachowano adres i datę publikacji.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Nie udało się zaimportować wpisu.");
@@ -93,7 +96,7 @@ export default function ManagedPostsManager() {
     setMessage("Wpis został przeniesiony do kosza.");
   }
 
-  return <><div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))", gap: 18 }}><PublicationForm kind="news" onSaved={refreshPosts} /><PublicationForm kind="tender" onSaved={refreshPosts} /></div><section style={{ marginTop: 32, display: "grid", gap: 14 }}>
+  return <>{mediaEnabled ? <p><a href="/admin/media">Otwórz wspólną bibliotekę mediów</a></p> : null}<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))", gap: 18 }}><PublicationForm kind="news" onSaved={refreshPosts} mediaEnabled={mediaEnabled} /><PublicationForm kind="tender" onSaved={refreshPosts} mediaEnabled={mediaEnabled} /></div><section style={{ marginTop: 32, display: "grid", gap: 14 }}>
     <h2 style={{ margin: 0 }}>Opublikowane wpisy</h2>
     {message ? <p style={{ margin: 0, color: message.includes("Nie udało") ? "#b91c1c" : "#166534" }}>{message}</p> : null}
     {!posts.length ? <p style={{ margin: 0, color: "#475569" }}>Brak wpisów dodanych z panelu administratora.</p> : null}
@@ -116,10 +119,16 @@ export default function ManagedPostsManager() {
           <label>Opis SEO (opcjonalnie)<textarea name="seoDescription" defaultValue={post.seoDescription ?? ""} maxLength={240} rows={3} placeholder={post.excerpt} style={{ width: "100%", padding: 10 }} /></label>
         </fieldset>
         <label>Treść<MarkdownEditor name="content" value={editing.content} onChange={(content) => setEditing((current) => current?.id === post.id ? { ...current, content } : current)} rows={10} required /></label>
-        <label>Nowa grafika (opcjonalnie)<input name="image" type="file" accept="image/jpeg,image/png,image/webp" /></label>
+        <label>Nowa grafika (opcjonalnie)<input ref={imageInputRef} name="image" type="file" accept="image/jpeg,image/png,image/webp" onChange={() => setEditing(current => current ? { ...current, libraryImage: null } : current)} /></label>
+        {mediaEnabled ? <MediaPicker kind="image" selected={editing.libraryImage ? [editing.libraryImage] : []} onChange={assets => {
+          setEditing(current => current ? { ...current, libraryImage: assets[0] ?? null } : current);
+          if (imageInputRef.current) imageInputRef.current.value = "";
+        }} /> : null}
+        {editing.libraryImage ? <img src={editing.libraryImage.href} alt="Wybrana grafika z biblioteki" style={{ width: "100%", maxWidth: 400, height: 180, objectFit: "contain" }} /> : null}
         <label>Dopasowanie grafiki<select name="imageFit" defaultValue={post.imageFit ?? "contain"} style={{ width: "100%", padding: 10 }}><option value="contain">Cały obraz</option><option value="cover">Wypełnij ramkę</option></select></label>
         <label>Dodaj załączniki (PDF, DOCX, XLSX)<input name="attachments" type="file" accept=".pdf,.docx,.xlsx" multiple /></label>
-        {post.attachments.length ? <section className="resource-box" aria-label="Obecne pliki"><h3 style={{ marginTop: 0 }}>Obecne pliki</h3>{post.attachments.map((item) => <a href={`/api/media/${encodeURIComponent(item.key)}`} key={item.key} target="_blank" rel="noreferrer">{item.name}</a>)}</section> : null}
+        {mediaEnabled ? <MediaPicker kind="attachment" selected={editing.libraryAttachments} onChange={assets => setEditing(current => current ? { ...current, libraryAttachments: assets } : current)} /> : null}
+        {post.attachments.length ? <section className="resource-box" aria-label="Obecne pliki"><h3 style={{ marginTop: 0 }}>Obecne pliki</h3>{post.attachments.map((item) => <a href={mediaHref(item.key)} key={item.key} target="_blank" rel="noreferrer">{item.name}</a>)}</section> : null}
         <label>Link źródłowy<input name="source" type="url" defaultValue={post.source} style={{ width: "100%", padding: 10 }} /></label>
         <div style={{ display: "flex", gap: 8 }}><button type="submit" className="button button-primary">Zapisz zmiany</button><button type="button" className="button button-outline" onClick={() => setEditing(null)}>Anuluj</button></div>
       </form> : null}

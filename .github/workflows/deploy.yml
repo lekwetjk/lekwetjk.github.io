@@ -81,6 +81,7 @@ jobs:
         run: |
           pnpm exec wrangler d1 execute DB --remote --config dist/server/wrangler.json --file db/migrations/content-safety.sql
           pnpm exec wrangler d1 execute DB --remote --config dist/server/wrangler.json --file db/migrations/content-history.sql
+          pnpm exec wrangler d1 execute DB --remote --config dist/server/wrangler.json --file db/migrations/content-media.sql
 
       - name: Deploy to Cloudflare Workers
-        run: pnpm exec wrangler deploy --config dist/server/wrangler.json --var CMS_TRASH_ENABLED:true --var CMS_HISTORY_ENABLED:true
+        run: pnpm exec wrangler deploy --config dist/server/wrangler.json --var CMS_TRASH_ENABLED:true --var CMS_HISTORY_ENABLED:true --var CMS_MEDIA_ENABLED:true

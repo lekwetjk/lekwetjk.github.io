@@ -7,7 +7,7 @@ type CloudflareBindings = {
     put(key: string, value: ArrayBuffer | Uint8Array | ReadableStream, options?: { httpMetadata?: { contentType?: string }; customMetadata?: Record<string, string> }): Promise<unknown>;
     get(key: string): Promise<{ body: ReadableStream; httpMetadata?: { contentType?: string }; customMetadata?: Record<string, string>; uploaded: Date } | null>;
     delete(key: string): Promise<void>;
-    list(options?: { prefix?: string; include?: Array<"customMetadata">; cursor?: string }): Promise<{ objects: Array<{ key: string; uploaded: Date; customMetadata?: Record<string, string> }>; truncated?: boolean; cursor?: string }>;
+    list(options?: { prefix?: string; include?: Array<"customMetadata" | "httpMetadata">; cursor?: string }): Promise<{ objects: Array<{ key: string; uploaded: Date; size?: number; httpMetadata?: { contentType?: string }; customMetadata?: Record<string, string> }>; truncated?: boolean; cursor?: string }>;
   };
 };
 
