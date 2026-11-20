@@ -77,4 +77,6 @@ NEXT_PUBLIC_SITE_URL=https://staging.krd-ig.com.pl
 
 ## Rollback
 
+Przed zmianami CMS zastosuj rowniez [zabezpieczenia tresci, kopie i probne odtworzenie](./CONTENT_SAFETY.md).
+
 Nie usuwaj starego Workera ani bazy D1 przez co najmniej 14 dni. W razie problemu przywroc poprzednie rekordy DNS i przeanalizuj logi ze stagingu przed kolejna proba.

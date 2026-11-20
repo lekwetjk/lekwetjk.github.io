@@ -85,12 +85,12 @@ export default function ManagedPostsManager() {
   }
 
   async function removePost(post: Post) {
-    if (!window.confirm(`Usunąć wpis „${post.title}”? Tej operacji nie można cofnąć.`)) return;
+    if (!window.confirm(`Przenieść wpis „${post.title}” do kosza? Pliki pozostaną zachowane.`)) return;
     const response = await fetch(`/api/admin/managed-posts/${post.id}`, { method: "DELETE" });
     const data = await response.json().catch(() => ({})) as { error?: string };
     if (!response.ok) { setMessage(data.error ?? "Nie udało się usunąć wpisu."); return; }
     setPosts((current) => current.filter((item) => item.id !== post.id));
-    setMessage("Wpis został usunięty.");
+    setMessage("Wpis został przeniesiony do kosza.");
   }
 
   return <><div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))", gap: 18 }}><PublicationForm kind="news" onSaved={refreshPosts} /><PublicationForm kind="tender" onSaved={refreshPosts} /></div><section style={{ marginTop: 32, display: "grid", gap: 14 }}>

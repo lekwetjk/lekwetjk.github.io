@@ -131,7 +131,7 @@ export default function ReportsManager() {
   }
 
   async function remove(report: ReportSummary) {
-    if (!window.confirm(`Usunąć publikację „${report.title}”?`)) return;
+    if (!window.confirm(`Przenieść publikację „${report.title}” do kosza? Pliki źródłowe pozostaną zachowane.`)) return;
     const response = await fetch(`/api/admin/reports/${report.id}`, { method: "DELETE" });
     const data = await response.json().catch(() => ({})) as { error?: string };
     if (!response.ok) {
@@ -139,7 +139,7 @@ export default function ReportsManager() {
       return;
     }
     setReports((current) => current.filter((item) => item.id !== report.id));
-    setStatus("Raport został usunięty.");
+    setStatus("Raport został przeniesiony do kosza.");
   }
 
   return (

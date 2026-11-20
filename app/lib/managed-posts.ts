@@ -6,6 +6,8 @@ import { managedPosts } from "../../db/schema.ts";
 import type { NewsPost } from "./content";
 import generatedPosts from "../data/generated-posts.json" with { type: "json" };
 import { getLocalManagedPostsDb } from "../../db/local-managed-posts.ts";
+import { completeTrashRestore, trashResource } from "./content-trash.ts";
+import { captureContentRevision } from "./content-history.ts";
 
 export const TENDER_CATEGORIES = ["Zapytania ofertowe", "Zaproszenie do składania ofert", "Wybór wykonawcy", "Wyniki postępowania", "Informacja o unieważnieniu"];
 const PRODUCTION_API_BASE = "https://krd-ig-website-concept.lek-wet-jk.workers.dev";
@@ -228,7 +230,7 @@ export async function listManagedPostsForAdmin() {
   }));
 }
 
-export async function updateManagedPost(id: string, input: { title: string; excerpt: string; content: string; category: string; source: string; seoTitle?: string; seoDescription?: string; imageFit?: string; image?: File | null; attachments?: File[] }) {
+export async function updateManagedPost(id: string, input: { title: string; excerpt: string; content: string; category: string; source: string; seoTitle?: string; seoDescription?: string; imageFit?: string; image?: File | null; attachments?: File[]; changedBy?: string }) {
   const db = await ensureManagedPostsTable();
   const rows = await db.select().from(managedPosts).where(eq(managedPosts.id, id)).limit(1);
   const existing = rows[0];
@@ -238,6 +240,7 @@ export async function updateManagedPost(id: string, input: { title: string; exce
   const content = normalizePublicationMarkdown(input.content).trim();
   if (!input.title.trim() || !input.excerpt.trim() || !content) throw new Error("Tytuł, opis i treść są wymagane.");
   if (existing.kind === "tender" && !TENDER_CATEGORIES.includes(input.category)) throw new Error("Wybierz poprawną kategorię zapytania.");
+  await captureContentRevision("post", id, existing.title, existing, input.changedBy);
 
   const bucket = input.image?.size || input.attachments?.some((file) => file.size)
     ? getMemberDocumentsBucket()
@@ -246,9 +249,8 @@ export async function updateManagedPost(id: string, input: { title: string; exce
   let imageContentType = existing.imageContentType;
   if (input.image?.size) {
     if (!input.image.type.startsWith("image/")) throw new Error("Dodaj plik graficzny.");
-    const nextKey = `managed-posts/${id}/${input.image.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`;
+    const nextKey = `managed-posts/${id}/revisions/${crypto.randomUUID()}/${input.image.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`;
     await bucket!.put(nextKey, await input.image.arrayBuffer(), { httpMetadata: { contentType: input.image.type } });
-    if (existing.imageKey && existing.imageKey !== nextKey) await bucket!.delete(existing.imageKey);
     imageKey = nextKey;
     imageContentType = input.image.type;
   }
@@ -256,7 +258,7 @@ export async function updateManagedPost(id: string, input: { title: string; exce
   const attachments = parseAttachments(existing.attachmentsJson);
   for (const attachment of input.attachments ?? []) {
     if (!/\.(pdf|docx|xlsx)$/i.test(attachment.name)) throw new Error("Załączniki mogą być tylko w formacie PDF, DOCX lub XLSX.");
-    const key = `managed-posts/${id}/attachments/${attachment.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`;
+    const key = `managed-posts/${id}/attachments/${crypto.randomUUID()}/${attachment.name.replace(/[^a-zA-Z0-9._-]/g, "-")}`;
     await bucket!.put(key, await attachment.arrayBuffer(), { httpMetadata: { contentType: attachment.type || "application/octet-stream" } });
     attachments.push({ name: attachment.name, key });
   }
@@ -264,17 +266,48 @@ export async function updateManagedPost(id: string, input: { title: string; exce
   await db.update(managedPosts).set({ title: input.title.trim(), excerpt: input.excerpt.trim(), ...seo, content, category: existing.kind === "news" ? "Aktualności" : input.category, source: input.source.trim(), imageKey, imageContentType, imageFit, attachmentsJson: JSON.stringify(attachments), updatedAt: new Date().toISOString() }).where(eq(managedPosts.id, id));
 }
 
-export async function deleteManagedPost(id: string) {
+export async function deleteManagedPost(id: string, changedBy?: string) {
   const db = await ensureManagedPostsTable();
   const rows = await db.select().from(managedPosts).where(eq(managedPosts.id, id)).limit(1);
   const existing = rows[0];
   if (!existing || existing.deletedAt) return false;
-  const attachments = parseAttachments(existing.attachmentsJson);
-  if (existing.imageKey || attachments.length) {
-    const bucket = getMemberDocumentsBucket();
-    if (existing.imageKey) await bucket.delete(existing.imageKey);
-    for (const attachment of attachments) await bucket.delete(attachment.key);
-  }
+  await captureContentRevision("post", id, existing.title, existing, changedBy);
+  await trashResource("post", id, existing);
   await db.update(managedPosts).set({ deletedAt: new Date().toISOString() }).where(eq(managedPosts.id, id));
   return true;
+}
+
+export async function restoreManagedPost(id: string) {
+  const db = await ensureManagedPostsTable();
+  const [existing] = await db.select().from(managedPosts).where(eq(managedPosts.id, id)).limit(1);
+  if (!existing) throw new Error("Nie znaleziono wpisu do przywrócenia.");
+  if (existing.deletedAt) await db.update(managedPosts).set({ deletedAt: null }).where(eq(managedPosts.id, id));
+  await completeTrashRestore("post", id);
+}
+
+export async function getManagedPostSnapshot(id: string) {
+  const db = await ensureManagedPostsTable();
+  return (await db.select().from(managedPosts).where(eq(managedPosts.id, id)).limit(1))[0] ?? null;
+}
+
+export async function restoreManagedPostRevision(id: string, value: unknown, changedBy: string) {
+  const previous = value as typeof managedPosts.$inferSelect | null;
+  const current = await getManagedPostSnapshot(id);
+  if (!previous || previous.id !== id || !current || current.deletedAt) throw new Error("Najpierw przywróć wpis z kosza.");
+  if (previous.slug !== current.slug || previous.kind !== current.kind) throw new Error("Wersja dotyczy innego adresu publikacji.");
+  for (const field of ["title", "excerpt", "content", "category", "source", "seoTitle", "seoDescription", "attachmentsJson"] as const) {
+    if (typeof previous[field] !== "string") throw new Error("Nieprawidłowa wersja publikacji.");
+  }
+  validateSeo(previous);
+  validateImageFit(previous.imageFit);
+  await captureContentRevision("post", id, current.title, current, changedBy);
+  const db = await ensureManagedPostsTable();
+  const changed = await db.update(managedPosts).set({
+    title: previous.title, excerpt: previous.excerpt, content: previous.content,
+    category: previous.category, source: previous.source, seoTitle: previous.seoTitle,
+    seoDescription: previous.seoDescription, imageFit: previous.imageFit,
+    imageKey: previous.imageKey, imageContentType: previous.imageContentType,
+    attachmentsJson: previous.attachmentsJson, updatedAt: new Date().toISOString(),
+  }).where(and(eq(managedPosts.id, id), eq(managedPosts.updatedAt, current.updatedAt), isNull(managedPosts.deletedAt))).returning({ id: managedPosts.id });
+  if (!changed.length) throw new Error("Wpis został zmieniony. Odśwież podgląd wersji.");
 }

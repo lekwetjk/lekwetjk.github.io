@@ -4,8 +4,10 @@ import { DatabaseSync, type SQLInputValue } from "node:sqlite";
 import test from "node:test";
 
 import { buildExportMapData, type ExportMapTableSelection } from "../app/lib/bulletin-export-map.ts";
-import { createPreparedBulletinReport, getBulletinReportData, getBulletinPdf, listBulletinReports, updatePreparedBulletinReport } from "../app/lib/bulletin-reports.ts";
+import { createPreparedBulletinReport, deleteBulletinReport, getBulletinReportData, getBulletinPdf, listBulletinReports, restoreBulletinReport, updatePreparedBulletinReport } from "../app/lib/bulletin-reports.ts";
 import type { PreparedBulletin } from "../app/lib/prepared-bulletin-model.ts";
+import { contentStateHash, listContentHistory } from "../app/lib/content-history.ts";
+import { currentRevisionState, restoreContentRevision } from "../app/lib/content-history-actions.ts";
 
 const original = JSON.parse(readFileSync(new URL("../app/data/bulletins/2026-08.json", import.meta.url), "utf8")) as PreparedBulletin;
 const selection: ExportMapTableSelection = {
@@ -41,6 +43,7 @@ test("publication persists each edition's map data and surfaces storage failures
   let concurrentUpdate = false;
   let failDelete = false;
   runtime.env = {
+    CMS_HISTORY_ENABLED: "true",
     DB: {
       prepare(query: string) {
         if (failInsert && /^insert into "bulletin_reports"/i.test(query)) throw new Error("database insert failed");
@@ -139,7 +142,22 @@ test("publication persists each edition's map data and surfaces storage failures
     assert.ok(objects.has(updated.sources[0].key));
     await assert.rejects(update(revised), /zostało zmienione/);
     assert.equal((await listBulletinReports()).length, 2);
+    const historical = (await listContentHistory()).find(item => item.kind === "bulletin" && JSON.parse(item.snapshotJson).dataKey === september.dataKey)!;
+    const retainedBeforeRestore = new Map(objects);
+    await restoreContentRevision(historical.id, contentStateHash(await currentRevisionState(historical)), "fixture");
+    assert.equal((await listBulletinReports()).find(item => item.id === september.id)?.dataKey, september.dataKey);
+    assert.equal((await listBulletinReports()).find(item => item.id === september.id)?.createdAt, september.createdAt);
+    assert.deepEqual(objects, retainedBeforeRestore);
     const objectCount = objects.size;
+    const octoberData = await getBulletinReportData(october);
+    const beforeTrash = new Map(objects);
+    await deleteBulletinReport(october.id);
+    assert.equal((await listBulletinReports()).some(report => report.id === october.id), false);
+    assert.deepEqual(objects, beforeTrash);
+    await restoreBulletinReport(october.id);
+    assert.deepEqual((await listBulletinReports()).find(report => report.id === october.id), october);
+    assert.deepEqual(await getBulletinReportData(october), octoberData);
+    assert.deepEqual(objects, beforeTrash);
     objects.set(september.dataKey, new TextEncoder().encode("{"));
     await assert.rejects(getBulletinReportData(september), /nie są poprawnym JSON-em/);
 

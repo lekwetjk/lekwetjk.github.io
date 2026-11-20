@@ -6,6 +6,7 @@ const PRODUCTION_API_BASE = "https://krd-ig-website-concept.lek-wet-jk.workers.d
 export async function GET(request: Request, { params }: { params: Promise<{ key: string[] }> }) {
   const { key } = await params;
   const objectKey = key.join("/");
+  if (objectKey.startsWith("content-trash/") || objectKey.startsWith("content-history/")) return new NextResponse("Not found", { status: 404 });
   try {
     const object = await getMemberDocumentsBucket().get(objectKey);
     if (object) return new NextResponse(object.body, { headers: { "Content-Type": object.httpMetadata?.contentType || "application/octet-stream", "Cache-Control": "public, max-age=31536000, immutable" } });

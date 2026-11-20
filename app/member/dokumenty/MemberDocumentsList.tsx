@@ -53,11 +53,17 @@ export default function MemberDocumentsList({ scope = "documents" }: { scope?: M
   }
 
   async function handleDelete(fileName: string) {
-    if (!window.confirm(`Usunąć plik ${fileName}?`)) return;
+    if (!window.confirm(`Przenieść plik ${fileName} do kosza? Istniejące odnośniki nadal będą działać.`)) return;
 
-    const response = await fetch(`/api/admin/member-documents/${encodeURIComponent(fileName)}?scope=${scope}`, { method: "DELETE" });
-    if (response.ok) {
+    try {
+      const response = await fetch(`/api/admin/member-documents/${encodeURIComponent(fileName)}?scope=${scope}`, { method: "DELETE" });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({})) as { error?: string };
+        throw new Error(data.error ?? "Nie udało się przenieść dokumentu do kosza.");
+      }
       setDocuments((current) => current.filter((document) => document.fileName !== fileName));
+    } catch (error) {
+      window.alert(error instanceof Error ? error.message : "Nie udało się przenieść dokumentu do kosza.");
     }
   }
 

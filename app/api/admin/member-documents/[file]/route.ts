@@ -26,7 +26,7 @@ export async function PATCH(
     return NextResponse.json({ error: "Nieprawidłowa nazwa pliku." }, { status: 400 });
   }
   try {
-    const updated = await updateMethodologyDocumentTitle(file, title);
+    const updated = await updateMethodologyDocumentTitle(file, title, session.username);
     await recordAuditEventSafely({ actor: session, eventType: "document_update", result: updated ? "success" : "failure", targetType: "document", targetId: file, details: { title, reason: updated ? undefined : "not_found" } });
     return updated
       ? NextResponse.json({ ok: true, title })
@@ -58,7 +58,7 @@ export async function DELETE(
     return NextResponse.json({ error: "Nieprawidłowa nazwa pliku." }, { status: 400 });
   }
   try {
-    const deleted = await deleteMemberDocument(file, scope);
+    const deleted = await deleteMemberDocument(file, scope, session.username);
     await recordAuditEventSafely({ actor: session, eventType: "document_delete", result: deleted ? "success" : "failure", targetType: "document", targetId: file, details: { scope, reason: deleted ? undefined : "not_found" } });
 
     return deleted

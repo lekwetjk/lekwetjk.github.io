@@ -4,6 +4,7 @@ import { getDb } from "../../db/index.ts";
 import { sql } from "drizzle-orm";
 import { asc, eq } from "drizzle-orm";
 import { wstawieniaMetadata, wstawieniaRows } from "../../db/schema.ts";
+import { captureContentRevision, contentHistoryEnabled } from "./content-history.ts";
 
 export const WSTAWIENIA_COLUMNS = [
   "Styczeń", "Luty", "Marzec", "I kwartał", "Dynamika", "Kwiecień", "Maj", "Czerwiec",
@@ -114,11 +115,15 @@ async function ensureWstawieniaTable() {
   const version = await db.select().from(wstawieniaMetadata).where(eq(wstawieniaMetadata.key, "data_version")).limit(1);
 
   if (version[0]?.value !== WSTAWIENIA_DATA_VERSION) {
-    await db.delete(wstawieniaRows);
-    for (const row of initialRows()) {
-      const values = normalizeValues(row.values).map((value, index) => DERIVED_INDEXES.has(index) ? "" : value);
-      await db.insert(wstawieniaRows).values({ year: row.year, valuesJson: JSON.stringify(values) });
+    const existing = await db.select({ year: wstawieniaRows.year }).from(wstawieniaRows).limit(1);
+    if (existing.length) {
+      console.error("Wstawienia data version differs; existing records preserved. A verified additive migration is required.");
+      return db;
     }
+    await db.insert(wstawieniaRows).values(initialRows().map(row => ({
+      year: row.year,
+      valuesJson: JSON.stringify(normalizeValues(row.values).map((value, index) => DERIVED_INDEXES.has(index) ? "" : value)),
+    }))).onConflictDoNothing();
     await db.insert(wstawieniaMetadata).values({ key: "data_version", value: WSTAWIENIA_DATA_VERSION })
       .onConflictDoUpdate({ target: wstawieniaMetadata.key, set: { value: WSTAWIENIA_DATA_VERSION } });
   }
@@ -161,23 +166,18 @@ export async function saveWstawieniaRows(rows: WstawieniaRow[], updatedBy: strin
   }
 
   const db = await ensureWstawieniaTable();
-  const existingRows = await db.select({ year: wstawieniaRows.year }).from(wstawieniaRows);
-  const importedYears = new Set(normalizedRows.map((row) => row.year));
-
-  for (const existingRow of existingRows) {
-    if (!importedYears.has(existingRow.year)) {
-      await db.delete(wstawieniaRows).where(eq(wstawieniaRows.year, existingRow.year));
-    }
-  }
-
-  for (const row of normalizedRows) {
-    await db.insert(wstawieniaRows).values({
+  if (contentHistoryEnabled()) await captureContentRevision("wstawienia", "table", "Tabela wstawień", await getWstawieniaRows(), updatedBy);
+  const updates = normalizedRows.map(row =>
+    db.insert(wstawieniaRows).values({
       year: row.year,
       valuesJson: JSON.stringify(row.values),
       updatedBy,
     }).onConflictDoUpdate({
       target: wstawieniaRows.year,
       set: { valuesJson: JSON.stringify(row.values), updatedAt: new Date().toISOString(), updatedBy },
-    });
-  }
+    }));
+  await db.batch([
+    db.delete(wstawieniaRows).where(sql`${wstawieniaRows.year} NOT IN (SELECT value FROM json_each(${JSON.stringify(normalizedRows.map(row => row.year))}))`),
+    ...updates,
+  ]);
 }

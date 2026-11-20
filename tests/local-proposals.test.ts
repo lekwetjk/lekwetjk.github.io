@@ -1,6 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { readFile, access } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import type { KnowledgePage } from "../app/lib/content.ts";
 import { acceptedProposalIds, localProposals, materialCountLabel, parseLocalSeoDraft, parseProposalFlags, pendingProposalIds, rejectedProposalIds, reviewedProposals } from "../app/lib/local-proposals.ts";
 import { cleanProposedParagraph, localContentHref, proposedPageHref } from "../app/lib/local-proposal-content.ts";
 
@@ -40,6 +42,25 @@ test("content cleanup and local links preserve documents and unknown external de
   assert.equal(proposedPageHref("kontakt"), "/kontakt");
   assert.equal(localContentHref("/wp-content/uploads/2025/07/Dezinformacja-zywnosciow-ebook.pdf", []), "https://krd-ig.com.pl/wp-content/uploads/2025/07/Dezinformacja-zywnosciow-ebook.pdf");
   assert.equal(cleanProposedParagraph("70 %  produkcji \uE00A"), "70% produkcji");
+});
+
+test("ebook download links resolve to the restored original public PDF", async () => {
+  const { pages } = JSON.parse(await readFile(new URL("../app/data/content.json", import.meta.url), "utf8")) as { pages: KnowledgePage[] };
+  const ebook = pages.find(page => page.slug === "e-book-o-dezinformacji-zywnosciowej");
+  assert.ok(ebook);
+  const downloads = ebook.links.filter(link => link.document);
+  assert.ok(downloads.length > 0);
+  const assets = JSON.parse(await readFile(new URL("../app/data/local-link-assets.json", import.meta.url), "utf8")) as Record<string, { size: number; sha256: string }>;
+  for (const link of downloads) {
+    const url = new URL(localContentHref(link.href, []));
+    assert.equal(url.origin, "https://krd-ig.com.pl");
+    const expected = assets[url.href];
+    assert.ok(expected);
+    const bytes = await readFile(new URL(`../public${url.pathname}`, import.meta.url));
+    assert.equal(bytes.subarray(0, 5).toString(), "%PDF-");
+    assert.equal(bytes.length, expected.size);
+    assert.equal(createHash("sha256").update(bytes).digest("hex"), expected.sha256);
+  }
 });
 
 test("SEO drafts accept only local article paths and bounded plain text", () => {

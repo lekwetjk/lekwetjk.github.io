@@ -556,7 +556,7 @@ test("methodology administration has its own profile tile and editable publicati
   assert.match(component, /method: "PATCH"/);
   assert.match(upload, /normalizeMethodologyTitle\(formData\?\.get\("title"\)\)/);
   assert.match(update, /session\.role !== "admin"/);
-  assert.match(update, /updateMethodologyDocumentTitle\(file, title\)/);
+  assert.match(update, /updateMethodologyDocumentTitle\(file, title, session\.username\)/);
   assert.match(middleware, /searchParams\.get\("scope"\) === "methodology"/);
   assert.match(profile, /Materiały i publikacje Działu Hodowli i Oceny Drobiu/);
   assert.match(upload, /randomUUID\(\)/);

@@ -1,4 +1,5 @@
-import { mkdir, readFile, readdir, stat, unlink, writeFile } from "node:fs/promises";
+import crypto from "node:crypto";
+import { mkdir, readFile, readdir, stat, utimes, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { desc, eq, sql } from "drizzle-orm";
@@ -6,6 +7,8 @@ import { zipSync } from "fflate";
 
 import { getDb, getMemberDocumentsBucket } from "../../db/index.ts";
 import { memberDocuments } from "../../db/schema.ts";
+import { completeTrashRestore, listContentTrash, trashResource } from "./content-trash.ts";
+import { captureContentRevision, contentHistoryEnabled } from "./content-history.ts";
 
 const MEMBER_DOCUMENTS_DIR = path.join(os.tmpdir(), "krd-ig-member-docs");
 const MEMBER_DOCUMENTS_PREFIX = "member-documents/";
@@ -113,15 +116,21 @@ export async function saveMemberDocument(input: {
   content: Buffer;
   contentType: string;
   title?: string;
+  uploadedAt?: string;
+  changedBy?: string;
 }, scope: MemberDocumentScope = "documents") {
   if (!validFileName(input.fileName)) throw new Error("Invalid document filename");
   const title = input.title === undefined ? documentTitle(input.fileName) : normalizeMethodologyTitle(input.title);
   if (!title) throw new Error("Invalid document title");
+  if ((await listContentTrash("document")).some(entry => entry.resourceId === `${scope}/${input.fileName}`)) {
+    throw new Error("Plik o tej nazwie jest w koszu. Przywróć go albo wybierz inną nazwę.");
+  }
+  await captureDocumentRevision(input.fileName, scope, input.changedBy);
   const bucket = optionalBucket();
   if (bucket) {
     await bucket.put(documentKey(input.fileName, scope), input.content, {
       httpMetadata: { contentType: input.contentType },
-      customMetadata: { title },
+      customMetadata: { title, ...(input.uploadedAt ? { historyUploadedAt: input.uploadedAt } : {}) },
     });
     return true;
   }
@@ -134,6 +143,7 @@ export async function saveMemberDocument(input: {
       title,
       content: input.content.toString("base64"),
       contentType: input.contentType,
+      ...(input.uploadedAt ? { createdAt: input.uploadedAt } : {}),
     }).onConflictDoUpdate({
       target: memberDocuments.fileName,
       set: {
@@ -147,14 +157,19 @@ export async function saveMemberDocument(input: {
   await mkdir(path.dirname(titleFilePath(input.fileName, scope)), { recursive: true });
   await writeFile(path.join(documentDirectory(scope), input.fileName), input.content);
   await writeFile(titleFilePath(input.fileName, scope), title, "utf8");
+  if (input.uploadedAt) await utimes(path.join(documentDirectory(scope), input.fileName), new Date(), new Date(input.uploadedAt));
   return false;
 }
 
-export async function updateMethodologyDocumentTitle(fileName: string, value: unknown) {
+export async function updateMethodologyDocumentTitle(fileName: string, value: unknown, changedBy?: string) {
   const title = normalizeMethodologyTitle(value);
   if (!validFileName(fileName) || !title) throw new Error("Invalid document filename or title");
 
   const scope = "methodology";
+  if ((await listContentTrash("document")).some(entry => entry.resourceId === `${scope}/${fileName}`)) {
+    throw new Error("Materiał jest w koszu. Przywróć go przed edycją.");
+  }
+  await captureDocumentRevision(fileName, scope, changedBy);
   const bucket = optionalBucket();
   if (bucket) {
     const document = await bucket.get(documentKey(fileName, scope));
@@ -188,6 +203,7 @@ export async function updateMethodologyDocumentTitle(fileName: string, value: un
 }
 
 export async function listMemberDocuments(scope: MemberDocumentScope = "documents") {
+  const trashed = new Set((await listContentTrash("document")).map(entry => entry.resourceId));
   const documents = new Map<string, { fileName: string; title: string; uploadedAt: string }>();
 
   const bucket = optionalBucket();
@@ -199,7 +215,7 @@ export async function listMemberDocuments(scope: MemberDocumentScope = "document
       for (const object of result.objects) {
         const fileName = object.key.slice(prefix.length);
         if (!validFileName(fileName)) continue;
-        documents.set(fileName, { fileName, title: object.customMetadata?.title || documentTitle(fileName), uploadedAt: object.uploaded.toISOString() });
+        documents.set(fileName, { fileName, title: object.customMetadata?.title || documentTitle(fileName), uploadedAt: object.customMetadata?.historyUploadedAt || object.uploaded.toISOString() });
       }
       if (result.truncated && (!result.cursor || result.cursor === cursor)) {
         throw new Error("R2 returned a truncated document list without a new cursor");
@@ -223,7 +239,7 @@ export async function listMemberDocuments(scope: MemberDocumentScope = "document
   }
 
   if (documents.size > 0) {
-    return [...documents.values()].sort((left, right) => right.uploadedAt.localeCompare(left.uploadedAt));
+    return [...documents.values()].filter(item => !trashed.has(`${scope}/${item.fileName}`)).sort((left, right) => right.uploadedAt.localeCompare(left.uploadedAt));
   }
 
   try {
@@ -241,45 +257,82 @@ export async function listMemberDocuments(scope: MemberDocumentScope = "document
         };
       }));
 
-    return documents.sort((a, b) => b.uploadedAt.localeCompare(a.uploadedAt));
+    return documents.filter(item => !trashed.has(`${scope}/${item.fileName}`)).sort((a, b) => b.uploadedAt.localeCompare(a.uploadedAt));
   } catch (error) {
     if (error instanceof Error && "code" in error && error.code === "ENOENT") return [];
     throw error;
   }
 }
 
-export async function deleteMemberDocument(fileName: string, scope: MemberDocumentScope = "documents") {
+export async function deleteMemberDocument(fileName: string, scope: MemberDocumentScope = "documents", changedBy?: string) {
   if (!validFileName(fileName)) return false;
-  let deleted = false;
-  const bucket = optionalBucket();
-  if (bucket) {
-    const existingDocument = await bucket.get(documentKey(fileName, scope));
-    if (existingDocument) {
-      await bucket.delete(documentKey(fileName, scope));
-      deleted = true;
-    }
-  }
+  const document = (await listMemberDocuments(scope)).find(item => item.fileName === fileName);
+  if (!document) return false;
+  await captureDocumentRevision(fileName, scope, changedBy);
+  await trashResource("document", `${scope}/${fileName}`, { ...document, scope });
+  return true;
+}
 
-  const db = optionalDatabase();
-  if (db) {
-    const existingDocument = await getDatabaseDocument(fileName, scope, db);
-    if (existingDocument) {
-      await db.delete(memberDocuments).where(eq(memberDocuments.fileName, databaseKey(fileName, scope)));
-      deleted = true;
-    }
+export async function restoreMemberDocument(fileName: string, scope: MemberDocumentScope = "documents") {
+  if (!validFileName(fileName)) throw new Error("Invalid document filename");
+  if (!await getMemberDocument(fileName, scope)) throw new Error("Brak pliku do przywrócenia.");
+  await completeTrashRestore("document", `${scope}/${fileName}`);
+}
+
+export type DocumentRevision = {
+  fileName: string; scope: MemberDocumentScope; title: string; uploadedAt: string;
+  contentType: string; asset: { key: string } | { base64: string };
+};
+
+async function captureDocumentRevision(fileName: string, scope: MemberDocumentScope, changedBy?: string) {
+  if (!contentHistoryEnabled()) return;
+  const document = await getMemberDocument(fileName, scope);
+  if (!document) return;
+  const metadata = (await listMemberDocuments(scope)).find(item => item.fileName === fileName);
+  if (!metadata) throw new Error("Brak metadanych dokumentu do zabezpieczenia.");
+  const bucket = optionalBucket();
+  let asset: DocumentRevision["asset"];
+  if (bucket) {
+    const key = `content-history/assets/${crypto.randomUUID()}`;
+    await bucket.put(key, document.content, { httpMetadata: { contentType: document.contentType } });
+    asset = { key };
+  } else {
+    asset = { base64: Buffer.from(await new Response(document.content).arrayBuffer()).toString("base64") };
   }
-  try {
-    await unlink(path.join(documentDirectory(scope), fileName));
-    deleted = true;
-  } catch (error) {
-    if (!(error instanceof Error && "code" in error && error.code === "ENOENT")) throw error;
+  await captureContentRevision("document", `${scope}/${fileName}`, metadata.title, { ...metadata, scope, contentType: document.contentType, asset } satisfies DocumentRevision, changedBy);
+}
+
+export async function getDocumentRevisionState(fileName: string, scope: MemberDocumentScope) {
+  const metadata = (await listMemberDocuments(scope)).find(item => item.fileName === fileName);
+  if (!metadata) return null;
+  const document = await getMemberDocument(fileName, scope);
+  if (!document) throw new Error("Nie można odczytać bieżącego dokumentu.");
+  const bytes = Buffer.from(await new Response(document.content).arrayBuffer());
+  return { ...metadata, scope, contentType: document.contentType, sha256: crypto.createHash("sha256").update(bytes).digest("hex") };
+}
+
+export async function readDocumentRevisionFile(resourceId: string, value: unknown) {
+  const version = value as DocumentRevision | null;
+  if (!version || `${version.scope}/${version.fileName}` !== resourceId || !["documents", "epi-geo", "methodology"].includes(version.scope) || !validFileName(version.fileName)) throw new Error("Nieprawidłowa wersja dokumentu.");
+  if (!version.asset || typeof version.contentType !== "string" || !Number.isFinite(Date.parse(version.uploadedAt))) throw new Error("Nieprawidłowe metadane wersji dokumentu.");
+  let content: Buffer | ReadableStream;
+  if ("key" in version.asset) {
+    if (!version.asset.key.startsWith("content-history/assets/")) throw new Error("Nieprawidłowy klucz kopii dokumentu.");
+    const object = await optionalBucket()?.get(version.asset.key);
+    if (!object) throw new Error("Brak zabezpieczonej kopii pliku.");
+    content = object.body;
+  } else {
+    if (typeof version.asset.base64 !== "string") throw new Error("Nieprawidłowe dane kopii dokumentu.");
+    content = Buffer.from(version.asset.base64, "base64");
+    if (content.toString("base64") !== version.asset.base64) throw new Error("Uszkodzona kopia dokumentu.");
   }
-  try {
-    await unlink(titleFilePath(fileName, scope));
-  } catch (error) {
-    if (!(error instanceof Error && "code" in error && error.code === "ENOENT")) throw error;
-  }
-  return deleted;
+  return { version, content };
+}
+
+export async function restoreDocumentRevision(resourceId: string, value: unknown, changedBy: string) {
+  const { version, content } = await readDocumentRevisionFile(resourceId, value);
+  const bytes = content instanceof Uint8Array ? Buffer.from(content) : Buffer.from(await new Response(content).arrayBuffer());
+  await saveMemberDocument({ fileName: version.fileName, title: version.title, content: bytes, contentType: version.contentType, uploadedAt: version.uploadedAt, changedBy }, version.scope);
 }
 
 export async function getMemberDocument(fileName: string, scope: MemberDocumentScope = "documents") {

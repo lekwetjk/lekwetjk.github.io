@@ -100,6 +100,7 @@ export async function POST(request: Request) {
       content: buffer,
       contentType: scope === "methodology" ? documentContentType(fileName) : file.type || "application/octet-stream",
       title: title ?? undefined,
+      changedBy: session.username,
     }, scope);
     await recordAuditEventSafely({
       actor: session,

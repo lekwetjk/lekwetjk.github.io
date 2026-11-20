@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { DatabaseSync, type SQLInputValue } from "node:sqlite";
 import test from "node:test";
 
-import { applyManagedPostOverrides, createManagedPost, deleteManagedPost, getManagedPostBySlug, importExistingPost, listDeletedPostSlugs, listImportablePosts, listManagedPosts, listManagedPostsForAdmin, mergeManagedPosts, resolvePublishedPost, updateManagedPost } from "../app/lib/managed-posts.ts";
+import { applyManagedPostOverrides, createManagedPost, deleteManagedPost, getManagedPostBySlug, importExistingPost, listDeletedPostSlugs, listImportablePosts, listManagedPosts, listManagedPostsForAdmin, mergeManagedPosts, resolvePublishedPost, restoreManagedPost, updateManagedPost } from "../app/lib/managed-posts.ts";
 import generatedPosts from "../app/data/generated-posts.json" with { type: "json" };
 import type { NewsPost } from "../app/lib/content.ts";
 
@@ -11,11 +11,14 @@ test("publication SEO and image fit migrate legacy data and persist independentl
   const previousEnv = runtime.env;
   const database = new DatabaseSync(":memory:");
   const preparedQueries: string[] = [];
+  const objects = new Map<string, Uint8Array>();
+  let failTrash = false;
   database.exec("CREATE TABLE managed_posts (id TEXT PRIMARY KEY NOT NULL, kind TEXT NOT NULL, slug TEXT NOT NULL UNIQUE, title TEXT NOT NULL, excerpt TEXT NOT NULL, content TEXT NOT NULL, category TEXT NOT NULL, image_key TEXT, image_content_type TEXT, source TEXT NOT NULL DEFAULT '', created_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, updated_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP, created_by TEXT NOT NULL)");
   database.exec("INSERT INTO managed_posts (id, kind, slug, title, excerpt, content, category, created_by) VALUES ('legacy', 'news', 'legacy', 'Original title', 'Original excerpt', 'Original content', 'Aktualności', 'test')");
   runtime.env = {
     DB: {
       prepare(query: string) {
+        if (failTrash && query.startsWith('insert into "content_trash"')) throw new Error("trash persistence failed");
         preparedQueries.push(query);
         const statement = database.prepare(query);
         return {
@@ -29,7 +32,10 @@ test("publication SEO and image fit migrate legacy data and persist independentl
         };
       },
     },
-    MEMBER_DOCUMENTS: {},
+    MEMBER_DOCUMENTS: {
+      async put(key: string, value: ArrayBuffer | Uint8Array) { objects.set(key, new Uint8Array(value)); },
+      async delete() { throw new Error("Published media must never be physically deleted."); },
+    },
   };
 
   try {
@@ -132,6 +138,31 @@ test("publication SEO and image fit migrate legacy data and persist independentl
     assert.equal(preparedQueries.filter((query) => query.startsWith("CREATE TABLE IF NOT EXISTS managed_posts")).length, 1);
     assert.equal(preparedQueries.filter((query) => query.startsWith("PRAGMA table_info(managed_posts)")).length, 1);
     assert.equal(preparedQueries.filter((query) => query.startsWith("ALTER TABLE managed_posts ADD COLUMN")).length, 5);
+    await restoreManagedPost(imported.id);
+    const restored = await getManagedPostBySlug(original.slug);
+    assert.equal(restored?.title, "Edited campaign");
+    assert.equal(restored?.date, original.date);
+    assert.equal(restored?.slug, original.slug);
+    assert.deepEqual(restored?.paragraphs, ["Edited content"]);
+    assert.equal(database.prepare("SELECT COUNT(*) AS count FROM content_trash WHERE resource_id = ? AND restored_at IS NULL").get(imported.id)?.count, 0);
+    const mediaInput = { kind: "news" as const, title: "Shared media", excerpt: "Excerpt", content: "Content", category: "Aktualności", source: "", createdBy: "test" };
+    const mediaSlug = await createManagedPost({ ...mediaInput, image: new File(["old image"], "same.png", { type: "image/png" }), attachments: [new File(["old document"], "same.pdf", { type: "application/pdf" })] });
+    const mediaPost = (await listManagedPostsForAdmin()).find(post => post.slug === mediaSlug)!;
+    const originalObjects = new Map(objects);
+    await updateManagedPost(mediaPost.id, { ...mediaInput, image: new File(["new image"], "same.png", { type: "image/png" }), attachments: [new File(["new document"], "same.pdf", { type: "application/pdf" })] });
+    const updated = (await listManagedPostsForAdmin()).find(post => post.id === mediaPost.id)!;
+    assert.notEqual(updated.image, mediaPost.image);
+    for (const [key, bytes] of originalObjects) assert.deepEqual(objects.get(key), bytes);
+    assert.equal(objects.size, originalObjects.size + 2);
+    failTrash = true;
+    await assert.rejects(deleteManagedPost(mediaPost.id), /trash persistence failed/);
+    assert.equal((await getManagedPostBySlug(mediaSlug))?.slug, mediaSlug);
+    failTrash = false;
+    assert.equal(await deleteManagedPost(mediaPost.id), true);
+    assert.equal(objects.size, originalObjects.size + 2);
+    await restoreManagedPost(mediaPost.id);
+    const restoredMedia = (await listManagedPostsForAdmin()).find(post => post.id === mediaPost.id)!;
+    assert.deepEqual(restoredMedia, updated);
   } finally {
     runtime.env = previousEnv;
     database.close();

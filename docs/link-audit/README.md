@@ -72,3 +72,16 @@ Import zwraca kod 1, jesli choc jeden plik nie ma potwierdzonej kopii.
 Limit pojedynczego pliku to 25 MiB; odrzucane sa odpowiedzi HTML zamiast pliku
 i nieprawidlowe naglowki PDF. Zweryfikowane kopie nie sa pobierane ponownie.
 Oryginalne dane eksportu i zewnetrzne pliki nie sa modyfikowane.
+
+## Przywrocenie e-booka (2026-11-20)
+
+Oryginalny e-book o dezinformacji zywnosciowej przywrocono w
+`public/wp-content/uploads/2025/07/Dezinformacja-zywnosciow-ebook.pdf`.
+Pozwala to zachowac dotychczasowe lacza bez zmieniania tresci strony.
+Plik ma 2069653 bajty; SHA-256:
+`8a32c3f51c1168330115d30f1fa741ee77df488c25dbc25d771fd0da171f6200`.
+Kopia z poprzedniego serwera jest identyczna z wczesniejszym importem
+odnotowanym w `downloads.json`. W przeciwienstwie do ignorowanego bufora
+`public/media/imported-documents/` przywrocony plik trafia do wdrozenia.
+Test `tests/local-proposals.test.ts` sprawdza wszystkie odsylacze dokumentow
+tej strony, naglowek PDF, rozmiar i zgodnosc sumy kontrolnej z manifestem.

@@ -1,6 +1,7 @@
 /** Cloudflare Worker entry point for the vinext-starter template. */
 import { handleImageOptimization, DEFAULT_DEVICE_SIZES, DEFAULT_IMAGE_SIZES } from "vinext/server/image-optimization";
 import handler from "vinext/server/app-router-entry";
+import { cmsWriteBlocked, type CmsSafetyEnvironment } from "../app/lib/cms-safety-flags";
 
 interface Fetcher {
   fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response>;
@@ -28,7 +29,7 @@ interface R2Bucket {
   list(options?: { prefix?: string; include?: Array<"customMetadata">; cursor?: string }): Promise<{ objects: Array<{ key: string; uploaded: Date; customMetadata?: Record<string, string> }>; truncated?: boolean; cursor?: string }>;
 }
 
-interface Env {
+interface Env extends CmsSafetyEnvironment {
   ASSETS: Fetcher;
   DB: D1Database;
   MEMBER_DOCUMENTS: R2Bucket;
@@ -473,6 +474,14 @@ const worker = {
     (globalThis as typeof globalThis & { env: Env }).env = env;
 
     const url = new URL(request.url);
+    try {
+      if (cmsWriteBlocked(request, env)) {
+        return createJsonResponse({ error: "Panel jest tymczasowo w trybie tylko do odczytu." }, 503, { "Retry-After": "300" });
+      }
+    } catch (error) {
+      console.error("CMS safety configuration failed", error);
+      return createJsonResponse({ error: "Nieprawidłowa konfiguracja zabezpieczeń CMS." }, 503);
+    }
 
     if (url.pathname === CHAT_HEALTH_PATH && request.method === "GET") {
       return createJsonResponse(

@@ -12,6 +12,8 @@ import { BULLETIN_CHAPTERS, documentContainsBulletinValue, getMissingDocumentCha
 import { buildBulletinModel, getMissingBulletinSections, shouldCollectBulletinSourceSheet, type BulletinModel, type BulletinSourceSheet } from "./bulletin-model.ts";
 import { validatePreparedBulletin, type PreparedBulletin } from "./prepared-bulletin-model.ts";
 import { getPreparedBulletin } from "./prepared-bulletins.ts";
+import { completeTrashRestore, listContentTrash, trashResource } from "./content-trash.ts";
+import { captureContentRevision } from "./content-history.ts";
 
 const LOCAL_REPORTS_DIR = path.join(os.tmpdir(), "krd-ig-bulletin-reports");
 const LOCAL_REPORTS_FILE = path.join(LOCAL_REPORTS_DIR, "reports.json");
@@ -523,16 +525,55 @@ export async function createBulletinReport(input: { month: number; year: number;
   return report;
 }
 
-export async function deleteBulletinReport(id: string) {
+export async function deleteBulletinReport(id: string, changedBy?: string) {
   const report = (await listBulletinReports()).find((item) => item.id === id);
   if (!report) throw new Error("Nie znaleziono raportu.");
-  await Promise.all([report.dataKey, ...report.sources.map((source) => source.key)].map(deleteObject));
+  await captureContentRevision("bulletin", id, report.title, report, changedBy);
+  await trashResource("bulletin", id, report);
   try {
     const db = await ensureReportsTable();
     await db.delete(bulletinReports).where(eq(bulletinReports.id, id));
   } catch (error) {
     if (!useLocalFallback(error, "DB")) throw error;
     await writeLocalReports((await readLocalReports()).filter((item) => item.id !== id));
+  }
+}
+
+export async function restoreBulletinReport(id: string) {
+  const entry = (await listContentTrash("bulletin")).find(item => item.resourceId === id);
+  if (!entry) throw new Error("Nie znaleziono raportu w koszu.");
+  const report = JSON.parse(entry.snapshotJson) as BulletinReport;
+  if (report.id !== id || !report.slug || !report.dataKey) throw new Error("Nieprawidłowy zapis raportu w koszu.");
+  const current = (await listBulletinReports()).find(item => item.id === id || item.slug === report.slug);
+  if (current && current.dataKey !== report.dataKey) throw new Error("Istnieje inne wydanie pod tym adresem. Przywracanie zablokowane.");
+  if (!current) await saveReport(report);
+  await completeTrashRestore("bulletin", id);
+}
+
+export async function restoreBulletinRevision(id: string, value: unknown, changedBy: string) {
+  const version = value as BulletinReport | null;
+  const current = (await listBulletinReports()).find(item => item.id === id);
+  if (!version || version.id !== id || !current) throw new Error("Najpierw przywróć biuletyn z kosza.");
+  if (version.slug !== current.slug || version.month !== current.month || version.year !== current.year) throw new Error("Wersja dotyczy innego wydania.");
+  if (!await getBulletinReportData(version)) throw new Error("Brak danych zabezpieczonego biuletynu.");
+  for (const source of version.sources) {
+    const object = await getObject(source.key);
+    if (!object) throw new Error("Brak pliku źródłowego wersji biuletynu.");
+    if (object.body instanceof ReadableStream) await object.body.cancel();
+  }
+  await captureContentRevision("bulletin", id, current.title, current, changedBy);
+  try {
+    const db = await ensureReportsTable();
+    const changed = await db.update(bulletinReports).set({
+      dataKey: version.dataKey, sourcesJson: JSON.stringify(version.sources),
+      sheetCount: String(version.sheetCount), rowCount: String(version.rowCount),
+    }).where(and(eq(bulletinReports.id, id), eq(bulletinReports.dataKey, current.dataKey))).returning({ id: bulletinReports.id });
+    if (!changed.length) throw new Error("Biuletyn został zmieniony. Odśwież podgląd wersji.");
+  } catch (error) {
+    if (!useLocalFallback(error, "DB")) throw error;
+    const reports = await readLocalReports();
+    if (!reports.some(item => item.id === id && item.dataKey === current.dataKey)) throw new Error("Biuletyn został zmieniony. Odśwież podgląd wersji.");
+    await writeLocalReports(reports.map(item => item.id === id ? { ...current, dataKey: version.dataKey, sources: version.sources, sheetCount: version.sheetCount, rowCount: version.rowCount } : item));
   }
 }
 
@@ -574,12 +615,14 @@ async function savePreparedBulletinReport(input: PreparedReportInput, update?: {
   const dataKey = `${prefix}/report.json`;
   const sources: BulletinReportSource[] = previous ? previous.sources.filter((source) => !input.pdfFile || !/\.pdf$/i.test(source.name)) : [];
   const uploadedKeys: string[] = [];
+  if (previous) await captureContentRevision("bulletin", id, previous.title, previous, input.createdBy);
   try {
     if (previous) {
       const backupKey = `${prefix}/previous.json`;
       await putObject(backupKey, Buffer.from(JSON.stringify({ report: previous, archivedAt: new Date().toISOString(), archivedBy: input.createdBy }), "utf8"), "application/json");
       uploadedKeys.push(backupKey);
     }
+
     if (input.pdfFile) {
       const key = `${prefix}/sources/1-${safeFileName(input.pdfFile.name)}`;
       await putObject(key, await input.pdfFile.arrayBuffer(), "application/pdf");

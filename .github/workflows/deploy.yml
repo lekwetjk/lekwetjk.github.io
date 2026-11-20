@@ -77,5 +77,10 @@ jobs:
           echo "CLOUDFLARE_ACCOUNT_ID=$CLEAN_ACCOUNT_ID" >> "$GITHUB_ENV"
           echo "Cloudflare credentials normalized and validated"
 
+      - name: Apply additive CMS migrations
+        run: |
+          pnpm exec wrangler d1 execute DB --remote --config dist/server/wrangler.json --file db/migrations/content-safety.sql
+          pnpm exec wrangler d1 execute DB --remote --config dist/server/wrangler.json --file db/migrations/content-history.sql
+
       - name: Deploy to Cloudflare Workers
-        run: pnpm exec wrangler deploy --config dist/server/wrangler.json
+        run: pnpm exec wrangler deploy --config dist/server/wrangler.json --var CMS_TRASH_ENABLED:true --var CMS_HISTORY_ENABLED:true

@@ -36,7 +36,7 @@ export async function DELETE(_request: Request, { params }: { params: Promise<{ 
   if (!session || session.role !== "admin") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   const { id } = await params;
   try {
-    await deleteBulletinReport(id);
+    await deleteBulletinReport(id, session.username);
     await recordAuditEventSafely({ actor: session, eventType: "report_delete", result: "success", targetType: "report", targetId: id });
     return NextResponse.json({ ok: true });
   } catch (error) {

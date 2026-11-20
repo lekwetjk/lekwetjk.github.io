@@ -132,7 +132,7 @@ export function MethodologyDocuments({ manage = false }: { manage?: boolean }) {
   }
 
   async function deleteFile(fileName: string) {
-    if (!window.confirm(`Usunąć materiał „${fileName}”?`)) return;
+    if (!window.confirm(`Przenieść materiał „${fileName}” do kosza? Istniejące odnośniki do pliku nadal będą działać.`)) return;
 
     setMessage("");
     setIsError(false);
@@ -147,7 +147,7 @@ export function MethodologyDocuments({ manage = false }: { manage?: boolean }) {
         throw new Error(data?.error ?? "Nie udało się usunąć materiału.");
       }
       setDocuments((current) => current.filter((document) => document.fileName !== fileName));
-      setMessage(`Usunięto: ${fileName}`);
+      setMessage(`Przeniesiono do kosza: ${fileName}`);
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Nie udało się usunąć materiału.");
       setIsError(true);

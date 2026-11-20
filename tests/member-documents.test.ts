@@ -4,7 +4,7 @@ import { DatabaseSync, type SQLInputValue } from "node:sqlite";
 import test from "node:test";
 import { unzipSync } from "fflate";
 
-import { createMemberDocumentsArchive, deleteMemberDocument, documentContentType, getMemberDocument, listMemberDocuments, memberDocumentScope, normalizeMethodologyTitle, saveMemberDocument, updateMethodologyDocumentTitle } from "../app/lib/member-documents.ts";
+import { createMemberDocumentsArchive, deleteMemberDocument, documentContentType, getMemberDocument, listMemberDocuments, memberDocumentScope, normalizeMethodologyTitle, restoreMemberDocument, saveMemberDocument, updateMethodologyDocumentTitle } from "../app/lib/member-documents.ts";
 import type { getMemberDocumentsBucket } from "../db/index.ts";
 
 test("document scope supports private and public sections and rejects unknown sections", () => {
@@ -31,7 +31,11 @@ test("local documents with identical names remain isolated across sections", asy
     assert.deepEqual(Object.keys(archivedFiles), [fileName]);
     assert.equal(new TextDecoder().decode(archivedFiles[fileName]), "general");
     assert.equal(await deleteMemberDocument(fileName, "epi-geo"), true);
-    assert.equal(await getMemberDocument(fileName, "epi-geo"), null);
+    assert.equal((await getMemberDocument(fileName, "epi-geo"))?.content.toString(), "epidemiology");
+    assert.equal((await listMemberDocuments("epi-geo")).some(item => item.fileName === fileName), false);
+    await assert.rejects(saveMemberDocument({ fileName, content: Buffer.from("replacement"), contentType: "text/plain" }, "epi-geo"), /koszu/);
+    await restoreMemberDocument(fileName, "epi-geo");
+    assert.equal((await listMemberDocuments("epi-geo")).some(item => item.fileName === fileName), true);
     assert.equal((await getMemberDocument(fileName))?.content.toString(), "general");
   } finally {
     await deleteMemberDocument(fileName);
@@ -81,6 +85,7 @@ test("R2 listing follows metadata pagination and rejects an invalid cursor", asy
     async get() { return null; },
     async delete() {},
     async list(options) {
+      if (options?.prefix === "content-trash/records/") return { objects: [] };
       cursors.push(options?.cursor);
       assert.deepEqual(options?.include, ["customMetadata"]);
       return options?.cursor
@@ -92,7 +97,7 @@ test("R2 listing follows metadata pagination and rejects an invalid cursor", asy
   try {
     assert.deepEqual((await listMemberDocuments("methodology")).map((document) => document.title).sort(), ["first", "second"]);
     assert.deepEqual(cursors, [undefined, "next-page"]);
-    bucket.list = async () => ({ objects: [], truncated: true });
+    bucket.list = async options => options?.prefix === "content-trash/records/" ? { objects: [] } : { objects: [], truncated: true };
     await assert.rejects(listMemberDocuments("methodology"), /without a new cursor/);
   } finally {
     runtime.env = previousEnv;
@@ -108,7 +113,10 @@ test("R2 failures surface instead of returning empty lists or false success", as
     async put() { throw new Error("R2 write failed"); },
     async get() { throw new Error("R2 read failed"); },
     async delete() { throw new Error("R2 delete failed"); },
-    async list() { throw new Error("R2 list failed"); },
+    async list(options) {
+      if (options?.prefix === "content-trash/records/") return { objects: [] };
+      throw new Error("R2 list failed");
+    },
   };
   runtime.env = { MEMBER_DOCUMENTS: bucket };
   try {
@@ -118,7 +126,10 @@ test("R2 failures surface instead of returning empty lists or false success", as
     await assert.rejects(getMemberDocument("failure.pdf", "methodology"), /R2 read failed/);
     await assert.rejects(updateMethodologyDocumentTitle("failure.pdf", "Failure"), /R2 read failed/);
     bucket.get = async () => ({ body: new Response("data").body!, uploaded: new Date() });
-    await assert.rejects(deleteMemberDocument("failure.pdf", "methodology"), /R2 delete failed/);
+    bucket.list = async options => ({
+      objects: options?.prefix === "content-trash/records/" ? [] : [{ key: "methodology-documents/failure.pdf", uploaded: new Date() }],
+    });
+    await assert.rejects(deleteMemberDocument("failure.pdf", "methodology"), /R2 write failed/);
   } finally {
     runtime.env = previousEnv;
   }
@@ -136,6 +147,10 @@ test("local methodology titles persist independently of file names and contents"
     assert.equal(await updateMethodologyDocumentTitle(`missing-${randomUUID()}.pdf`, "Missing"), false);
     await assert.rejects(updateMethodologyDocumentTitle("../file.pdf", "Invalid"));
     await assert.rejects(updateMethodologyDocumentTitle(fileName, ""));
+    await deleteMemberDocument(fileName, "methodology");
+    await assert.rejects(updateMethodologyDocumentTitle(fileName, "Changed in trash"), /koszu/);
+    await restoreMemberDocument(fileName, "methodology");
+    assert.equal((await listMemberDocuments("methodology")).find(document => document.fileName === fileName)?.title, "Nowy tytuł publikacji");
   } finally {
     await deleteMemberDocument(fileName, "methodology");
   }
@@ -205,7 +220,7 @@ for (const storage of ["R2", "D1"] as const) {
         assert.deepEqual(database.prepare("SELECT file_name FROM member_documents ORDER BY file_name").all().map((row) => row.file_name), [`epi-geo/${fileName}`, fileName].sort());
       }
       assert.equal(await deleteMemberDocument(fileName, "epi-geo"), true);
-      assert.equal(await getMemberDocument(fileName, "epi-geo"), null);
+      assert.equal(await new Response((await getMemberDocument(fileName, "epi-geo"))!.content).text(), "epi updated");
       assert.equal((await listMemberDocuments("epi-geo")).some((document) => document.fileName === fileName), false);
       assert.equal(await new Response((await getMemberDocument(fileName))!.content).text(), "general");
       await saveMemberDocument({ fileName, title: "Publiczna metodyka", content: Buffer.from("methodology content"), contentType: "application/pdf" }, "methodology");
@@ -230,13 +245,16 @@ for (const storage of ["R2", "D1"] as const) {
           },
         };
         assert.equal(await deleteMemberDocument(fileName, "methodology"), true);
-        assert.deepEqual(deletedKeys, [`methodology-documents/${fileName}`]);
-        assert.equal(database.prepare("SELECT file_name FROM member_documents WHERE file_name = ?").get(`methodology/${fileName}`), undefined);
+        assert.deepEqual(deletedKeys, []);
+        assert.ok(database.prepare("SELECT file_name FROM member_documents WHERE file_name = ?").get(`methodology/${fileName}`));
         delete runtime.env.MEMBER_DOCUMENTS;
-        assert.equal(await getMemberDocument(fileName, "methodology"), null);
+        assert.equal(await new Response((await getMemberDocument(fileName, "methodology"))!.content).text(), "methodology content");
       }
       assert.deepEqual((await listMemberDocuments()).map((document) => document.fileName), [fileName]);
       assert.equal(await new Response((await getMemberDocument(fileName))!.content).text(), "general");
+      await restoreMemberDocument(fileName, "epi-geo");
+      assert.equal((await listMemberDocuments("epi-geo")).find(item => item.fileName === fileName)?.fileName, fileName);
+      assert.equal(await new Response((await getMemberDocument(fileName, "epi-geo"))!.content).text(), "epi updated");
     } finally {
       await deleteMemberDocument(fileName);
       await deleteMemberDocument(fileName, "epi-geo");

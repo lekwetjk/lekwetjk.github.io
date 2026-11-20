@@ -6,6 +6,7 @@ import { AUTH_COOKIE_NAME, getCurrentMemberSession, getMemberCompanies, getMembe
 import { withBasePath } from "../../lib/basePath";
 import MemberProfileSection from "./MemberProfileSection";
 import ProfileDictionaryManager from "../../admin/uzytkownicy/ProfileDictionaryManager";
+import { cmsFlag, type CmsSafetyEnvironment } from "../../lib/cms-safety-flags";
 
 export default async function MemberProfilePage() {
   const cookieStore = await cookies();
@@ -23,6 +24,8 @@ export default async function MemberProfilePage() {
   const profile = await getMemberProfile(session.sub);
   const companyId = await getMemberCompanyId(session.sub);
   const company = (await getMemberCompanies()).find(item => item.id === companyId);
+  const cmsEnvironment = (globalThis as typeof globalThis & { env?: CmsSafetyEnvironment }).env;
+  const historyAvailable = cmsFlag(cmsEnvironment?.CMS_HISTORY_ENABLED) || cmsFlag(cmsEnvironment?.CMS_TRASH_ENABLED);
 
   return (
     <PageShell>
@@ -85,6 +88,12 @@ export default async function MemberProfilePage() {
               <a href="/admin/publikacje" style={{ display: "block", border: "1px solid #d5d9df", borderRadius: 12, padding: 18, color: "#0f172a", textDecoration: "none" }}>
                 <strong>Dodaj post lub zapytanie ofertowe</strong>
                 <span style={{ display: "block", marginTop: 6, color: "#475569" }}>Publikuj treść i grafikę oraz wybieraj kategorię zapytania ofertowego.</span>
+              </a>
+            ) : null}
+            {session.role === "admin" && historyAvailable ? (
+              <a href="/admin/historia-i-kosz" style={{ display: "block", border: "1px solid #d5d9df", borderRadius: 12, padding: 18, color: "#0f172a", textDecoration: "none" }}>
+                <strong>Historia zmian i kosz</strong>
+                <span style={{ display: "block", marginTop: 6, color: "#475569" }}>Porównuj zachowane wersje i przywracaj treści oraz dokumenty bez utraty plików.</span>
               </a>
             ) : null}
             {session.role === "admin" ? <ProfileDictionaryManager /> : null}
