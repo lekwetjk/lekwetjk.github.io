@@ -70,6 +70,99 @@ new Function("require", "module", "exports", bundled.outputFiles.find(file => fi
 );
 const renderer = compiled.exports;
 
+test("statute renders every legal label in nested lists without changing its text or numbering", async () => {
+  const content = JSON.parse(readFileSync(new URL("../app/data/content.json", import.meta.url), "utf8"));
+  const statute = content.pages.find(page => page.slug === "statut");
+  const $ = load(await renderer.article(statute));
+  const article = $("article.statut-prose.prose-justified");
+  assert.equal(article.length, 1);
+  assert.deepEqual(
+    article.find("h2.statut-section-heading").map((_, heading) => $(heading).text()).get(),
+    Array.from({ length: 42 }, (_, index) => `§ ${index + 1}`),
+  );
+  const normalize = text => text.replace(/\s+/g, " ").trim();
+  assert.equal(normalize(article.children().map((_, element) => $(element).text()).get().join(" ")), normalize(statute.paragraphs.join(" ")));
+  assert.doesNotMatch(article.text(), /##/);
+  assert.equal(article.find(".statut-chapter-heading").length, 9);
+  assert.equal(article.find(".statut-organ-heading").length, 5);
+  assert.equal(article.find(".statut-list-subsection > li").length, 138);
+  assert.equal(article.find(".statut-list-point > li").length, 115);
+  assert.equal(article.find(".statut-list-letter > li").length, 25);
+  assert.equal(article.find("p strong").length, 0);
+  for (const [style, pattern] of [["subsection", /^(\d+\.)\s+/], ["point", /^(\d+\))\s+/]]) {
+    assert.deepEqual(
+      article.find(`.statut-list-${style} > li > .statut-item-marker`).map((_, marker) => $(marker).text().trim()).get(),
+      statute.paragraphs.filter(text => pattern.test(text)).map(text => text.match(pattern)[1]),
+    );
+  }
+
+  const sectionBlocks = number => article.find(".statut-section-heading").filter((_, h) => $(h).text() === `§ ${number}`).nextUntil(".statut-section-heading, .statut-chapter-heading, .statut-organ-heading");
+  const letters = [[6, 2, 14], [8, 2, 4], [11, 4, 4], [22, 1, 3]];
+  for (const [section, subsection, count] of letters) {
+    const list = sectionBlocks(section).filter("ol").children(`li[value="${subsection}"]`).find(".statut-item-content > .statut-list-letter");
+    assert.equal(list.length, 1, `§ ${section} ust. ${subsection}`);
+    assert.deepEqual(list.children("li").children(".statut-item-marker").map((_, marker) => $(marker).text().trim()).get(), Array.from({ length: count }, (_, i) => `${String.fromCharCode(97 + i)})`));
+  }
+  for (const [section, subsection, count] of [[4, 1, 2], [6, 1, 11], [7, 1, 18], [17, 3, 4], [18, 2, 14], [23, 1, 16], [24, 6, 3], [27, 5, 2], [33, 1, 2]]) {
+    const list = sectionBlocks(section).filter("ol").children(`li[value="${subsection}"]`).find(".statut-item-content > .statut-list-point");
+    assert.equal(list.children("li").length, count, `§ ${section} ust. ${subsection}`);
+  }
+  for (const [section, count] of [[12, 5], [16, 6], [30, 6], [38, 2]]) {
+    assert.equal(sectionBlocks(section).filter(".statut-list-point").children("li").length, count, `§ ${section}`);
+    assert.equal(sectionBlocks(section).filter(".statut-list-subsection").length, 0, `§ ${section}: no invented subsection`);
+  }
+  for (const [section, subsection, continuation] of [[17, 2, statute.paragraphs[134]], [24, 5, statute.paragraphs[220]]]) {
+    const paragraphs = sectionBlocks(section).filter("ol").children(`li[value="${subsection}"]`).children(".statut-item-content").children("p");
+    assert.equal(paragraphs.length, 2);
+    assert.equal(paragraphs.last().text().trim(), continuation);
+  }
+});
+
+test("statute splits sentence-final section labels but preserves inline and sentence-final references on all pages", async () => {
+  const props = {
+    slug: "statut",
+    source: "",
+    links: [],
+    paragraphs: [
+      "§ 1",
+      "1. Zdanie kończy się tutaj. § 2",
+      "2. Obowiązuje odesłanie do § 24",
+      "3. Zastosowanie mają § 11 ust. 4 oraz § 24 ust. 6-13 Statutu.",
+      "1) Odesłanie do § 8 Statutu,",
+    ],
+  };
+  const $ = load(await renderer.article(props));
+  assert.deepEqual($("h2.statut-section-heading").map((_, element) => $(element).text()).get(), ["§ 1", "§ 2"]);
+  assert.equal($("h2.statut-section-heading").last().prev("ol").find("p").text().trim(), "Zdanie kończy się tutaj.");
+  assert.deepEqual($("article p").map((_, element) => $(element).text().trim()).get(), props.paragraphs.slice(1).map(text => text.replace(/^\d+[.)]\s+/, "").replace(/\s+§ 2$/, "")));
+
+  const unrelated = load(await renderer.article({ ...props, slug: "statute-formatting-fixture" }));
+  assert.equal(unrelated(".statut-section-heading, .statut-prose, .prose-justified").length, 0);
+  assert.equal(unrelated('article ol[start="1"] > li').first().text(), props.paragraphs[1].replace(/^1\.\s+/, ""));
+});
+
+test("statute preserves explicit labels, three list levels and continuation paragraphs without treating references as lists", async () => {
+  const paragraphs = [
+    "§ 1",
+    "3. Ustęp z numeracją źródłową:",
+    "2) Punkt z numeracją źródłową:",
+    "a) Pierwszy podpunkt",
+    "b) Drugi podpunkt",
+    "Dalsza treść podpunktu.",
+    "5. Odesłania do ust. 3 pkt 2) i lit. a) pozostają w zdaniu.",
+    "§ 2",
+    "Wprowadzenie bez numerowanego ustępu:",
+    "1) Pierwszy punkt.",
+    "2) Drugi punkt.",
+  ];
+  const $ = load(await renderer.article({ slug: "statut", source: "", links: [], paragraphs }));
+  assert.equal($(".statut-list-subsection > li[value='3'] .statut-list-point > li[value='2'] .statut-list-letter > li").length, 2);
+  assert.equal($(".statut-list-letter > li[value='2'] > .statut-item-content > p").last().text().trim(), paragraphs[5]);
+  assert.equal($(".statut-list-subsection > li[value='5'] .statut-item-content > p").text().trim(), paragraphs[6].replace(/^5\.\s+/, ""));
+  assert.equal($(".statut-list-subsection > li[value='5'] ol").length, 0);
+  assert.deepEqual($("article > ol").last().children("li").children(".statut-item-marker").map((_, marker) => $(marker).text().trim()).get(), ["1)", "2)"]);
+});
+
 test("post galleries render below text and before downloads, while older posts have no gallery markup", async () => {
   const props = { slug: "gallery-rendering-fixture", paragraphs: ["Treść przed galerią."], links: [{ label: "Dokument PDF", href: "/manual.pdf", document: true, managedAttachment: true }], source: "", inferHeadings: false };
   const images = Array.from({ length: 5 }, (_, index) => ({ name: `Zdjęcie ${index + 1}`, href: `/media/photo-${index + 1}.jpg` }));

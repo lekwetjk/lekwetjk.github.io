@@ -44,6 +44,22 @@ pnpm dev
 
 Aplikacja będzie dostępna lokalnie na porcie 3000 lub kolejnych wolnych portach, w zależności od aktywności innych procesów.
 
+### Formatowanie statutu
+
+Strona `/tresc/statut` zachowuje źródłową treść i numerację prawną.
+Ustępy (`1.`), punkty (`1)`) i pozycje literowe (`a)`) są listami HTML
+zagnieżdżonymi zgodnie z dokumentem, z justowaniem i wiszącymi wcięciami.
+Wyliczenia literowe zapisane w jednym akapicie są rozdzielane, a dalsze
+akapity ustępu pozostają w jego obrębie. Nie są dopisywane brakujące
+oznaczenia ani zmieniane odwołania. Nagłówki rozdziałów i części organów
+pozostają nagłówkami; oznaczenia paragrafów są wyśrodkowane.
+
+Testy renderowania statutu i pozostałych artykułów:
+
+```bash
+node --test tests/campaign-rendering.test.mjs
+```
+
 ### Publikacje, dokumenty i Wstawienia
 
 Po dodaniu publikacji lista wpisów w panelu odświeża się bez przeładowania

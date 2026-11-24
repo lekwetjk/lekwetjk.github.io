@@ -18,6 +18,7 @@ import { knowledgePages, newsPosts } from "../lib/content";
 import { applyManagedPostOverrides } from "../lib/managed-posts";
 import { memberProfileOptions } from "../lib/member-profile-options";
 import { connection } from "next/server";
+import { StatuteContent } from "./StatuteContent";
 import PostGallery from "./PostGallery";
 import type { GalleryImage } from "../lib/post-gallery";
 
@@ -1284,23 +1285,10 @@ export async function ArticleBody({
   }
 
   if (slug === "statut") {
-    const isBracketedPoint = (value: string) => /^\s*(?:\d+|[a-z])\)[\s"“”]/i.test(value);
-    const isDotPoint = (value: string) => /^\s*(?:\d+|[a-z])\.\s+/.test(value);
-
     return (
       <div className="article-layout article-layout-full shell">
-        <article className="prose statut-prose">
-          {visibleParagraphs.map((paragraph, index) =>
-            index > 0 && looksLikeHeading(paragraph) && !isBracketedPoint(paragraph) && !isDotPoint(paragraph) ? (
-              <h2 key={`${index}-${paragraph.slice(0, 20)}`}>{paragraph}</h2>
-            ) : index > 0 && isDotPoint(paragraph) ? (
-              <p key={`${index}-${paragraph.slice(0, 20)}`}>
-                <strong>{paragraph}</strong>
-              </p>
-            ) : (
-              <p key={`${index}-${paragraph.slice(0, 20)}`}>{paragraph}</p>
-            ),
-          )}
+        <article className="prose prose-justified statut-prose">
+          <StatuteContent paragraphs={visibleParagraphs} />
         </article>
       </div>
     );

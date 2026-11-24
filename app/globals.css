@@ -2918,24 +2918,48 @@ blockquote {
   letter-spacing: -0.01em;
 }
 
+.statut-prose .statut-section-heading {
+  text-align: center;
+  text-align-last: center;
+}
+
 .statut-prose strong,
 .statut-prose b {
   font-weight: 700;
 }
 
-.statut-prose ul,
-.statut-prose ol {
-  margin: 0 0 18px 22px;
-  padding-left: 18px;
+.prose.statut-prose .statut-list {
+  margin: 0 0 18px;
+  padding: 0;
+  list-style: none;
 }
 
-.statut-prose li {
-  margin-bottom: 6px;
+.prose.statut-prose .statut-list .statut-list {
+  margin: 8px 0 4px;
 }
 
-.statut-prose li::marker {
-  color: var(--red);
+.prose.statut-prose .statut-list > li {
+  display: grid;
+  grid-template-columns: 2.2em minmax(0, 1fr);
+  gap: 0.4em;
+  margin: 0 0 12px;
+}
+
+.statut-prose .statut-item-marker {
+  color: var(--ink);
   font-weight: 700;
+  white-space: nowrap;
+  text-align: left;
+  text-align-last: left;
+}
+
+.statut-prose .statut-list .statut-item-content > p {
+  margin-block: 0 0 8px;
+  font-weight: 400;
+}
+
+.statut-prose .statut-list .statut-item-content > p:last-child {
+  margin-bottom: 0;
 }
 
 .article-board-heading {
