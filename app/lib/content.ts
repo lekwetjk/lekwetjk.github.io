@@ -466,6 +466,28 @@ const supplementalNewsPosts: NewsPost[] = [
 const supplementalSlugs = new Set(supplementalNewsPosts.map((post) => post.slug));
 const generatedSlugs = new Set(generatedContentPosts.map((post) => post.slug));
 
+function filipinyVisitPhoto(index: number) {
+  const number = String(index).padStart(2, "0");
+  return {
+    name: `Wizyta studyjna delegacji z Filipin – zdjęcie ${index} (fot. KRD-IG)`,
+    href: `/media/news/filipiny-wizyta-2026/${number}.jpg`,
+  };
+}
+
+// The WordPress export cut excerpts mid-word and dropped block galleries.
+const importedPostCorrections: Record<string, Partial<Pick<NewsPost, "excerpt" | "gallery">>> = {
+  "filipinska-branza-miesna-z-wizyta-studyjna-w-polsce": {
+    excerpt:
+      "Przedstawiciele branży mięsnej z Filipin odwiedzili Polskę, aby zapoznać się z potencjałem krajowego sektora drobiarskiego, standardami produkcji oraz możliwościami rozwoju współpracy handlowej.",
+    gallery: [1, 2, 3, 4, 5].map(filipinyVisitPhoto),
+  },
+};
+
+function correctImportedPost(post: NewsPost): NewsPost {
+  const correction = post.managed ? undefined : importedPostCorrections[post.slug];
+  return correction ? { ...post, ...correction } : post;
+}
+
 export const newsPosts = [
   ...(generatedContentPosts as NewsPost[]),
   ...supplementalNewsPosts,
@@ -485,7 +507,7 @@ export const newsPosts = [
   }),
   categories: normalizeTenderCategories(post.title, post.categories),
   excerpt: normalizePreviewText(post.excerpt),
-})).map(correctCampaignPost).map(post => isTenderPost(post) ? restoreTenderAttachments(post) : post);
+})).map(correctCampaignPost).map(correctImportedPost).map(post => isTenderPost(post) ? restoreTenderAttachments(post) : post);
 
 function normalizeTenderCategories(title: string, categories: string[]) {
   const normalizedCategories = new Set<string>(categories.filter(Boolean));
