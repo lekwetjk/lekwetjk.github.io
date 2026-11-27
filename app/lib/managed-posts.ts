@@ -242,7 +242,7 @@ function galleryIds(gallery: GalleryInput[] = []) {
 }
 
 async function validateGallery(gallery: GalleryInput[] = []) {
-  if (gallery.length > MAX_GALLERY_IMAGES) throw new Error("Galeria może zawierać maksymalnie 5 zdjęć.");
+  if (gallery.length > MAX_GALLERY_IMAGES) throw new Error(`Galeria może zawierać maksymalnie ${MAX_GALLERY_IMAGES} zdjęć.`);
   if (gallery.length && !mediaLibraryEnabled()) throw new Error("Biblioteka mediów jest wyłączona.");
   for (const item of gallery) if ("file" in item) {
     const { contentType } = await validateMediaUpload(item.file);

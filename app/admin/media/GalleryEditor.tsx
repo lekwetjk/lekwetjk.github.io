@@ -31,14 +31,14 @@ export default function GalleryEditor({ value, onChange }: { value: GalleryItem[
   function close() { dialogRef.current?.close(); setOpen(false); }
   function select(asset: MediaAsset) {
     if (value.some(item => item.id === asset.id)) { setError("To zdjęcie jest już w galerii."); return; }
-    if (value.length >= MAX_GALLERY_IMAGES) { setError("Galeria może zawierać maksymalnie 5 zdjęć."); return; }
+    if (value.length >= MAX_GALLERY_IMAGES) { setError(`Galeria może zawierać maksymalnie ${MAX_GALLERY_IMAGES} zdjęć.`); return; }
     onChange([...value, { id: asset.id, href: asset.href, name: asset.name }]); setError("");
     if (value.length + 1 === MAX_GALLERY_IMAGES) close();
   }
   function addFiles(event: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(event.target.files ?? []);
     event.target.value = "";
-    if (files.length > MAX_GALLERY_IMAGES - value.length) { setError(`Pozostałe miejsca: ${MAX_GALLERY_IMAGES - value.length}. Nie dodano plików przekraczających limit 5 zdjęć.`); return; }
+    if (files.length > MAX_GALLERY_IMAGES - value.length) { setError(`Pozostałe miejsca: ${MAX_GALLERY_IMAGES - value.length}. Nie dodano plików przekraczających limit ${MAX_GALLERY_IMAGES} zdjęć.`); return; }
     if (files.some(file => !["image/jpeg", "image/png", "image/webp"].includes(file.type) || file.size === 0 || file.size > 25 * 1024 * 1024)) { setError("Wybierz niepuste zdjęcia JPEG, PNG lub WebP, do 25 MB każde."); return; }
     const added = files.map(file => {
       const href = URL.createObjectURL(file); urls.current.add(href);
@@ -51,8 +51,8 @@ export default function GalleryEditor({ value, onChange }: { value: GalleryItem[
   }
   return <fieldset className={galleryStyles.editor}>
     <legend>Galeria zdjęć pod tekstem (opcjonalnie)</legend>
-    <small>Osobna od grafiki kafelka. Maksymalnie 5 zdjęć; miniatury pod tekstem, powiększenie 1024 × 768 px.</small>
-    <strong role="status">Wybrano {value.length} z 5 zdjęć</strong>
+    <small>Osobna od grafiki kafelka. Maksymalnie {MAX_GALLERY_IMAGES} zdjęć; miniatury pod tekstem, powiększenie 1024 × 768 px.</small>
+    <strong role="status">Wybrano {value.length} z {MAX_GALLERY_IMAGES} zdjęć</strong>
     <div className={galleryStyles.actions}>
       <button type="button" className="button button-outline" disabled={value.length === MAX_GALLERY_IMAGES} onClick={() => { setError(""); setOpen(true); }}>Wybierz zdjęcia z biblioteki</button>
       <label>Dodaj zdjęcia z dysku<input aria-label="Dodaj zdjęcia do galerii z dysku" type="file" accept="image/jpeg,image/png,image/webp" multiple disabled={value.length === MAX_GALLERY_IMAGES} onChange={addFiles} /></label>
@@ -69,7 +69,7 @@ export default function GalleryEditor({ value, onChange }: { value: GalleryItem[
     <small>Odłączenie zdjęcia nie usuwa oryginalnego pliku.</small>
     {error ? <p role="alert" className={galleryStyles.error}>{error}</p> : null}
     {open ? createPortal(<dialog ref={dialogRef} aria-label="Wybór zdjęć do galerii" className={styles.dialog} onClose={() => setOpen(false)} onCancel={event => { event.preventDefault(); close(); }}>
-      <header className={styles.header}><h2>Galeria: {value.length}/5 zdjęć</h2><button type="button" className="button button-outline" onClick={close}>Gotowe — zamknij bibliotekę</button></header>
+      <header className={styles.header}><h2>Galeria: {value.length}/{MAX_GALLERY_IMAGES} zdjęć</h2><button type="button" className="button button-outline" onClick={close}>Gotowe — zamknij bibliotekę</button></header>
       <div className={styles.content}>{error ? <p role="alert" className={galleryStyles.error}>{error}</p> : null}<MediaBrowser kind="image" onSelect={select} /></div>
     </dialog>, document.body) : null}
   </fieldset>;

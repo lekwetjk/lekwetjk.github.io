@@ -1,4 +1,4 @@
-export const MAX_GALLERY_IMAGES = 5;
+export const MAX_GALLERY_IMAGES = 10;
 
 export type GalleryImage = { name: string; href: string };
 export type GalleryItem = GalleryImage & { id: string; file?: File };
@@ -21,7 +21,7 @@ export function readGalleryFormData(form: FormData): GalleryInput[] | undefined 
   if (typeof value !== "string") throw new Error("Nieprawidłowy zapis galerii.");
   let entries: unknown;
   try { entries = JSON.parse(value); } catch { throw new Error("Nieprawidłowy zapis galerii."); }
-  if (!Array.isArray(entries) || entries.length > MAX_GALLERY_IMAGES) throw new Error("Galeria może zawierać maksymalnie 5 zdjęć.");
+  if (!Array.isArray(entries) || entries.length > MAX_GALLERY_IMAGES) throw new Error(`Galeria może zawierać maksymalnie ${MAX_GALLERY_IMAGES} zdjęć.`);
   const usedFiles = new Set<number>();
   const result = entries.map((entry: unknown): GalleryInput => {
     if (!entry || typeof entry !== "object" || Object.keys(entry).length !== 1) throw new Error("Nieprawidłowe zdjęcie w galerii.");

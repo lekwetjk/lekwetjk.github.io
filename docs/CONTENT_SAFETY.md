@@ -244,7 +244,7 @@ zamyka okno; przy zalacznikach mozna wskazac kilka plikow przed zamknieciem.
 Przycisk zamkniecia i Escape wracaja do formularza bez zapisu publikacji.
 Okno jest poza formularzem, aby Enter w wyszukiwaniu nie publikowal wpisu.
 
-Publikacje i zapytania moga dodatkowo miec do 5 zdjec w osobnej galerii pod
+Publikacje i zapytania moga dodatkowo miec do 10 zdjec w osobnej galerii pod
 tekstem. Grafika kafelka oraz zalaczniki pozostaja niezalezne. Miniatury maja
 160 x 120 px na komputerze; powiekszenie miesci pelny obraz w ramce
 1024 x 768 px, bez rozciagania, z dopasowaniem do mniejszego ekranu.

@@ -8,6 +8,7 @@ import { listContentHistory } from "./content-history.ts";
 import { listContentTrash } from "./content-trash.ts";
 import { documentContentType, validFileName, type MemberDocumentScope } from "./member-documents.ts";
 import { addMediaUsage, collectMediaReferences, mediaHref, reusableMedia, type MediaAsset, type MediaUsage } from "./media-references.ts";
+import { MAX_GALLERY_IMAGES } from "./post-gallery.ts";
 
 export const MAX_MEDIA_BYTES = 25 * 1024 * 1024;
 const FILE_TYPES: Record<string, string> = {
@@ -192,7 +193,7 @@ export async function getBulletinSourceDownload(id: string) {
 }
 
 export async function resolveMediaSelection(imageId?: string, attachmentIds: string[] = [], galleryIds: string[] = []) {
-  if (galleryIds.length > 5 || new Set(galleryIds).size !== galleryIds.length) throw new MediaLibraryError("Wybierz najwyżej 5 różnych zdjęć do galerii.");
+  if (galleryIds.length > MAX_GALLERY_IMAGES || new Set(galleryIds).size !== galleryIds.length) throw new MediaLibraryError(`Wybierz najwyżej ${MAX_GALLERY_IMAGES} różnych zdjęć do galerii.`);
   if (!imageId && !attachmentIds.length && !galleryIds.length) return { image: undefined, attachments: [], gallery: [] };
   requireEnabled();
   if (attachmentIds.length > 30) throw new MediaLibraryError("Jednorazowo można wybrać najwyżej 30 załączników.");

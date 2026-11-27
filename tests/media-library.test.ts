@@ -4,7 +4,7 @@ import test from "node:test";
 import { changeMediaTrash, getBulletinSourceDownload, listMediaAssets, MAX_MEDIA_BYTES, resolveMediaSelection, uploadMediaAsset } from "../app/lib/media-library.ts";
 import { collectMediaReferences } from "../app/lib/media-references.ts";
 import { createManagedPost, deleteManagedPost, getManagedPostBySlug, listManagedPostsForAdmin, restoreManagedPost, updateManagedPost } from "../app/lib/managed-posts.ts";
-import { appendGalleryFormData, readGalleryFormData } from "../app/lib/post-gallery.ts";
+import { appendGalleryFormData, MAX_GALLERY_IMAGES, readGalleryFormData } from "../app/lib/post-gallery.ts";
 import { restoreContentRevision, currentRevisionState } from "../app/lib/content-history-actions.ts";
 import { contentStateHash, listContentHistory } from "../app/lib/content-history.ts";
 import staticCatalog from "../app/data/media-catalog.json" with { type: "json" };
@@ -22,7 +22,7 @@ test("gallery multipart preserves mixed order, supports clearing, and rejects ma
   assert.ok("file" in parsed[1] && parsed[1].file.name === file.name);
   const empty = new FormData(); empty.set("gallery", "[]");
   assert.deepEqual(readGalleryFormData(empty), []);
-  for (const value of ["null", "{}", "{", '[{"file":0}]', '[{"id":"a","file":0}]', JSON.stringify(Array.from({ length: 6 }, () => ({ id: "static:/photo.jpg" })))]) {
+  for (const value of ["null", "{}", "{", '[{"file":0}]', '[{"id":"a","file":0}]', JSON.stringify(Array.from({ length: MAX_GALLERY_IMAGES + 1 }, () => ({ id: "static:/photo.jpg" })))]) {
     const invalid = new FormData(); invalid.set("gallery", value);
     assert.throws(() => readGalleryFormData(invalid));
   }
@@ -126,7 +126,7 @@ test("gallery limits, duplicates, private files and invalid image signatures are
     const before = f.db.prepare("SELECT COUNT(*) AS count FROM managed_posts").get()!.count;
     const puts = f.control.puts;
     for (const gallery of [
-      archived.slice(0, 6).map(asset => ({ id: asset.id })),
+      Array.from({ length: MAX_GALLERY_IMAGES + 1 }, (_, index) => ({ id: archived[index % archived.length].id })),
       [{ id: archived[0].id }, { id: archived[0].id }],
       [{ id: pdf.id }],
       [{ id: "r2:member-documents/private.png" }],
